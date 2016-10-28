@@ -1,0 +1,116 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Calculators</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <!-- Place favicon.ico in the root directory -->
+  <link rel="shortcut icon" href="favicon.ico" />
+
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/papier-1.3.1.min.css">
+  <link rel="stylesheet" href="css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/boilerplate.css">
+  <link rel="stylesheet" href="css/main.css">
+  <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+</head>
+<body>
+  <!--[if lt IE 8]>
+      <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
+
+  <div class="site-content">
+
+    <h1>Laskureita</h1>
+
+    <!-- Last edit block -->
+    <section class="panel">
+      <header class="bg-subtle">Viimeisin arvo</header>
+      <div class="calculator item">
+        <div class="name">Arvo</div>
+        <button class="fa fa-clipboard tool-icon" aria-hidden="true" id="copy-to-clipboard"></button>
+        <div class="value"><input type="text" id="last-value" class="wide" readonly="true" /></div>
+      </div>
+    </section>
+
+    <!-- Identifiers -->
+    <section class="panel">
+      <header class="bg-teal">Tunnisteet</header>
+      <div class="calculator item">
+        <div class="name">Hetu</div>
+        <div class="value">
+          <button class="fa fa-refresh tool-icon" id="hetu-generate"></button>
+          <input type="text" id="hetu-input" class="narrow" maxlength="10" />
+          <input type="text" id="hetu-check" class="letter" readonly="readonly" />
+        </div>
+      </div>
+      <div class="calculator item">
+        <div class="name">Viitenumero</div>
+        <div class="value">
+          <button class="fa fa-refresh tool-icon" id="bank-reference-generate"></button>
+          <input type="text" id="bank-reference-input" class="medium" />
+          <input type="text" id="bank-reference-check" class="letter" readonly="readonly" />
+        </div>
+      </div>
+      <div class="calculator item">
+        <div class="name">Y-tunnus</div>
+        <div class="value">
+          <button class="fa fa-refresh tool-icon" id="company-id-generate"></button>
+          <input type="text" id="company-id-input" class="medium" />
+          <input type="text" id="company-id-check" class="letter" readonly="readonly" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Cryptography -->
+    <section class="panel">
+      <header class="bg-teal">Kryptografia</header>
+      <div class="calculator item">
+        <div class="name">Teksti</div>
+        <div class="value">
+          <textarea id="plain-text-input" class="large"></textarea>
+         </div>
+      </div>
+      <div class="calculator item">
+        <div class="name">
+          <input type="radio" name="crypto" value="md5" checked="checked" id="crypto-select-md5" /><label for="crypto-select-md5">MD5</label>
+          <div class="tools">
+            <input type="checkbox" id="md5-uc" />
+            <label for="md5-uc" title="Isot kirjaimet"><i class="fa fa-font" aria-hidden="true"></i></label>
+          </div>
+        </div>
+        <div class="value">
+          <input type="text" id="md5-text" class="wide" readonly="readonly" />
+        </div>
+      </div>
+      <div class="calculator item">
+        <div class="name">
+          <input type="radio" name="crypto" value="sha1" id="crypto-select-sha1" /><label for="crypto-select-sha1">SHA-1</label>
+          <div class="tools">
+            <input type="checkbox" id="sha1-uc" />
+            <label for="sha1-uc" title="Isot kirjaimet"><i class="fa fa-font" aria-hidden="true"></i></label>
+          </div>
+        </div>
+        <div class="value">
+          <input type="text" id="sha1-text" class="wide" readonly="readonly" />
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="js/vendor/jquery-3.1.1.min.js"></script>
+  <script src="js/vendor/lodash.core.js"></script>
+  <script src="js/vendor/Bacon-0.7.86.js"></script>
+  <script src="js/vendor/Bacon.UI.js"></script>
+  <script src="js/plugins.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="js/md5.js"></script>
+  <script src="js/sha1.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
