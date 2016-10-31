@@ -14,7 +14,7 @@ module.exports = function(grunt) {
     },
     browserify: {
       client: {
-        src: 'src/js/*.js',
+        src: 'src/js/main.js',
         dest: 'build/<%= pkg.name %>.js'
       }
     }

@@ -1,5 +1,13 @@
-(function($, calc) {
+(function() {
     "use strict"
+
+    var $ = require("jquery");
+    var Bacon = require("baconjs");
+    var calc = require("./calc");
+    var util = reuquire("./util");
+
+    // See that we have console
+    util.fixConsole();
 
     function init() {
         console.log("Initializing calculators");
@@ -140,4 +148,4 @@
 
     $(document).ready(init);
 
-})(jQuery, window.calc);
+})();
