@@ -3,8 +3,11 @@
 
     var $ = require("jquery");
     var Bacon = require("baconjs");
+    var BaconUtil = require("./util/baconutil")
     var calc = require("./calc");
-    var util = require("./util");
+    var util = require("./util/util");
+
+    $.fn.asEventStream = Bacon.$.asEventStream;
 
     // See that we have console
     util.fixConsole();
@@ -119,7 +122,7 @@
 
     function streamToCheck(inputField, calculateCheck, checkField, combiner) {
         if (!combiner) combiner = combineWith("");
-        var inputStream = Bacon.UI.textFieldValue(inputField);
+        var inputStream = BaconUtil.textFieldValue(inputField);
         var checkValue = inputStream.map(calculateCheck);
         checkValue.onValue(function(value) {
             console.log("Calculated check value:", value);

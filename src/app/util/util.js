@@ -38,10 +38,9 @@ function fixConsole() {
     }
 }
 
-module.exports = function(n) {
-    return {
-        getRandomInt: getRandomInt,
-        zeroPad: zeroPad,
-        fixConsole: fixConsole
-    };
+module.exports = {
+    getRandomInt: getRandomInt,
+    zeroPad: zeroPad,
+    fixConsole: fixConsole
 };
+

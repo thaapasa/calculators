@@ -1,6 +1,8 @@
 "use strict"
 
 var hetu = require("./calc/hetu");
+var md5 = require("./calc/md5");
+var sha1 = require("./calc/sha1");
 
 var ZEROPAD = "0000000000000000000000000000000000000";
 function zeroPad(str, len, padRight) {
@@ -62,12 +64,11 @@ function generateCompanyIdBody() {
     return zeroPad(getRandomInt(1, 9999999), 7);
 }
 
-module.exports = function(n) {
-    return {
-        hetu: hetu,
-        bankReference: { check: getBankReferenceCheck, generate: generateBankReferenceBody },
-        companyId: { check: getCompanyIdCheck, generate: generateCompanyIdBody },
-        getRandomInt: getRandomInt,
-        zeroPad: zeroPad
-    };
+module.exports = {
+    hetu: hetu,
+    bankReference: { check: getBankReferenceCheck, generate: generateBankReferenceBody },
+    companyId: { check: getCompanyIdCheck, generate: generateCompanyIdBody },
+    md5: md5,
+    sha1: sha1
 };
+

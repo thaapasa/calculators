@@ -1,6 +1,8 @@
 "use strict"
 
-var util = require("../util");
+var util = require("../util/util");
+
+var zeroPad = util.zeroPad;
 
 /* Hetu (Henkilötunnus, Finnish Social Security Number) */
 /* ---------------------------------------------------- */
@@ -42,9 +44,8 @@ function generateHetuBody() {
     return zeroPad(day, 2) + zeroPad(month, 2) + zeroPad(year, 2) + check + zeroPad(counter, 3);
 }
 
-module.exports = function(n) {
-    return {
-        check: getHetuCheck,
-        generate: generateHetuBody
-    };
+module.exports = {
+    check: getHetuCheck,
+    generate: generateHetuBody
 };
+
