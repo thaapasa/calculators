@@ -6,9 +6,9 @@ var zeroPad = util.zeroPad;
 
 /* Hetu (Henkilötunnus, Finnish Social Security Number) */
 /* ---------------------------------------------------- */
-var HETU_CHECKS = new Array('A', 'B', 'C', 'D', 'E', 'F', 'H', 'J', 'K',
-    'L', 'M', 'N', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y');
-var HETU_SEPARATORS = new Array('A', '-', '+');
+var HETU_CHECKS = ['A', 'B', 'C', 'D', 'E', 'F', 'H', 'J', 'K',
+    'L', 'M', 'N', 'P', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y'];
+var HETU_SEPARATORS = ['A', '-', '+'];
 function getHetuCheck(hetu) {
     if (hetu.length != 10) {
         return;

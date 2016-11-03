@@ -1,5 +1,5 @@
 (function() {
-    "use strict"
+    "use strict";
 
     var $ = require("jquery");
     var Bacon = require("baconjs");
