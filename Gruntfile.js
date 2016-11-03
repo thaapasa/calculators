@@ -8,14 +8,14 @@ module.exports = function(grunt) {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
       },
       build: {
-        src: 'build/<%= pkg.name %>.js',
-        dest: 'build/<%= pkg.name %>.min.js'
+        src: 'public/js/calculators.js',
+        dest: 'public/js/calculators.min.js'
       }
     },
     browserify: {
       client: {
-        src: 'src/js/main.js',
-        dest: 'build/<%= pkg.name %>.js'
+        src: 'src/app/main.js',
+        dest: 'public/js/calculators.js'
       }
     }
   });

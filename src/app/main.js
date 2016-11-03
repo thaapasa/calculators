@@ -4,7 +4,7 @@
     var $ = require("jquery");
     var Bacon = require("baconjs");
     var calc = require("./calc");
-    var util = reuquire("./util");
+    var util = require("./util");
 
     // See that we have console
     util.fixConsole();
