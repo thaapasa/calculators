@@ -17,13 +17,26 @@ module.exports = function(grunt) {
         src: 'src/app/main.js',
         dest: 'public/js/calculators.js'
       }
+    },
+    watchify: {
+      options: {
+        detectGlobals: true,
+        insertGlobals: false,
+        ignoreMissing: false,
+        debug: false,
+        standalone: false,
+        keepalive: true
+      },
+      client: {
+        src: './src/app/main.js',
+        dest: 'public/js/calculators.js'
+      }
     }
   });
 
-  // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  // Load the plugin that provides the "browserify" task.
   grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-watchify');
 
   // Default task(s).
   grunt.registerTask('default', ['browserify']);
