@@ -4,7 +4,7 @@
     var $ = require("jquery");
     var Bacon = require("baconjs");
     var BaconUtil = require("./util/baconutil")
-    var calc = require("./calc");
+    var calc = require("./calc/calc");
     var util = require("./util/util");
 
     $.fn.asEventStream = Bacon.$.asEventStream;
