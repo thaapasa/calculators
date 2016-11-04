@@ -1,15 +1,8 @@
-"use strict"
+const $ = require("jquery")
+import * as Bacon from "baconjs"
 
-var $ = require("jquery");
-var Bacon = require("baconjs");
+$.fn.asEventStream = Bacon.$.asEventStream
 
-$.fn.asEventStream = Bacon.$.asEventStream;
-
-function textFieldValue(target) {
-    return $(target).asEventStream("keyup").map(function(ev) { return $(ev.target).val(); });
+export function textFieldValue(target) {
+    return $(target).asEventStream("keyup").map((e) => $(e.target).val())
 }
-
-module.exports = {
-    textFieldValue: textFieldValue
-};
-

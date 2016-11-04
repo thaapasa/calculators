@@ -1,46 +1,40 @@
-"use strict"
+const zeroPadding = "0000000000000000000000000000000000000"
 
-var ZEROPAD = "0000000000000000000000000000000000000";
-function zeroPad(str, len, padRight) {
+export function zeroPad(str, len, padRight) {
     if (!padRight) {
-        return (ZEROPAD + str).slice(-len);
+        return (zeroPadding + str).slice(-len)
     } else {
-        return (str + ZEROPAD).substring(0, len);
+        return (str + zeroPadding).substring(0, len)
     }
 }
 
 // Returns a random integer between min (included) and max (excluded)
 // Using Math.round() will give you a non-uniform distribution!
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min)) + min;
+export function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min
 }
 
+export function noop() {}
+
+const consoleMethods = [
+    'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
+    'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
+    'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
+    'timeline', 'timelineEnd', 'timeStamp', 'trace', 'warn'
+]
+
 // Avoid `console` errors in browsers that lack a console.
-function fixConsole() {
-    var method;
-    var noop = function () {};
-    var methods = [
-        'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
-        'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
-        'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
-        'timeline', 'timelineEnd', 'timeStamp', 'trace', 'warn'
-    ];
-    var length = methods.length;
-    var console = (window.console = window.console || {});
+export function fixConsole() {
+
+    var length = consoleMethods.length
+    var console = (window.console = window.console || {})
 
     while (length--) {
-        method = methods[length];
+        const method = consoleMethods[length]
 
         // Only stub undefined methods.
         if (!console[method]) {
-            console[method] = noop;
+            console[method] = noop
         }
     }
 }
-
-module.exports = {
-    getRandomInt: getRandomInt,
-    zeroPad: zeroPad,
-    fixConsole: fixConsole
-};
-

@@ -1,15 +1,13 @@
-"use strict"
-
-var util = require("../util/util");
+import * as util from "../util/util"
 
 /* Bank reference number (viitenumero) */
 /* ----------------------------------- */
-function generateBankReferenceBody() {
+export function generate() {
     return util.getRandomInt(100, 999999999);
 }
 
 var BANK_CHECK_WEIGHTS = [7, 3, 1];
-function getBankReferenceCheck(value) {
+export function check(value) {
     if (!value || value.length < 1) {
         return;
     }
@@ -23,9 +21,3 @@ function getBankReferenceCheck(value) {
     var diff = 10 - (sum % 10);
     return diff < 10 ? diff : 0;
 }
-
-module.exports = {
-    check: getBankReferenceCheck,
-    generate: generateBankReferenceBody
-};
-
