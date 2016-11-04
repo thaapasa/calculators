@@ -126,7 +126,7 @@ function streamCalculation(inputField, calculation, calcMapper, valueField, valu
     const inputStream = inputField.asEventStream("keyup").map(eventToValue)
     let calculated = inputStream.map(calculation)
     if (calcMapper) {
-        calculated = calculated.combine(calcMapper, function(val, m) { return m(val); })
+        calculated = calculated.combine(calcMapper, (val, m) => m(val))
     }
     calculated.onValue((value) => valueField.val(value))
 
