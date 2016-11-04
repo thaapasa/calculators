@@ -13,6 +13,13 @@ module.exports = function(grunt) {
       }
     },
     browserify: {
+      options: {
+        transform: [
+          ["babelify", {
+            presets: ["es2015"]
+          }]
+        ]
+      },
       client: {
         src: 'src/app/main.js',
         dest: 'public/js/calculators.js'
@@ -25,7 +32,12 @@ module.exports = function(grunt) {
         ignoreMissing: false,
         debug: false,
         standalone: false,
-        keepalive: true
+        keepalive: true,
+        transform: [
+          ["babelify", {
+            presets: ["es2015"]
+          }]
+        ]
       },
       client: {
         src: './src/app/main.js',
