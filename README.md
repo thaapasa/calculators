@@ -11,4 +11,4 @@ so you can calculate password hashes safely.
 
 ### Installation instructions ###
 
-No steps needed. Just view the page src/index.html in your browser.
+No steps needed. Just view the page `src/index.html` in your browser.
