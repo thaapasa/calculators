@@ -9,6 +9,10 @@ import * as companyId from "./calc/companyid"
 import * as bankReference from "./calc/bankreference"
 import * as hetu from "./calc/hetu"
 import * as util from "./util/util"
+import React from 'react'
+import ReactDOM from 'react-dom'
+
+import { TextCheck } from "./component/text-check"
 
 // See that we have console
 util.fixConsole()
@@ -16,6 +20,10 @@ util.fixConsole()
 function init() {
     console.log("Initializing calculators")
     const cryptoSelect = getRadioStream("crypto", "md5")
+
+    // const element = <h1>Hello, world</h1>;
+    const element = <TextCheck name="Test element" />
+    ReactDOM.render(element, document.getElementById("root"))
 
     initGenerator("hetu", hetu.generate),
     initGenerator("bank-reference", bankReference.generate),
