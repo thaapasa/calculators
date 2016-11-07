@@ -96,16 +96,9 @@ export class CalculatorPage extends React.Component {
         this.showValue = this.showValue.bind(this)
 
         this.state = {
-            hetu:
-                <CheckValue name="Henkilötunnus" id="hetu" check={hetu.check} generate={hetu.generate}
-                            combine={util.combine} maxLength="10" className="narrow" onValue={showValue} />,
-            bankReference:
-                <CheckValue name="Viitenumero" id="bank-reference" check={bankReference.check} generate={bankReference.generate}
-                            combine={util.combine} maxLength="24" className="medium" onValue={showValue} />,
-            companyId:
-                <CheckValue name="Y-tunnus" id="companyId" check={companyId.check} generate={companyId.generate}
-                            combine={util.combineWith("-")} maxLength="7" className="narrow" onValue={showValue} />
-        }
+            lastValue: ""
+        };
+
 /*
         const calculatedValues = [
             streamCalculation($("#plain-text-input"), hex_md5, ucIfChecked($("#md5-uc")), $("#md5-text"), cryptoSelect.map(valueEquals("md5"))),
@@ -135,9 +128,15 @@ export class CalculatorPage extends React.Component {
             </section>
             <section className="panel">
                 <header className="bg-teal">Tunnisteet</header>
-                { this.state.hetu }
-                { this.state.bankReference }
-                { this.state.companyId }
+                <CheckValue name="Henkilötunnus" id="hetu"
+                            check={hetu.check} generate={hetu.generate} combine={util.combine}
+                            onValue={showValue} maxLength="10" className="narrow" />
+                <CheckValue name="Viitenumero" id="bank-reference"
+                            check={bankReference.check} generate={bankReference.generate} combine={util.combine}
+                            onValue={showValue} maxLength="24" className="medium" />
+                <CheckValue name="Y-tunnus" id="companyId"
+                            check={companyId.check} generate={companyId.generate} combine={util.combineWith("-")}
+                            onValue={showValue} maxLength="7" className="narrow" />
             </section>
             <section className="panel">
                 <header className="bg-teal">Kryptografia</header>
