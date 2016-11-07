@@ -1,3 +1,7 @@
+.hidden {
+    display: none;
+}
+
 .site-content {
     width: 60em;
     margin: auto;

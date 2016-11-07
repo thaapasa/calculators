@@ -11,13 +11,16 @@ export class CheckValue extends React.Component {
         this.state = {
             buttonId: `${this.props.id}-generate`,
             inputId: `${this.props.id}-input`,
-            checkId: `${this.props.id}-check`
+            checkId: `${this.props.id}-check`,
+            valueId: `${this.props.id}-value`,
+            value: "",
+            checkValue: ""
         }
     }
 
     componentDidMount() {
         this.streamToGenerate(`#${this.state.buttonId}`, this.props.generate, `#${this.state.inputId}`)
-        this.streamToCheck(`#${this.state.inputId}`, this.props.check, `#${this.state.checkId}`, this.props.combine)
+        this.streamToCheck(`#${this.state.inputId}`, this.props.check, this.props.combine)
     }
 
     streamToGenerate(button, generator, target) {
@@ -28,16 +31,20 @@ export class CheckValue extends React.Component {
         })
     }
 
-    streamToCheck(inputField, calculateCheck, checkField, combiner = combineWith("")) {
+    streamToCheck(inputField, calculateCheck, combiner = combineWith("")) {
         const inputStream = BaconUtil.textFieldValue(inputField)
         const checkValue = inputStream.map(calculateCheck)
         checkValue.onValue((value) => {
             console.log("Calculated check value:", value)
-            $(checkField).val(value)
+            this.setState({ checkValue: value })
         })
         return checkValue
             .combine(inputStream, (chk, inp) => (chk !== undefined) && combiner(inp, chk))
             .filter(util.nonEmpty)
+            .onValue((v) => {
+                this.setState({ value: v })
+                this.props.onValue && this.props.onValue(v)
+            })
     }
 
     render() {
@@ -46,7 +53,8 @@ export class CheckValue extends React.Component {
                 <div className="value">
                 <button className="fa fa-refresh tool-icon" id={this.state.buttonId} title="Luo uusi" />
                 <input type="text" id={this.state.inputId} className={this.props.className} maxLength={this.props.maxLength} />
-                <input type="text" id={this.state.checkId} className="letter" readOnly />
+                <input type="text" id={this.state.checkId} className="letter" readOnly value={this.state.checkValue}/>
+                <input type="hidden" id={this.state.valueId} value={this.state.value} />
             </div>
         </div>
     }

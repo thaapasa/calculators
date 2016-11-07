@@ -6,6 +6,7 @@ import { sha1 } from "../calc/sha1"
 import * as companyId from "../calc/companyid"
 import * as bankReference from "../calc/bankreference"
 import * as hetu from "../calc/hetu"
+import * as util from "../util/util"
 import { CheckValue } from "./check-value"
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -92,16 +93,18 @@ export class CalculatorPage extends React.Component {
         console.log("Initializing calculators")
         const cryptoSelect = getRadioStream("crypto", "md5")
 
+        this.showValue = this.showValue.bind(this)
+
         this.state = {
             hetu:
                 <CheckValue name="Henkilötunnus" id="hetu" check={hetu.check} generate={hetu.generate}
-                            combine={(a,b) => `${a}-${b}`} maxLength="10" className="narrow"/>,
+                            combine={util.combine} maxLength="10" className="narrow" onValue={showValue} />,
             bankReference:
-                <CheckValue name="Viitenumero" id="bank-reference" check={bankReference.check}
-                            generate={bankReference.generate} combine={(a,b) => `${a}${b}`} maxLength="24" className="medium" />,
+                <CheckValue name="Viitenumero" id="bank-reference" check={bankReference.check} generate={bankReference.generate}
+                            combine={util.combine} maxLength="24" className="medium" onValue={showValue} />,
             companyId:
                 <CheckValue name="Y-tunnus" id="companyId" check={companyId.check} generate={companyId.generate}
-                            combine={(a,b) => `${a}-${b}`} maxLength="7" className="narrow"/>
+                            combine={util.combineWith("-")} maxLength="7" className="narrow" onValue={showValue} />
         }
 /*
         const calculatedValues = [
@@ -115,6 +118,9 @@ export class CalculatorPage extends React.Component {
          */
     }
 
+    showValue(value) {
+        this.setState({ lastValue: value })
+    }
 
     render() {
         return <div className="site-content">
@@ -124,7 +130,7 @@ export class CalculatorPage extends React.Component {
                 <div className="calculator item">
                     <div className="name">Arvo</div>
                     <button className="fa fa-clipboard tool-icon" id="copy-to-clipboard" title="Kopioi leikepöydälle" />
-                    <div className="value"><input type="text" id="last-value" className="wide" readOnly /></div>
+                    <div className="value"><input type="text" id="last-value" className="wide" readOnly value={ this.state.lastValue }/></div>
                 </div>
             </section>
             <section className="panel">
