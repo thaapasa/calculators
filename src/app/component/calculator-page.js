@@ -9,8 +9,9 @@ import * as hetu from "../calc/hetu"
 import * as util from "../util/util"
 import Identifiers from "./identifiers"
 import { CheckValue } from "./check-value"
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from "react"
+import ReactDOM from "react-dom"
+import LastValue from "./last-value"
 
 function eventToValue(event) {
     return $(event.target).val()
@@ -57,20 +58,6 @@ function getRadioStream(name, initialValue) {
     return $("input[name=" + name + "]").asEventStream("change").map(eventToValue).toProperty(initialValue)
 }
 
-function bindCopyToClipboard(button, fieldToCopy) {
-    button.asEventStream("click").onValue(() => {
-        const value = fieldToCopy.val()
-        console.log(`Copying to clipboard: ${value}`)
-
-        try {
-            fieldToCopy.select()
-            document.execCommand("copy")
-        } catch (e) {
-            console.log("Could not copy!")
-        }
-    })
-}
-
 function streamCalculation(inputField, calculation, calcMapper, valueField, valueFilter) {
     const inputStream = inputField.asEventStream("keyup").map(eventToValue)
     let calculated = inputStream.map(calculation)
@@ -97,7 +84,7 @@ export class CalculatorPage extends React.Component {
         this.showValue = this.showValue.bind(this)
 
         this.state = {
-            lastValue: ""
+            lastValue: <LastValue />
         };
 
 /*
@@ -113,20 +100,13 @@ export class CalculatorPage extends React.Component {
     }
 
     showValue(value) {
-        this.setState({ lastValue: value })
+        this.refs.lastValue.setValue(value)
     }
 
     render() {
         return <div className="site-content">
             <h1>Laskureita</h1>
-            <section className="panel">
-                <header className="bg-subtle">Viimeisin arvo</header>
-                <div className="calculator item">
-                    <div className="name">Arvo</div>
-                    <button className="fa fa-clipboard tool-icon" id="copy-to-clipboard" title="Kopioi leikepöydälle" />
-                    <div className="value"><input type="text" id="last-value" className="wide" readOnly value={ this.state.lastValue }/></div>
-                </div>
-            </section>
+            <LastValue ref="lastValue" />
             <Identifiers onValue={this.showValue} />
             <section className="panel">
                 <header className="bg-teal">Kryptografia</header>
