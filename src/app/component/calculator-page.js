@@ -7,6 +7,7 @@ import * as companyId from "../calc/companyid"
 import * as bankReference from "../calc/bankreference"
 import * as hetu from "../calc/hetu"
 import * as util from "../util/util"
+import Identifiers from "./identifiers"
 import { CheckValue } from "./check-value"
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -126,18 +127,7 @@ export class CalculatorPage extends React.Component {
                     <div className="value"><input type="text" id="last-value" className="wide" readOnly value={ this.state.lastValue }/></div>
                 </div>
             </section>
-            <section className="panel">
-                <header className="bg-teal">Tunnisteet</header>
-                <CheckValue name="Henkilötunnus" id="hetu"
-                            check={hetu.check} generate={hetu.generate} combine={util.combine}
-                            onValue={showValue} maxLength="10" className="narrow" />
-                <CheckValue name="Viitenumero" id="bank-reference"
-                            check={bankReference.check} generate={bankReference.generate} combine={util.combine}
-                            onValue={showValue} maxLength="24" className="medium" />
-                <CheckValue name="Y-tunnus" id="companyId"
-                            check={companyId.check} generate={companyId.generate} combine={util.combineWith("-")}
-                            onValue={showValue} maxLength="7" className="narrow" />
-            </section>
+            <Identifiers onValue={this.showValue} />
             <section className="panel">
                 <header className="bg-teal">Kryptografia</header>
                 <div className="calculator item">
