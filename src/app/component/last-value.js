@@ -1,5 +1,6 @@
 const $ = require("jquery")
 import React from "react"
+import {ClipboardButton} from "./tool-button"
 import log from "../util/log"
 
 export default class LastValue extends React.Component {
@@ -31,7 +32,7 @@ export default class LastValue extends React.Component {
             <header className="bg-subtle">Viimeisin arvo</header>
             <div className="calculator item">
                 <div className="name">Arvo</div>
-                <button className="fa fa-clipboard tool-icon" id="copy-to-clipboard" title="Kopioi leikepöydälle" onClick={this.copyToClipboard} />
+                <ClipboardButton id="copy-to-clipboard" title="Kopioi leikepöydälle" onClick={this.copyToClipboard} />
                 <div className="value"><input type="text" id="last-value" className="wide" readOnly value={ this.state.value }/></div>
             </div>
         </section>

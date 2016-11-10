@@ -1,6 +1,7 @@
 const $ = require("jquery")
 import React from 'react'
 import * as BaconUtil from "../util/baconutil"
+import { GenerateButton } from "./tool-button"
 import { log } from '../util/log'
 import * as util from '../util/util'
 
@@ -50,8 +51,8 @@ export default class CheckValue extends React.Component {
     render() {
         return <div className="calculator item">
             <div className="name">{ this.props.name }</div>
-                <div className="value">
-                <button className="fa fa-refresh tool-icon" id={this.state.buttonId} title="Luo uusi" />
+            <div className="value">
+                <GenerateButton id={this.state.buttonId} title="Luo uusi" />
                 <input type="text" id={this.state.inputId} className={this.props.className} maxLength={this.props.maxLength} />
                 <input type="text" id={this.state.checkId} className="letter" readOnly value={this.state.checkValue}/>
                 <input type="hidden" id={this.state.valueId} value={this.state.value} />
