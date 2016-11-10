@@ -1,6 +1,5 @@
-const $ = require("jquery")
 import React from "react"
-import {ClipboardButton} from "./component/tool-button"
+import { ClipboardButton } from "./component/tool-button"
 import log from "../util/log"
 
 export default class LastValue extends React.Component {
@@ -16,9 +15,7 @@ export default class LastValue extends React.Component {
     }
 
     copyToClipboard() {
-        const field = $("#last-value")
-        console.log(`Copying to clipboard: ${field.val()}`)
-
+        const field = this.refs.lastValue
         try {
             field.select()
             document.execCommand("copy")
@@ -33,7 +30,7 @@ export default class LastValue extends React.Component {
             <div className="calculator item">
                 <div className="name">Arvo</div>
                 <ClipboardButton id="copy-to-clipboard" title="Kopioi leikepöydälle" onClick={this.copyToClipboard} />
-                <div className="value"><input type="text" id="last-value" className="wide" readOnly value={ this.state.value }/></div>
+                <div className="value"><input type="text" id="last-value" ref="lastValue" className="wide" readOnly value={ this.state.value }/></div>
             </div>
         </section>
 
