@@ -21,7 +21,7 @@ module.exports = function(grunt) {
         browserify: {
             options: {
                 transform: [
-                    ["babelify", { presets: ["es2015"] }]
+                    ["babelify", { presets: ["es2015", "react"] }]
                 ]
             },
             client: {

@@ -16,6 +16,23 @@ export function getRandomInt(min, max) {
 
 export function noop() {}
 
+export function toUpperCase(value) { return typeof value === "string" ? value.toUpperCase() : undefined }
+
+export function identity(value) { return value }
+
+export function nonEmpty(value) {
+    return value && value.length && value.length > 0
+}
+
+export function combine(a, b) {
+    return `${a}${b}`
+}
+
+export function combineWith(separator) {
+    return (a, b) => `${a}${separator}${b}`
+}
+
+
 const consoleMethods = [
     'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
     'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',

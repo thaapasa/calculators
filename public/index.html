@@ -19,89 +19,11 @@
 </head>
 <body>
   <!--[if lt IE 8]>
-      <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <p class="browserupgrade">You are using an <strong>outdated</strong> browser.
+    Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
   <![endif]-->
 
-  <div class="site-content">
-
-    <h1>Laskureita</h1>
-
-    <!-- Last edit block -->
-    <section class="panel">
-      <header class="bg-subtle">Viimeisin arvo</header>
-      <div class="calculator item">
-        <div class="name">Arvo</div>
-        <button class="fa fa-clipboard tool-icon" aria-hidden="true" id="copy-to-clipboard" title="Kopioi leikepöydälle"></button>
-        <div class="value"><input type="text" id="last-value" class="wide" readonly="true" /></div>
-      </div>
-    </section>
-
-    <!-- Identifiers -->
-    <section class="panel">
-      <header class="bg-teal">Tunnisteet</header>
-      <div class="calculator item">
-        <div class="name">Hetu</div>
-        <div class="value">
-          <button class="fa fa-refresh tool-icon" id="hetu-generate" title="Luo uusi"></button>
-          <input type="text" id="hetu-input" class="narrow" maxlength="10" />
-          <input type="text" id="hetu-check" class="letter" readonly="readonly" />
-        </div>
-      </div>
-      <div class="calculator item">
-        <div class="name">Viitenumero</div>
-        <div class="value">
-          <button class="fa fa-refresh tool-icon" id="bank-reference-generate" title="Luo uusi"></button>
-          <input type="text" id="bank-reference-input" class="medium" />
-          <input type="text" id="bank-reference-check" class="letter" readonly="readonly" />
-        </div>
-      </div>
-      <div class="calculator item">
-        <div class="name">Y-tunnus</div>
-        <div class="value">
-          <button class="fa fa-refresh tool-icon" id="company-id-generate" title="Luo uusi"></button>
-          <input type="text" id="company-id-input" class="medium" />
-          <input type="text" id="company-id-check" class="letter" readonly="readonly" />
-        </div>
-      </div>
-    </section>
-
-    <!-- Cryptography -->
-    <section class="panel">
-      <header class="bg-teal">Kryptografia</header>
-      <div class="calculator item">
-        <div class="name">Teksti</div>
-        <div class="value">
-          <textarea id="plain-text-input" class="large"></textarea>
-         </div>
-      </div>
-      <div class="calculator item">
-        <div class="name">
-          <input type="radio" name="crypto" value="md5" checked="checked" id="crypto-select-md5" /><label for="crypto-select-md5">MD5</label>
-          <div class="tools">
-            <input type="checkbox" id="md5-uc" />
-            <label for="md5-uc" title="Isot kirjaimet"><i class="fa fa-font" aria-hidden="true"></i></label>
-          </div>
-        </div>
-        <div class="value">
-          <input type="text" id="md5-text" class="wide" readonly="readonly" />
-        </div>
-      </div>
-      <div class="calculator item">
-        <div class="name">
-          <input type="radio" name="crypto" value="sha1" id="crypto-select-sha1" /><label for="crypto-select-sha1">SHA-1</label>
-          <div class="tools">
-            <input type="checkbox" id="sha1-uc" />
-            <label for="sha1-uc" title="Isot kirjaimet"><i class="fa fa-font" aria-hidden="true"></i></label>
-          </div>
-        </div>
-        <div class="value">
-          <input type="text" id="sha1-text" class="wide" readonly="readonly" />
-        </div>
-      </div>
-    </section>
-
-  </div>
-
+  <div id="root"></div>
 
   <script src="js/calculators.js"></script>
 </body>
