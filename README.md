@@ -3,9 +3,9 @@
 ### Calculators ###
 
 Need to calculate some SHA1-hashes? Want to generate a few Finnish
-national identification numbers (hetu)? 
+national identification numbers (hetu)?
 
-This repo contains the source code for a static web page that has all 
+This repo contains the source code for a static web page that has all
 those nifty calculators working in the browser. No data is sent anywhere,
 so you can calculate password hashes safely.
 
@@ -19,10 +19,14 @@ Install dependencies:
 Build project:
 
     grunt
-    
-Develop (watch for source-file changes):
+
+Watch for source-file changes:
 
     grunt watch
+
+Develop (build & watch)
+
+    grunt dev
 
 ### See the results ###
 
