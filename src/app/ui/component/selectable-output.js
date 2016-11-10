@@ -1,4 +1,3 @@
-const $ = require("jquery")
 import React from 'react'
 import * as Bacon from "baconjs"
 import * as BaconUtil from "../../util/baconutil"
@@ -9,14 +8,16 @@ export default class SelectableOutput extends React.Component {
     constructor(props) {
         super(props)
         this.setValue = this.setValue.bind(this)
-        this.state = { value: "" };
+        this.state = { value: "", inputStream: null }
     }
 
     componentDidMount() {
-        const cryptoSelect = BaconUtil.getRadioStream(this.props.group, this.props.default).map(BaconUtil.safeLog(`crypto${this.props.id}`))
+        const cryptoSelect =
+            BaconUtil.getRadioStream(this.props.group, this.props.default)
         const inputStream = new Bacon.Bus()
         this.setState({ inputStream: inputStream })
-        this.streamCalculation(inputStream, this.props.calculate, this.ucIfChecked($(`#uc-${this.props.id}`)), cryptoSelect.map((v) => v == this.props.id))
+        this.streamCalculation(inputStream, this.props.calculate, this.ucIfChecked(this.refs.uc),
+            cryptoSelect.map((v) => v == this.props.id))
     }
 
     setValue(val) {
@@ -50,8 +51,8 @@ export default class SelectableOutput extends React.Component {
             <div className="name">
                 {radioButton}<label htmlFor={`crypto-select-${this.props.id}`}>{ this.props.label }</label>
                 <div className="tools">
-                    <input type="checkbox" id={`uc-${this.props.id}`} />
-                    <label htmlFor={`uc-${this.props.id}`} title="Isot kirjaimet"><i className="fa fa-font" /></label>
+                    <input type="checkbox" ref="uc" id={`uc-${this.props.id}`} />
+                    <label htmlFor={`uc-${this.props.id}`} title="Isot kirjaimet"> <i className="fa fa-font" /></label>
                 </div>
             </div>
             <div className="value">
