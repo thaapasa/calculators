@@ -20,8 +20,8 @@ export default class Cryptography extends React.Component {
                     <textarea id="plain-text-input" className="large" />
                 </div>
             </div>
-            <SelectableOutput ref="md5" id="md5" group="crypto" label="MD5" calculate={hex_md5} onValue={this.props.onValue} default={true} />
-            <SelectableOutput ref="sha1" id="sha1" group="crypto" label="SHA-1" calculate={sha1} onValue={this.props.onValue} />
+            <SelectableOutput ref="md5" id="md5" group="crypto" label="MD5" calculate={hex_md5} onValue={this.props.onValue} default="md5" />
+            <SelectableOutput ref="sha1" id="sha1" group="crypto" label="SHA-1" calculate={sha1} onValue={this.props.onValue} default="md5" />
         </section>
     }
 }

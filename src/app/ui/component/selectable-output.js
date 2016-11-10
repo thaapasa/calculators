@@ -13,7 +13,7 @@ export default class SelectableOutput extends React.Component {
     }
 
     componentDidMount() {
-        const cryptoSelect = BaconUtil.getRadioStream(this.props.group, this.props.name)
+        const cryptoSelect = BaconUtil.getRadioStream(this.props.group, this.props.default).map(BaconUtil.safeLog(`crypto${this.props.id}`))
         const inputStream = new Bacon.Bus()
         this.setState({ inputStream: inputStream })
         this.streamCalculation(inputStream, this.props.calculate, this.ucIfChecked($(`#uc-${this.props.id}`)), cryptoSelect.map((v) => v == this.props.id))
@@ -43,7 +43,7 @@ export default class SelectableOutput extends React.Component {
     }
 
     render() {
-        const radioButton = this.props.default ?
+        const radioButton = (this.props.default == this.props.id) ?
             <input type="radio" name={this.props.group} value={this.props.id} id={`crypto-select-${this.props.id}`} defaultChecked /> :
             <input type="radio" name={this.props.group} value={this.props.id} id={`crypto-select-${this.props.id}`} />
         return <div className="calculator item">
