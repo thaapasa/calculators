@@ -1,9 +1,9 @@
-import Identifiers from "./identifiers"
-import Cryptography from "./cryptography"
 import React from "react"
 import LastValue from "./last-value"
+import Identifiers from "./identifiers"
+import Cryptography from "./cryptography"
 
-export class CalculatorPage extends React.Component {
+export default class CalculatorPage extends React.Component {
 
     constructor(props) {
         super(props)

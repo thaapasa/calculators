@@ -1,8 +1,8 @@
 const $ = require("jquery")
 import React from 'react'
 import * as Bacon from "baconjs"
-import * as BaconUtil from "../util/baconutil"
-import * as util from '../util/util'
+import * as BaconUtil from "../../util/baconutil"
+import * as util from '../../util/util'
 
 export default class SelectableOutput extends React.Component {
 

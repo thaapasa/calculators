@@ -2,7 +2,7 @@ import * as companyId from "../calc/companyid"
 import * as bankReference from "../calc/bankreference"
 import * as hetu from "../calc/hetu"
 import * as util from "../util/util"
-import CheckValue from "./check-value"
+import CheckValue from "./component/check-value"
 import React from 'react'
 
 export default class Identifiers extends React.Component {

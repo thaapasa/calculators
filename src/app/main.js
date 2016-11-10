@@ -5,7 +5,7 @@ import * as util from "./util/util"
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import { CalculatorPage } from "./component/calculator-page"
+import CalculatorPage from "./ui/page"
 
 // See that we have console
 util.fixConsole()

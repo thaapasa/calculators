@@ -1,6 +1,6 @@
 import React from 'react'
 import * as BaconUtil from "../util/baconutil"
-import SelectableOutput from "./selectable-output"
+import SelectableOutput from "./component/selectable-output"
 import {hex_md5} from "../calc/md5"
 import {sha1} from "../calc/sha1"
 

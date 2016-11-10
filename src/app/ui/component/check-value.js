@@ -1,9 +1,9 @@
 const $ = require("jquery")
 import React from 'react'
-import * as BaconUtil from "../util/baconutil"
+import * as BaconUtil from "../../util/baconutil"
 import { GenerateButton } from "./tool-button"
-import { log } from '../util/log'
-import * as util from '../util/util'
+import { log } from '../../util/log'
+import * as util from '../../util/util'
 
 export default class CheckValue extends React.Component {
 

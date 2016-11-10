@@ -1,6 +1,6 @@
 const $ = require("jquery")
 import React from "react"
-import {ClipboardButton} from "./tool-button"
+import {ClipboardButton} from "./component/tool-button"
 import log from "../util/log"
 
 export default class LastValue extends React.Component {
