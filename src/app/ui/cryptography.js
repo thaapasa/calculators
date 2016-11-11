@@ -1,6 +1,7 @@
 import React from "react"
 import * as Bacon from "baconjs"
 import SelectableOutput from "./component/selectable-output"
+import Section from "./component/section"
 import {hex_md5} from "../calc/md5"
 import {sha1} from "../calc/sha1"
 
@@ -24,8 +25,7 @@ export default class Cryptography extends React.Component {
     }
 
     render() {
-        return <section className="panel">
-            <header className="bg-teal">Kryptografia</header>
+        return <Section title="Kryptografia">
             <div className="calculator item">
                 <div className="name">Teksti</div>
                 <div className="value">
@@ -34,6 +34,6 @@ export default class Cryptography extends React.Component {
             </div>
             <SelectableOutput ref="md5" id="md5" group="crypto" label="MD5" calculate={hex_md5} onValue={this.props.onValue} default="md5" />
             <SelectableOutput ref="sha1" id="sha1" group="crypto" label="SHA-1" calculate={sha1} onValue={this.props.onValue} default="md5" />
-        </section>
+        </Section>
     }
 }

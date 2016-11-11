@@ -1,4 +1,5 @@
 import React from "react"
+import Section from "./component/section"
 import { ClipboardButton } from "./component/tool-button"
 import log from "../util/log"
 
@@ -25,14 +26,13 @@ export default class LastValue extends React.Component {
     }
 
     render() {
-        return <section className="panel">
-            <header className="bg-subtle">Viimeisin arvo</header>
+        return <Section title="Viimeisin arvo" bgClass="bg-subtle">
             <div className="calculator item">
                 <div className="name">Arvo</div>
                 <ClipboardButton id="copy-to-clipboard" title="Kopioi leikepöydälle" onClick={this.copyToClipboard} />
                 <div className="value"><input type="text" id="last-value" ref="lastValue" className="wide" readOnly value={ this.state.value }/></div>
             </div>
-        </section>
+        </Section>
 
     }
 }
