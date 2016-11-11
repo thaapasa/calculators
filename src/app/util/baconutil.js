@@ -7,7 +7,7 @@ export function attachToJQuery() {
 }
 
 export function addBaconSafeLog() {
-    Bacon.EventStream.prototype.safeLog = function (title) {
+    Bacon.Observable.prototype.safeLog = function (title) {
         return this.map(safeLog(title))
     }
 }

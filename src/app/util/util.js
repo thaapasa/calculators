@@ -32,6 +32,9 @@ export function combineWith(separator) {
     return (a, b) => `${a}${separator}${b}`
 }
 
+export function reverse(value) {
+   return value.split("").reverse().join("")
+}
 
 const consoleMethods = [
     'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',

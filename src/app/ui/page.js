@@ -1,5 +1,6 @@
 import React from "react"
 import LastValue from "./last-value"
+import Numbers from "./numbers"
 import Identifiers from "./identifiers"
 import Cryptography from "./cryptography"
 
@@ -20,6 +21,7 @@ export default class CalculatorPage extends React.Component {
         return <div className="site-content">
             <h1>Laskureita</h1>
             <LastValue ref="lastValue" />
+            <Numbers onValue={this.showValue} />
             <Identifiers onValue={this.showValue} />
             <Cryptography onValue={this.showValue} />
         </div>

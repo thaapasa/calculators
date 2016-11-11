@@ -1,8 +1,8 @@
 import React from 'react'
 import * as Bacon from "baconjs"
 import { GenerateButton } from "./tool-button"
-import log from '../../util/log'
 import * as util from '../../util/util'
+import Item from "./item"
 
 export default class CheckValue extends React.Component {
 
@@ -49,16 +49,13 @@ export default class CheckValue extends React.Component {
     }
 
     render() {
-        return <div className="calculator item">
-            <div className="name">{ this.props.name }</div>
-            <div className="value">
-                <GenerateButton id={`${this.props.id}-generate`} onClick={this.generate} title="Luo uusi" />
-                <input type="text" id={`${this.props.id}-input`} onChange={this.inputChanged}
-                       className={this.props.className} maxLength={this.props.maxLength} value={this.state.input} />
-                <input type="text" id={`${this.props.id}-check`} ref={(i) => this.check = i}
-                       className="letter" readOnly value={this.state.checkValue}/>
-                <input type="hidden" id={`${this.props.id}-value`} value={this.state.value} />
-            </div>
-        </div>
+        return <Item name={this.props.name}>
+            <GenerateButton id={`${this.props.id}-generate`} onClick={this.generate} title="Luo uusi" />
+            <input type="text" id={`${this.props.id}-input`} onChange={this.inputChanged}
+                   className={this.props.className} maxLength={this.props.maxLength} value={this.state.input}/>
+            <input type="text" id={`${this.props.id}-check`} ref={(i) => this.check = i}
+                   className="letter" readOnly value={this.state.checkValue}/>
+            <input type="hidden" id={`${this.props.id}-value`} value={this.state.value}/>
+        </Item>
     }
 }
