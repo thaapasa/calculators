@@ -1,11 +1,15 @@
 const $ = require("jquery")
 import * as Bacon from "baconjs"
-import {log} from "./log"
+import log from "./log"
 
-$.fn.asEventStream = Bacon.$.asEventStream
+export function attachToJQuery() {
+    $.fn.asEventStream = Bacon.$.asEventStream
+}
 
-Bacon.EventStream.prototype.safeLog = function(title) {
-    return this.map(safeLog(title))
+export function addBaconSafeLog() {
+    Bacon.EventStream.prototype.safeLog = function (title) {
+        return this.map(safeLog(title))
+    }
 }
 
 export function safeLog(title) {
@@ -13,10 +17,6 @@ export function safeLog(title) {
         log(`${title}: ${value}`)
         return value
     }
-}
-
-export function textFieldValue(target) {
-    return Bacon.fromEvent(target, "change").map((e) => $(e.target).val())
 }
 
 export function eventToValue(event) {
@@ -28,7 +28,7 @@ export function eventToChecked(event) {
 }
 
 export function getCheckboxStream(element, initialValue) {
-    return $(element).asEventStream("change").map(eventToChecked).toProperty(initialValue)
+    return Bacon.fromEvent(element, "change").map(eventToChecked).toProperty(initialValue)
 }
 
 export function getRadioStream(name, initialValue) {

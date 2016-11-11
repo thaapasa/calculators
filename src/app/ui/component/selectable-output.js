@@ -8,20 +8,19 @@ export default class SelectableOutput extends React.Component {
     constructor(props) {
         super(props)
         this.setValue = this.setValue.bind(this)
-        this.state = { value: "", inputStream: null }
+        this.state = { value: "" }
     }
 
     componentDidMount() {
         const cryptoSelect =
             BaconUtil.getRadioStream(this.props.group, this.props.default)
-        const inputStream = new Bacon.Bus()
-        this.setState({ inputStream: inputStream })
-        this.streamCalculation(inputStream, this.props.calculate, this.ucIfChecked(this.refs.uc),
+        this.inputStream = new Bacon.Bus()
+        this.streamCalculation(this.inputStream, this.props.calculate, this.ucIfChecked(this.refs.uc),
             cryptoSelect.map((v) => v == this.props.id))
     }
 
     setValue(val) {
-        this.state.inputStream.push(val)
+        this.inputStream.push(val)
     }
 
     streamCalculation(inputStream, calculation, calcMapper, valueFilter) {

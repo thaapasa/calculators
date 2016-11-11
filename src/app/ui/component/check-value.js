@@ -1,7 +1,7 @@
 import React from 'react'
 import * as Bacon from "baconjs"
 import { GenerateButton } from "./tool-button"
-import { log } from '../../util/log'
+import log from '../../util/log'
 import * as util from '../../util/util'
 
 export default class CheckValue extends React.Component {
@@ -23,7 +23,6 @@ export default class CheckValue extends React.Component {
 
     generate() {
         const generated = this.props.generate().toString()
-        log(`Generated value: ${generated}`)
         this.setState({ input: generated })
         this.inputStream.push(generated)
     }
@@ -36,9 +35,8 @@ export default class CheckValue extends React.Component {
 
     streamToCheck(calculateCheck, combiner = util.combineWith("")) {
         this.inputStream = new Bacon.Bus()
-        const checkValue = this.inputStream.safeLog("input").map(calculateCheck).safeLog("check")
+        const checkValue = this.inputStream.map(calculateCheck)
         checkValue.onValue((value) => {
-            console.log("Calculated check value:", value)
             this.setState({ checkValue: (value !== undefined) ? value : "" })
         })
         checkValue

@@ -1,17 +1,20 @@
 "use strict";
 
-const $ = require("jquery")
-import * as util from "./util/util"
-import React from 'react'
-import ReactDOM from 'react-dom'
-
+import React from "react"
+import ReactDOM from "react-dom"
 import CalculatorPage from "./ui/page"
+import * as util from "./util/util"
+import * as BaconUtil from "./util/baconutil"
 
-// See that we have console
-util.fixConsole()
+function init() {
+    util.fixConsole()
+    BaconUtil.addBaconSafeLog()
+    BaconUtil.attachToJQuery()
+    renderCalculators()
+}
 
 function renderCalculators() {
     ReactDOM.render(<CalculatorPage />, document.getElementById("root"))
 }
 
-$(document).ready(renderCalculators)
+document.addEventListener("DOMContentLoaded", init)
