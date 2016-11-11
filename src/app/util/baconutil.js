@@ -4,6 +4,10 @@ import {log} from "./log"
 
 $.fn.asEventStream = Bacon.$.asEventStream
 
+Bacon.EventStream.prototype.safeLog = function(title) {
+    return this.map(safeLog(title))
+}
+
 export function safeLog(title) {
     return function (value) {
         log(`${title}: ${value}`)
@@ -12,7 +16,7 @@ export function safeLog(title) {
 }
 
 export function textFieldValue(target) {
-    return $(target).asEventStream("keyup").map((e) => $(e.target).val())
+    return Bacon.fromEvent(target, "change").map((e) => $(e.target).val())
 }
 
 export function eventToValue(event) {

@@ -9,9 +9,9 @@ export default class ToolButton extends React.Component {
 }
 
 export function GenerateButton(props) {
-    return <ToolButton icon="refresh" id={props.id} title={props.title} onClick={props.onClick}/>
+    return <ToolButton icon="refresh" id={props.id} title={props.title} onClick={props.onClick} ref={props.refp}/>
 }
 
 export function ClipboardButton(props) {
-    return <ToolButton icon="clipboard" id={props.id} title={props.title} onClick={props.onClick}/>
+    return <ToolButton icon="clipboard" id={props.id} title={props.title} onClick={props.onClick} ref={props.refp}/>
 }
