@@ -3,6 +3,7 @@ import Section from "./component/section"
 import Item from "./component/item"
 import * as Bacon from "baconjs"
 import * as numbers from "../calc/numbers"
+import * as util from "../util/util"
 
 export default class Numbers extends React.Component {
 
@@ -20,16 +21,18 @@ export default class Numbers extends React.Component {
     }
 
     componentDidMount() {
+        const emptyStream = Bacon.never()
         this.currentInput = new Bacon.Bus()
         const inputConverter = this.currentInput.map((id) => this.types[id].read)
         this.inputStream = new Bacon.Bus()
         const converted = this.inputStream
-            .combine(inputConverter, (i, c) => c(i)).filter((v) => typeof(v) == "number" && !isNaN(v))
+            .combine(inputConverter, (i, c) => c(i)).map((v) => (typeof(v) == "number" && !isNaN(v)) ? v : undefined)
         Object.keys(this.types).forEach((type) => {
             const typeInfo = this.types[type]
-            const whenSourceIsNotThis = this.currentInput.filter((id) => id != type)
-            converted.combine(whenSourceIsNotThis, (c, w) => c)
+            const sourceIsThis = this.currentInput.map((id) => id == type)
+            converted.combine(sourceIsThis, (c, i) => [c, i]).flatMapLatest((v) => v[1] ? emptyStream : converted)
                 .map(typeInfo.write)
+                .map((v) => util.isString(v) ? v : "")
                 .onValue((v) => this.setState({[typeInfo.state]: v}))
         })
     }

@@ -14,6 +14,18 @@ export function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min)) + min
 }
 
+export function isDefined(value) {
+    return value !== undefined && value !== null
+}
+
+export function isNumber(value) {
+    return value !== undefined && value !== null && typeof value == "number"
+}
+
+export function isString(value) {
+    return value !== undefined && value !== null && typeof value == "string"
+}
+
 export function noop() {}
 
 export function toUpperCase(value) { return typeof value === "string" ? value.toUpperCase() : undefined }
