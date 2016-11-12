@@ -12,10 +12,12 @@ export default class Numbers extends React.Component {
         this.inputChanged = this.inputChanged.bind(this)
         this.state = {
             number: "",
+            hex: "",
             binary: ""
         }
         this.types = {
             "number-input": { read: numbers.strToInt, state: "number", write: numbers.intToStr },
+            "hex-input": { read: numbers.hexStrToInt, state: "hex", write: numbers.intToHexStr },
             "binary-input": { read: numbers.binaryStrToInt, state: "binary", write: numbers.intToBinaryStr }
         }
     }
@@ -50,8 +52,11 @@ export default class Numbers extends React.Component {
             <Item name="Numero">
                 <input type="text" id="number-input" maxLength="30" value={this.state.number} onChange={this.inputChanged} />
             </Item>
+            <Item name="Heksa">
+                <input type="text" id="hex-input" maxLength="30" value={this.state.hex} onChange={this.inputChanged} />
+            </Item>
             <Item name="Binääri">
-                <input type="text" id="binary-input" maxLength="30" value={this.state.binary} onChange={this.inputChanged} />
+                <input type="text" id="binary-input" maxLength="40" value={this.state.binary} onChange={this.inputChanged} />
             </Item>
         </Section>
 
