@@ -13,11 +13,13 @@ export default class Numbers extends React.Component {
         this.state = {
             number: "",
             hex: "",
+            octal: "",
             binary: ""
         }
         this.types = {
             "number-input": { read: numbers.strToInt, state: "number", write: numbers.intToStr },
             "hex-input": { read: numbers.hexStrToInt, state: "hex", write: numbers.intToHexStr },
+            "octal-input": { read: numbers.octalStrToInt, state: "octal", write: numbers.intToOctalStr },
             "binary-input": { read: numbers.binaryStrToInt, state: "binary", write: numbers.intToBinaryStr }
         }
     }
@@ -49,14 +51,17 @@ export default class Numbers extends React.Component {
 
     render() {
         return <Section title="Numerot">
-            <Item name="Numero">
+            <Item name="Binääri">
+                <input type="text" id="binary-input" maxLength="40" value={this.state.binary} onChange={this.inputChanged} />
+            </Item>
+            <Item name="Oktaali">
+                <input type="text" id="octal-input" maxLength="30" value={this.state.octal} onChange={this.inputChanged} />
+            </Item>
+            <Item name="Desimaali">
                 <input type="text" id="number-input" maxLength="30" value={this.state.number} onChange={this.inputChanged} />
             </Item>
             <Item name="Heksa">
                 <input type="text" id="hex-input" maxLength="30" value={this.state.hex} onChange={this.inputChanged} />
-            </Item>
-            <Item name="Binääri">
-                <input type="text" id="binary-input" maxLength="40" value={this.state.binary} onChange={this.inputChanged} />
             </Item>
         </Section>
 

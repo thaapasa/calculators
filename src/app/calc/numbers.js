@@ -1,54 +1,68 @@
 import * as util from "../util/util"
 
-export function intToBinaryStr(value) {
-    if (!util.isDefined(value)) return
-    let res = ""
-    let remaining = strToInt(value)
-    while (remaining > 1) {
-        res += (remaining & 0b1)
-        remaining >>= 1
-    }
-    res += remaining
-    return util.reverse(res)
-}
+const binCharsRE = /[^01]/
+const octCharsRE = /[^0-7]/
+const decCharsRE = /[^0-9]/
+const hexCharsRE = /[^0-9A-Fa-f]/
+const numChars = "0123456789ABCDEF"
 
 export function binaryStrToInt(value) {
-    if (!util.isDefined(value) || value.match(/[^01]/)) return NaN
-    return parseInt(value, 2)
+    return strToIntChecked(value, 2, binCharsRE)
+}
+
+export function octalStrToInt(value) {
+    return strToIntChecked(value, 8, octCharsRE)
 }
 
 export function decimalStrToInt(value) {
-    if (!util.isDefined(value)) return NaN
-    if (typeof value == "number") return value
-    if (value.match(/[^0-9]/)) return NaN
-    return parseInt(value, 10)
+    return strToIntChecked(value, 10, decCharsRE)
+}
+
+export function hexStrToInt(value) {
+    return strToIntChecked(value, 16, hexCharsRE)
 }
 
 export function strToInt(v) { return decimalStrToInt(v) }
 
 export function intToStr(value) { return util.isDefined(value) ? value.toString() : undefined }
 
-const hexChars = "0123456789ABCDEF"
-export function toHexChar(value) {
-    if (!util.isNumber(value) || value < 0 || value > 15) return
-    return hexChars.charAt(value)
+export function intToHexStr(value) {
+    return intToStrBPC(value, 4)
 }
 
-export function intToHexStr(value) {
+export function intToOctalStr(value) {
+    return intToStrBPC(value, 3)
+}
+
+export function intToBinaryStr(value) {
+    return intToStrBPC(value, 1)
+}
+
+
+/* Helper functions */
+function strToIntChecked(value, radix, validChars) {
+    if (!util.isDefined(value)) return NaN
+    if (typeof value == "number") return value
+    if (value.match(validChars)) return NaN
+    return parseInt(value, radix)
+}
+
+function toChar(value, radix) {
+    if (!util.isNumber(value) || value < 0 || value >= radix || value >= numChars.length) return
+    return numChars.charAt(value)
+}
+
+function intToStrBPC(value, bitsPerChar) {
+    const radix = 1 << bitsPerChar
+    const mask = (1 << bitsPerChar) - 1
     if (!util.isDefined(value)) return
     let remaining = value
     let str = []
     while (remaining > 0) {
-        str.push(toHexChar(remaining & 0xf))
-        remaining >>= 4
+        str.push(toChar(remaining & mask, radix))
+        remaining >>= bitsPerChar
     }
     if (str.length == 0) str.push("0")
     return str.reverse().join("")
 }
 
-export function hexStrToInt(value) {
-    if (!util.isDefined(value)) return NaN
-    if (typeof value == "number") return value
-    if (value.match(/[^0-9A-Fa-f]/)) return NaN
-    return parseInt(value, 16)
-}
