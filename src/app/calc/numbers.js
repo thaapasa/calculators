@@ -55,7 +55,7 @@ function toChar(value, radix) {
 function intToStrBPC(value, bitsPerChar) {
     const radix = 1 << bitsPerChar
     const mask = (1 << bitsPerChar) - 1
-    if (!util.isDefined(value)) return
+    if (!util.isDefined(value) || typeof value == "object" || isNaN(value)) return
     let remaining = value
     let str = []
     while (remaining > 0) {
