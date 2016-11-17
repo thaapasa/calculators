@@ -1,14 +1,25 @@
+html, body {
+    font-family: 'Roboto', sans-serif;
+}
+
 .hidden {
     display: none;
 }
 
-.site-content {
+
+
+/*
+  Old styles
+  TODO: Check these
+*/
+
+.main-content {
     width: 60em;
-    margin: auto;
-    margin-top: 4em;
+    margin: 56px auto auto;
+    padding-top: 1px;
 }
 
-.site-content > .panel {
+.main-content > .panel {
     padding-bottom: 0.3em;
     margin: 1.5em 0;
 }
