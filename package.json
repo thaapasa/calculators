@@ -2,7 +2,10 @@
   "name": "calculators",
   "version": "0.1.0",
   "scripts": {
-    "preinstall-disabled": "npm install -g grunt-cli"
+    "preinstall-disabled": "npm install -g grunt-cli",
+    "build": "browserify src/app/main.js -t [ babelify --presets [ es2015 react ] ] > public/js/calculators.js",
+    "build-test": "browserify src/test/**/*.js -t [ babelify --presets [ es2015 react ] ] > test/test.js",
+    "test": "node_modules/mocha/bin/mocha"
   },
   "dependencies": {
     "baconjs": "~0.7.88",
