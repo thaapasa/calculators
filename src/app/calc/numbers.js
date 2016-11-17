@@ -43,6 +43,7 @@ export function intToBinaryStr(value) {
 function strToIntChecked(value, radix, validChars) {
     if (!util.isDefined(value)) return NaN
     if (typeof value == "number") return value
+    if (typeof value != "string") return NaN
     if (value.match(validChars)) return NaN
     return parseInt(value, radix)
 }
