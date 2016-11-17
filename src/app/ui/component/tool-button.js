@@ -1,4 +1,7 @@
-import React from 'react'
+import React from "react"
+import FontIcon from "material-ui/FontIcon"
+import {red500} from 'material-ui/styles/colors'
+import IconButton from "material-ui/IconButton"
 
 export default class ToolButton extends React.Component {
     render() {
@@ -13,5 +16,7 @@ export function GenerateButton(props) {
 }
 
 export function ClipboardButton(props) {
-    return <ToolButton icon="clipboard" id={props.id} title={props.title} onClick={props.onClick} ref={props.refp}/>
+    return <IconButton tooltip={props.title} title={props.title} onClick={props.onClick}>
+            <FontIcon className="material-icons" color={red500}>content_copy</FontIcon>
+        </IconButton>
 }

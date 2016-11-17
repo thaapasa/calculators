@@ -1,7 +1,8 @@
 import React from "react"
-import Section from "./component/section"
 import { ClipboardButton } from "./component/tool-button"
 import log from "../util/log"
+import TextField from "material-ui/TextField"
+import {ToolbarGroup} from "material-ui/Toolbar"
 
 export default class LastValue extends React.Component {
 
@@ -24,15 +25,11 @@ export default class LastValue extends React.Component {
             log(`Could not copy: ${e}`)
         }
     }
-
+ß
     render() {
-        return <Section title="Viimeisin arvo" bgClass="bg-subtle">
-            <div className="calculator item">
-                <div className="name">Arvo</div>
-                <ClipboardButton id="copy-to-clipboard" title="Kopioi leikepöydälle" onClick={this.copyToClipboard} />
-                <div className="value"><input type="text" id="last-value" ref="lastValue" className="wide" readOnly value={ this.state.value }/></div>
-            </div>
-        </Section>
-
+        return <ToolbarGroup>
+            <ClipboardButton title="Kopioi leikepöydälle" onClick={this.copyToClipboard} />
+            <TextField value={ this.state.value } ref="lastValue" name="lastValue" fullWidth={true} />
+        </ToolbarGroup>
     }
 }
