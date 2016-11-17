@@ -27,6 +27,10 @@ module.exports = function(grunt) {
             client: {
                 src: './src/app/main.js',
                 dest: './public/js/calculators.js'
+            },
+            test: {
+                src: './src/test/**/*.js',
+                dest: './test/test.js'
             }
         },
         watch: {
@@ -36,6 +40,8 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask("build", ["browserify:client"]);
+    grunt.registerTask("build-test", ["browserify:test"]);
+    grunt.registerTask("all", ["build", "build-test"]);
     grunt.registerTask("dev", ["build", "watch"]);
 
     grunt.registerTask("default", ["build"]);
