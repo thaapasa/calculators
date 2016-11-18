@@ -1,10 +1,10 @@
 import React from "react"
-import {Toolbar, ToolbarGroup} from "material-ui/Toolbar"
+import {Toolbar, ToolbarGroup, ToolbarTitle} from "material-ui/Toolbar"
 import Avatar from "material-ui/Avatar"
-import Chip from "material-ui/Chip"
 
 const styles = {
-    chip: { marginLeft: "0.7em" }
+    avatar: { marginLeft: "0.7em" },
+    titleText: { marginLeft: "0.7em" }
 }
 
 export default class ToolbarExamplesSimple extends React.Component {
@@ -17,10 +17,8 @@ export default class ToolbarExamplesSimple extends React.Component {
         return (
             <Toolbar className="topbar">
                 <ToolbarGroup firstChild={true}>
-                    <Chip style={styles.chip}>
-                        <Avatar src="img/calculators.png" />
-                        Laskurit
-                    </Chip>
+                    <Avatar src="img/calculators.png" style={styles.avatar} />
+                    <ToolbarTitle text="Laskurit" style={styles.titleText} />
                 </ToolbarGroup>
                 <ToolbarGroup>
                     { this.props.children }

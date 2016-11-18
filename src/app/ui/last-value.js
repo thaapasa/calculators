@@ -9,6 +9,7 @@ export default class LastValue extends React.Component {
     constructor(props) {
         super(props)
         this.state = { value: "" }
+        this.setValue = this.setValue.bind(this)
         this.copyToClipboard = this.copyToClipboard.bind(this)
     }
 
@@ -29,7 +30,8 @@ export default class LastValue extends React.Component {
     render() {
         return <ToolbarGroup>
             <ClipboardButton title="Kopioi leikepöydälle" onClick={this.copyToClipboard} />
-            <TextField value={ this.state.value } ref="lastValue" name="lastValue" fullWidth={true} />
+            <TextField value={ this.state.value } ref="lastValue" name="lastValue" fullWidth={true}
+                       hintText="Viimeisin arvo" onChange={(i) => this.setValue(i.target.value)}/>
         </ToolbarGroup>
     }
 }
