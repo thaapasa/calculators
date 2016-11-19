@@ -22,10 +22,6 @@ html, body {
     z-index: 0;
 }
 
-/*
-  Old styles
-  TODO: Check these
-*/
 
 .main-content {
     width: 60em;
@@ -33,6 +29,45 @@ html, body {
     padding-top: 1px;
 }
 
+.section {
+    padding-bottom: 0.3em;
+    margin: 1.5em 0;
+}
+
+
+.item {
+    margin: 0.2em 0.75em;
+    display: flex;
+    align-self: baseline;
+}
+
+.item > .name {
+    width: 10em;
+    padding-top: 1em;
+}
+
+.item > .value {
+    flex-grow: 1;
+    align-self: baseline;
+    white-space: nowrap;
+    display: inline-flex;
+    width: auto;
+    flex-wrap: nowrap;
+}
+
+.item.multiline > .value {
+    white-space: normal;
+    display: inherit;
+    width: auto;
+    flex-wrap: inherit;
+}
+
+/*
+  Old styles
+  TODO: Check these
+*/
+
+/*
 .main-content > .panel {
     padding-bottom: 0.3em;
     margin: 1.5em 0;
@@ -99,7 +134,10 @@ h1 {
     input.wide { width: 20em; }
 }
 
+*/
+
 /* tool-button.js */
+/*
 .tool-button-component {
     padding: 0 0.4em;
     font-size: 0.9em;
@@ -107,3 +145,4 @@ h1 {
 .tool-button-component:active {
     background: #b6c4e0;
 }
+*/
