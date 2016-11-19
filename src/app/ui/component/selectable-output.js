@@ -1,62 +1,59 @@
 import React from 'react'
 import * as Bacon from "baconjs"
-import * as BaconUtil from "../../util/baconutil"
 import * as util from '../../util/util'
+import Item from "./item"
+import Checkbox from 'material-ui/Checkbox';
+import TextField from "material-ui/TextField"
+import FontIcon from "material-ui/FontIcon"
+import {red500} from "material-ui/styles/colors"
 
 export default class SelectableOutput extends React.Component {
 
     constructor(props) {
         super(props)
         this.setValue = this.setValue.bind(this)
+        this.checkUpperCase= this.checkUpperCase.bind(this)
+
         this.state = { value: "" }
     }
 
     componentDidMount() {
-        const cryptoSelect =
-            BaconUtil.getRadioStream(this.props.group, this.props.default)
         this.inputStream = new Bacon.Bus()
-        this.streamCalculation(this.inputStream, this.props.calculate, this.ucIfChecked(this.refs.uc),
-            cryptoSelect.map((v) => v == this.props.id))
+        this.ucStream = new Bacon.Bus()
+        this.streamCalculation(this.inputStream, this.props.calculate, this.ucIfChecked(this.ucStream.toProperty(false)))
     }
 
     setValue(val) {
         this.inputStream.push(val)
     }
 
-    streamCalculation(inputStream, calculation, calcMapper, valueFilter) {
+    streamCalculation(inputStream, calculation, calcMapper) {
         let calculated = inputStream.map(calculation)
         if (calcMapper) {
             calculated = calculated.combine(calcMapper, (val, m) => m(val))
         }
-        calculated.onValue((value) => this.setState( { value: value } ))
-
-        const valueStream = (valueFilter ?
-            Bacon.combineAsArray(calculated, valueFilter)
-                .filter((t) => t[1])
-                .map((t) => t[0]) :
-            calculated)
-        valueStream.onValue(this.props.onValue)
+        calculated.onValue(v => {
+            this.setState( { value: v } )
+            if (this.props.onValue) this.props.onValue(v)
+        })
     }
 
-    ucIfChecked(element) {
-        return BaconUtil.getCheckboxStream(element).map((checked) => checked ? util.toUpperCase : util.identity)
+    checkUpperCase(event) {
+        this.ucStream.push(event.target.checked)
+        this.props.onSelect && this.props.onSelect(event)
+    }
+
+    ucIfChecked(stream) {
+        return stream.map((checked) => checked ? util.toUpperCase : util.identity)
     }
 
     render() {
-        const radioButton = (this.props.default == this.props.id) ?
-            <input type="radio" name={this.props.group} value={this.props.id} id={`crypto-select-${this.props.id}`} defaultChecked /> :
-            <input type="radio" name={this.props.group} value={this.props.id} id={`crypto-select-${this.props.id}`} />
-        return <div className="calculator item">
-            <div className="name">
-                {radioButton}<label htmlFor={`crypto-select-${this.props.id}`}>{ this.props.label }</label>
-                <div className="tools">
-                    <input type="checkbox" ref="uc" id={`uc-${this.props.id}`} />
-                    <label htmlFor={`uc-${this.props.id}`} title="Isot kirjaimet"> <i className="fa fa-font" /></label>
-                </div>
-            </div>
-            <div className="value">
-                <input type="text" id={`${this.props.id}-text`} className="wide" value={this.state.value} readOnly />
-            </div>
-        </div>
+        const my = this
+        return <Item name={<Checkbox name={my.props.type + "-upper-case"} label={
+            <FontIcon className="material-icons" color={red500}>text_format</FontIcon>
+        } onCheck={this.checkUpperCase}/>}>
+            <TextField type="text" floatingLabelText={this.props.label} className="wide" value={this.state.value}
+                       fullWidth={true} readOnly name="output" onFocus={this.props.onSelect}/>
+        </Item>
     }
 }

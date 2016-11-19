@@ -3,6 +3,7 @@ import LastValue from "./last-value"
 import Numbers from "./numbers"
 import Identifiers from "./identifiers"
 import Cryptography from "./cryptography"
+import TopBar from "./layout/topbar"
 
 export default class CalculatorPage extends React.Component {
 
@@ -18,12 +19,15 @@ export default class CalculatorPage extends React.Component {
     }
 
     render() {
-        return <div className="site-content">
-            <h1>Laskureita</h1>
-            <LastValue ref="lastValue" />
-            <Numbers onValue={this.showValue} />
-            <Identifiers onValue={this.showValue} />
-            <Cryptography onValue={this.showValue} />
+        return <div className="everything">
+            <TopBar>
+                <LastValue ref="lastValue" />
+            </TopBar>
+            <div className="main-content">
+                <Numbers onValue={this.showValue} />
+                <Identifiers onValue={this.showValue} />
+                <Cryptography onValue={this.showValue} />
+            </div>
         </div>
     }
 }

@@ -1,17 +1,39 @@
+html, body {
+    font-family: 'Roboto', sans-serif;
+}
+
 .hidden {
     display: none;
 }
 
-.site-content {
-    width: 60em;
-    margin: auto;
-    margin-top: 4em;
+.everything {
+    position: relative;
 }
 
-.site-content > .panel {
+.topbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 1;
+}
+
+.main-content {
+    z-index: 0;
+}
+
+
+.main-content {
+    max-width: 60em;
+    margin: 56px auto auto;
+    padding-top: 1px;
+}
+
+.section {
     padding-bottom: 0.3em;
     margin: 1.5em 0;
 }
+
 
 .item {
     margin: 0.2em 0.75em;
@@ -20,65 +42,22 @@
 }
 
 .item > .name {
-    width: 13em;
-    padding-top: 0.4em;
+    width: 8em;
+    padding-top: 1em;
 }
 
 .item > .value {
     flex-grow: 1;
+    align-self: baseline;
     white-space: nowrap;
     display: inline-flex;
     width: auto;
     flex-wrap: nowrap;
-    align-self: baseline;
 }
 
-.item > .value > input,
-.item > .value > textarea {
-    margin: 0.1em 0.3em;
-}
-
-.item > .name > input[type=radio] {
-    margin-right: 0.5em;
-}
-
-.item > .name > .tools {
-    float: right;
-    text-align: right;
-    margin-left: 0.4em;
-    margin-right: 0.4em;
-}
-
-input.letter { width: 2em; }
-input.narrow { width: 7em; }
-input.medium { width: 10em; }
-input.wide { width: auto; flex-grow: 1;  }
-
-textarea.large { width: auto; flex-grow: 1; min-height: 5em;}
-
-h1 {
-    background: #00bcd4;
-    margin: 0;
-    padding: 0.3em 0.75em;
-    color: white;
-    border-radius: 0.3em;
-    box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
-}
-
-@media (max-width: 65em) {
-    .site-content {
-        width: auto;
-        margin: 2em;
-        margin-top: 4em;
-    }
-    input.wide { width: 20em; }
-}
-
-/* tool-button.js */
-.tool-button-component {
-    padding: 0 0.4em;
-    font-size: 0.9em;
-}
-.tool-button-component:active {
-    background: #b6c4e0;
+.item.multiline > .value {
+    white-space: normal;
+    display: inherit;
+    width: auto;
+    flex-wrap: inherit;
 }

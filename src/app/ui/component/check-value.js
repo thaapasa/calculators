@@ -1,13 +1,22 @@
-import React from 'react'
+import React from "react"
 import * as Bacon from "baconjs"
-import { GenerateButton } from "./tool-button"
-import * as util from '../../util/util'
+import { GenerateButton } from './tool-button'
+import * as util from "../../util/util"
 import Item from "./item"
+import TextField from "material-ui/TextField"
+
+const styles = {
+    check: { width: "1em" }
+}
 
 export default class CheckValue extends React.Component {
 
     constructor(props) {
         super(props)
+        this.inputStyle = {}
+        if (this.props.width)
+            this.inputStyle.width = this.props.width
+
         this.generate = this.generate.bind(this)
         this.inputChanged = this.inputChanged.bind(this)
         this.state = {
@@ -51,11 +60,11 @@ export default class CheckValue extends React.Component {
     render() {
         return <Item name={this.props.name}>
             <GenerateButton id={`${this.props.id}-generate`} onClick={this.generate} title="Luo uusi" />
-            <input type="text" id={`${this.props.id}-input`} onChange={this.inputChanged}
-                   className={this.props.className} maxLength={this.props.maxLength} value={this.state.input}/>
-            <input type="text" id={`${this.props.id}-check`} ref={(i) => this.check = i}
-                   className="letter" readOnly value={this.state.checkValue}/>
-            <input type="hidden" id={`${this.props.id}-value`} value={this.state.value}/>
+            <TextField type="text" id={`${this.props.id}-input`} onChange={this.inputChanged}
+                   style={this.inputStyle} maxLength={this.props.maxLength} value={this.state.input} />
+            <TextField id={`${this.props.id}-check`} ref={(i) => this.check = i}
+                   className="letter" readOnly value={this.state.checkValue} style={styles.check} />
+            <input type="hidden" id={`${this.props.id}-value`} value={this.state.value} />
         </Item>
     }
 }
