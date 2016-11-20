@@ -19,7 +19,7 @@ export function isDefined(value) {
 }
 
 export function isNumber(value) {
-    return value !== undefined && value !== null && typeof value == "number"
+    return value !== undefined && value !== null && typeof value == "number" && !isNaN(value)
 }
 
 export function isString(value) {
