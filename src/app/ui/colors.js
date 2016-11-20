@@ -2,7 +2,7 @@ import React from 'react'
 import Section from "./component/section"
 import {zeroPad,isNumber} from "../util/util"
 import {strToInt,intToHexStr,hexStrToInt} from "../calc/numbers"
-import Item from "./component/Item"
+import Item from "./component/item"
 import TextField from "material-ui/TextField"
 import Slider from 'material-ui/Slider';
 import * as Bacon from "baconjs"
