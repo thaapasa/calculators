@@ -125,11 +125,11 @@ export default class Colors extends React.Component {
     }
 
     componentDidMount() {
-        this.updateHex()
+        this.updateHex({ r: this.state.r, g: this.state.g, b: this.state.b })
     }
 
-    updateHex() {
-        this.setState({ hex: this.asHex() })
+    updateHex(values) {
+        this.setState({ hex: toHexColor(values.r, values.g, values.b) })
     }
 
     updateComponents(r, g, b) {
@@ -146,13 +146,11 @@ export default class Colors extends React.Component {
         return toRGBColor(this.state.r, this.state.g, this.state.b)
     }
 
-    asHex() {
-        return toHexColor(this.state.r, this.state.g, this.state.b)
-    }
-
     setComponent(c, val) {
+        let values = { r: this.state.r, g: this.state.g, b: this.state.b }
         this.setState({[c]: val})
-        this.updateHex()
+        values[c] = val
+        this.updateHex(values)
     }
 
     setFromHex(value) {
