@@ -5,7 +5,8 @@ import Divider from 'material-ui/Divider';
 export default class Section extends React.Component {
     render() {
         return <Card initiallyExpanded={true} className="section">
-            <CardHeader title={this.props.title} actAsExpander={true} showExpandableButton={true} subtitle={this.props.subtitle} />
+            <CardHeader title={this.props.title} actAsExpander={true} showExpandableButton={true}
+                        subtitle={this.props.subtitle} avatar={this.props.avatar}/>
             <Divider />
             <CardText expandable={true}>
                 { this.props.children }

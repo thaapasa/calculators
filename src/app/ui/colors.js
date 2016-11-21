@@ -5,6 +5,7 @@ import {strToInt,intToHexStr,hexStrToInt} from "../calc/numbers"
 import Item from "./component/item"
 import TextField from "material-ui/TextField"
 import Slider from 'material-ui/Slider';
+import Avatar from 'material-ui/Avatar';
 import * as Bacon from "baconjs"
 
 const styles = {
@@ -15,6 +16,9 @@ const styles = {
     slider: {
         width: "10em",
         height: "1em"
+    },
+    avatar: {
+        border: "1px solid #BBBBBB"
     }
 }
 
@@ -44,6 +48,10 @@ function toHexComp(value) {
 
 function sliderToVal(value) {
     return Math.round(value * 255)
+}
+
+function validateHex(value) {
+    return (value && value[0] == "#") ? value : "#" + value
 }
 
 function hexToComponents(value) {
@@ -120,7 +128,8 @@ export default class Colors extends React.Component {
             r: 255,
             g: 255,
             b: 255,
-            hex: ""
+            hex: "#FFFFFF",
+            color: "#FFFFFF"
         }
     }
 
@@ -129,7 +138,8 @@ export default class Colors extends React.Component {
     }
 
     updateHex(values) {
-        this.setState({ hex: toHexColor(values.r, values.g, values.b) })
+        const hexd = toHexColor(values.r, values.g, values.b)
+        this.setState({ hex: hexd, color: hexd })
     }
 
     updateComponents(r, g, b) {
@@ -154,13 +164,13 @@ export default class Colors extends React.Component {
     }
 
     setFromHex(value) {
-        this.setState({hex: value})
+        this.setState({hex: value, color: validateHex(hex)})
         const comps = hexToComponents(value)
         this.updateComponents(comps[0], comps[1], comps[2])
     }
 
     render() {
-        return <Section title="Väri">
+        return <Section title="Väri" avatar={<Avatar backgroundColor={this.state.color} style={styles.avatar}>&nbsp;</Avatar>}>
             <Item name="Heksa">
                 <TextField hintText="#FFFFFF" name="color-hex" value={this.state.hex} maxLength={7}
                            onChange={e => this.setFromHex(e.target.value)}/>
