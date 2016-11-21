@@ -172,7 +172,7 @@ export default class Colors extends React.Component {
     }
 
     setFromHex(value) {
-        this.setState({hex: value, color: validateHex(hex)})
+        this.setState({hex: value, color: validateHex(value)})
         const comps = hexToComponents(value)
         this.updateComponents(comps[0], comps[1], comps[2])
         this.sendToParent()
