@@ -1,5 +1,5 @@
 import React from 'react'
-import Section from "./component/section"
+import {HalfSection} from "./component/section"
 import {zeroPad,isNumber} from "../util/util"
 import {strToInt,intToHexStr,hexStrToInt} from "../calc/numbers"
 import Item from "./component/item"
@@ -189,7 +189,7 @@ export default class Colors extends React.Component {
     }
 
     render() {
-        return <Section title="Väri" subtitle={texts[this.state.selected]}
+        return <HalfSection title="Väri" subtitle={texts[this.state.selected]}
                         avatar={<Avatar backgroundColor={this.state.color} style={styles.avatar}>&nbsp;</Avatar>}>
             <Item name="Heksa">
                 <TextField hintText="#FFFFFF" name="color-hex" value={this.state.hex} maxLength={7}
@@ -202,7 +202,7 @@ export default class Colors extends React.Component {
             <ColorComponent name="Red" value={this.state.r} onValue={v => this.setComponent("r", v)} ref="r"/>
             <ColorComponent name="Green" value={this.state.g} onValue={v => this.setComponent("g", v)} ref="g"/>
             <ColorComponent name="Blue" value={this.state.b} onValue={v => this.setComponent("b", v)} ref="b"/>
-        </Section>
+        </HalfSection>
 
     }
 }

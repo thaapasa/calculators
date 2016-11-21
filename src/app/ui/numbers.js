@@ -1,5 +1,5 @@
 import React from "react"
-import Section from "./component/section"
+import {HalfSection} from "./component/section"
 import Item from "./component/item"
 import * as Bacon from "baconjs"
 import * as numbers from "../calc/numbers"
@@ -71,7 +71,7 @@ export default class Numbers extends React.Component {
     }
 
     render() {
-        return <Section title="Numerot" subtitle={texts[this.state.selected]}>
+        return <HalfSection title="Numerot" subtitle={texts[this.state.selected]}>
             <Item name="Binääri">
                 <TextField type="number" id="binary-input" hintText={texts["binary"]} maxLength="40"
                            value={this.state.binary} onChange={this.inputChanged} onFocus={this.selectSrc} />
@@ -88,7 +88,7 @@ export default class Numbers extends React.Component {
                 <TextField type="text" id="hex-input" hintText={texts["hex"]} maxLength="30"
                            value={this.state.hex} onChange={this.inputChanged} onFocus={this.selectSrc} />
             </Item>
-        </Section>
+        </HalfSection>
 
     }
 }

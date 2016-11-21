@@ -1,5 +1,6 @@
 html, body {
     font-family: 'Roboto', sans-serif;
+    background: #fafafa;
 }
 
 .hidden {
@@ -60,4 +61,20 @@ html, body {
     display: inherit;
     width: auto;
     flex-wrap: inherit;
+}
+
+@media (min-width: 60em) {
+    .section-half-size {
+        width: 29em;
+        display: inline-block;
+        vertical-align: top;
+        margin-left: 1em;
+        margin-right: 1em;
+    }
+    .section-half-size:first-of-type {
+        margin-left: 0;
+    }
+    .section-half-size:last-of-type {
+        margin-right: 0;
+    }
 }

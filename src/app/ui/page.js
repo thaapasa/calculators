@@ -25,8 +25,10 @@ export default class CalculatorPage extends React.Component {
                 <LastValue ref="lastValue" />
             </TopBar>
             <div className="main-content">
-                <Numbers onValue={this.showValue} />
-                <Colors onValue={this.showValue} />
+                <div class="section-row">
+                    <Numbers onValue={this.showValue} />
+                    <Colors onValue={this.showValue} />
+                </div>
                 <Identifiers onValue={this.showValue} />
                 <Cryptography onValue={this.showValue} />
             </div>
