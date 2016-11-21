@@ -1,6 +1,9 @@
 #!/bin/sh
 
 npm install
-grunt
 
-echo "Build successful!"
+npm run build:test && \
+    npm test && \
+    npm run prod && \
+    echo "Build successful!"
+
