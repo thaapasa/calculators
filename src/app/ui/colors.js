@@ -115,6 +115,11 @@ class ColorComponent extends React.Component {
     }
 }
 
+const texts = {
+    hex: "Heksakoodi",
+    rgb: "RGB-arvo"
+}
+
 export default class Colors extends React.Component {
 
     constructor(props) {
@@ -122,6 +127,7 @@ export default class Colors extends React.Component {
 
         this.setComponent = this.setComponent.bind(this)
         this.setFromHex = this.setFromHex.bind(this)
+        this.select = this.select.bind(this)
 
         this.components = ["r", "g", "b"]
         this.state = {
@@ -129,7 +135,8 @@ export default class Colors extends React.Component {
             g: 255,
             b: 255,
             hex: "#FFFFFF",
-            color: "#FFFFFF"
+            color: "#FFFFFF",
+            selected: "hex"
         }
     }
 
@@ -161,22 +168,36 @@ export default class Colors extends React.Component {
         this.setState({[c]: val})
         values[c] = val
         this.updateHex(values)
+        this.sendToParent()
     }
 
     setFromHex(value) {
         this.setState({hex: value, color: validateHex(hex)})
         const comps = hexToComponents(value)
         this.updateComponents(comps[0], comps[1], comps[2])
+        this.sendToParent()
+    }
+
+    sendToParent(src) {
+        const val = (src || this.state.selected) == "hex" ? this.state.hex : this.asRgb()
+        this.props.onValue && this.props.onValue(val)
+    }
+
+    select(src) {
+        this.setState({ selected: src })
+        this.sendToParent(src)
     }
 
     render() {
-        return <Section title="Väri" avatar={<Avatar backgroundColor={this.state.color} style={styles.avatar}>&nbsp;</Avatar>}>
+        return <Section title="Väri" subtitle={texts[this.state.selected]}
+                        avatar={<Avatar backgroundColor={this.state.color} style={styles.avatar}>&nbsp;</Avatar>}>
             <Item name="Heksa">
                 <TextField hintText="#FFFFFF" name="color-hex" value={this.state.hex} maxLength={7}
-                           onChange={e => this.setFromHex(e.target.value)}/>
+                           onChange={e => this.setFromHex(e.target.value)} onFocus={e => this.select("hex")}/>
             </Item>
-            <Item name="Desimaali">
-                <TextField hintText="rgb(255,255,255)" name="color-rgb" value={this.asRgb()} readOnly/>
+            <Item name="RGB-arvo">
+                <TextField hintText="rgb(255,255,255)" name="color-rgb" value={this.asRgb()} readOnly
+                           onFocus={e => this.select("rgb")}/>
             </Item>
             <ColorComponent name="Red" value={this.state.r} onValue={v => this.setComponent("r", v)} ref="r"/>
             <ColorComponent name="Green" value={this.state.g} onValue={v => this.setComponent("g", v)} ref="g"/>
