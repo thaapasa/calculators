@@ -13,6 +13,6 @@ cp -rf public/* dist/
 
 mv dist/css/main.css dist/css/main-$REV.css
 mv dist/js/calculators.min.js dist/js/calculators.min-$REV.js
-sed -e "s/css\/main\.css/css\/main-$REV.css/g" -e "s/js\/calculators\.js/js\/calculators.min-$REV.js/g" -i "" dist/index.html
+sed -e "s/css\/main\.css/css\/main-$REV.css/g" -e "s/js\/calculators\.js/js\/calculators.min-$REV.js/g" -i dist/index.html
 
 popd >/dev/null
