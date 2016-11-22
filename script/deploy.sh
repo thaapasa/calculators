@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ssh deployer@pomeranssi.fi "cd ~/calculators && git pull && ./build.sh"
+ssh deployer@pomeranssi.fi "cd ~/calculators && git pull && script/build-prod.sh"

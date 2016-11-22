@@ -10,7 +10,7 @@
     "watch": "node_modules/watchify/bin/cmd.js src/app/main.js -v -t [ babelify --presets [ es2015 react ] ] -o public/js/calculators.js",
     "test": "node_modules/mocha/bin/mocha",
     "build": "npm run build:dev && npm run build:test",
-    "prod": "npm run build:prod && npm run build:minify"
+    "prod": "npm run build:prod && npm run build:minify && script/create-dist.sh"
   },
   "repository": {
     "type": "git",
