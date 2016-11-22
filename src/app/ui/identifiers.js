@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 import CheckValue from "./component/check-value"
 import Section from "./component/section"
 import * as companyId from "../calc/companyid"

@@ -1,6 +1,6 @@
 import React from "react"
-import {Card, CardHeader, CardText} from 'material-ui/Card';
-import Divider from 'material-ui/Divider';
+import {Card, CardHeader, CardText} from "material-ui/Card"
+import Divider from "material-ui/Divider"
 
 export default class Section extends React.Component {
     render() {

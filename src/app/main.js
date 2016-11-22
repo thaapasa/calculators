@@ -5,8 +5,8 @@ import ReactDOM from "react-dom"
 import CalculatorPage from "./ui/page"
 import {fixConsole} from "./util/util"
 import {addBaconSafeLog} from "./util/baconutil"
-import injectTapEventPlugin from "react-tap-event-plugin";
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import injectTapEventPlugin from "react-tap-event-plugin"
+import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
 
 function init() {
     // Ensure that there is a console

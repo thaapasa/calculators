@@ -1,10 +1,10 @@
-import React from 'react'
+import React from "react"
 import {HalfSection} from "./component/section"
 import {zeroPad,isNumber} from "../util/util"
 import {intToHexStr,hexStrToInt} from "../calc/numbers"
 import Item from "./component/item"
 import TextField from "material-ui/TextField"
-import Avatar from 'material-ui/Avatar';
+import Avatar from "material-ui/Avatar"
 import ByteValueSelector from "./component/byte-value-selector"
 
 const styles = {

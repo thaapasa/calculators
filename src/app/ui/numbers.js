@@ -4,7 +4,7 @@ import Item from "./component/item"
 import * as Bacon from "baconjs"
 import * as numbers from "../calc/numbers"
 import * as util from "../util/util"
-import TextField from 'material-ui/TextField';
+import TextField from "material-ui/TextField"
 
 const texts = {
     "binary": "Binääri",

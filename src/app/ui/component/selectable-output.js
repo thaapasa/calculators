@@ -1,8 +1,8 @@
-import React from 'react'
+import React from "react"
 import * as Bacon from "baconjs"
-import * as util from '../../util/util'
+import * as util from "../../util/util"
 import Item from "./item"
-import Checkbox from 'material-ui/Checkbox';
+import Checkbox from "material-ui/Checkbox"
 import TextField from "material-ui/TextField"
 import FontIcon from "material-ui/FontIcon"
 import {red500} from "material-ui/styles/colors"

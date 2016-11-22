@@ -1,6 +1,6 @@
 import React from "react"
 import * as Bacon from "baconjs"
-import { GenerateButton } from './tool-button'
+import { GenerateButton } from "./tool-button"
 import * as util from "../../util/util"
 import Item from "./item"
 import TextField from "material-ui/TextField"

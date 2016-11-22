@@ -9,7 +9,7 @@ export function check(value) {
         return
     }
     let sum = 0
-    for (var i = 0; i < 7; ++i) {
+    for (let i = 0; i < 7; ++i) {
         const c = parseInt(value.charAt(i), 10)
         if (isNaN(c)) return
         sum += c * companyIdWeights[i]
