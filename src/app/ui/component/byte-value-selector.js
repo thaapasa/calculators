@@ -1,9 +1,9 @@
-import React from 'react'
+import React from "react"
 import {zeroPad,isNumber,identity} from "../../util/util"
 import {strToInt,intToHexStr,hexStrToInt} from "../../calc/numbers"
 import Item from "../component/item"
 import TextField from "material-ui/TextField"
-import Slider from 'material-ui/Slider';
+import Slider from "material-ui/Slider"
 import * as Bacon from "baconjs"
 
 function isValidComp(value) {
@@ -26,8 +26,6 @@ function sliderToVal(value) {
     return Math.round(value * 255)
 }
 
-const types = ["parent", "dec", "hex", "slider"]
-
 const styles = {
     component: {
         width: "3em",
@@ -38,6 +36,8 @@ const styles = {
         height: "1em"
     }
 }
+
+const types = ["parent", "dec", "hex", "slider"]
 
 const typeInfo = {
     "parent": { read: identity, write: identity },
@@ -52,6 +52,7 @@ export default class ByteValueSelector extends React.Component {
         super(props)
         this.setValue = this.setValue.bind(this)
         this.pushValue = this.pushValue.bind(this)
+        this.showValue = this.showValue.bind(this)
         this.state = {}
         this.curSrcStr = new Bacon.Bus()
         this.inputStr = {}
@@ -65,8 +66,8 @@ export default class ByteValueSelector extends React.Component {
         newValStr.combine(this.curSrcStr, (v, s) => [v, s]).onValue(r => this.showValue(r[0], r[1]))
     }
 
-    setValue(val) {
-        this.pushValue("parent", val)
+    setValue(value) {
+        this.pushValue(value, "parent")
     }
 
     showValue(val, src) {
