@@ -1,22 +1,13 @@
 import React from 'react'
 import {HalfSection} from "./component/section"
 import {zeroPad,isNumber} from "../util/util"
-import {strToInt,intToHexStr,hexStrToInt} from "../calc/numbers"
+import {intToHexStr,hexStrToInt} from "../calc/numbers"
 import Item from "./component/item"
 import TextField from "material-ui/TextField"
-import Slider from 'material-ui/Slider';
 import Avatar from 'material-ui/Avatar';
-import * as Bacon from "baconjs"
+import ByteValueSelector from "./component/byte-value-selector"
 
 const styles = {
-    component: {
-        width: "3em",
-        marginRight: "1em"
-    },
-    slider: {
-        width: "10em",
-        height: "1em"
-    },
     avatar: {
         border: "1px solid #BBBBBB"
     }
@@ -34,20 +25,8 @@ function isValidComp(value) {
     return isNumber(value) && !isNaN(value) &&  value >= 0 && value <= 255
 }
 
-function toSliderValue(value) {
-    return isValidComp(value) ? value / 255 : 0
-}
-
-function toDecValue(value) {
-    return isValidComp(value) ? value : ""
-}
-
 function toHexComp(value) {
     return isValidComp(value) ? zeroPad(intToHexStr(value), 2) : ""
-}
-
-function sliderToVal(value) {
-    return Math.round(value * 255)
 }
 
 function validateHex(value) {
@@ -66,53 +45,6 @@ function hexToComponents(value) {
     })
 
     return [r, g, b]
-}
-
-class ColorComponent extends React.Component {
-
-    constructor(props) {
-        super(props)
-        this.types = ["dec", "hex", "slider"]
-        this.pushValue = this.pushValue.bind(this)
-        this.typeInfo = {
-            "dec": { read: strToInt, write: toDecValue },
-            "hex": { read: hexStrToInt, write: toHexComp },
-            "slider": { read: sliderToVal, write: toSliderValue }
-        }
-        this.state = {}
-        this.types.forEach(t => this.state[t] = this.typeInfo[t].write(this.props.value))
-    }
-
-    setValue(val, src) {
-        let ns = {}
-        this.types.filter(t => t != src).forEach(t => ns[t] = this.typeInfo[t].write(val))
-        this.setState(ns)
-        if (this.props.onValue && this.types.includes(src)) this.props.onValue(val)
-    }
-
-    componentDidMount() {
-        this.curSrcStr = new Bacon.Bus()
-        this.types.forEach(t => this.typeInfo[t].stream = new Bacon.Bus())
-        const newValStr = Bacon.mergeAll(this.types.map(t => this.typeInfo[t].stream.map(this.typeInfo[t].read)))
-        newValStr.combine(this.curSrcStr, (v, s) => [v, s]).onValue(r => this.setValue(r[0], r[1]))
-    }
-
-    pushValue(src, value) {
-        this.setState({ [src]: value })
-        this.curSrcStr.push(src)
-        this.typeInfo[src].stream.push(value)
-    }
-
-    render() {
-        return <Item name={this.props.name}>
-            <TextField hintText="FF" style={styles.component} maxLength="2" value={this.state.hex}
-                       onChange={e => this.pushValue("hex", e.target.value)}/>
-            <TextField hintText="255" style={styles.component} type="number" maxLength="3" value={this.state.dec}
-                       onChange={e => this.pushValue("dec", e.target.value)}/>
-            <Slider value={this.state.slider} style={styles.slider} max={1} min={0}
-                    onChange={(e, v) => this.pushValue("slider", v)}/>
-        </Item>
-    }
 }
 
 const texts = {
@@ -152,11 +84,7 @@ export default class Colors extends React.Component {
     updateComponents(r, g, b) {
         const values = {r: r, g: g, b: b}
         this.setState(values)
-        this.components.forEach(c => this.refs[c].setValue(values[c], "parent"))
-    }
-
-    isSet() {
-        return isNumber(this.state.r) && isNumber(this.state.g) && isNumber(this.state.b)
+        this.components.forEach(c => this.refs[c].setValue(values[c]))
     }
 
     asRgb() {
@@ -199,9 +127,9 @@ export default class Colors extends React.Component {
                 <TextField hintText="rgb(255,255,255)" name="color-rgb" value={this.asRgb()} readOnly
                            onFocus={e => this.select("rgb")}/>
             </Item>
-            <ColorComponent name="Red" value={this.state.r} onValue={v => this.setComponent("r", v)} ref="r"/>
-            <ColorComponent name="Green" value={this.state.g} onValue={v => this.setComponent("g", v)} ref="g"/>
-            <ColorComponent name="Blue" value={this.state.b} onValue={v => this.setComponent("b", v)} ref="b"/>
+            <ByteValueSelector name="Red" value={this.state.r} onValue={v => this.setComponent("r", v)} ref="r"/>
+            <ByteValueSelector name="Green" value={this.state.g} onValue={v => this.setComponent("g", v)} ref="g"/>
+            <ByteValueSelector name="Blue" value={this.state.b} onValue={v => this.setComponent("b", v)} ref="b"/>
         </HalfSection>
 
     }
