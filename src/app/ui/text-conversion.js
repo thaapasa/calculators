@@ -5,10 +5,12 @@ import * as Bacon from "baconjs"
 import SelectField from "material-ui/SelectField"
 import MenuItem from "material-ui/MenuItem"
 import * as base64 from "../calc/base64"
+import rot13 from "../calc/rot13"
 
-const converters = ["base64"]
+const converters = ["base64", "rot13"]
 const convertInfo = {
-    base64: { encode: base64.encode, decode: base64.decode, name: "Base64" }
+    base64: { encode: base64.encode, decode: base64.decode, name: "Base64" },
+    rot13: { encode: rot13, decode: rot13, name: "ROT-13" }
 }
 
 export default class TextConversion extends React.Component {
@@ -28,6 +30,7 @@ export default class TextConversion extends React.Component {
         this.streams.source.onValue(v => this.setState({ source: v }))
         this.streams.target.onValue(v => this.setState({ target: v }))
         const selected = this.streams.selected.skipDuplicates()
+        selected.onValue(v => this.setState({ selected: v }))
         const encStr = this.streams.source.combine(selected, (val, c) => (convertInfo[c].encode)(val))
         encStr.onValue(v => this.setState({ target: v }))
         const decStr = this.streams.target.combine(selected, (val, c) => (convertInfo[c].decode)(val))
