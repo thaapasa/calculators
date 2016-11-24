@@ -27,9 +27,10 @@ export default class TextConversion extends React.Component {
         }
         this.streams.source.onValue(v => this.setState({ source: v }))
         this.streams.target.onValue(v => this.setState({ target: v }))
-        const encStr = this.streams.source.combine(this.streams.selected, (val, c) => (convertInfo[c].encode)(val))
+        const selected = this.streams.selected.skipDuplicates()
+        const encStr = this.streams.source.combine(selected, (val, c) => (convertInfo[c].encode)(val))
         encStr.onValue(v => this.setState({ target: v }))
-        const decStr = this.streams.target.combine(this.streams.selected, (val, c) => (convertInfo[c].decode)(val))
+        const decStr = this.streams.target.combine(selected, (val, c) => (convertInfo[c].decode)(val))
         decStr.onValue(v => this.setState({ source: v }))
         Bacon.mergeAll(encStr, decStr).onValue(v => this.props.onValue && this.props.onValue(v))
         this.streams.selected.push(converters[0])
