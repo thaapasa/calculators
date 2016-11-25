@@ -11,7 +11,9 @@ const texts = {
     "octal": "Oktaali",
     "decimal": "Desimaali",
     "hex": "Heksa",
-    "char": "Merkki"
+    "char": "Merkki",
+    "unicode": "Unicode",
+    "html": "HTML-koodi"
 }
 
 const types = {
@@ -19,7 +21,9 @@ const types = {
     "octal": { read: numbers.octalStrToInt, write: numbers.intToOctalStr, inputType: "number", maxLength: 40 },
     "decimal": { read: numbers.strToInt, write: numbers.intToStr, inputType: "number", maxLength: 40 },
     "hex": { read: numbers.hexStrToInt, write: numbers.intToHexStr, inputType: "text", maxLength: 30 },
-    "char": { read: numbers.charToInt, write: numbers.intToChar, inputType: "text", maxLength: 1 }
+    "char": { read: numbers.charToInt, write: numbers.intToChar, inputType: "text", maxLength: 1 },
+    "unicode": { read: util.identity, write: intToUnicodeStr, inputType: "text", maxLength: 6, readOnly: true },
+    "html": { read: util.identity, write: intToHTMLCode, inputType: "text", maxLength: 10, readOnly: true }
 }
 const typeKeys = Object.keys(types)
 
@@ -91,15 +95,10 @@ export default class Numbers extends React.Component {
                                value={this.state[t]}
                                onChange={this.inputChanged}
                                onFocus={this.selectSrc}
+                               readOnly={types[t].readOnly}
                                key={t} />
                 </Item>)
             }
-            <Item name="Unicode">
-                <TextField type="text" readOnly value={this.state.unicode} name="unicode" hintText="Unicode" />
-            </Item>
-            <Item name="HTML-koodi">
-                <TextField type="text" readOnly value={this.state.html} name="html" hintText="HTML-koodi" />
-            </Item>
         </HalfSection>
 
     }
