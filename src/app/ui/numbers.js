@@ -10,7 +10,8 @@ const texts = {
     "binary": "Binääri",
     "octal": "Oktaali",
     "decimal": "Desimaali",
-    "hex": "Heksa"
+    "hex": "Heksa",
+    "char": "Merkki"
 }
 
 export default class Numbers extends React.Component {
@@ -24,13 +25,15 @@ export default class Numbers extends React.Component {
             octal: "",
             decimal: "",
             hex: "",
+            char: "",
             selected: "decimal"
         }
         this.types = {
             "binary-input": { read: numbers.binaryStrToInt, state: "binary", write: numbers.intToBinaryStr },
             "octal-input": { read: numbers.octalStrToInt, state: "octal", write: numbers.intToOctalStr },
             "decimal-input": { read: numbers.strToInt, state: "decimal", write: numbers.intToStr },
-            "hex-input": { read: numbers.hexStrToInt, state: "hex", write: numbers.intToHexStr }
+            "hex-input": { read: numbers.hexStrToInt, state: "hex", write: numbers.intToHexStr },
+            "char-input": { read: numbers.charToInt, state: "char", write: numbers.intToChar }
         }
     }
 
@@ -87,6 +90,10 @@ export default class Numbers extends React.Component {
             <Item name="Heksa">
                 <TextField type="text" id="hex-input" hintText={texts["hex"]} maxLength="30"
                            value={this.state.hex} onChange={this.inputChanged} onFocus={this.selectSrc} />
+            </Item>
+            <Item name="Merkki">
+                <TextField type="text" id="char-input" hintText={texts["char"]} maxLength="1"
+                           value={this.state.char} onChange={this.inputChanged} onFocus={this.selectSrc} />
             </Item>
         </HalfSection>
 

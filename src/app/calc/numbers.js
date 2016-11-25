@@ -38,6 +38,16 @@ export function intToBinaryStr(value) {
     return intToStrBPC(value, 1)
 }
 
+export function charToInt(value) {
+    if (!util.isDefined(value)) return NaN
+    if (typeof value == "number") return value
+    if (typeof value != "string" || value.length === 0) return NaN
+    return value.charCodeAt(0)
+}
+
+export function intToChar(value) {
+    return (typeof value === "number" && !isNaN(value)) ? String.fromCharCode(value) : undefined
+}
 
 /* Helper functions */
 function strToIntChecked(value, radix, validChars) {
