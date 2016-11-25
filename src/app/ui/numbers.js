@@ -23,13 +23,23 @@ const types = {
 }
 const typeKeys = Object.keys(types)
 
+function intToUnicodeStr(value) {
+    const str = numbers.intToHexStr(value)
+    return typeof str == "string" ? "U+" + util.zeroPad(str, 4) : ""
+}
+
+function intToHTMLCode(value) {
+    const str = numbers.intToStr(value)
+    return typeof str == "string" ? `&#${str};` : ""
+}
+
 export default class Numbers extends React.Component {
 
     constructor(props) {
         super(props)
         this.inputChanged = this.inputChanged.bind(this)
         this.selectSrc = this.selectSrc.bind(this)
-        this.state = { selected: "decimal" }
+        this.state = { selected: "decimal", unicode: "" }
         typeKeys.forEach(t => this.state[t] = "")
     }
 
@@ -48,6 +58,7 @@ export default class Numbers extends React.Component {
                 .map(typeInfo.write)
                 .map((v) => util.isString(v) ? v : "")
                 .onValue((v) => this.setState({[t]: v}))
+            converted.onValue(v => this.setState({ unicode: intToUnicodeStr(v), html: intToHTMLCode(v) }))
         })
         this.selectedSrcStr
             .map(t => types[t].write)
@@ -83,6 +94,12 @@ export default class Numbers extends React.Component {
                                key={t} />
                 </Item>)
             }
+            <Item name="Unicode">
+                <TextField type="text" readOnly value={this.state.unicode} name="unicode" hintText="Unicode" />
+            </Item>
+            <Item name="HTML-koodi">
+                <TextField type="text" readOnly value={this.state.html} name="html" hintText="HTML-koodi" />
+            </Item>
         </HalfSection>
 
     }
