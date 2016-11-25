@@ -22,6 +22,9 @@ export default class TextConversion extends React.Component {
             target: "",
             selected: converters[0]
         }
+    }
+
+    componentDidMount() {
         this.streams = {
             source: new Bacon.Bus(),
             target: new Bacon.Bus(),
