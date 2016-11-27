@@ -37,18 +37,19 @@ html, body {
 }
 
 
-.item {
+.calculator-item {
     margin: 0.2em 0.75em;
     display: flex;
     align-self: baseline;
+    align: baseline;
 }
 
-.item > .name {
+.calculator-item > .name {
     width: 8em;
     padding-top: 1em;
 }
 
-.item > .value {
+.calculator-item > .value {
     flex-grow: 1;
     align-self: baseline;
     white-space: nowrap;
@@ -57,7 +58,7 @@ html, body {
     flex-wrap: nowrap;
 }
 
-.item.multiline > .value {
+.calculator-item.multiline > .value {
     white-space: normal;
     display: inherit;
     width: auto;

@@ -4,6 +4,7 @@ import Numbers from "./numbers"
 import Colors from "./colors"
 import TextConversion from "./text-conversion"
 import Identifiers from "./identifiers"
+import DateTime from "./datetime"
 import Cryptography from "./cryptography"
 import TopBar from "./layout/topbar"
 
@@ -28,9 +29,12 @@ export default class CalculatorPage extends React.Component {
             <div className="main-content">
                 <div className="section-row">
                     <Numbers onValue={this.showValue} />
+                    <DateTime onValue={this.showValue} />
+                </div>
+                <div className="section-row">
+                    <Identifiers onValue={this.showValue} />
                     <Colors onValue={this.showValue} />
                 </div>
-                <Identifiers onValue={this.showValue} />
                 <TextConversion onValue={this.showValue} />
                 <Cryptography onValue={this.showValue} />
             </div>

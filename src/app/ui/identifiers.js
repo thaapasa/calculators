@@ -1,6 +1,6 @@
 import React from "react"
 import CheckValue from "./component/check-value"
-import Section from "./component/section"
+import {HalfSection} from "./component/section"
 import * as companyId from "../calc/companyid"
 import * as bankReference from "../calc/bankreference"
 import * as hetu from "../calc/hetu"
@@ -9,7 +9,7 @@ import * as util from "../util/util"
 export default class Identifiers extends React.Component {
 
     render() {
-        return <Section title="Tunnisteet">
+        return <HalfSection title="Tunnisteet">
             <CheckValue name="Henkilötunnus" id="hetu"
                         check={hetu.check} generate={hetu.generate} combine={util.combine}
                         onValue={this.props.onValue} maxLength="10" width="6.5em" />
@@ -19,7 +19,7 @@ export default class Identifiers extends React.Component {
             <CheckValue name="Y-tunnus" id="companyId"
                         check={companyId.check} generate={companyId.generate} combine={util.combineWith("-")}
                         onValue={this.props.onValue} maxLength="7" width="6em" />
-        </Section>
+        </HalfSection>
 
     }
 }
