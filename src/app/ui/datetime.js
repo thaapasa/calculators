@@ -30,7 +30,7 @@ const typeInfo = {
     javaTime: { read: readJavaTime, src: "javaTime", write: m => m.unix() * 1000 },
     unixTime: { read: readUnixTime, src: "unixTime", write: m => m.unix() },
     day: { read: strToInt, src: "value", write: m => m.date() },
-    month: { read: strToInt, src: "value", write: m => m.month() + 1 },
+    month: { read: v => strToInt(v) - 1, src: "value", write: m => m.month() + 1 },
     year: { read: strToInt, src: "value", write: m => m.year() },
     hour: { read: strToInt, src: "value", write: m => m.hour() },
     minute: { read: strToInt, src: "value", write: m => m.minute() },
