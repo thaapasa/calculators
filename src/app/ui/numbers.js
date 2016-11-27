@@ -4,6 +4,7 @@ import Item from "./component/item"
 import * as Bacon from "baconjs"
 import * as numbers from "../calc/numbers"
 import * as util from "../util/util"
+import {zeroPad} from "../util/strings"
 import TextField from "material-ui/TextField"
 
 const texts = {
@@ -29,7 +30,7 @@ const typeKeys = Object.keys(types)
 
 function intToUnicodeStr(value) {
     const str = numbers.intToHexStr(value)
-    return typeof str == "string" ? "U+" + util.zeroPad(str, 4) : ""
+    return typeof str == "string" ? "U+" + zeroPad(str, 4) : ""
 }
 
 function intToHTMLCode(value) {

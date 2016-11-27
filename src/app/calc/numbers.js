@@ -1,4 +1,4 @@
-import * as util from "../util/util"
+import {isDefined,isNumber} from "../util/util"
 
 const binCharsRE = /[^01]/
 const octCharsRE = /[^0-7]/
@@ -24,7 +24,7 @@ export function hexStrToInt(value) {
 
 export function strToInt(v) { return decimalStrToInt(v) }
 
-export function intToStr(value) { return util.isDefined(value) ? value.toString() : undefined }
+export function intToStr(value) { return isDefined(value) ? value.toString() : undefined }
 
 export function intToHexStr(value) {
     return intToStrBPC(value, 4)
@@ -39,7 +39,7 @@ export function intToBinaryStr(value) {
 }
 
 export function charToInt(value) {
-    if (!util.isDefined(value)) return NaN
+    if (!isDefined(value)) return NaN
     if (typeof value == "number") return value
     if (typeof value != "string" || value.length === 0) return NaN
     return value.charCodeAt(0)
@@ -51,7 +51,7 @@ export function intToChar(value) {
 
 /* Helper functions */
 function strToIntChecked(value, radix, validChars) {
-    if (!util.isDefined(value)) return NaN
+    if (!isDefined(value)) return NaN
     if (typeof value == "number") return value
     if (typeof value != "string") return NaN
     if (value.match(validChars)) return NaN
@@ -59,14 +59,14 @@ function strToIntChecked(value, radix, validChars) {
 }
 
 function toChar(value, radix) {
-    if (!util.isNumber(value) || value < 0 || value >= radix || value >= numChars.length) return
+    if (!isNumber(value) || value < 0 || value >= radix || value >= numChars.length) return
     return numChars.charAt(value)
 }
 
 function intToStrBPC(value, bitsPerChar) {
     const radix = 1 << bitsPerChar
     const mask = (1 << bitsPerChar) - 1
-    if (!util.isDefined(value) || typeof value == "object" || isNaN(value)) return
+    if (!isDefined(value) || typeof value == "object" || isNaN(value)) return
     let remaining = value
     let str = []
     while (remaining > 0) {

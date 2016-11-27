@@ -1,9 +1,9 @@
-import * as util from "../util/util"
+import {getRandomInt} from "../util/util"
 
 /* Bank reference number (viitenumero) */
 /* ----------------------------------- */
 export function generate() {
-    return util.getRandomInt(100, 999999999)
+    return getRandomInt(100, 999999999)
 }
 
 const BANK_CHECK_WEIGHTS = [7, 3, 1]
@@ -14,7 +14,7 @@ export function check(value) {
     }
     let sum = 0
     let c = 0
-    for ( var i = value.length - 1; i >= 0; i--) {
+    for (let i = value.length - 1; i >= 0; i--) {
         const cur = parseInt(value.charAt(i), 10)
         if (isNaN(cur)) return
         sum += cur * BANK_CHECK_WEIGHTS[c++ % 3]

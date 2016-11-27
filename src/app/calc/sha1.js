@@ -45,12 +45,13 @@ export function sha1(message) {
         blocks[4] = blocks[5] = blocks[6] = blocks[7] =
         blocks[8] = blocks[9] = blocks[10] = blocks[11] =
         blocks[12] = blocks[13] = blocks[14] = blocks[15] = 0
+        let i
         if (notString) {
-            for (var i = start; index < length && i < 64; ++index) {
+            for (i = start; index < length && i < 64; ++index) {
                 blocks[i >> 2] |= message[index] << SHIFT[i++ & 3]
             }
         } else {
-            for (var i = start; index < length && i < 64; ++index) {
+            for (i = start; index < length && i < 64; ++index) {
                 let code = message.charCodeAt(index)
                 if (code < 0x80) {
                     blocks[i >> 2] |= code << SHIFT[i++ & 3]
@@ -87,7 +88,7 @@ export function sha1(message) {
           blocks[j] =  (t << 1) | (t >>> 31)
         }
 
-        var a = h0, b = h1, c = h2, d = h3, e = h4
+        let a = h0, b = h1, c = h2, d = h3, e = h4
         for (j = 0; j < 20; j += 5) {
             f = (b & c) | ((~b) & d)
             t = (a << 5) | (a >>> 27)

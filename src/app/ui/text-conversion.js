@@ -6,12 +6,14 @@ import SelectField from "material-ui/SelectField"
 import MenuItem from "material-ui/MenuItem"
 import * as base64 from "../calc/base64"
 import rot13 from "../calc/rot13"
+import * as strings from "../util/strings"
 
-const converters = ["base64", "rot13"]
 const convertInfo = {
     base64: { encode: base64.encode, decode: base64.decode, name: "Base64" },
-    rot13: { encode: rot13, decode: rot13, name: "ROT-13" }
+    rot13: { encode: rot13, decode: rot13, name: "ROT-13" },
+    hexStr: { encode: strings.toHexString, decode: strings.fromHexString, name: "Heksamerkkijono"}
 }
+const converters = Object.keys(convertInfo)
 
 export default class TextConversion extends React.Component {
 

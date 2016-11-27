@@ -26,7 +26,7 @@ export default class LastValue extends React.Component {
             log(`Could not copy: ${e}`)
         }
     }
-ß
+
     render() {
         return <ToolbarGroup>
             <ClipboardButton title="Kopioi leikepöydälle" onClick={this.copyToClipboard} />

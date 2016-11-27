@@ -1,4 +1,5 @@
-import * as util from "../util/util"
+import {zeroPad} from "../util/strings"
+import {getRandomInt} from "../util/util"
 
 /* Company id (Y-tunnus)    */
 /* ------------------------ */
@@ -20,5 +21,5 @@ export function check(value) {
 }
 
 export function generate() {
-    return util.zeroPad(util.getRandomInt(1, 9999999), 7)
+    return zeroPad(getRandomInt(1, 9999999), 7)
 }

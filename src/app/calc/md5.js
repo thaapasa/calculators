@@ -37,14 +37,14 @@ function core_md5(x, len)
   let c = -1732584194
   let d =  271733878
 
-  for (var i = 0; i < x.length; i += 16)
+  for (let i = 0; i < x.length; i += 16)
   {
     let olda = a;
     let oldb = b;
     let oldc = c;
     let oldd = d;
 
-    a = md5_ff(a, b, c, d, x[i+ 0], 7 , -680876936);
+    a = md5_ff(a, b, c, d, x[i   ], 7 , -680876936);
     d = md5_ff(d, a, b, c, x[i+ 1], 12, -389564586);
     c = md5_ff(c, d, a, b, x[i+ 2], 17,  606105819);
     b = md5_ff(b, c, d, a, x[i+ 3], 22, -1044525330);
@@ -64,7 +64,7 @@ function core_md5(x, len)
     a = md5_gg(a, b, c, d, x[i+ 1], 5 , -165796510);
     d = md5_gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
     c = md5_gg(c, d, a, b, x[i+11], 14,  643717713);
-    b = md5_gg(b, c, d, a, x[i+ 0], 20, -373897302);
+    b = md5_gg(b, c, d, a, x[i   ], 20, -373897302);
     a = md5_gg(a, b, c, d, x[i+ 5], 5 , -701558691);
     d = md5_gg(d, a, b, c, x[i+10], 9 ,  38016083);
     c = md5_gg(c, d, a, b, x[i+15], 14, -660478335);
@@ -87,7 +87,7 @@ function core_md5(x, len)
     c = md5_hh(c, d, a, b, x[i+ 7], 16, -155497632);
     b = md5_hh(b, c, d, a, x[i+10], 23, -1094730640);
     a = md5_hh(a, b, c, d, x[i+13], 4 ,  681279174);
-    d = md5_hh(d, a, b, c, x[i+ 0], 11, -358537222);
+    d = md5_hh(d, a, b, c, x[i   ], 11, -358537222);
     c = md5_hh(c, d, a, b, x[i+ 3], 16, -722521979);
     b = md5_hh(b, c, d, a, x[i+ 6], 23,  76029189);
     a = md5_hh(a, b, c, d, x[i+ 9], 4 , -640364487);
@@ -95,7 +95,7 @@ function core_md5(x, len)
     c = md5_hh(c, d, a, b, x[i+15], 16,  530742520);
     b = md5_hh(b, c, d, a, x[i+ 2], 23, -995338651);
 
-    a = md5_ii(a, b, c, d, x[i+ 0], 6 , -198630844);
+    a = md5_ii(a, b, c, d, x[i   ], 6 , -198630844);
     d = md5_ii(d, a, b, c, x[i+ 7], 10,  1126891415);
     c = md5_ii(c, d, a, b, x[i+14], 15, -1416354905);
     b = md5_ii(b, c, d, a, x[i+ 5], 21, -57434055);
@@ -117,7 +117,7 @@ function core_md5(x, len)
     c = safe_add(c, oldc);
     d = safe_add(d, oldd);
   }
-  return Array(a, b, c, d);
+  return [a, b, c, d]
 
 }
 
@@ -153,8 +153,8 @@ function core_hmac_md5(key, data)
   let bkey = str2binl(key)
   if (bkey.length > 16) bkey = core_md5(bkey, key.length * chrsz)
 
-  var ipad = Array(16), opad = Array(16)
-  for (var i = 0; i < 16; i++)
+  let ipad = [16], opad = [16]
+  for (let i = 0; i < 16; i++)
   {
     ipad[i] = bkey[i] ^ 0x36363636;
     opad[i] = bkey[i] ^ 0x5C5C5C5C;
@@ -189,9 +189,9 @@ function bit_rol(num, cnt)
  */
 function str2binl(str)
 {
-  let bin = Array()
+  let bin = []
   const mask = (1 << chrsz) - 1
-  for (var i = 0; i < str.length * chrsz; i += chrsz)
+  for (let i = 0; i < str.length * chrsz; i += chrsz)
     bin[i>>5] |= (str.charCodeAt(i / chrsz) & mask) << (i%32)
   return bin
 }
@@ -201,9 +201,9 @@ function str2binl(str)
  */
 function binl2str(bin)
 {
-  var str = ""
-  var mask = (1 << chrsz) - 1
-  for (var i = 0; i < bin.length * 32; i += chrsz)
+  let str = ""
+  let mask = (1 << chrsz) - 1
+  for (let i = 0; i < bin.length * 32; i += chrsz)
     str += String.fromCharCode((bin[i>>5] >>> (i % 32)) & mask)
   return str;
 }
@@ -216,7 +216,7 @@ const bl2h_hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef"
 function binl2hex(binarray)
 {
   let str = ""
-  for (var i = 0; i < binarray.length * 4; i++)
+  for (let i = 0; i < binarray.length * 4; i++)
   {
     str += bl2h_hex_tab.charAt((binarray[i>>2] >> ((i%4)*8+4)) & 0xF) +
         bl2h_hex_tab.charAt((binarray[i>>2] >> ((i%4)*8  )) & 0xF)
@@ -231,12 +231,12 @@ const bl2b64_tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 function binl2b64(binarray)
 {
   let str = ""
-  for (var i = 0; i < binarray.length * 4; i += 3)
+  for (let i = 0; i < binarray.length * 4; i += 3)
   {
     const triplet = (((binarray[i   >> 2] >> 8 * ( i   %4)) & 0xFF) << 16)
                 | (((binarray[i+1 >> 2] >> 8 * ((i+1)%4)) & 0xFF) << 8 )
                 |  ((binarray[i+2 >> 2] >> 8 * ((i+2)%4)) & 0xFF)
-    for (var j = 0; j < 4; j++) {
+    for (let j = 0; j < 4; j++) {
       if (i * 8 + j * 6 > binarray.length * 32) str += b64pad
       else str += bl2b64_tab.charAt((triplet >> 6*(3-j)) & 0x3F)
     }

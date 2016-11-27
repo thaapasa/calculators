@@ -1,4 +1,5 @@
-import * as util from "../util/util"
+import {getRandomInt} from "../util/util"
+import {zeroPad} from "../util/strings"
 
 /* Hetu (Henkilötunnus, Finnish Social Security Number) */
 /* ---------------------------------------------------- */
@@ -28,14 +29,14 @@ export function check(hetu) {
 
 export function generate() {
     // TODO: Use a date lib to generate all dates
-    const day = util.getRandomInt(1, 29)
-    const month = util.getRandomInt(1, 13)
-    let year = util.getRandomInt(50, 114)
+    const day = getRandomInt(1, 29)
+    const month = getRandomInt(1, 13)
+    let year = getRandomInt(50, 114)
     let check = "-"
     if (year > 99) {
         year -= 100
         check = "A"
     }
-    const counter = util.getRandomInt(1, 999)
-    return util.zeroPad(day, 2) + util.zeroPad(month, 2) + util.zeroPad(year, 2) + check + util.zeroPad(counter, 3)
+    const counter = getRandomInt(1, 999)
+    return zeroPad(day, 2) + zeroPad(month, 2) + zeroPad(year, 2) + check + zeroPad(counter, 3)
 }

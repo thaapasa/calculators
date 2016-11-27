@@ -1,6 +1,7 @@
 import React from "react"
 import * as Bacon from "baconjs"
-import * as util from "../../util/util"
+import {identity} from "../../util/util"
+import {toUpperCase} from "../../util/strings"
 import Item from "./item"
 import Checkbox from "material-ui/Checkbox"
 import TextField from "material-ui/TextField"
@@ -44,7 +45,7 @@ export default class SelectableOutput extends React.Component {
     }
 
     ucIfChecked(stream) {
-        return stream.map((checked) => checked ? util.toUpperCase : util.identity)
+        return stream.map((checked) => checked ? toUpperCase : identity)
     }
 
     render() {
