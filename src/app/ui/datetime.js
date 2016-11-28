@@ -6,11 +6,16 @@ import moment from "moment"
 import * as Bacon from "baconjs"
 import {isDefined} from "../util/util"
 import {strToInt} from "../calc/numbers"
+import {zeroPad} from "../util/strings"
+
+window.moment = moment
 
 const styles = {
-    len2: { width: "2em" },
-    len3: { width: "3em" },
-    len4: { width: "4em" }
+    len2: { width: "1.8em" },
+    len3: { width: "2.6em" },
+    len4: { width: "3.5em" },
+    len7: { width: "4.2em" },
+    center: { textAlign: "center", width: "100%" }
 }
 
 function readJavaTime(s) {
@@ -25,21 +30,41 @@ function readUnixTime(s) {
     return moment.unix(s)
 }
 
+function pad(val, len) {
+    if (typeof val == "number" && isNaN(val)) return val
+    return zeroPad(val, len)
+}
+
+const texts = {
+    weekDay: ["", "ma", "ti", "ke", "to", "pe", "la", "su"]
+}
+
+
 const typeInfo = {
     selected: { },
-    javaTime: { read: readJavaTime, src: "javaTime", write: m => m.unix() * 1000 },
+    javaTime: { read: readJavaTime, src: "javaTime", write: m => m.valueOf() },
     unixTime: { read: readUnixTime, src: "unixTime", write: m => m.unix() },
-    day: { read: strToInt, src: "value", write: m => m.date() },
-    month: { read: v => strToInt(v) - 1, src: "value", write: m => m.month() + 1 },
-    year: { read: strToInt, src: "value", write: m => m.year() },
-    hour: { read: strToInt, src: "value", write: m => m.hour() },
-    minute: { read: strToInt, src: "value", write: m => m.minute() },
-    second: { read: strToInt, src: "value", write: m => m.second() },
-    milli: { read: strToInt, src: "value", write: m => m.millisecond() },
+    day: { read: strToInt, src: "value", write: m => pad(m.date(), 2), style: styles.len2, maxLength: 2 },
+    month: { read: v => strToInt(v) - 1, src: "value", write: m => pad(m.month() + 1, 2), style: styles.len2, maxLength: 2 },
+    year: { read: strToInt, src: "value", write: m => m.year(), style: styles.len4, maxLength: 4 },
+    hour: { read: strToInt, src: "value", write: m => pad(m.hour(), 2), style: styles.len2, maxLength: 2 },
+    minute: { read: strToInt, src: "value", write: m => pad(m.minute(), 2), style: styles.len2, maxLength: 2 },
+    second: { read: strToInt, src: "value", write: m => pad(m.second(), 2), style: styles.len2, maxLength: 2 },
+    millisecond: { read: strToInt, src: "value", write: m => pad(m.millisecond(), 3), style: styles.len3, maxLength: 3 },
     direct: { src: "direct" }
 }
 
-const valueTypes = ["day", "month", "year", "hour", "minute", "second", "milli"]
+const hints = {
+    day: "31",
+    month: "12",
+    year: "2016",
+    hour: "10",
+    minute: "00",
+    second: "00",
+    millisecond: "000"
+}
+
+const valueTypes = ["day", "month", "year", "hour", "minute", "second", "millisecond"]
 
 const types = Object.keys(typeInfo)
 
@@ -55,7 +80,8 @@ export default class DateTime extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            week: ""
+            week: "",
+            weekDay: ""
         }
         types.forEach(t => this.state[t] = "")
         this.inputChanged = this.inputChanged.bind(this)
@@ -76,7 +102,7 @@ export default class DateTime extends React.Component {
             hour: incoming.hour,
             minute: incoming.minute,
             second: incoming.second,
-            millisecond: incoming.milli
+            millisecond: incoming.millisecond
         }).map(v => moment(v))
         const newVal = Bacon.mergeAll(incoming.direct, incoming.unixTime, incoming.javaTime,
             Bacon.combineAsArray(incoming.value, this.streams.selected)
@@ -91,7 +117,10 @@ export default class DateTime extends React.Component {
                 if (src != "value" && valueTypes.includes(t))
                     this.streams[t].push(output)
             })
-            this.setState({ week: toStateValue(val, v => `${v.weekYear()}/${v.week()}`)})
+            this.setState({
+                week: toStateValue(val, v => `${v.isoWeekYear()}/${v.isoWeek()}`),
+                weekDay: toStateValue(val, v => texts.weekDay[v.isoWeekday()])
+            })
         })
         this.pushValue(moment(), "direct")
     }
@@ -107,6 +136,12 @@ export default class DateTime extends React.Component {
         this.streams[src].push(val)
     }
 
+    renderType(type) {
+        return <TextField type="text" value={this.state[type]} style={typeInfo[type].style}
+                          maxLength={typeInfo[type].maxLength} name={type} hintText={hints[type]}
+                          inputStyle={styles.center} hintStyle={styles.center} onChange={this.inputChanged}/>
+    }
+
     render() {
         return <HalfSection title="Aikaleimat">
             <Item name="Java/JS time">
@@ -118,27 +153,18 @@ export default class DateTime extends React.Component {
                            onChange={this.inputChanged} />
             </Item>
             <Item name="Päivä" style={styles.item}>
-                <TextField type="text" value={this.state.day} style={styles.len2} maxLength={2}
-                           name="day" hintText="31" onChange={this.inputChanged}/>.
-                <TextField type="text" value={this.state.month} style={styles.len2} maxLength={2}
-                           name="month" hintText="12" onChange={this.inputChanged}/>.
-                <TextField type="text" value={this.state.year} style={styles.len4} maxLength={4}
-                           name="year" hintText="2016" onChange={this.inputChanged}/>
+                {this.renderType("day")}.{this.renderType("month")}.{this.renderType("year")}
+                (<TextField type="text" value={this.state.weekDay} style={styles.len2} name="weekDay"
+                            hintText="la" inputStyle={styles.center} hintStyle={styles.center} readOnly />)
             </Item>
             <Item name="Kellonaika" style={styles.item}>
-                <TextField type="text" value={this.state.hour} style={styles.len2} maxLength={2}
-                           name="hour" hintText="18" onChange={this.inputChanged}/>.
-                <TextField type="text" value={this.state.minute} style={styles.len2} maxLength={2}
-                           name="minute" hintText="00" onChange={this.inputChanged}/>.
-                <TextField type="text" value={this.state.second} style={styles.len2} maxLength={2}
-                           name="second" hintText="00" onChange={this.inputChanged}/>.
-                <TextField type="text" value={this.state.milli} style={styles.len3} maxLength={3}
-                           name="milli" hintText="000" onChange={this.inputChanged}/>
+                {this.renderType("hour")}:{this.renderType("minute")}:{this.renderType("second")}.{this.renderType("millisecond")}
             </Item>
             <Item name="Viikko">
-                <TextField type="text" value={this.state.week} readOnly hintText="2016/52" />
+                <TextField type="text" value={this.state.week} style={styles.len7} readOnly
+                           inputStyle={styles.center} hintStyle={styles.center} hintText="2016/52" />
             </Item>
-        </HalfSection>
+            </HalfSection>
 
     }
 }
