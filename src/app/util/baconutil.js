@@ -9,7 +9,7 @@ export function addBaconSafeLog() {
 
 export function safeLog(title) {
     return function (value) {
-        log(`${title}: ${value}`)
+        log(`${title}:`, value)
         return value
     }
 }
