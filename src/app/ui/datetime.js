@@ -46,9 +46,15 @@ const texts = {
 
 
 const typeInfo = {
+    week: { reportValue: true },
+    focused: { },
     selected: { },
-    javaTime: { read: readJavaTime, src: "javaTime", write: m => m.valueOf() },
-    unixTime: { read: readUnixTime, src: "unixTime", write: m => m.unix() },
+    iso8601: { reportValue: true },
+    iso8601utc: { reportValue: true },
+    nameDay: { reportValue: true },
+    weekDay: { },
+    javaTime: { read: readJavaTime, src: "javaTime", reportValue: true, write: m => m.valueOf() },
+    unixTime: { read: readUnixTime, src: "unixTime", reportValue: true, write: m => m.unix() },
     day: { read: strToInt, src: "value", write: m => pad(m.date(), 2), style: styles.len2, maxLength: 2 },
     month: { read: v => strToInt(v) - 1, src: "value", write: m => pad(m.month() + 1, 2), style: styles.len2, maxLength: 2 },
     year: { read: strToInt, src: "value", write: m => m.year(), style: styles.len4, maxLength: 4 },
@@ -84,22 +90,21 @@ export default class DateTime extends React.Component {
 
     constructor(props) {
         super(props)
-        this.state = {
-            week: "",
-            weekDay: "",
-            nameDay: ""
-        }
+        this.state = {}
         types.forEach(t => this.state[t] = "")
         this.inputChanged = this.inputChanged.bind(this)
+        this.focusChanged = this.focusChanged.bind(this)
     }
 
     componentDidMount() {
-        this.streams = {}
-        const incoming = { direct: new Bacon.Bus() }
+        this.streams = { focused: new Bacon.Bus() }
+        const incoming = { direct: new Bacon.Bus(), focused: this.streams.focused }
         types.forEach(t => {
-            this.streams[t] = new Bacon.Bus()
-            this.streams[t].onValue(v => this.setState({ [t]: v }))
-            incoming[t] = ((typeInfo[t].read) ? this.streams[t].map(typeInfo[t].read) : this.streams[t])
+            if (t != "focused") {
+                this.streams[t] = new Bacon.Bus()
+                this.streams[t].onValue(v => this.setState({[t]: v}))
+                incoming[t] = ((typeInfo[t].read) ? this.streams[t].map(typeInfo[t].read) : this.streams[t])
+            }
         })
         incoming.value = Bacon.combineTemplate({
             day: incoming.day,
@@ -123,11 +128,11 @@ export default class DateTime extends React.Component {
                 if (src != "value" && valueTypes.includes(t))
                     this.streams[t].push(output)
             })
-            this.setState({
-                week: toStateValue(val, toIsoWeek),
-                weekDay: toStateValue(val, v => texts.weekDay[v.isoWeekday()]),
-                nameDay: toStateValue(val, v => getNameDay(v.month() + 1, v.date()))
-            })
+            incoming.iso8601.push(toStateValue(val, v => v.isValid() && v.format()))
+            incoming.iso8601utc.push(toStateValue(val, v => v.isValid() && v.utc().format()))
+            incoming.week.push(toStateValue(val, toIsoWeek))
+            incoming.weekDay.push(toStateValue(val, v => texts.weekDay[v.isoWeekday()]))
+            incoming.nameDay.push(toStateValue(val, v => getNameDay(v.month() + 1, v.date())))
         })
         this.pushValue(moment(), "direct")
     }
@@ -138,6 +143,11 @@ export default class DateTime extends React.Component {
         this.pushValue(val, src)
     }
 
+    focusChanged(event) {
+        const src = event.target.name
+        this.streams.focused.push(src)
+    }
+
     pushValue(val, src) {
         this.streams.selected.push(typeInfo[src].src)
         this.streams[src].push(val)
@@ -146,33 +156,45 @@ export default class DateTime extends React.Component {
     renderType(type) {
         return <TextField type="text" value={this.state[type]} style={typeInfo[type].style}
                           maxLength={typeInfo[type].maxLength} name={type} hintText={hints[type]}
-                          inputStyle={styles.center} hintStyle={styles.center} onChange={this.inputChanged}/>
+                          inputStyle={styles.center} hintStyle={styles.center}
+                          onChange={this.inputChanged} onFocus={this.focusChanged} />
     }
 
     render() {
         return <HalfSection title="Aikaleimat">
             <Item name="Java/JS time">
                 <TextField type="text" value={this.state.javaTime} fullWidth={true} name="javaTime"
-                           onChange={this.inputChanged }/>
+                           onChange={this.inputChanged } onFocus={this.focusChanged} />
             </Item>
             <Item name="Unixtime">
                 <TextField type="text" value={this.state.unixTime} fullWidth={true} name="unixTime"
-                           onChange={this.inputChanged} />
+                           onChange={this.inputChanged} onFocus={this.focusChanged} />
             </Item>
             <Item name="Päivä" style={styles.item}>
                 {this.renderType("day")}.{this.renderType("month")}.{this.renderType("year")}
                 (<TextField type="text" value={this.state.weekDay} style={styles.len2} name="weekDay"
-                            hintText="la" inputStyle={styles.center} hintStyle={styles.center} readOnly />)
+                            hintText="la" inputStyle={styles.center} hintStyle={styles.center} readOnly
+                            onFocus={this.focusChanged} />)
             </Item>
             <Item name="Kellonaika" style={styles.item}>
                 {this.renderType("hour")}:{this.renderType("minute")}:{this.renderType("second")}.{this.renderType("millisecond")}
             </Item>
             <Item name="Viikko">
-                <TextField type="text" value={this.state.week} style={styles.len7} readOnly
-                           inputStyle={styles.center} hintStyle={styles.center} hintText="2016/52" />
+                <TextField type="text" name="week" value={this.state.week} style={styles.len7} readOnly
+                           inputStyle={styles.center} hintStyle={styles.center} hintText="2016/52"
+                           onFocus={this.focusChanged} />
             </Item>
             <Item name="Nimipäivä">
-                <TextField type="text" name="nameday" value={this.state.nameDay} fullWidth={true} readOnly multiLine={true} />
+                <TextField type="text" name="nameDay" value={this.state.nameDay} fullWidth={true} readOnly
+                           multiLine={true} onFocus={this.focusChanged} />
+            </Item>
+            <Item name="ISO-8601">
+                <TextField type="text" name="iso8601" value={this.state.iso8601} fullWidth={true} readOnly
+                           onFocus={this.focusChanged} />
+            </Item>
+            <Item name="ISO-8601 UTC">
+                <TextField type="text" name="iso8601utc" value={this.state.iso8601utc} fullWidth={true} readOnly
+                           onFocus={this.focusChanged} />
             </Item>
             </HalfSection>
 
