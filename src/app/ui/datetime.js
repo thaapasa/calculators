@@ -7,6 +7,7 @@ import * as Bacon from "baconjs"
 import {isDefined} from "../util/util"
 import {strToInt} from "../calc/numbers"
 import {zeroPad} from "../util/strings"
+import {getNameDay} from "../util/namedays"
 
 window.moment = moment
 
@@ -28,6 +29,10 @@ function readUnixTime(s) {
     if (typeof s === "string") s = parseInt(s, 10)
     if (typeof s !== "number" || isNaN(s)) return
     return moment.unix(s)
+}
+
+function toIsoWeek(v) {
+    return v.isValid() ? `${v.isoWeekYear()}/${v.isoWeek()}` : ""
 }
 
 function pad(val, len) {
@@ -81,7 +86,8 @@ export default class DateTime extends React.Component {
         super(props)
         this.state = {
             week: "",
-            weekDay: ""
+            weekDay: "",
+            nameDay: ""
         }
         types.forEach(t => this.state[t] = "")
         this.inputChanged = this.inputChanged.bind(this)
@@ -118,8 +124,9 @@ export default class DateTime extends React.Component {
                     this.streams[t].push(output)
             })
             this.setState({
-                week: toStateValue(val, v => `${v.isoWeekYear()}/${v.isoWeek()}`),
-                weekDay: toStateValue(val, v => texts.weekDay[v.isoWeekday()])
+                week: toStateValue(val, toIsoWeek),
+                weekDay: toStateValue(val, v => texts.weekDay[v.isoWeekday()]),
+                nameDay: toStateValue(val, v => getNameDay(v.month() + 1, v.date()))
             })
         })
         this.pushValue(moment(), "direct")
@@ -163,6 +170,9 @@ export default class DateTime extends React.Component {
             <Item name="Viikko">
                 <TextField type="text" value={this.state.week} style={styles.len7} readOnly
                            inputStyle={styles.center} hintStyle={styles.center} hintText="2016/52" />
+            </Item>
+            <Item name="Nimipäivä">
+                <TextField type="text" name="nameday" value={this.state.nameDay} fullWidth={true} readOnly multiLine={true} />
             </Item>
             </HalfSection>
 
