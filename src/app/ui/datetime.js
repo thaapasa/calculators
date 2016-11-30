@@ -41,18 +41,26 @@ function pad(val, len) {
 }
 
 const texts = {
-    weekDay: ["", "ma", "ti", "ke", "to", "pe", "la", "su"]
+    weekDay: ["", "ma", "ti", "ke", "to", "pe", "la", "su"],
+    types: {
+        iso8601: "ISO 8601",
+        iso8601utc: "ISO 8601 UTC",
+        javaTime: "Java/JS time",
+        unixTime: "Unixtime",
+        nameDay: "Nimipäivä",
+        week: "Viikko"
+    }
 }
 
 
 const typeInfo = {
-    week: { reportValue: true, inputStyle: styles.center },
+    week: { write: val => toStateValue(val, toIsoWeek), reportValue: true, inputStyle: styles.center },
     focused: { },
     selected: { },
     iso8601: { read: v => moment(v, moment.ISO_8601), write: m => m.isValid() ? m.format() : "", src: "iso8601", reportValue: true, fullWidth: true },
     iso8601utc: { read: v => moment(v, moment.ISO_8601), write: m => m.isValid() ? m.toISOString() : "", src: "iso8601utc", reportValue: true, fullWidth: true },
-    nameDay: { reportValue: true, inputStyle: styles.center },
-    weekDay: { },
+    nameDay: { write: val => toStateValue(val, v => getNameDay(v.month() + 1, v.date())), reportValue: true, inputStyle: styles.center },
+    weekDay: { write: val => toStateValue(val, v => texts.weekDay[v.isoWeekday()]) },
     javaTime: { read: readJavaTime, src: "javaTime", reportValue: true, write: m => m.isValid() ? m.valueOf() : "", fullWidth: true },
     unixTime: { read: readUnixTime, src: "unixTime", reportValue: true, write: m => m.isValid() ? m.unix() : "", fullWidth: true },
     day: { read: strToInt, src: "value", write: m => pad(m.date(), 2), style: styles.len2, maxLength: 2, inputStyle: styles.center },
@@ -75,7 +83,6 @@ const hints = {
     second: "00",
     millisecond: "000",
     timeZone: "+02:00"
-
 }
 
 const valueTypes = ["day", "month", "year", "hour", "minute", "second", "millisecond"]
@@ -93,13 +100,16 @@ export default class DateTime extends React.Component {
 
     constructor(props) {
         super(props)
-        this.state = {}
+        this.state = {
+            reportTarget: ""
+        }
         types.forEach(t => this.state[t] = "")
         this.inputChanged = this.inputChanged.bind(this)
         this.focusChanged = this.focusChanged.bind(this)
     }
 
     componentDidMount() {
+        // Create streams and incoming (converted) streams
         this.streams = { focused: new Bacon.Bus() }
         const incoming = { direct: new Bacon.Bus(), focused: this.streams.focused }
         types.forEach(t => {
@@ -118,10 +128,12 @@ export default class DateTime extends React.Component {
             second: incoming.second,
             millisecond: incoming.millisecond
         }).map(v => moment(v))
+        // Create stream for new value
         const newVal = Bacon.mergeAll(incoming.direct, incoming.unixTime, incoming.javaTime,
             incoming.iso8601, incoming.iso8601utc,
             Bacon.combineAsArray(incoming.value, this.streams.selected)
                 .flatMapLatest(t => t[1] == "value" ? t[0] : Bacon.never()))
+        // Process new value updates
         Bacon.combineAsArray(newVal, this.streams.selected).onValue(r => {
             const val = r[0]
             const src = r[1]
@@ -132,10 +144,12 @@ export default class DateTime extends React.Component {
                 if (src != "value" && valueTypes.includes(t))
                     this.streams[t].push(output)
             })
-            incoming.week.push(toStateValue(val, toIsoWeek))
-            incoming.weekDay.push(toStateValue(val, v => texts.weekDay[v.isoWeekday()]))
-            incoming.nameDay.push(toStateValue(val, v => getNameDay(v.month() + 1, v.date())))
         })
+        // Which value is reported to parent
+        const reportTarget = incoming.focused.filter(t => typeInfo[t].reportValue)
+        reportTarget.onValue(v => this.setState({ reportTarget: v }))
+        Bacon.combineAsArray(newVal, reportTarget).onValue(t => this.props.onValue(typeInfo[t[1]].write(t[0])))
+        // Push default value
         this.pushValue(moment(), "direct")
     }
 
@@ -164,7 +178,7 @@ export default class DateTime extends React.Component {
     }
 
     render() {
-        return <HalfSection title="Aikaleimat">
+        return <HalfSection title="Aikaleimat" subtitle={texts.types[this.state.reportTarget]}>
             <Item name="Java/JS time">
                 { this.renderType("javaTime") }
             </Item>
@@ -178,7 +192,8 @@ export default class DateTime extends React.Component {
                             onFocus={this.focusChanged} />)
             </Item>
             <Item name="Kellonaika" style={styles.item}>
-                {this.renderType("hour")}:{this.renderType("minute")}:{this.renderType("second")}.{this.renderType("millisecond")} {this.renderType("timeZone")}
+                {this.renderType("hour")}:{this.renderType("minute")}:{this.renderType("second")}.{this.renderType("millisecond")}
+                {this.renderType("timeZone")}
             </Item>
             <Item name="Viikko">
                 <TextField type="text" name="week" value={this.state.week} style={styles.len7} readOnly
