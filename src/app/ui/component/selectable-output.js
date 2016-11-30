@@ -8,6 +8,11 @@ import TextField from "material-ui/TextField"
 import FontIcon from "material-ui/FontIcon"
 import {red500} from "material-ui/styles/colors"
 
+const styles = {
+    itemName: { marginTop: "1.7em" },
+    itemValue: { alignItems: "flex-start" }
+}
+
 export default class SelectableOutput extends React.Component {
 
     constructor(props) {
@@ -52,7 +57,7 @@ export default class SelectableOutput extends React.Component {
         const my = this
         return <Item name={<Checkbox name={my.props.type + "-upper-case"} label={
             <FontIcon className="material-icons" color={red500}>text_format</FontIcon>
-        } onCheck={this.checkUpperCase}/>}>
+        } onCheck={this.checkUpperCase}/>} valueStyle={styles.itemValue} nameStyle={styles.itemName}>
             <TextField type="text" floatingLabelText={this.props.label} className="wide" value={this.state.value}
                        fullWidth={true} readOnly name="output" onFocus={this.props.onSelect}/>
         </Item>

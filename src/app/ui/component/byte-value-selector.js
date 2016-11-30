@@ -35,6 +35,9 @@ const styles = {
     slider: {
         width: "10em",
         height: "1em"
+    },
+    itemValue: {
+        alignItems: "flex-start"
     }
 }
 
@@ -85,7 +88,7 @@ export default class ByteValueSelector extends React.Component {
     }
 
     render() {
-        return <Item name={this.props.name}>
+        return <Item name={this.props.name} valueStyle={styles.itemValue}>
             <TextField hintText="FF" style={styles.component} maxLength="2" value={this.state.hex}
                        onChange={e => this.pushValue(e.target.value, "hex")}/>
             <TextField hintText="255" style={styles.component} type="number" maxLength="3" value={this.state.dec}

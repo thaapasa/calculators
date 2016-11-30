@@ -6,7 +6,8 @@ import Item from "./item"
 import TextField from "material-ui/TextField"
 
 const styles = {
-    check: { width: "1em" }
+    check: { width: "1em" },
+    itemValue: { alignItems: "flex-start" }
 }
 
 export default class CheckValue extends React.Component {
@@ -58,7 +59,7 @@ export default class CheckValue extends React.Component {
     }
 
     render() {
-        return <Item name={this.props.name}>
+        return <Item name={this.props.name} valueStyle={styles.itemValue}>
             <GenerateButton id={`${this.props.id}-generate`} onClick={this.generate} title="Luo uusi" />
             <TextField type="text" id={`${this.props.id}-input`} onChange={this.inputChanged}
                    style={this.inputStyle} maxLength={this.props.maxLength} value={this.state.input} />
