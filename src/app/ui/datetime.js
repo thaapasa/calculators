@@ -2,12 +2,13 @@ import React from "react"
 import {HalfSection} from "./component/section"
 import Item from "./component/item"
 import TextField from "material-ui/TextField"
+import AutoComplete from "material-ui/AutoComplete"
 import moment from "moment"
 import * as Bacon from "baconjs"
-import {isDefined} from "../util/util"
+import {isDefined, isString, isObject} from "../util/util"
 import {strToInt} from "../calc/numbers"
 import {zeroPad} from "../util/strings"
-import {getNameDay} from "../util/namedays"
+import {getNameDay, findNameDayFor} from "../util/namedays"
 
 window.moment = moment
 
@@ -89,6 +90,11 @@ const valueTypes = ["day", "month", "year", "hour", "minute", "second", "millise
 
 const types = Object.keys(typeInfo)
 
+const nameDaySearchConfig = {
+    text: "text",
+    value: "value"
+}
+
 function toStateValue(mom, writer) {
     if (typeof mom !== "object") return ""
     let s = writer(mom)
@@ -101,11 +107,14 @@ export default class DateTime extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            reportTarget: ""
+            reportTarget: "",
+            foundNameDays: []
         }
         types.forEach(t => this.state[t] = "")
         this.inputChanged = this.inputChanged.bind(this)
         this.focusChanged = this.focusChanged.bind(this)
+        this.handleFindNameDay = this.handleFindNameDay.bind(this)
+        this.pushDate = this.pushDate.bind(this)
     }
 
     componentDidMount() {
@@ -177,6 +186,29 @@ export default class DateTime extends React.Component {
                           onChange={this.inputChanged} onFocus={this.focusChanged} readOnly={info.readOnly} />
     }
 
+    pushDate(date) {
+        if (isObject(date) && date.value && date.value.day && date.value.month) {
+            this.streams.selected.push("value")
+            this.streams.day.push(date.value.day)
+            this.streams.month.push(date.value.month)
+        }
+    }
+
+    handleFindNameDay(val) {
+        let res = []
+        if (isString(val) && val.length >= 2) {
+            const matches = findNameDayFor(val)
+            Object.keys(matches).forEach(name => {
+                const date = matches[name]
+                res.push({
+                    text: `${name}: ${date.day}.${date.month}.`,
+                    value: date
+                })
+            })
+        }
+        this.setState({ foundNameDays: res })
+    }
+
     render() {
         return <HalfSection title="Aikaleimat" subtitle={texts.types[this.state.reportTarget]}>
             <Item name="Java/JS time">
@@ -203,6 +235,11 @@ export default class DateTime extends React.Component {
             <Item name="Nimipäivä">
                 <TextField type="text" name="nameDay" value={this.state.nameDay} fullWidth={true} readOnly
                            multiLine={true} onFocus={this.focusChanged} />
+            </Item>
+            <Item name="Etsi nimipäivä">
+                <AutoComplete name="findNameDay" key="findNameDay" hintText="Etsi nimipäivä" fullWidth={true}
+                              filter={AutoComplete.noFilter} onNewRequest={this.pushDate}
+                              dataSource={this.state.foundNameDays} onUpdateInput={this.handleFindNameDay} />
             </Item>
             <Item name="ISO-8601">
                 { this.renderType("iso8601") }

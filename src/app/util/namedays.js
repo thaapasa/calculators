@@ -1,4 +1,4 @@
-import {isNumber} from "./util"
+import {isNumber,isString} from "./util"
 
 /* Nimipäivät vuonna 2007 */
 const nameDays = {}
@@ -284,7 +284,7 @@ nameDays[10][ 3] = ["Raimo"]
 nameDays[10][ 4] = ["Saija", "Saila"]
 nameDays[10][ 5] = ["Inkeri", "Inka"]
 nameDays[10][ 6] = ["Pinja", "Minttu"]
-nameDays[10][ 7] = ["Pirkko", "Pirjo", "Piritta", "Pirita", "Birgitta"]
+nameDays[10][ 7] = ["Pirkko", "Pirjo", "Pipsa", "Piritta", "Pirita", "Birgitta"]
 nameDays[10][ 8] = ["Hilja"]
 nameDays[10][ 9] = ["Ilona"]
 nameDays[10][10] = ["Aleksi", "Aleksis"]
@@ -376,5 +376,54 @@ export default nameDays
 
 export function getNameDay(month, day) {
     return isNumber(month) && isNumber(day) && month >= 1 && month <= 12 && day >= 1 && day <= 31
-        && nameDays[month][day] ? nameDays[month][day].join(", ") : undefined
+       && nameDays[month][day] ? nameDays[month][day].join(", ") : undefined
+}
+
+const byName = {
+    defined: false,
+    names: [],
+    nameDays: {}
+}
+
+function canonName(name) {
+    return isString(name) ? name.toLowerCase() : undefined
+}
+
+function shownName(name) {
+    return isString(name) && name.length > 0 ? name.substring(0, 1).toUpperCase().concat(name.substring(1)) : undefined
+}
+
+function calculateByName() {
+    for (let m = 1; m <= 12; ++m) {
+        for (let d = 1; d <= 31; ++d) {
+            const names = nameDays[m][d]
+            if (names) {
+                names.map(canonName).forEach(name => {
+                    byName.names.push(name)
+                    byName.nameDays[name] = { month: m, day: d }
+                })
+            }
+        }
+    }
+    byName.names = byName.names.sort()
+    byName.defined = true
+}
+
+export function getNameDayFor(name) {
+    if (!byName.defined) calculateByName()
+    const cn = canonName(name)
+    return byName.nameDays[cn]
+}
+
+export function findNameDayFor(name) {
+    if (!byName.defined) calculateByName()
+    const cn = canonName(name)
+    const resp = {}
+    byName.names.filter(n => n.startsWith(cn)).forEach(n => resp[shownName(n)] = byName.nameDays[n])
+    return resp
+}
+
+export function getAllNames() {
+    if (!byName.defined) calculateByName()
+    return byName.names
 }

@@ -16,6 +16,10 @@ export function isString(value) {
     return value !== undefined && value !== null && typeof value == "string"
 }
 
+export function isObject(value) {
+    return value !== undefined && value !== null && typeof value == "object"
+}
+
 export function noop() {}
 
 export function identity(value) { return value }
