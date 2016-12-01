@@ -13,8 +13,35 @@ so you can calculate password hashes safely.
 
 Install dependencies:
 
-    sudo npm install -g grunt-cli
     npm install
+
+#### Linux / Mac ####
+
+Build project (app + tests):
+
+    npm run build
+    
+Develop (watchify):
+
+    npm run watch
+
+Run tests:
+
+    npm test
+
+Build production package under `dist` directory:
+
+    scripts/build-prod.sh
+
+#### Windows ####
+
+`npm` scripts do not work in Windows currently (environment variables are set with
+different syntax, and I've had problems with `watchify`: `npm watch` does not always 
+rebuild). You can run `grunt` tasks instead.
+
+Install grunt (run with Administrator privileges): 
+
+    npm install -g grunt-cli
 
 Build project:
 
