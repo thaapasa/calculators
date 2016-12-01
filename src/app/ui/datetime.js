@@ -211,12 +211,6 @@ export default class DateTime extends React.Component {
 
     render() {
         return <HalfSection title="Aikaleimat" subtitle={texts.types[this.state.reportTarget]}>
-            <Item name="Java/JS time">
-                { this.renderType("javaTime") }
-            </Item>
-            <Item name="Unixtime">
-                { this.renderType("unixTime") }
-            </Item>
             <Item name="Päivä" style={styles.item}>
                 {this.renderType("day")}.{this.renderType("month")}.{this.renderType("year")}
                 (<TextField type="text" value={this.state.weekDay} style={styles.len2} name="weekDay"
@@ -240,6 +234,12 @@ export default class DateTime extends React.Component {
                 <AutoComplete name="findNameDay" key="findNameDay" hintText="Etsi nimipäivä" fullWidth={true}
                               filter={AutoComplete.noFilter} onNewRequest={this.pushDate}
                               dataSource={this.state.foundNameDays} onUpdateInput={this.handleFindNameDay} />
+            </Item>
+            <Item name="Java/JS time">
+                { this.renderType("javaTime") }
+            </Item>
+            <Item name="Unixtime">
+                { this.renderType("unixTime") }
             </Item>
             <Item name="ISO-8601">
                 { this.renderType("iso8601") }
