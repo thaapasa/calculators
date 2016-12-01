@@ -3,12 +3,14 @@ import {HalfSection} from "./component/section"
 import Item from "./component/item"
 import TextField from "material-ui/TextField"
 import AutoComplete from "material-ui/AutoComplete"
+import DatePicker from "material-ui/DatePicker"
 import moment from "moment"
 import * as Bacon from "baconjs"
 import {isDefined, isString, isObject} from "../util/util"
 import {strToInt} from "../calc/numbers"
 import {zeroPad} from "../util/strings"
 import {getNameDay, findNameDayFor} from "../util/namedays"
+import areIntlLocalesSupported from "intl-locales-supported"
 
 window.moment = moment
 
@@ -42,14 +44,13 @@ function pad(val, len) {
     return zeroPad(val, len)
 }
 
-const dateFormat = "D.M.YYYY"
 function readDate(v) {
-    const c = moment(v, dateFormat)
+    const c = moment(v)
     return c.isValid() ? { day: c.date(), month: c.month(), year: c.year() } : {}
 }
 
 function writeDate(v) {
-    return v.isValid() ? v.format(dateFormat) : ""
+    return v.isValid() ? v.toDate() : null
 }
 
 const texts = {
@@ -76,10 +77,10 @@ const typeInfo = {
     javaTime: { read: readJavaTime, src: "javaTime", reportValue: true, write: m => m.isValid() ? m.valueOf() : "", fullWidth: true },
     unixTime: { read: readUnixTime, src: "unixTime", reportValue: true, write: m => m.isValid() ? m.unix() : "", fullWidth: true },
     date: { read: readDate, src: "value", write: writeDate, style: styles.len10, maxLength: 10, inputStyle: styles.center },
-    hour: { read: strToInt, src: "value", write: m => pad(m.hour(), 2), style: styles.len2, maxLength: 2, inputStyle: styles.center },
-    minute: { read: strToInt, src: "value", write: m => pad(m.minute(), 2), style: styles.len2, maxLength: 2, inputStyle: styles.center },
-    second: { read: strToInt, src: "value", write: m => pad(m.second(), 2), style: styles.len2, maxLength: 2, inputStyle: styles.center },
-    millisecond: { read: strToInt, src: "value", write: m => pad(m.millisecond(), 3), style: styles.len3, maxLength: 3, inputStyle: styles.center },
+    hour: { read: strToInt, src: "value", write: m => m.isValid() ? pad(m.hour(), 2) : "", style: styles.len2, maxLength: 2, inputStyle: styles.center },
+    minute: { read: strToInt, src: "value", write: m => m.isValid() ? pad(m.minute(), 2) : "", style: styles.len2, maxLength: 2, inputStyle: styles.center },
+    second: { read: strToInt, src: "value", write: m => m.isValid() ? pad(m.second(), 2) : "", style: styles.len2, maxLength: 2, inputStyle: styles.center },
+    millisecond: { read: strToInt, src: "value", write: m => m.isValid() ? pad(m.millisecond(), 3) : "", style: styles.len3, maxLength: 3, inputStyle: styles.center },
     timeZone: { write: m => m.isValid() ? m.format('Z') : "", style: styles.len7, maxLength: 6, inputStyle: styles.center, readOnly: true },
     direct: { src: "direct" }
 }
@@ -95,13 +96,22 @@ const hints = {
 
 const valueTypes = ["date", "hour", "minute", "second", "millisecond"]
 
+let DateTimeFormat
+if (areIntlLocalesSupported(["fi"])) {
+    DateTimeFormat = global.Intl.DateTimeFormat
+} else {
+    const IntlPolyfill = require('intl')
+    DateTimeFormat = IntlPolyfill.DateTimeFormat
+    require('intl/locale-data/jsonp/fi')
+}
+
 const types = Object.keys(typeInfo)
 
 function toStateValue(mom, writer) {
     if (typeof mom !== "object") return ""
     let s = writer(mom)
     if (!isDefined(s) || (typeof s === "number" && isNaN(s))) return ""
-    return (typeof s === "number") ? `${s}` : s
+    return (typeof s === "object" || s === null) ? s : ((typeof s === "number") ? `${s}` : s)
 }
 
 export default class DateTime extends React.Component {
@@ -110,9 +120,11 @@ export default class DateTime extends React.Component {
         super(props)
         this.state = {
             reportTarget: "",
-            foundNameDays: []
+            foundNameDays: [],
+            locale: "fi"
         }
         types.forEach(t => this.state[t] = "")
+        this.state.date = null
         this.inputChanged = this.inputChanged.bind(this)
         this.focusChanged = this.focusChanged.bind(this)
         this.handleFindNameDay = this.handleFindNameDay.bind(this)
@@ -149,7 +161,7 @@ export default class DateTime extends React.Component {
             const src = r[1]
             types.forEach(t => {
                 if (typeInfo[t].src == src || !typeInfo[t].write) return
-                const output = toStateValue(val, typeInfo[t].write)
+                const output = typeInfo[t].write(val)
                 this.setState({ [t]: output })
                 if (src != "value" && valueTypes.includes(t))
                     this.streams[t].push(output)
@@ -190,8 +202,7 @@ export default class DateTime extends React.Component {
     pushDate(date) {
         if (isObject(date) && date.value && date.value.day && date.value.month) {
             this.streams.selected.push("value")
-            this.streams.day.push(date.value.day)
-            this.streams.month.push(date.value.month)
+            this.streams.date.push(moment({ day: date.value.day, month: date.value.month - 1 }).toDate())
         }
     }
 
@@ -213,7 +224,10 @@ export default class DateTime extends React.Component {
     render() {
         return <HalfSection title="Aikaleimat" subtitle={texts.types[this.state.reportTarget]}>
             <Item name="Päivä" style={styles.item}>
-                {this.renderType("date")}
+                <DatePicker name="date" container="inline" value={this.state.date} textFieldStyle={typeInfo.date.style}
+                            autoOk={true} DateTimeFormat={DateTimeFormat} locale={this.state.locale}
+                            hintText={hints.date} inputStyle={typeInfo.date.inputStyle}
+                            hintStyle={typeInfo.date.inputStyle} fullWidth={false} onChange={(a, v) => this.pushValue(v, "date")} />
                 (<TextField type="text" value={this.state.weekDay} style={styles.len2} name="weekDay"
                             hintText="la" inputStyle={styles.center} hintStyle={styles.center} readOnly
                             onFocus={this.focusChanged} />)
