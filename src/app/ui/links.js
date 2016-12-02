@@ -2,13 +2,14 @@ import React from "react"
 import Section from "./component/section"
 import Item from "./component/item"
 import * as Bacon from "baconjs"
-import {isString}  from "../util/util"
+import {isString,isArray}  from "../util/util"
 import {startsWith} from "../util/strings"
 import TextField from "material-ui/TextField"
 import Divider from "material-ui/Divider"
 import AddIcon from "material-ui/svg-icons/av/library-add"
 import DeleteIcon from "material-ui/svg-icons/action/delete"
 import {List,ListItem} from "material-ui/List"
+import * as storage from "../util/storage"
 
 function validate(link) {
     if (!isString(link)) return ""
@@ -16,11 +17,14 @@ function validate(link) {
     return "http://" + link
 }
 
+const linkKey = "links"
+
 export default class Links extends React.Component {
 
     constructor(props) {
         super(props)
-        this.state = { link: "", validatedLink: "", storedLinks: [] }
+        const links = storage.getArray(linkKey)
+        this.state = { link: "", validatedLink: "", storedLinks: isArray(links) ? links : [] }
 
         this.addLink = this.addLink.bind(this)
         this.deleteLink = this.deleteLink.bind(this)
@@ -39,6 +43,7 @@ export default class Links extends React.Component {
         if (link) {
             const links = this.state.storedLinks
             if (!links.includes(link)) links.push(link)
+            storage.setArray(linkKey, links)
             this.setState({ storedLinks: links })
         }
     }
@@ -46,6 +51,7 @@ export default class Links extends React.Component {
     deleteLink(link) {
         if (link) {
             const links = this.state.storedLinks.filter(l => l != link)
+            storage.setArray(linkKey, links)
             this.setState({ storedLinks: links })
         }
     }

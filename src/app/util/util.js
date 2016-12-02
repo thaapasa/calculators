@@ -20,6 +20,10 @@ export function isObject(value) {
     return value !== undefined && value !== null && typeof value == "object"
 }
 
+export function isArray(value) {
+    return Array.isArray(value)
+}
+
 export function noop() {}
 
 export function identity(value) { return value }
