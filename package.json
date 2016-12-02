@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "scripts": {
     "preinstall-disabled": "npm install -g grunt-cli",
-    "build:dev": "NODE_ENV=development node_modules/browserify/bin/cmd.js src/app/main.js -t [ envify --NODE_ENV development ] -t [ babelify --presets [ es2015 react ] ] -o public/js/calculators.js",
+    "build:dev": "NODE_ENV=development node_modules/browserify/bin/cmd.js --debug src/app/main.js -t [ envify --NODE_ENV development ] -t [ babelify --presets [ es2015 react ] ] -o public/js/calculators.js",
     "build:test": "NODE_ENV=development node_modules/browserify/bin/cmd.js src/test/**/*.js -t [ envify --NODE_ENV development ] -t [ babelify --presets [ es2015 react ] ] > test/test.js",
     "build:prod": "NODE_ENV=production node_modules/browserify/bin/cmd.js src/app/main.js -t [ envify purge --NODE_ENV production ] -t [ babelify --presets [ es2015 react ] ] -o public/js/calculators.js",
     "build:minify": "node_modules/uglify-js/bin/uglifyjs --compress -- public/js/calculators.js > public/js/calculators.min.js 2>minify.log",
-    "watch": "node_modules/watchify/bin/cmd.js src/app/main.js -v -t [ babelify --presets [ es2015 react ] ] -o public/js/calculators.js",
+    "watch": "node_modules/watchify/bin/cmd.js src/app/main.js --debug -v -t [ babelify --presets [ es2015 react ] ] -o public/js/calculators.js",
     "test": "node_modules/mocha/bin/mocha",
     "build": "npm run build:dev && npm run build:test",
     "prod": "npm run build:prod && npm run build:minify && script/create-dist.sh"
