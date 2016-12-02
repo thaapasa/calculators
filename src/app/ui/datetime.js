@@ -90,11 +90,6 @@ const valueTypes = ["day", "month", "year", "hour", "minute", "second", "millise
 
 const types = Object.keys(typeInfo)
 
-const nameDaySearchConfig = {
-    text: "text",
-    value: "value"
-}
-
 function toStateValue(mom, writer) {
     if (typeof mom !== "object") return ""
     let s = writer(mom)
