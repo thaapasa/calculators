@@ -17,6 +17,7 @@ const styles = {
     len3: { width: "2.6em" },
     len4: { width: "3.5em" },
     len7: { width: "4.2em" },
+    len10: { width: "6em" },
     center: { textAlign: "center", width: "100%" }
 }
 
@@ -39,6 +40,16 @@ function toIsoWeek(v) {
 function pad(val, len) {
     if (typeof val == "number" && isNaN(val)) return val
     return zeroPad(val, len)
+}
+
+const dateFormat = "D.M.YYYY"
+function readDate(v) {
+    const c = moment(v, dateFormat)
+    return c.isValid() ? { day: c.date(), month: c.month(), year: c.year() } : {}
+}
+
+function writeDate(v) {
+    return v.isValid() ? v.format(dateFormat) : ""
 }
 
 const texts = {
@@ -64,9 +75,7 @@ const typeInfo = {
     weekDay: { write: val => toStateValue(val, v => texts.weekDay[v.isoWeekday()]) },
     javaTime: { read: readJavaTime, src: "javaTime", reportValue: true, write: m => m.isValid() ? m.valueOf() : "", fullWidth: true },
     unixTime: { read: readUnixTime, src: "unixTime", reportValue: true, write: m => m.isValid() ? m.unix() : "", fullWidth: true },
-    day: { read: strToInt, src: "value", write: m => pad(m.date(), 2), style: styles.len2, maxLength: 2, inputStyle: styles.center },
-    month: { read: v => strToInt(v) - 1, src: "value", write: m => pad(m.month() + 1, 2), style: styles.len2, maxLength: 2, inputStyle: styles.center },
-    year: { read: strToInt, src: "value", write: m => m.year(), style: styles.len4, maxLength: 4, inputStyle: styles.center },
+    date: { read: readDate, src: "value", write: writeDate, style: styles.len10, maxLength: 10, inputStyle: styles.center },
     hour: { read: strToInt, src: "value", write: m => pad(m.hour(), 2), style: styles.len2, maxLength: 2, inputStyle: styles.center },
     minute: { read: strToInt, src: "value", write: m => pad(m.minute(), 2), style: styles.len2, maxLength: 2, inputStyle: styles.center },
     second: { read: strToInt, src: "value", write: m => pad(m.second(), 2), style: styles.len2, maxLength: 2, inputStyle: styles.center },
@@ -76,9 +85,7 @@ const typeInfo = {
 }
 
 const hints = {
-    day: "31",
-    month: "12",
-    year: "2016",
+    date: "31.12.2016",
     hour: "10",
     minute: "00",
     second: "00",
@@ -86,7 +93,7 @@ const hints = {
     timeZone: "+02:00"
 }
 
-const valueTypes = ["day", "month", "year", "hour", "minute", "second", "millisecond"]
+const valueTypes = ["date", "hour", "minute", "second", "millisecond"]
 
 const types = Object.keys(typeInfo)
 
@@ -124,14 +131,13 @@ export default class DateTime extends React.Component {
             }
         })
         incoming.value = Bacon.combineTemplate({
-            day: incoming.day,
-            month: incoming.month,
-            year: incoming.year,
+            date: incoming.date,
             hour: incoming.hour,
             minute: incoming.minute,
             second: incoming.second,
             millisecond: incoming.millisecond
-        }).map(v => moment(v))
+        }).map(v => moment({ day: v.date.day, month: v.date.month, year: v.date.year,
+            hour: v.hour, minute: v.minute, second: v.second, millisecond: v.millisecond }))
         // Create stream for new value
         const newVal = Bacon.mergeAll(incoming.direct, incoming.unixTime, incoming.javaTime,
             incoming.iso8601, incoming.iso8601utc,
@@ -207,7 +213,7 @@ export default class DateTime extends React.Component {
     render() {
         return <HalfSection title="Aikaleimat" subtitle={texts.types[this.state.reportTarget]}>
             <Item name="Päivä" style={styles.item}>
-                {this.renderType("day")}.{this.renderType("month")}.{this.renderType("year")}
+                {this.renderType("date")}
                 (<TextField type="text" value={this.state.weekDay} style={styles.len2} name="weekDay"
                             hintText="la" inputStyle={styles.center} hintStyle={styles.center} readOnly
                             onFocus={this.focusChanged} />)
