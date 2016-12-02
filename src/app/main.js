@@ -4,7 +4,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import CalculatorPage from "./ui/page"
 import {fixConsole} from "./util/util"
-import {addBaconSafeLog} from "./util/baconutil"
+import {addBaconSafeLog,addBaconSetStateValue} from "./util/baconutil"
 import injectTapEventPlugin from "react-tap-event-plugin"
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider"
 
@@ -16,6 +16,7 @@ function init() {
     injectTapEventPlugin()
 
     addBaconSafeLog()
+    addBaconSetStateValue()
     renderCalculators()
 }
 

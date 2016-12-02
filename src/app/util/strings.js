@@ -1,4 +1,5 @@
-import { intToHexStr, hexStrToInt } from "../calc/numbers"
+import {intToHexStr, hexStrToInt} from "../calc/numbers"
+import {isString} from "./util"
 
 const zeroPadding = "0000000000000000000000000000000000000"
 
@@ -33,4 +34,11 @@ export function fromHexString(value) {
         }
     }
     return output.join("")
+}
+
+export function startsWith(src, prefix, ignoreCase = false) {
+    if (!isString(src) || !isString(prefix)) return false
+    const s = ignoreCase ? src.toLowerCase() : src
+    const p = ignoreCase ? prefix.toLowerCase() : prefix
+    return s.length >= p.length && s.substr(0, p.length) == p
 }

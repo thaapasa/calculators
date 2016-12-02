@@ -6,6 +6,7 @@ import TextConversion from "./text-conversion"
 import Identifiers from "./identifiers"
 import DateTime from "./datetime"
 import Cryptography from "./cryptography"
+import Links from "./links"
 import TopBar from "./layout/topbar"
 
 export default class CalculatorPage extends React.Component {
@@ -35,6 +36,7 @@ export default class CalculatorPage extends React.Component {
                     <Identifiers onValue={this.showValue} />
                     <Colors onValue={this.showValue} />
                 </div>
+                <Links onValue={this.showValue} />
                 <TextConversion onValue={this.showValue} />
                 <Cryptography onValue={this.showValue} />
             </div>

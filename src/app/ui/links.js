@@ -1,0 +1,72 @@
+import React from "react"
+import Section from "./component/section"
+import Item from "./component/item"
+import * as Bacon from "baconjs"
+import {isString}  from "../util/util"
+import {startsWith} from "../util/strings"
+import TextField from "material-ui/TextField"
+import Divider from "material-ui/Divider"
+import AddIcon from "material-ui/svg-icons/av/library-add"
+import DeleteIcon from "material-ui/svg-icons/action/delete"
+import {List,ListItem} from "material-ui/List"
+
+function validate(link) {
+    if (!isString(link)) return ""
+    if (startsWith(link, "http://", true) || startsWith(link, "https://", true)) return link
+    return "http://" + link
+}
+
+export default class Links extends React.Component {
+
+    constructor(props) {
+        super(props)
+        this.state = { link: "", validatedLink: "", storedLinks: [] }
+
+        this.addLink = this.addLink.bind(this)
+        this.deleteLink = this.deleteLink.bind(this)
+
+        this.linkStream = new Bacon.Bus()
+        const validated = this.linkStream.map(validate)
+        this.linkStream.setState(this, "link")
+        validated.setState(this, "validatedLink")
+    }
+
+    componentDidMount() {
+        this.linkStream.push("")
+    }
+
+    addLink(link) {
+        if (link) {
+            const links = this.state.storedLinks
+            if (!links.includes(link)) links.push(link)
+            this.setState({ storedLinks: links })
+        }
+    }
+
+    deleteLink(link) {
+        if (link) {
+            const links = this.state.storedLinks.filter(l => l != link)
+            this.setState({ storedLinks: links })
+        }
+    }
+
+    render() {
+        return <Section title="Linkit">
+            <Item name="Linkki">
+                <TextField name="link" value={this.state.link} fullWidth={true} onChange={v => this.linkStream.push(v.target.value)} />
+            </Item>
+            <List>
+                <ListItem primaryText={<a href={this.state.validatedLink} title={this.state.validatedLink}>{ this.state.validatedLink }</a>}
+                          leftIcon={<AddIcon onClick={m => this.addLink(this.state.validatedLink)} />}/>
+                <Divider />
+                {
+                    this.state.storedLinks.map(l =>
+                        <ListItem key={l} primaryText={<a href={l} title={l}>{ l }</a>}
+                                  leftIcon={<DeleteIcon onClick={m => this.deleteLink(l)} />}/>)
+                }
+
+            </List>
+        </Section>
+
+    }
+}
