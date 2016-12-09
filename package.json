@@ -1,6 +1,8 @@
 {
   "name": "calculators",
   "version": "0.1.0",
+  "license": "ISC",
+  "description": "Handy calculator tools in an easily-accessible web page",
   "scripts": {
     "preinstall-disabled": "npm install -g grunt-cli",
     "build:dev": "NODE_ENV=development node_modules/browserify/bin/cmd.js --debug src/app/main.js -t [ envify --NODE_ENV development ] -t [ babelify --presets [ es2015 react ] ] -o public/js/calculators.js",
