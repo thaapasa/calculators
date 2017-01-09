@@ -120,9 +120,9 @@ export default class Colors extends React.Component {
     render() {
         return <HalfSection title="Väri" subtitle={texts[this.state.selected]}
                         avatar={<Avatar backgroundColor={this.state.color} style={styles.avatar}>&nbsp;</Avatar>}>
-            <ByteValueSelector name="Red" value={this.state.r} onValue={v => this.setComponent("r", v)} ref="r"/>
-            <ByteValueSelector name="Green" value={this.state.g} onValue={v => this.setComponent("g", v)} ref="g"/>
-            <ByteValueSelector name="Blue" value={this.state.b} onValue={v => this.setComponent("b", v)} ref="b"/>
+            <ByteValueSelector floatingLabel="Red" value={this.state.r} onValue={v => this.setComponent("r", v)} ref="r"/>
+            <ByteValueSelector floatingLabel="Green" value={this.state.g} onValue={v => this.setComponent("g", v)} ref="g"/>
+            <ByteValueSelector floatingLabel="Blue" value={this.state.b} onValue={v => this.setComponent("b", v)} ref="b"/>
             <Item name="Heksa">
                 <TextField hintText="#FFFFFF" name="color-hex" value={this.state.hex} maxLength={7}
                            onChange={e => this.setFromHex(e.target.value)} onFocus={e => this.select("hex")}/>

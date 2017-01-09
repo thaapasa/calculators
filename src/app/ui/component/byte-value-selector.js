@@ -12,7 +12,7 @@ function isValidComp(value) {
 }
 
 function toSliderValue(value) {
-    return isValidComp(value) ? value / 255 : 0
+    return isValidComp(value) ? value : 0
 }
 
 function toDecValue(value) {
@@ -24,17 +24,13 @@ function toHexComp(value) {
 }
 
 function sliderToVal(value) {
-    return Math.round(value * 255)
+    return value
 }
 
 const styles = {
     component: {
         width: "3em",
         marginRight: "1em"
-    },
-    slider: {
-        width: "10em",
-        height: "1em"
     },
     itemValue: {
         alignItems: "flex-start"
@@ -88,13 +84,22 @@ export default class ByteValueSelector extends React.Component {
     }
 
     render() {
-        return <Item name={this.props.name} valueStyle={styles.itemValue}>
-            <TextField hintText="FF" style={styles.component} maxLength="2" value={this.state.hex}
+        const content = <div style={{ display: "flex", padding: "0 0.75em" }}>
+            <TextField floatingLabelText={this.props.floatingLabel} floatingLabelFixed={true} hintText="FF" style={styles.component} maxLength="2" value={this.state.hex}
                        onChange={e => this.pushValue(e.target.value, "hex")}/>
-            <TextField hintText="255" style={styles.component} type="number" maxLength="3" value={this.state.dec}
+            <TextField floatingLabelText={this.props.floatingLabel} floatingLabelFixed={true} hintText="255" style={styles.component} type="number" maxLength="3" value={this.state.dec}
                        onChange={e => this.pushValue(e.target.value, "dec")}/>
-            <Slider value={this.state.slider} style={styles.slider} max={1} min={0}
+            <Slider value={this.state.slider} style={{
+                flexGrow: "1",
+                width: "10em",
+                height: "1em",
+                paddingTop: this.props.floatingLabel ? "0.75em" : "inherit"
+            }} max={255} min={0} step={1}
                     onChange={(e, v) => this.pushValue(v, "slider")}/>
-        </Item>
+        </div>
+
+        return this.props.name ?
+            <Item name={this.props.name} valueStyle={styles.itemValue}>{ content }</Item> :
+            content
     }
 }
