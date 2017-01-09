@@ -25,13 +25,11 @@ const styles = {
 
 function readJavaTime(s) {
     if (typeof s === "string") s = parseInt(s, 10)
-    if (typeof s !== "number" || isNaN(s)) return
     return moment(s)
 }
 
 function readUnixTime(s) {
     if (typeof s === "string") s = parseInt(s, 10)
-    if (typeof s !== "number" || isNaN(s)) return
     return moment.unix(s)
 }
 
