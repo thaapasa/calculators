@@ -11,7 +11,7 @@ import DeleteIcon from "material-ui/svg-icons/action/delete"
 import {List,ListItem} from "material-ui/List"
 import * as storage from "../util/storage"
 
-function validate(link) {
+function validate(link: string) {
     if (!isString(link)) return ""
     if (startsWith(link, "http://", true) || startsWith(link, "https://", true)) return link
     return "http://" + link
@@ -19,7 +19,7 @@ function validate(link) {
 
 const linkKey = "links"
 
-export default class Links extends React.Component {
+export default class Links extends React.Component<any, any> {
 
     constructor(props) {
         super(props)

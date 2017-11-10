@@ -15,9 +15,9 @@ const convertInfo = {
 }
 const converters = Object.keys(convertInfo)
 
-export default class TextConversion extends React.Component {
+export default class TextConversion extends React.Component<any, any> {
 
-    constructor(props) {
+    constructor(props: any) {
         super(props)
         this.state = {
             source: "",

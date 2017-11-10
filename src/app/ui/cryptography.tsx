@@ -7,7 +7,7 @@ import {sha1} from "../calc/sha1"
 import Item from "./component/item"
 import TextField from "material-ui/TextField"
 
-export default class Cryptography extends React.Component {
+export default class Cryptography extends React.Component<any, any> {
 
     constructor(props) {
         super(props)

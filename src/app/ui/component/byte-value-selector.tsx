@@ -7,23 +7,23 @@ import TextField from "material-ui/TextField"
 import Slider from "material-ui/Slider"
 import * as Bacon from "baconjs"
 
-function isValidComp(value) {
-    return isNumber(value) && !isNaN(value) &&  value >= 0 && value <= 255
+function isValidComp(value: number): boolean {
+    return isNumber(value) && !isNaN(value) && value >= 0 && value <= 255
 }
 
-function toSliderValue(value) {
+function toSliderValue(value: number): number {
     return isValidComp(value) ? value : 0
 }
 
-function toDecValue(value) {
-    return isValidComp(value) ? value : ""
+function toDecValue(value: number): string {
+    return isValidComp(value) ? value.toString() : ""
 }
 
-function toHexComp(value) {
+function toHexComp(value: number): string {
     return isValidComp(value) ? zeroPad(intToHexStr(value), 2) : ""
 }
 
-function sliderToVal(value) {
+function sliderToVal(value: number): number {
     return value
 }
 
@@ -46,16 +46,29 @@ const typeInfo = {
     "slider": { read: sliderToVal, write: toSliderValue }
 }
 
-export default class ByteValueSelector extends React.Component {
+interface SelectorState {
+    hex: string;
+    dec: string;
+    parent: string;
+    slider: number;
+}
 
-    constructor(props) {
+export default class ByteValueSelector extends React.Component<any, SelectorState> {
+
+    public state: SelectorState = {
+        hex: "",
+        dec: "",
+        parent: "",
+        slider: 0,
+    }
+    private curSrcStr = new Bacon.Bus<string, any>()
+    private inputStr: any = {}
+
+    constructor(props: any) {
         super(props)
         this.setValue = this.setValue.bind(this)
         this.pushValue = this.pushValue.bind(this)
         this.showValue = this.showValue.bind(this)
-        this.state = {}
-        this.curSrcStr = new Bacon.Bus()
-        this.inputStr = {}
 
         types.forEach(t => {
             this.state[t] = typeInfo[t].write(this.props.value)
@@ -63,39 +76,45 @@ export default class ByteValueSelector extends React.Component {
         })
 
         const newValStr = Bacon.mergeAll(types.map(t => this.inputStr[t].map(typeInfo[t].read)))
-        newValStr.combine(this.curSrcStr, (v, s) => [v, s]).onValue(r => this.showValue(r[0], r[1]))
+        newValStr.combine(this.curSrcStr.toProperty(), (v, s) => [v, s]).onValue(r => this.showValue(r[0], r[1]))
     }
 
-    setValue(value) {
+    setValue(value: string) {
         this.pushValue(value, "parent")
     }
 
-    showValue(val, src) {
+    showValue(val: number, src: string) {
         let ns = {}
         types.filter(t => t != src).forEach(t => ns[t] = typeInfo[t].write(val))
         this.setState(ns)
         if (this.props.onValue && src != "parent") this.props.onValue(val)
     }
 
-    pushValue(value, src) {
-        this.setState({ [src]: value })
+    pushValue(value: string, src: 'hex' | 'parent' | 'dec' | 'slider') {
+        this.setState({ [src]: value } as any)
         this.curSrcStr.push(src)
         this.inputStr[src].push(value)
     }
 
+    pushSliderValue(value: number) {
+        this.setState({ slider: value })
+        this.curSrcStr.push('slider')
+        this.inputStr.slider.push(value)
+    }
+
     render() {
         const content = <div style={{ display: "flex", padding: "0 0.75em" }}>
-            <TextField floatingLabelText={this.props.floatingLabel} floatingLabelFixed={true} hintText="FF" style={styles.component} maxLength="2" value={this.state.hex}
-                       onChange={e => this.pushValue(e.target.value, "hex")}/>
-            <TextField floatingLabelText={this.props.floatingLabel} floatingLabelFixed={true} hintText="255" style={styles.component} type="number" maxLength="3" value={this.state.dec}
-                       onChange={e => this.pushValue(e.target.value, "dec")}/>
+            <TextField floatingLabelText={this.props.floatingLabel} floatingLabelFixed={true} hintText="FF" style={styles.component} maxlength="2" value={this.state.hex}
+                       onChange={(e, t) => this.pushValue(t, "hex")}/>
+            <TextField floatingLabelText={this.props.floatingLabel} floatingLabelFixed={true} hintText="255" style={styles.component} type="number" maxlength="3" value={this.state.dec}
+                       onChange={(e, t) => this.pushValue(t, "dec")}/>
             <Slider value={this.state.slider} style={{
-                flexGrow: "1",
+                flexgrow: "1",
                 width: "10em",
                 height: "1em",
                 paddingTop: this.props.floatingLabel ? "0.75em" : "inherit"
             }} max={255} min={0} step={1}
-                    onChange={(e, v) => this.pushValue(v, "slider")}/>
+                    onChange={(e, v) => this.pushValue(v.toString(), "slider")}/>
         </div>
 
         return this.props.name ?

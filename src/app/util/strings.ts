@@ -3,7 +3,7 @@ import {isString} from "./util"
 
 const zeroPadding = "0000000000000000000000000000000000000"
 
-export function zeroPad(str, len, padRight) {
+export function zeroPad(str: string, len: number, padRight: boolean = false) {
     if (!padRight) {
         return (zeroPadding + str).slice(-len)
     } else {
@@ -11,12 +11,12 @@ export function zeroPad(str, len, padRight) {
     }
 }
 
-export function toUpperCase(value) { return typeof value === "string" ? value.toUpperCase() : undefined }
-export function toLowerCase(value) { return typeof value === "string" ? value.toLowerCase() : undefined }
+export function toUpperCase(value: string) { return typeof value === "string" ? value.toUpperCase() : undefined }
+export function toLowerCase(value: string) { return typeof value === "string" ? value.toLowerCase() : undefined }
 
-export function reverse(value) { return typeof value === "string" ? value.split("").reverse().join("") : undefined }
+export function reverse(value: string) { return typeof value === "string" ? value.split("").reverse().join("") : undefined }
 
-export function toHexString(value) {
+export function toHexString(value: string) {
     if (typeof value !== "string") return
     let output = []
     for (let i = 0; i < value.length; ++i) {

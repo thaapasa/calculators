@@ -7,12 +7,7 @@ const styles = {
     titleText: { marginLeft: "0.7em" }
 }
 
-export default class ToolbarExamplesSimple extends React.Component {
-
-    constructor(props) {
-        super(props)
-    }
-
+export default class CalculatorToolbar extends React.Component<{}, {}> {
     render() {
         return (
             <Toolbar className="topbar">

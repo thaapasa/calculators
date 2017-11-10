@@ -13,9 +13,9 @@ const styles = {
     itemValue: { alignItems: "flex-start" }
 }
 
-export default class SelectableOutput extends React.Component {
+export default class SelectableOutput extends React.Component<any, any> {
 
-    constructor(props) {
+    constructor(props: any) {
         super(props)
         this.setValue = this.setValue.bind(this)
         this.checkUpperCase= this.checkUpperCase.bind(this)

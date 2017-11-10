@@ -1,9 +1,13 @@
 import {isNumber,isString} from "./util"
 
 /* Nimipäivät vuonna 2007 */
-const nameDays = {}
+const nameDays: string[][][] = []
 for (let i = 1; i <= 12; i++) {
-    nameDays[i] = {}
+    const m: string[][] = [];
+    for (let j = i; j <= 31; j++) {
+        m.push([]);
+    }
+    nameDays.push(m)
 }
 
 nameDays[ 1][ 2] = ["Aapeli"]
@@ -374,29 +378,29 @@ nameDays[12][25] = ["Joulupäivä"]
 
 export default nameDays
 
-export function getNameDay(month, day) {
+export function getNameDay(month: number, day: number) {
     return isNumber(month) && isNumber(day) && month >= 1 && month <= 12 && day >= 1 && day <= 31
        && nameDays[month][day] ? nameDays[month][day].join(", ") : undefined
 }
 
 const byName = {
     defined: false,
-    names: [],
+    names: [] as string[],
     nameDays: {}
 }
 
-function canonName(name) {
-    return isString(name) ? name.toLowerCase() : undefined
+function canonName(name: string): string {
+    return name.toLowerCase()
 }
 
-function shownName(name) {
-    return isString(name) && name.length > 0 ? name.substring(0, 1).toUpperCase().concat(name.substring(1)) : undefined
+function shownName(name: string): string {
+    return name.length > 0 ? name.substring(0, 1).toUpperCase().concat(name.substring(1))
 }
 
 function calculateByName() {
     for (let m = 1; m <= 12; ++m) {
         for (let d = 1; d <= 31; ++d) {
-            const names = nameDays[m][d]
+            const names = nameDays[m][d] || [] as string[]
             if (names) {
                 names.map(canonName).forEach(name => {
                     byName.names.push(name)
@@ -409,13 +413,13 @@ function calculateByName() {
     byName.defined = true
 }
 
-export function getNameDayFor(name) {
+export function getNameDayFor(name: string) {
     if (!byName.defined) calculateByName()
     const cn = canonName(name)
     return byName.nameDays[cn]
 }
 
-export function findNameDayFor(name) {
+export function findNameDayFor(name: string) {
     if (!byName.defined) calculateByName()
     const cn = canonName(name)
     const resp = {}

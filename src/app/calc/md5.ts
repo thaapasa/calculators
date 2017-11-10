@@ -26,7 +26,7 @@ export function md5_vm_test()
 /*
  * Calculate the MD5 of an array of little-endian words, and a bit length
  */
-function core_md5(x, len)
+function core_md5(x: any[], len: number)
 {
   /* append padding */
   x[len >> 5] |= 0x80 << ((len) % 32)
@@ -124,23 +124,23 @@ function core_md5(x, len)
 /*
  * These functions implement the four basic operations the algorithm uses.
  */
-function md5_cmn(q, a, b, x, s, t)
+function md5_cmn(q: number, a: number, b: number, x: number, s: number, t: number): number
 {
   return safe_add(bit_rol(safe_add(safe_add(a, q), safe_add(x, t)), s),b)
 }
-function md5_ff(a, b, c, d, x, s, t)
+function md5_ff(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number
 {
   return md5_cmn((b & c) | ((~b) & d), a, b, x, s, t)
 }
-function md5_gg(a, b, c, d, x, s, t)
+function md5_gg(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number
 {
   return md5_cmn((b & d) | (c & (~d)), a, b, x, s, t)
 }
-function md5_hh(a, b, c, d, x, s, t)
+function md5_hh(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number
 {
   return md5_cmn(b ^ c ^ d, a, b, x, s, t)
 }
-function md5_ii(a, b, c, d, x, s, t)
+function md5_ii(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number
 {
   return md5_cmn(c ^ (b | (~d)), a, b, x, s, t)
 }
@@ -148,7 +148,7 @@ function md5_ii(a, b, c, d, x, s, t)
 /*
  * Calculate the HMAC-MD5, of a key and some data
  */
-function core_hmac_md5(key, data)
+function core_hmac_md5(key: string, data: string)
 {
   let bkey = str2binl(key)
   if (bkey.length > 16) bkey = core_md5(bkey, key.length * chrsz)
@@ -168,7 +168,7 @@ function core_hmac_md5(key, data)
  * Add integers, wrapping at 2^32. This uses 16-bit operations internally
  * to work around bugs in some JS interpreters.
  */
-function safe_add(x, y)
+function safe_add(x: number, y: number): number
 {
   const lsw = (x & 0xFFFF) + (y & 0xFFFF)
   const msw = (x >> 16) + (y >> 16) + (lsw >> 16)
@@ -178,7 +178,7 @@ function safe_add(x, y)
 /*
  * Bitwise rotate a 32-bit number to the left.
  */
-function bit_rol(num, cnt)
+function bit_rol(num: number, cnt: number): number
 {
   return (num << cnt) | (num >>> (32 - cnt))
 }
@@ -187,9 +187,9 @@ function bit_rol(num, cnt)
  * Convert a string to an array of little-endian words
  * If chrsz is ASCII, characters >255 have their hi-byte silently ignored.
  */
-function str2binl(str)
+function str2binl(str: string): number[]
 {
-  let bin = []
+  const bin: number[] = []
   const mask = (1 << chrsz) - 1
   for (let i = 0; i < str.length * chrsz; i += chrsz)
     bin[i>>5] |= (str.charCodeAt(i / chrsz) & mask) << (i%32)
@@ -199,7 +199,7 @@ function str2binl(str)
 /*
  * Convert an array of little-endian words to a string
  */
-function binl2str(bin)
+function binl2str(bin: number[]): string
 {
   let str = ""
   let mask = (1 << chrsz) - 1
@@ -213,7 +213,7 @@ const bl2h_hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef"
 /*
  * Convert an array of little-endian words to a hex string.
  */
-function binl2hex(binarray)
+function binl2hex(binarray: number[]): string
 {
   let str = ""
   for (let i = 0; i < binarray.length * 4; i++)
@@ -228,7 +228,7 @@ const bl2b64_tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 /*
  * Convert an array of little-endian words to a base-64 string
  */
-function binl2b64(binarray)
+function binl2b64(binarray: number[]): string
 {
   let str = ""
   for (let i = 0; i < binarray.length * 4; i += 3)
@@ -248,9 +248,9 @@ function binl2b64(binarray)
  * These are the functions you'll usually want to call
  * They take string arguments and return either hex or base-64 encoded strings
  */
-export function hex_md5(s) { return binl2hex(core_md5(str2binl(s), s.length * chrsz));}
-export function b64_md5(s) { return binl2b64(core_md5(str2binl(s), s.length * chrsz));}
-export function str_md5(s) { return binl2str(core_md5(str2binl(s), s.length * chrsz));}
-export function hex_hmac_md5(key, data) { return binl2hex(core_hmac_md5(key, data)); }
-export function b64_hmac_md5(key, data) { return binl2b64(core_hmac_md5(key, data)); }
-export function str_hmac_md5(key, data) { return binl2str(core_hmac_md5(key, data)); }
+export function hex_md5(s: string) { return binl2hex(core_md5(str2binl(s), s.length * chrsz));}
+export function b64_md5(s: string) { return binl2b64(core_md5(str2binl(s), s.length * chrsz));}
+export function str_md5(s: string) { return binl2str(core_md5(str2binl(s), s.length * chrsz));}
+export function hex_hmac_md5(key: string, data: string) { return binl2hex(core_hmac_md5(key, data)); }
+export function b64_hmac_md5(key: string, data: string) { return binl2b64(core_hmac_md5(key, data)); }
+export function str_hmac_md5(key: string, data: string) { return binl2str(core_hmac_md5(key, data)); }

@@ -10,21 +10,36 @@ const styles = {
     itemValue: { alignItems: "flex-start" }
 }
 
-export default class CheckValue extends React.Component {
+interface CheckProps {
+    width: string
+}
 
-    constructor(props) {
+interface CheckState {
+    input: string,
+    value: string,
+    checkValue: string
+}
+
+export default class CheckValue extends React.Component<CheckProps, CheckState> {
+
+    public state: CheckState = {
+        input: "",
+        value: "",
+        checkValue: ""
+    };
+
+    private inputStyle = {
+        width: ""
+    };
+
+    constructor(props: CheckProps) {
         super(props)
-        this.inputStyle = {}
         if (this.props.width)
             this.inputStyle.width = this.props.width
 
         this.generate = this.generate.bind(this)
         this.inputChanged = this.inputChanged.bind(this)
-        this.state = {
-            input: "",
-            value: "",
-            checkValue: ""
-        }
+        this.state = 
     }
 
     componentDidMount() {

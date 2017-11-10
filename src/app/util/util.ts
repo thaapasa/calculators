@@ -1,43 +1,43 @@
 // Returns a random integer between min (included) and max (excluded)
 // Using Math.round() will give you a non-uniform distribution!
-export function getRandomInt(min, max) {
+export function getRandomInt(min: number, max: number) {
     return Math.floor(Math.random() * (max - min)) + min
 }
 
-export function isDefined(value) {
+export function isDefined(value: any) {
     return value !== undefined && value !== null
 }
 
-export function isNumber(value) {
+export function isNumber(value: any) {
     return value !== undefined && value !== null && typeof value == "number" && !isNaN(value)
 }
 
-export function isString(value) {
+export function isString(value: any) {
     return value !== undefined && value !== null && typeof value == "string"
 }
 
-export function isObject(value) {
+export function isObject(value: any) {
     return value !== undefined && value !== null && typeof value == "object"
 }
 
-export function isArray(value) {
+export function isArray(value: any) {
     return Array.isArray(value)
 }
 
 export function noop() {}
 
-export function identity(value) { return value }
+export function identity(value: any) { return value }
 
-export function nonEmpty(value) {
+export function nonEmpty(value: any) {
     return value && value.length && value.length > 0
 }
 
-export function combine(a, b) {
+export function combine(a: any, b: any): string {
     return `${a}${b}`
 }
 
-export function combineWith(separator) {
-    return (a, b) => `${a}${separator}${b}`
+export function combineWith(separator: string) {
+    return (a: any, b: any) => `${a}${separator}${b}`
 }
 
 const consoleMethods = [
@@ -49,16 +49,14 @@ const consoleMethods = [
 
 // Avoid `console` errors in browsers that lack a console.
 export function fixConsole() {
-
-    let length = consoleMethods.length
-    let console = (window.console = window.console || {})
-
-    while (length--) {
-        const method = consoleMethods[length]
-
-        // Only stub undefined methods.
-        if (!console[method]) {
-            console[method] = noop
-        }
+    if (window.console === undefined) {
+        (window as any).console = {}
     }
+    const c = window.console
+    consoleMethods.forEach(method => {
+        // Only stub undefined methods.
+        if (!c[method]) {
+            c[method] = noop
+        }
+    })
 }

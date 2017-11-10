@@ -4,7 +4,7 @@ import log from "../util/log"
 import TextField from "material-ui/TextField"
 import {ToolbarGroup} from "material-ui/Toolbar"
 
-export default class LastValue extends React.Component {
+export default class LastValue extends React.Component<any, any> {
 
     constructor(props) {
         super(props)

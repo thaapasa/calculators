@@ -26,7 +26,7 @@ export function strToInt(v) { return decimalStrToInt(v) }
 
 export function intToStr(value) { return isDefined(value) ? value.toString() : undefined }
 
-export function intToHexStr(value) {
+export function intToHexStr(value): string {
     return intToStrBPC(value, 4)
 }
 
