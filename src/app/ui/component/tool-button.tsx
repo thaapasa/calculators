@@ -1,4 +1,4 @@
-import React from "react"
+import * as React from "react"
 import FontIcon from "material-ui/FontIcon"
 import {red500,lightBlue600} from "material-ui/styles/colors"
 import IconButton from "material-ui/IconButton"

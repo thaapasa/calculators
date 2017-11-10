@@ -1,4 +1,4 @@
-import React from "react"
+import * as React from "react"
 import Section from "./component/section"
 import TextField from "material-ui/TextField"
 import * as Bacon from "baconjs"

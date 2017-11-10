@@ -1,4 +1,4 @@
-import React from "react"
+import * as React from "react"
 import {Card, CardHeader, CardText} from "material-ui/Card"
 import Divider from "material-ui/Divider"
 

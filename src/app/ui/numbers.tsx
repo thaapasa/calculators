@@ -1,4 +1,4 @@
-import React from "react"
+import * as React from "react"
 import {HalfSection} from "./component/section"
 import Item from "./component/item"
 import * as Bacon from "baconjs"

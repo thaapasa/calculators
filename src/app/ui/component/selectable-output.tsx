@@ -1,4 +1,4 @@
-import React from "react"
+import * as React from "react"
 import * as Bacon from "baconjs"
 import {identity} from "../../util/util"
 import {toUpperCase} from "../../util/strings"
