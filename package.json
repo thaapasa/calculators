@@ -5,15 +5,10 @@
   "description": "Handy calculator tools in an easily-accessible web page",
   "homepage": "http://laskurit.pomeranssi.fi",
   "scripts": {
-    "preinstall-disabled": "npm install -g grunt-cli",
-    "build:dev": "NODE_ENV=development node_modules/browserify/bin/cmd.js --debug src/app/main.js -t [ envify --NODE_ENV development ] -t [ babelify --presets [ es2015 react ] ] -o public/js/calculators.js",
-    "build:test": "NODE_ENV=development node_modules/browserify/bin/cmd.js src/test/**/*.js -t [ envify --NODE_ENV development ] -t [ babelify --presets [ es2015 react ] ] > test/test.js",
-    "build:prod": "NODE_ENV=production node_modules/browserify/bin/cmd.js src/app/main.js -t [ envify purge --NODE_ENV production ] -t [ babelify --presets [ es2015 react ] ] -o public/js/calculators.js",
-    "build:minify": "node_modules/uglify-js/bin/uglifyjs --compress -- public/js/calculators.js > public/js/calculators.min.js 2>minify.log",
-    "watch": "node_modules/watchify/bin/cmd.js src/app/main.js --debug -v -t [ babelify --presets [ es2015 react ] ] -o public/js/calculators.js",
-    "test": "node_modules/mocha/bin/mocha",
-    "build": "npm run build:dev && npm run build:test",
-    "prod": "npm run build:prod && npm run build:minify && script/create-dist.sh"
+    "start": "react-scripts-ts start",
+    "build": "react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom",
+    "eject": "react-scripts-ts eject"
   },
   "repository": {
     "type": "git",
@@ -45,6 +40,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "minimatch": "^3.0.3",
     "mocha": "^3.1.2",
+    "react-scripts-ts": "^2.8.0",
     "uglify-js": "^2.7.4",
     "watchify": "^3.7.0"
   }
