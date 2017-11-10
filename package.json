@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/thaapasa/calculators/"
+    "url": "https://github.com/thaapasa/calculators/"
   },
   "dependencies": {
     "baconjs": "~0.7.88",
