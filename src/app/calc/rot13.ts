@@ -3,7 +3,7 @@ const A = "A".charCodeAt(0)
 const z = "z".charCodeAt(0)
 const Z = "Z".charCodeAt(0)
 
-export function rotN(input, n) {
+export function rotN(input: string, n: number): string | undefined {
     if (input == null || input == undefined || typeof input !== "string")
         return
 
@@ -17,6 +17,6 @@ export function rotN(input, n) {
     return output.join("")
 }
 
-export default function rot13(input) {
+export default function rot13(input: string): string | undefined {
     return rotN(input, 13)
 }

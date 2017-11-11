@@ -12,9 +12,9 @@ const HEX_CHARS = '0123456789abcdef'.split('')
 const EXTRA = [-2147483648, 8388608, 32768, 128]
 const SHIFT = [24, 16, 8, 0]
 
-let blocks = []
+let blocks: number[] = []
 
-export function sha1(message) {
+export function sha1(message: any): string {
     const notString = typeof(message) != 'string'
 
     if (notString && message.constructor == ArrayBuffer) {

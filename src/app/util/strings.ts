@@ -20,12 +20,12 @@ export function toHexString(value: string) {
     if (typeof value !== "string") return
     let output = []
     for (let i = 0; i < value.length; ++i) {
-        output.push(zeroPad(intToHexStr(value.charCodeAt(i)), 2))
+        output.push(zeroPad(intToHexStr(value.charCodeAt(i)) || '', 2))
     }
     return output.join("")
 }
 
-export function fromHexString(value) {
+export function fromHexString(value: string): string | undefined {
     if (typeof value !== "string") return
     let output = []
     for (let i = 0; i < value.length; i += 2) {
@@ -36,7 +36,7 @@ export function fromHexString(value) {
     return output.join("")
 }
 
-export function startsWith(src, prefix, ignoreCase = false) {
+export function startsWith(src: string, prefix: string, ignoreCase: boolean = false): boolean {
     if (!isString(src) || !isString(prefix)) return false
     const s = ignoreCase ? src.toLowerCase() : src
     const p = ignoreCase ? prefix.toLowerCase() : prefix

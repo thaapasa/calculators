@@ -12,6 +12,13 @@ const styles = {
 
 interface CheckProps {
     width: string
+    check: any
+    combine: any
+    name: string
+    id: any
+    maxLength: number
+    generate: () => any
+    onValue: (x: any) => any
 }
 
 interface CheckState {
@@ -21,6 +28,8 @@ interface CheckState {
 }
 
 export default class CheckValue extends React.Component<CheckProps, CheckState> {
+
+    private check: any
 
     public state: CheckState = {
         input: "",
@@ -32,6 +41,8 @@ export default class CheckValue extends React.Component<CheckProps, CheckState> 
         width: ""
     };
 
+    private inputStream: any = null
+
     constructor(props: CheckProps) {
         super(props)
         if (this.props.width)
@@ -39,7 +50,6 @@ export default class CheckValue extends React.Component<CheckProps, CheckState> 
 
         this.generate = this.generate.bind(this)
         this.inputChanged = this.inputChanged.bind(this)
-        this.state = 
     }
 
     componentDidMount() {
@@ -47,27 +57,27 @@ export default class CheckValue extends React.Component<CheckProps, CheckState> 
     }
 
     generate() {
-        const generated = this.props.generate().toString()
+        const generated: string = this.props.generate().toString()
         this.setState({ input: generated })
         this.inputStream.push(generated)
     }
 
-    inputChanged(event) {
+    inputChanged(event: any) {
         const inp = event.target.value
         this.setState({ input: inp })
         this.inputStream.push(inp)
     }
 
-    streamToCheck(calculateCheck, combiner = util.combineWith("")) {
+    streamToCheck(calculateCheck: any, combiner = util.combineWith("")) {
         this.inputStream = new Bacon.Bus()
         const checkValue = this.inputStream.map(calculateCheck)
-        checkValue.onValue((value) => {
+        checkValue.onValue((value: any) => {
             this.setState({ checkValue: (value !== undefined) ? value : "" })
         })
         checkValue
-            .combine(this.inputStream, (chk, inp) => (chk !== undefined) && combiner(inp, chk))
+            .combine(this.inputStream, (chk: any, inp: any) => (chk !== undefined) && combiner(inp, chk))
             .filter(util.nonEmpty)
-            .onValue((v) => {
+            .onValue((v: any) => {
                 this.setState({ value: v || "" })
                 this.props.onValue && this.props.onValue(v)
             })
@@ -75,11 +85,11 @@ export default class CheckValue extends React.Component<CheckProps, CheckState> 
 
     render() {
         return <Item name={this.props.name} valueStyle={styles.itemValue}>
-            <GenerateButton id={`${this.props.id}-generate`} onClick={this.generate} title="Luo uusi" />
+            <GenerateButton onClick={this.generate} title="Luo uusi" />
             <TextField type="text" id={`${this.props.id}-input`} onChange={this.inputChanged}
-                   style={this.inputStyle} maxLength={this.props.maxLength} value={this.state.input} />
+                   style={this.inputStyle} value={this.state.input} />
             <TextField id={`${this.props.id}-check`} ref={(i) => this.check = i}
-                   className="letter" readOnly value={this.state.checkValue} style={styles.check} />
+                   className="letter" read-only value={this.state.checkValue} style={styles.check} />
             <input type="hidden" id={`${this.props.id}-value`} value={this.state.value} />
         </Item>
     }

@@ -4,7 +4,7 @@
 
 const keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
 
-export function encode(input) {
+export function encode(input: string) {
     let output = ""
     let chr1, chr2, chr3
     let enc1, enc2, enc3, enc4
@@ -33,7 +33,7 @@ export function encode(input) {
     return output
 }
 
-export function decode(input) {
+export function decode(input: string) {
     let output = ""
     let chr1, chr2, chr3
     let enc1, enc2, enc3, enc4

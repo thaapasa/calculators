@@ -8,7 +8,7 @@ const hetuChecks = ['A', 'B', 'C', 'D', 'E', 'F', 'H', 'J', 'K',
 
 const hetuSeparators = ['A', '-', '+']
 
-export function check(hetu) {
+export function check(hetu: string) {
     if (hetu.length != 10) {
         return
     }
@@ -38,5 +38,5 @@ export function generate() {
         check = "A"
     }
     const counter = getRandomInt(1, 999)
-    return zeroPad(day, 2) + zeroPad(month, 2) + zeroPad(year, 2) + check + zeroPad(counter, 3)
+    return zeroPad(day.toString(), 2) + zeroPad(month.toString(), 2) + zeroPad(year.toString(), 2) + check + zeroPad(counter.toString(), 3)
 }

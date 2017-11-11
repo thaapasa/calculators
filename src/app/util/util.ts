@@ -1,34 +1,34 @@
 // Returns a random integer between min (included) and max (excluded)
 // Using Math.round() will give you a non-uniform distribution!
-export function getRandomInt(min: number, max: number) {
+export function getRandomInt(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min)) + min
 }
 
-export function isDefined(value: any) {
+export function isDefined(value: any): boolean {
     return value !== undefined && value !== null
 }
 
-export function isNumber(value: any) {
+export function isNumber(value: any): boolean {
     return value !== undefined && value !== null && typeof value == "number" && !isNaN(value)
 }
 
-export function isString(value: any) {
+export function isString(value: any): boolean {
     return value !== undefined && value !== null && typeof value == "string"
 }
 
-export function isObject(value: any) {
+export function isObject(value: any): boolean {
     return value !== undefined && value !== null && typeof value == "object"
 }
 
-export function isArray(value: any) {
+export function isArray(value: any): boolean {
     return Array.isArray(value)
 }
 
-export function noop() {}
+export function noop(): void {}
 
-export function identity(value: any) { return value }
+export function identity<T>(value: T): T { return value }
 
-export function nonEmpty(value: any) {
+export function nonEmpty(value: any): boolean {
     return value && value.length && value.length > 0
 }
 

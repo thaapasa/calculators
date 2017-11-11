@@ -7,9 +7,19 @@ import {sha1} from "../calc/sha1"
 import Item from "./component/item"
 import TextField from "material-ui/TextField"
 
-export default class Cryptography extends React.Component<any, any> {
+interface CryptographyProps {
+    onValue: (x: any) => any
+}
 
-    constructor(props) {
+export default class Cryptography extends React.Component<CryptographyProps, any> {
+
+    private cryptoList: any
+    private cryptos: any
+    private default: any
+    private inputStream: any
+    private cryptoSelectStream: any
+
+    constructor(props: CryptographyProps) {
         super(props)
         this.inputChanged = this.inputChanged.bind(this)
         this.cryptoList = [
@@ -17,7 +27,7 @@ export default class Cryptography extends React.Component<any, any> {
             { name: "SHA-1", calculate: sha1, code: "sha1" }
         ]
         this.cryptos = {}
-        this.cryptoList.forEach(c => this.cryptos[c.code] = c)
+        this.cryptoList.forEach((c: any) => this.cryptos[c.code] = c)
         this.default = this.cryptoList[0].code
 
         this.state = { input: "", selected: this.default }
@@ -26,8 +36,8 @@ export default class Cryptography extends React.Component<any, any> {
     componentDidMount() {
         this.inputStream = new Bacon.Bus()
         this.cryptoSelectStream = new Bacon.Bus()
-        this.inputStream.onValue(v => this.cryptoList.forEach(c => this.refs[c.code].setValue(v)))
-        this.cryptoList.forEach(l => {
+        this.inputStream.onValue((v: any) => this.cryptoList.forEach((c: any) => this.refs[c.code].setValue(v)))
+        this.cryptoList.forEach((l: any) => {
             l.valueStream = new Bacon.Bus()
             const prop = l.valueStream.toProperty("")
             prop.combine(

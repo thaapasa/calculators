@@ -28,12 +28,12 @@ const types = {
 }
 const typeKeys = Object.keys(types)
 
-function intToUnicodeStr(value) {
+function intToUnicodeStr(value: number): string {
     const str = numbers.intToHexStr(value)
     return typeof str == "string" ? "U+" + zeroPad(str, 4) : ""
 }
 
-function intToHTMLCode(value) {
+function intToHTMLCode(value: number): string {
     const str = numbers.intToStr(value)
     return typeof str == "string" ? `&#${str};` : ""
 }

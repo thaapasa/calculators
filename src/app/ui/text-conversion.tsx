@@ -17,6 +17,8 @@ const converters = Object.keys(convertInfo)
 
 export default class TextConversion extends React.Component<any, any> {
 
+    private streams: any
+
     constructor(props: any) {
         super(props)
         this.state = {
@@ -32,13 +34,13 @@ export default class TextConversion extends React.Component<any, any> {
             target: new Bacon.Bus(),
             selected: new Bacon.Bus()
         }
-        this.streams.source.onValue(v => this.setState({ source: v }))
-        this.streams.target.onValue(v => this.setState({ target: v }))
+        this.streams.source.onValue((v: any) => this.setState({ source: v }))
+        this.streams.target.onValue((v: any) => this.setState({ target: v }))
         const selected = this.streams.selected.skipDuplicates()
         selected.onValue(v => this.setState({ selected: v }))
-        const encStr = this.streams.source.combine(selected, (val, c) => (convertInfo[c].encode)(val))
+        const encStr = this.streams.source.combine(selected, (val: any, c: any) => (convertInfo[c].encode)(val))
         encStr.onValue(v => this.setState({ target: v }))
-        const decStr = this.streams.target.combine(selected, (val, c) => (convertInfo[c].decode)(val))
+        const decStr = this.streams.target.combine(selected, (val: any, c: any) => (convertInfo[c].decode)(val))
         decStr.onValue(v => this.setState({ source: v }))
         Bacon.mergeAll(encStr, decStr).onValue(v => this.props.onValue && this.props.onValue(v))
         this.streams.selected.push(converters[0])
@@ -46,12 +48,12 @@ export default class TextConversion extends React.Component<any, any> {
 
     render() {
         return <Section title="Tekstimuunnokset" subtitle={convertInfo[this.state.selected].name}>
-            <TextField onChange={e => this.streams.source.push(e.target.value)} fullWidth={true} multiLine={true}
+            <TextField onChange={(e, v) => this.streams.source.push(v)} fullWidth={true} multiLine={true}
                        name="source" value={this.state.source} />
             <SelectField value={this.state.selected} onChange={(e, i, v) => this.streams.selected.push(v)} floatingLabelText="Konversio">
                 { converters.map(c => <MenuItem value={c} key={c} primaryText={convertInfo[c].name} />) }
             </SelectField>
-            <TextField onChange={e => this.streams.target.push(e.target.value)} fullWidth={true} multiLine={true}
+            <TextField onChange={(e, v) => this.streams.target.push(v)} fullWidth={true} multiLine={true}
                        name="target" value={this.state.target} />
         </Section>
 

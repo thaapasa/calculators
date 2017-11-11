@@ -15,6 +15,9 @@ const styles = {
 
 export default class SelectableOutput extends React.Component<any, any> {
 
+    private inputStream: any
+    private ucStream: any
+
     constructor(props: any) {
         super(props)
         this.setValue = this.setValue.bind(this)
@@ -29,28 +32,28 @@ export default class SelectableOutput extends React.Component<any, any> {
         this.streamCalculation(this.inputStream, this.props.calculate, this.ucIfChecked(this.ucStream.toProperty(false)))
     }
 
-    setValue(val) {
+    setValue(val: any) {
         this.inputStream.push(val)
     }
 
-    streamCalculation(inputStream, calculation, calcMapper) {
+    streamCalculation(inputStream: any, calculation: any, calcMapper: any) {
         let calculated = inputStream.map(calculation)
         if (calcMapper) {
-            calculated = calculated.combine(calcMapper, (val, m) => m(val))
+            calculated = calculated.combine(calcMapper, (val: any, m: any) => m(val))
         }
-        calculated.onValue(v => {
+        calculated.onValue((v: any) => {
             this.setState( { value: v } )
             if (this.props.onValue) this.props.onValue(v)
         })
     }
 
-    checkUpperCase(event) {
+    checkUpperCase(event: any) {
         this.ucStream.push(event.target.checked)
         this.props.onSelect && this.props.onSelect(event)
     }
 
-    ucIfChecked(stream) {
-        return stream.map((checked) => checked ? toUpperCase : identity)
+    ucIfChecked(stream: any) {
+        return stream.map((checked: any) => checked ? toUpperCase : identity)
     }
 
     render() {

@@ -1,4 +1,4 @@
-import React from "react"
+import * as React from "react"
 import Section from "./component/section"
 import Item from "./component/item"
 import * as Bacon from "baconjs"
@@ -19,9 +19,11 @@ function validate(link: string) {
 
 const linkKey = "links"
 
-export default class Links extends React.Component<any, any> {
+export default class Links extends React.Component<{}, any> {
 
-    constructor(props) {
+    private linkStream: any
+
+    constructor(props: {}) {
         super(props)
         const links = storage.getArray(linkKey)
         this.state = { link: "", validatedLink: "", storedLinks: isArray(links) ? links : [] }
@@ -39,7 +41,7 @@ export default class Links extends React.Component<any, any> {
         this.linkStream.push("")
     }
 
-    addLink(link) {
+    addLink(link: string) {
         if (link) {
             const links = this.state.storedLinks
             if (!links.includes(link)) links.push(link)
@@ -48,9 +50,9 @@ export default class Links extends React.Component<any, any> {
         }
     }
 
-    deleteLink(link) {
+    deleteLink(link: string) {
         if (link) {
-            const links = this.state.storedLinks.filter(l => l != link)
+            const links = this.state.storedLinks.filter((l: string) => l != link)
             storage.setArray(linkKey, links)
             this.setState({ storedLinks: links })
         }
@@ -59,14 +61,14 @@ export default class Links extends React.Component<any, any> {
     render() {
         return <Section title="Linkit">
             <Item name="Linkki">
-                <TextField name="link" value={this.state.link} fullWidth={true} onChange={v => this.linkStream.push(v.target.value)} />
+                <TextField name="link" value={this.state.link} fullWidth={true} onChange={(e, v) => this.linkStream.push(v)} />
             </Item>
             <List>
                 <ListItem primaryText={<a href={this.state.validatedLink} title={this.state.validatedLink}>{ this.state.validatedLink }</a>}
                           leftIcon={<AddIcon onClick={m => this.addLink(this.state.validatedLink)} />}/>
                 <Divider />
                 {
-                    this.state.storedLinks.map(l =>
+                    this.state.storedLinks.map((l: any) =>
                         <ListItem key={l} primaryText={<a href={l} title={l}>{ l }</a>}
                                   leftIcon={<DeleteIcon onClick={m => this.deleteLink(l)} />}/>)
                 }

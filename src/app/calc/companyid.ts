@@ -5,7 +5,7 @@ import {getRandomInt} from "../util/util"
 /* ------------------------ */
 const companyIdWeights = [7, 9, 10, 5, 8, 4, 2]
 
-export function check(value) {
+export function check(value: string) {
     if (value.length != 7) {
         return
     }
@@ -20,6 +20,6 @@ export function check(value) {
         (div == 1 ? "-" : 11 - div)
 }
 
-export function generate() {
-    return zeroPad(getRandomInt(1, 9999999), 7)
+export function generate(): string {
+    return zeroPad(getRandomInt(1, 9999999).toString(), 7)
 }

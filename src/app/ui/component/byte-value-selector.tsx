@@ -7,7 +7,7 @@ import TextField from "material-ui/TextField"
 import Slider from "material-ui/Slider"
 import * as Bacon from "baconjs"
 
-function isValidComp(value: number): boolean {
+function isValidComp(value: number): value is number {
     return isNumber(value) && !isNaN(value) && value >= 0 && value <= 255
 }
 
@@ -91,7 +91,7 @@ export default class ByteValueSelector extends React.Component<any, SelectorStat
     }
 
     pushValue(value: string, src: 'hex' | 'parent' | 'dec' | 'slider') {
-        this.setState({ [src]: value } as any)
+        this.setState(src, value)
         this.curSrcStr.push(src)
         this.inputStr[src].push(value)
     }

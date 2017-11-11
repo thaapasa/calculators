@@ -8,7 +8,7 @@ export function generate() {
 
 const BANK_CHECK_WEIGHTS = [7, 3, 1]
 
-export function check(value) {
+export function check(value: string): number | undefined {
     if (value == undefined || value == null || value.length < 1) {
         return
     }
