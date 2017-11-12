@@ -12,7 +12,11 @@ function isValidComp(value: number): value is number {
 }
 
 function toSliderValue(value: number): number {
+<<<<<<< d0d89bc2be736b846ba9a2c2d60b2460cc931061
     return isValidComp(value) ? value : 0
+=======
+    return isValidComp(value) ? value / 255 : 0
+>>>>>>> Fix slider typings a bit
 }
 
 function toDecValue(value: number): string {
@@ -43,7 +47,7 @@ const typeInfo = {
     "parent": { read: identity, write: identity },
     "dec": { read: strToInt, write: toDecValue },
     "hex": { read: hexStrToInt, write: toHexComp },
-    "slider": { read: sliderToVal, write: toSliderValue }
+    "slider": { read: sliderToVal, write: toSliderValue },
 }
 
 interface SelectorState {
@@ -114,7 +118,7 @@ export default class ByteValueSelector extends React.Component<any, any> {
                 height: "1em",
                 paddingTop: this.props.floatingLabel ? "0.75em" : "inherit"
             }} max={255} min={0} step={1}
-                    onChange={(e, v) => this.pushValue(v.toString(), "slider")}/>
+                    onChange={(e, v: number) => this.pushSliderValue(v)}/>
         </div>
 
         return this.props.name ?
