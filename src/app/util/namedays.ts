@@ -1,10 +1,10 @@
-import {isNumber,isString} from "./util"
+import {isNumber} from "./util"
 
 /* Nimipäivät vuonna 2007 */
 const nameDays: string[][][] = []
-for (let i = 1; i <= 12; i++) {
+for (let i = 0; i <= 12; i++) {
     const m: string[][] = [];
-    for (let j = i; j <= 31; j++) {
+    for (let j = 0; j <= 31; j++) {
         m.push([]);
     }
     nameDays.push(m)
@@ -390,11 +390,11 @@ const byName = {
 }
 
 function canonName(name: string): string {
-    return name.toLowerCase()
+    return name.toLowerCase();
 }
 
 function shownName(name: string): string {
-    return name.length > 0 ? name.substring(0, 1).toUpperCase().concat(name.substring(1))
+    return name.length > 0 ? name.substring(0, 1).toUpperCase().concat(name.substring(1)) : "";
 }
 
 function calculateByName() {

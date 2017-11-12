@@ -53,7 +53,7 @@ interface SelectorState {
     slider: number;
 }
 
-export default class ByteValueSelector extends React.Component<any, SelectorState> {
+export default class ByteValueSelector extends React.Component<any, any> {
 
     public state: SelectorState = {
         hex: "",
@@ -91,7 +91,7 @@ export default class ByteValueSelector extends React.Component<any, SelectorStat
     }
 
     pushValue(value: string, src: 'hex' | 'parent' | 'dec' | 'slider') {
-        this.setState(src, value)
+        this.setState({ [src]: value })
         this.curSrcStr.push(src)
         this.inputStr[src].push(value)
     }

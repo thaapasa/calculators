@@ -9,17 +9,17 @@ import Cryptography from "./cryptography"
 import Links from "./links"
 import TopBar from "./layout/topbar"
 
-export default class CalculatorPage extends React.Component {
+export default class CalculatorPage extends React.Component<{}, any> {
 
-    constructor(props) {
+    constructor(props: {}) {
         super(props)
         console.log("Initializing calculators")
 
         this.showValue = this.showValue.bind(this)
     }
 
-    showValue(value) {
-        this.refs.lastValue.setValue(value)
+    showValue(value: any) {
+        (this.refs.lastValue as any).setValue(value)
     }
 
     render() {
@@ -36,7 +36,7 @@ export default class CalculatorPage extends React.Component {
                     <Identifiers onValue={this.showValue} />
                     <Colors onValue={this.showValue} />
                 </div>
-                <Links onValue={this.showValue} />
+                <Links />
                 <TextConversion onValue={this.showValue} />
                 <Cryptography onValue={this.showValue} />
             </div>

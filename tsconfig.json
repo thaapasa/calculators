@@ -27,5 +27,6 @@
     ],
     "types": [
         "typePatches"
-    ]
+    ],
+    "typeRoots": ["./typings"]
 }

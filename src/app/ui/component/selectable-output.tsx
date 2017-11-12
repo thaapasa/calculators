@@ -62,7 +62,7 @@ export default class SelectableOutput extends React.Component<any, any> {
             <FontIcon className="material-icons" color={red500}>text_format</FontIcon>
         } onCheck={this.checkUpperCase}/>} valueStyle={styles.itemValue} nameStyle={styles.itemName}>
             <TextField type="text" floatingLabelText={this.props.label} className="wide" value={this.state.value}
-                       fullWidth={true} readOnly name="output" onFocus={this.props.onSelect}/>
+                       fullWidth={true} read-only name="output" onFocus={this.props.onSelect}/>
         </Item>
     }
 }

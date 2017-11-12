@@ -36,24 +36,24 @@ export default class Cryptography extends React.Component<CryptographyProps, any
     componentDidMount() {
         this.inputStream = new Bacon.Bus()
         this.cryptoSelectStream = new Bacon.Bus()
-        this.inputStream.onValue((v: any) => this.cryptoList.forEach((c: any) => this.refs[c.code].setValue(v)))
+        this.inputStream.onValue((v: any) => this.cryptoList.forEach((c: any) => (this.refs[c.code] as SelectableOutput).setValue(v)))
         this.cryptoList.forEach((l: any) => {
             l.valueStream = new Bacon.Bus()
             const prop = l.valueStream.toProperty("")
             prop.combine(
-                this.cryptoSelectStream.toProperty(this.default).map(c => c == l.code),
-                (val, match) => [val, match])
-                    .onValue(x => x[1] && this.props.onValue(x[0]))
+                this.cryptoSelectStream.toProperty(this.default).map((c: any) => c == l.code),
+                (val: any, match: any) => [val, match])
+                    .onValue((x: any) => x[1] && this.props.onValue(x[0]))
         })
     }
 
-    inputChanged(event) {
+    inputChanged(event: any) {
         const inp = event.target.value
         this.setState({ input: inp })
         this.inputStream.push(inp)
     }
 
-    selectCrypto(code) {
+    selectCrypto(code: any) {
         this.setState({ selected: code })
         this.cryptoSelectStream.push(code)
     }
@@ -64,9 +64,9 @@ export default class Cryptography extends React.Component<CryptographyProps, any
                 <TextField onChange={this.inputChanged} fullWidth={true} multiLine={true} name="input" />
             </Item>
             {
-                this.cryptoList.map(c =>
+                this.cryptoList.map((c: any) =>
                     <SelectableOutput ref={c.code} type={c.code} label={c.name} calculate={c.calculate}
-                                      onValue={v => c.valueStream.push(v)} key={c.code} onSelect={(e) => this.selectCrypto(c.code)} />
+                                      onValue={(v: any) => c.valueStream.push(v)} key={c.code} onSelect={() => this.selectCrypto(c.code)} />
                 )
             }
         </Section>

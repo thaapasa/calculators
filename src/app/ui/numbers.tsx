@@ -38,40 +38,49 @@ function intToHTMLCode(value: number): string {
     return typeof str == "string" ? `&#${str};` : ""
 }
 
-export default class Numbers extends React.Component {
+interface NumbersProps {
+    onValue: (x: any) => any
+}
 
-    constructor(props) {
+export default class Numbers extends React.Component<NumbersProps, any> {
+
+    public state: any = { selected: "decimal", unicode: "" };
+
+    private currentInput: any
+    private inputStream: any
+    private selectedSrcStr: any
+
+    constructor(props: NumbersProps) {
         super(props)
         this.inputChanged = this.inputChanged.bind(this)
         this.selectSrc = this.selectSrc.bind(this)
-        this.state = { selected: "decimal", unicode: "" }
         typeKeys.forEach(t => this.state[t] = "")
     }
 
     componentDidMount() {
         const emptyStream = Bacon.never()
         this.currentInput = new Bacon.Bus()
-        const inputConverter = this.currentInput.map(t => types[t].read)
+        const inputConverter = this.currentInput.map((t: any) => types[t].read)
         this.inputStream = new Bacon.Bus()
         const converted = this.inputStream
-            .combine(inputConverter, (i, c) => c(i)).map(v => (typeof(v) == "number" && !isNaN(v)) ? v : undefined)
+            .combine(inputConverter, (i: any, c: any) => c(i)).map((v: any) => (typeof(v) == "number" && !isNaN(v)) ? v : undefined)
         this.selectedSrcStr = new Bacon.Bus()
         typeKeys.forEach(t => {
             const typeInfo = types[t]
-            const sourceIsThis = this.currentInput.map(name => t == name)
-            converted.combine(sourceIsThis, (c, i) => [c, i]).flatMapLatest((v) => v[1] ? emptyStream : converted)
+            const sourceIsThis = this.currentInput.map((name: any) => t == name)
+            converted.combine(sourceIsThis, (c: any, i: any) => [c, i]).flatMapLatest((v: any) => v[1] ? emptyStream : converted)
                 .map(typeInfo.write)
-                .map((v) => util.isString(v) ? v : "")
-                .onValue((v) => this.setState({[t]: v}))
-            converted.onValue(v => this.setState({ unicode: intToUnicodeStr(v), html: intToHTMLCode(v) }))
+                .map((v: any) => util.isString(v) ? v : "")
+                .onValue((v: any) => this.setState({[t]: v}))
+            converted.onValue((v: any) => this.setState({ unicode: intToUnicodeStr(v), html: intToHTMLCode(v) }))
         })
         this.selectedSrcStr
-            .map(t => types[t].write)
-            .combine(converted, (c, v) => c(v))
-            .onValue(v => this.props.onValue && this.props.onValue(v))
+            .map((t: any) => types[t].write)
+            .combine(converted, (c: any, v: any) => c(v))
+            .onValue((v: any) => this.props.onValue && this.props.onValue(v))
     }
 
-    inputChanged(event) {
+    inputChanged(event: any) {
         const name = event.target.name
         const value = event.target.value
         this.setState({ [name]: value })
@@ -79,7 +88,7 @@ export default class Numbers extends React.Component {
         this.inputStream.push(value)
     }
 
-    selectSrc(event) {
+    selectSrc(event: any) {
         const src = event.target.name
         this.setState({ selected: src })
         this.selectedSrcStr.push(event.target.name)
@@ -92,11 +101,11 @@ export default class Numbers extends React.Component {
                     <TextField type={types[t].inputType}
                                name={t}
                                hintText={texts[t]}
-                               maxLength={types[t].maxLength}
+                               maxlength={types[t].maxLength}
                                value={this.state[t]}
                                onChange={this.inputChanged}
                                onFocus={this.selectSrc}
-                               readOnly={types[t].readOnly}
+                               read-only={types[t].readOnly}
                                key={t} />
                 </Item>)
             }

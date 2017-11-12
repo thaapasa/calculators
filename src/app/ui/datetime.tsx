@@ -1,18 +1,18 @@
-import React from "react"
+import * as React from "react"
 import {HalfSection} from "./component/section"
 import Item from "./component/item"
 import TextField from "material-ui/TextField"
 import AutoComplete from "material-ui/AutoComplete"
 import DatePicker from "material-ui/DatePicker"
-import moment from "moment"
+import * as moment from "moment"
 import * as Bacon from "baconjs"
 import {isDefined, isString, isObject} from "../util/util"
 import {strToInt} from "../calc/numbers"
 import {zeroPad} from "../util/strings"
 import {getNameDay, findNameDayFor} from "../util/namedays"
-import areIntlLocalesSupported from "intl-locales-supported"
+const areIntlLocalesSupported = require("intl-locales-supported");
 
-window.moment = moment
+(window as any).moment = moment
 
 const styles = {
     len2: { width: "1.8em" },
@@ -20,34 +20,35 @@ const styles = {
     len4: { width: "3.5em" },
     len7: { width: "4.2em" },
     len10: { width: "6em" },
-    center: { textAlign: "center", width: "100%" }
+    center: { textAlign: "center", width: "100%" },
+    item: {}
 }
 
-function readJavaTime(s) {
+function readJavaTime(s: any): moment.Moment | undefined {
     if (typeof s === "string") s = parseInt(s, 10)
     return moment(s)
 }
 
-function readUnixTime(s) {
+function readUnixTime(s: any): moment.Moment | undefined {
     if (typeof s === "string") s = parseInt(s, 10)
     return moment.unix(s)
 }
 
-function toIsoWeek(v) {
+function toIsoWeek(v: moment.Moment): string {
     return v.isValid() ? `${v.isoWeekYear()}/${v.isoWeek()}` : ""
 }
 
-function pad(val, len) {
-    if (typeof val == "number" && isNaN(val)) return val
-    return zeroPad(val, len)
+function pad(val: string | number, len: number): string {
+    if (typeof val === "number" && isNaN(val)) return val.toString()
+    return zeroPad(val.toString(), len)
 }
 
-function readDate(v) {
+function readDate(v: any): object {
     const c = moment(v)
     return c.isValid() ? { day: c.date(), month: c.month(), year: c.year() } : {}
 }
 
-function writeDate(v) {
+function writeDate(v: moment.Moment): Date | null {
     return v.isValid() ? v.toDate() : null
 }
 
@@ -65,21 +66,21 @@ const texts = {
 
 
 const typeInfo = {
-    week: { write: val => toStateValue(val, toIsoWeek), reportValue: true, inputStyle: styles.center },
+    week: { write: (val: any) => toStateValue(val, toIsoWeek), reportValue: true, inputStyle: styles.center },
     focused: { },
     selected: { },
-    iso8601: { read: v => moment(v, moment.ISO_8601), write: m => m.isValid() ? m.format() : "", src: "iso8601", reportValue: true, fullWidth: true },
-    iso8601utc: { read: v => moment(v, moment.ISO_8601), write: m => m.isValid() ? m.toISOString() : "", src: "iso8601utc", reportValue: true, fullWidth: true },
-    nameDay: { write: val => toStateValue(val, v => getNameDay(v.month() + 1, v.date())), reportValue: true, inputStyle: styles.center },
-    weekDay: { write: val => toStateValue(val, v => texts.weekDay[v.isoWeekday()]) },
-    javaTime: { read: readJavaTime, src: "javaTime", reportValue: true, write: m => m.isValid() ? m.valueOf() : "", fullWidth: true },
-    unixTime: { read: readUnixTime, src: "unixTime", reportValue: true, write: m => m.isValid() ? m.unix() : "", fullWidth: true },
+    iso8601: { read: (v: any) => moment(v, moment.ISO_8601), write: (m: any) => m.isValid() ? m.format() : "", src: "iso8601", reportValue: true, fullWidth: true },
+    iso8601utc: { read: (v: any) => moment(v, moment.ISO_8601), write: (m: any) => m.isValid() ? m.toISOString() : "", src: "iso8601utc", reportValue: true, fullWidth: true },
+    nameDay: { write: (val: any) => toStateValue(val, (v: any) => getNameDay(v.month() + 1, v.date())), reportValue: true, inputStyle: styles.center },
+    weekDay: { write: (val: any) => toStateValue(val, (v: any) => texts.weekDay[v.isoWeekday()]) },
+    javaTime: { read: readJavaTime, src: "javaTime", reportValue: true, write: (m: any) => m.isValid() ? m.valueOf() : "", fullWidth: true },
+    unixTime: { read: readUnixTime, src: "unixTime", reportValue: true, write: (m: any) => m.isValid() ? m.unix() : "", fullWidth: true },
     date: { read: readDate, src: "value", write: writeDate, style: styles.len10, maxLength: 10, inputStyle: styles.center },
-    hour: { read: strToInt, src: "value", write: m => m.isValid() ? pad(m.hour(), 2) : "", style: styles.len2, maxLength: 2, inputStyle: styles.center },
-    minute: { read: strToInt, src: "value", write: m => m.isValid() ? pad(m.minute(), 2) : "", style: styles.len2, maxLength: 2, inputStyle: styles.center },
-    second: { read: strToInt, src: "value", write: m => m.isValid() ? pad(m.second(), 2) : "", style: styles.len2, maxLength: 2, inputStyle: styles.center },
-    millisecond: { read: strToInt, src: "value", write: m => m.isValid() ? pad(m.millisecond(), 3) : "", style: styles.len3, maxLength: 3, inputStyle: styles.center },
-    timeZone: { write: m => m.isValid() ? m.format('Z') : "", style: styles.len7, maxLength: 6, inputStyle: styles.center, readOnly: true },
+    hour: { read: strToInt, src: "value", write: (m: any) => m.isValid() ? pad(m.hour(), 2) : "", style: styles.len2, maxLength: 2, inputStyle: styles.center },
+    minute: { read: strToInt, src: "value", write: (m: any) => m.isValid() ? pad(m.minute(), 2) : "", style: styles.len2, maxLength: 2, inputStyle: styles.center },
+    second: { read: strToInt, src: "value", write: (m: any) => m.isValid() ? pad(m.second(), 2) : "", style: styles.len2, maxLength: 2, inputStyle: styles.center },
+    millisecond: { read: strToInt, src: "value", write: (m: any) => m.isValid() ? pad(m.millisecond(), 3) : "", style: styles.len3, maxLength: 3, inputStyle: styles.center },
+    timeZone: { write: (m: any) => m.isValid() ? m.format('Z') : "", style: styles.len7, maxLength: 6, inputStyle: styles.center, readOnly: true },
     direct: { src: "direct" }
 }
 
@@ -94,7 +95,7 @@ const hints = {
 
 const valueTypes = ["date", "hour", "minute", "second", "millisecond"]
 
-let DateTimeFormat
+let DateTimeFormat: any
 if (areIntlLocalesSupported(["fi"])) {
     DateTimeFormat = global.Intl.DateTimeFormat
 } else {
@@ -105,16 +106,24 @@ if (areIntlLocalesSupported(["fi"])) {
 
 const types = Object.keys(typeInfo)
 
-function toStateValue(mom, writer) {
+function toStateValue(mom: any, writer: any) {
     if (typeof mom !== "object") return ""
     let s = writer(mom)
     if (!isDefined(s) || (typeof s === "number" && isNaN(s))) return ""
     return (typeof s === "object" || s === null) ? s : ((typeof s === "number") ? `${s}` : s)
 }
 
-export default class DateTime extends React.Component {
+interface DateTimeProps {
+    onValue: (x: any) => any
+}
 
-    constructor(props) {
+export default class DateTime extends React.Component<DateTimeProps, any> {
+
+    public state: any = {}
+
+    private streams: any
+
+    constructor(props: DateTimeProps) {
         super(props)
         this.state = {
             reportTarget: "",
@@ -132,11 +141,11 @@ export default class DateTime extends React.Component {
     componentDidMount() {
         // Create streams and incoming (converted) streams
         this.streams = { focused: new Bacon.Bus() }
-        const incoming = { direct: new Bacon.Bus(), focused: this.streams.focused }
+        const incoming: any = { direct: new Bacon.Bus(), focused: this.streams.focused }
         types.forEach(t => {
             if (t != "focused") {
                 this.streams[t] = new Bacon.Bus()
-                this.streams[t].onValue(v => this.setState({[t]: v}))
+                this.streams[t].onValue((v: any) => this.setState({[t]: v}))
                 incoming[t] = ((typeInfo[t].read) ? this.streams[t].map(typeInfo[t].read) : this.streams[t])
             }
         })
@@ -146,7 +155,7 @@ export default class DateTime extends React.Component {
             minute: incoming.minute,
             second: incoming.second,
             millisecond: incoming.millisecond
-        }).map(v => moment({ day: v.date.day, month: v.date.month, year: v.date.year,
+        }).map((v: any) => moment({ day: v.date.day, month: v.date.month, year: v.date.year,
             hour: v.hour, minute: v.minute, second: v.second, millisecond: v.millisecond }))
         // Create stream for new value
         const newVal = Bacon.mergeAll(incoming.direct, incoming.unixTime, incoming.javaTime,
@@ -157,55 +166,55 @@ export default class DateTime extends React.Component {
         Bacon.combineAsArray(newVal, this.streams.selected).onValue(r => {
             const val = r[0]
             const src = r[1]
-            types.forEach(t => {
+            types.forEach((t: string) => {
                 if (typeInfo[t].src == src || !typeInfo[t].write) return
                 const output = typeInfo[t].write(val)
                 this.setState({ [t]: output })
-                if (src != "value" && valueTypes.includes(t))
+                if (src != "value" && (valueTypes as any).includes(t))
                     this.streams[t].push(output)
             })
         })
         // Which value is reported to parent
-        const reportTarget = incoming.focused.filter(t => typeInfo[t].reportValue)
-        reportTarget.onValue(v => this.setState({ reportTarget: v }))
+        const reportTarget = incoming.focused.filter((t: any) => typeInfo[t].reportValue)
+        reportTarget.onValue((v: any) => this.setState({ reportTarget: v }))
         Bacon.combineAsArray(newVal, reportTarget).onValue(t => this.props.onValue(typeInfo[t[1]].write(t[0])))
         // Push default value
         this.pushValue(moment(), "direct")
     }
 
-    inputChanged(event) {
+    inputChanged(event: any) {
         const src = event.target.name
         const val = event.target.value
         this.pushValue(val, src)
     }
 
-    focusChanged(event) {
+    focusChanged(event: any) {
         const src = event.target.name
         this.streams.focused.push(src)
     }
 
-    pushValue(val, src) {
+    pushValue(val: any, src: any) {
         this.streams.selected.push(typeInfo[src].src)
         this.streams[src].push(val)
     }
 
-    renderType(type) {
+    renderType(type: any) {
         const info = typeInfo[type]
         return <TextField type="text" value={this.state[type]} style={info.style}
-                          maxLength={info.maxLength} name={type} hintText={hints[type]}
+                          maxlength={info.maxLength} name={type} hintText={hints[type]}
                           inputStyle={info.inputStyle} hintStyle={info.inputStyle} fullWidth={info.fullWidth}
-                          onChange={this.inputChanged} onFocus={this.focusChanged} readOnly={info.readOnly} />
+                          onChange={this.inputChanged} onFocus={this.focusChanged} read-only={info.readOnly} />
     }
 
-    pushDate(date) {
+    pushDate(date: any) {
         if (isObject(date) && date.value && date.value.day && date.value.month) {
             this.streams.selected.push("value")
             this.streams.date.push(moment({ day: date.value.day, month: date.value.month - 1 }).toDate())
         }
     }
 
-    handleFindNameDay(val) {
-        let res = []
+    handleFindNameDay(val: any) {
+        let res: any[] = []
         if (isString(val) && val.length >= 2) {
             const matches = findNameDayFor(val)
             Object.keys(matches).forEach(name => {
@@ -227,7 +236,7 @@ export default class DateTime extends React.Component {
                             hintText={hints.date} inputStyle={typeInfo.date.inputStyle}
                             hintStyle={typeInfo.date.inputStyle} fullWidth={false} onChange={(a, v) => this.pushValue(v, "date")} />
                 (<TextField type="text" value={this.state.weekDay} style={styles.len2} name="weekDay"
-                            hintText="la" inputStyle={styles.center} hintStyle={styles.center} readOnly
+                            hintText="la" inputStyle={styles.center} hintStyle={styles.center} read-only
                             onFocus={this.focusChanged} />)
             </Item>
             <Item name="Kellonaika" style={styles.item}>
@@ -235,12 +244,12 @@ export default class DateTime extends React.Component {
                 {this.renderType("timeZone")}
             </Item>
             <Item name="Viikko">
-                <TextField type="text" name="week" value={this.state.week} style={styles.len7} readOnly
+                <TextField type="text" name="week" value={this.state.week} style={styles.len7} read-only
                            inputStyle={styles.center} hintStyle={styles.center} hintText="2016/52"
                            onFocus={this.focusChanged} />
             </Item>
             <Item name="Nimipäivä">
-                <TextField type="text" name="nameDay" value={this.state.nameDay} fullWidth={true} readOnly
+                <TextField type="text" name="nameDay" value={this.state.nameDay} fullWidth={true} read-only
                            multiLine={true} onFocus={this.focusChanged} />
             </Item>
             <Item name="Etsi nimipäivä">

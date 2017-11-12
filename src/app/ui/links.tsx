@@ -21,7 +21,7 @@ const linkKey = "links"
 
 export default class Links extends React.Component<{}, any> {
 
-    private linkStream: any
+    private linkStream: Bacon.Bus<string, any>
 
     constructor(props: {}) {
         super(props)
@@ -31,10 +31,10 @@ export default class Links extends React.Component<{}, any> {
         this.addLink = this.addLink.bind(this)
         this.deleteLink = this.deleteLink.bind(this)
 
-        this.linkStream = new Bacon.Bus()
+        this.linkStream = new Bacon.Bus<string, any>()
         const validated = this.linkStream.map(validate)
-        this.linkStream.setState(this, "link")
-        validated.setState(this, "validatedLink")
+        this.linkStream.onValue(v => this.setState({ "link": v }));
+        validated.onValue(v => this.setState({ "validatedLink": v }));
     }
 
     componentDidMount() {

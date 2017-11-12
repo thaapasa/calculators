@@ -2,7 +2,7 @@ import * as React from "react"
 import {Card, CardHeader, CardText} from "material-ui/Card"
 import Divider from "material-ui/Divider"
 
-export default class Section extends React.Component<{ className?: string, title: string, subtitle?: string, avatar?: string }, {}> {
+export default class Section extends React.Component<{ className?: string, title: string, subtitle?: string, avatar?: any }, {}> {
     render() {
         return <Card initiallyExpanded={true} className={"section " + (this.props.className || "")}>
             <CardHeader title={this.props.title} actAsExpander={true} showExpandableButton={true}
@@ -15,7 +15,7 @@ export default class Section extends React.Component<{ className?: string, title
     }
 }
 
-export function HalfSection({ title, subtitle, avatar, children }: { title: string, subtitle?: string, avatar?: string, children: any }) {
+export function HalfSection({ title, subtitle, avatar, children }: { title: string, subtitle?: string, avatar?: any, children: any }) {
     return <Section title={title} subtitle={subtitle} avatar={avatar} className="section-half-size">
             { children }
         </Section>
