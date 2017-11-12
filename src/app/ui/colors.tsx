@@ -130,11 +130,11 @@ export default class Colors extends React.Component<ColorsProps, any> {
             <ByteValueSelector floatingLabel="Green" value={this.state.g} onValue={(v: any) => this.setComponent("g", v)} ref="g"/>
             <ByteValueSelector floatingLabel="Blue" value={this.state.b} onValue={(v: any) => this.setComponent("b", v)} ref="b"/>
             <Item name="Heksa">
-                <TextField hintText="#FFFFFF" name="color-hex" value={this.state.hex} maxlength="7"
+                <TextField hintText="#FFFFFF" name="color-hex" value={this.state.hex} max-length="7"
                            onChange={(e, t) => this.setFromHex(t)} onFocus={e => this.select("hex")}/>
             </Item>
             <Item name="RGB-arvo">
-                <TextField hintText="rgb(255,255,255)" name="color-rgb" value={this.asRgb()} read-only
+                <TextField hintText="rgb(255,255,255)" name="color-rgb" value={this.asRgb()} read-only='read-only'
                            onFocus={e => this.select("rgb")}/>
             </Item>
         </HalfSection>

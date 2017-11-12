@@ -16,7 +16,7 @@ interface CheckProps {
     combine: any
     name: string
     id: any
-    maxLength: number
+    'max-length'?: string
     generate: () => any
     onValue: (x: any) => any
 }
@@ -87,9 +87,9 @@ export default class CheckValue extends React.Component<CheckProps, CheckState> 
         return <Item name={this.props.name} valueStyle={styles.itemValue}>
             <GenerateButton onClick={this.generate} title="Luo uusi" />
             <TextField type="text" id={`${this.props.id}-input`} onChange={this.inputChanged}
-                   style={this.inputStyle} value={this.state.input} />
+                   style={this.inputStyle} value={this.state.input} max-length={this.props['max-length']} />
             <TextField id={`${this.props.id}-check`} ref={(i) => this.check = i}
-                   className="letter" read-only value={this.state.checkValue} style={styles.check} />
+                   className="letter" read-only='read-only' value={this.state.checkValue} style={styles.check} />
             <input type="hidden" id={`${this.props.id}-value`} value={this.state.value} />
         </Item>
     }

@@ -101,11 +101,11 @@ export default class Numbers extends React.Component<NumbersProps, any> {
                     <TextField type={types[t].inputType}
                                name={t}
                                hintText={texts[t]}
-                               maxlength={types[t].maxLength}
+                               max-length={types[t].maxLength}
                                value={this.state[t]}
                                onChange={this.inputChanged}
                                onFocus={this.selectSrc}
-                               read-only={types[t].readOnly}
+                               read-only={util.htmlBoolean(types[t].readOnly, 'readonly')}
                                key={t} />
                 </Item>)
             }

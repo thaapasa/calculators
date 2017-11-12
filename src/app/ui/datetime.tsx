@@ -6,7 +6,7 @@ import AutoComplete from "material-ui/AutoComplete"
 import DatePicker from "material-ui/DatePicker"
 import * as moment from "moment"
 import * as Bacon from "baconjs"
-import {isDefined, isString, isObject} from "../util/util"
+import {isDefined, isString, isObject, htmlBoolean} from "../util/util"
 import {strToInt} from "../calc/numbers"
 import {zeroPad} from "../util/strings"
 import {getNameDay, findNameDayFor} from "../util/namedays"
@@ -201,9 +201,9 @@ export default class DateTime extends React.Component<DateTimeProps, any> {
     renderType(type: any) {
         const info = typeInfo[type]
         return <TextField type="text" value={this.state[type]} style={info.style}
-                          maxlength={info.maxLength} name={type} hintText={hints[type]}
+                          max-length={info.maxLength} name={type} hintText={hints[type]}
                           inputStyle={info.inputStyle} hintStyle={info.inputStyle} fullWidth={info.fullWidth}
-                          onChange={this.inputChanged} onFocus={this.focusChanged} read-only={info.readOnly} />
+                          onChange={this.inputChanged} onFocus={this.focusChanged} read-only={htmlBoolean(info.readOnly, 'read-only')} />
     }
 
     pushDate(date: any) {
@@ -236,7 +236,7 @@ export default class DateTime extends React.Component<DateTimeProps, any> {
                             hintText={hints.date} inputStyle={typeInfo.date.inputStyle}
                             hintStyle={typeInfo.date.inputStyle} fullWidth={false} onChange={(a, v) => this.pushValue(v, "date")} />
                 (<TextField type="text" value={this.state.weekDay} style={styles.len2} name="weekDay"
-                            hintText="la" inputStyle={styles.center} hintStyle={styles.center} read-only
+                            hintText="la" inputStyle={styles.center} hintStyle={styles.center} read-only='read-only'
                             onFocus={this.focusChanged} />)
             </Item>
             <Item name="Kellonaika" style={styles.item}>
@@ -244,12 +244,12 @@ export default class DateTime extends React.Component<DateTimeProps, any> {
                 {this.renderType("timeZone")}
             </Item>
             <Item name="Viikko">
-                <TextField type="text" name="week" value={this.state.week} style={styles.len7} read-only
+                <TextField type="text" name="week" value={this.state.week} style={styles.len7} read-only='read-only'
                            inputStyle={styles.center} hintStyle={styles.center} hintText="2016/52"
                            onFocus={this.focusChanged} />
             </Item>
             <Item name="Nimipäivä">
-                <TextField type="text" name="nameDay" value={this.state.nameDay} fullWidth={true} read-only
+                <TextField type="text" name="nameDay" value={this.state.nameDay} fullWidth={true} read-only='read-only'
                            multiLine={true} onFocus={this.focusChanged} />
             </Item>
             <Item name="Etsi nimipäivä">

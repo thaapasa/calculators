@@ -40,6 +40,10 @@ export function combineWith(separator: string): (a: any, b: any) => string {
     return (a: any, b: any) => `${a}${separator}${b}`
 }
 
+export function htmlBoolean(val: boolean, name: string): string | undefined {
+    return val ? name : undefined
+}
+
 const consoleMethods = [
     'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
     'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
