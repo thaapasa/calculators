@@ -12,7 +12,7 @@
  * the server-side, but the defaults work in most cases.
  */
 const hexcase = 0  /* hex output format. 0 - lowercase; 1 - uppercase        */
-const b64pad  = "" /* base-64 pad character. "=" for strict RFC compliance   */
+const b64pad  = '' /* base-64 pad character. '=' for strict RFC compliance   */
 const chrsz   = 8  /* bits per input character. 8 - ASCII; 16 - Unicode      */
 
 /*
@@ -20,7 +20,7 @@ const chrsz   = 8  /* bits per input character. 8 - ASCII; 16 - Unicode      */
  */
 export function md5_vm_test()
 {
-  return hex_md5("abc") == "900150983cd24fb0d6963f7d28e17f72"
+  return hex_md5('abc') == '900150983cd24fb0d6963f7d28e17f72'
 }
 
 /*
@@ -201,21 +201,21 @@ function str2binl(str: string): number[]
  */
 function binl2str(bin: number[]): string
 {
-  let str = ""
+  let str = ''
   let mask = (1 << chrsz) - 1
   for (let i = 0; i < bin.length * 32; i += chrsz)
     str += String.fromCharCode((bin[i>>5] >>> (i % 32)) & mask)
   return str;
 }
 
-const bl2h_hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef"
+const bl2h_hex_tab = hexcase ? '0123456789ABCDEF' : '0123456789abcdef'
 
 /*
  * Convert an array of little-endian words to a hex string.
  */
 function binl2hex(binarray: number[]): string
 {
-  let str = ""
+  let str = ''
   for (let i = 0; i < binarray.length * 4; i++)
   {
     str += bl2h_hex_tab.charAt((binarray[i>>2] >> ((i%4)*8+4)) & 0xF) +
@@ -224,13 +224,13 @@ function binl2hex(binarray: number[]): string
   return str
 }
 
-const bl2b64_tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+const bl2b64_tab = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 /*
  * Convert an array of little-endian words to a base-64 string
  */
 function binl2b64(binarray: number[]): string
 {
-  let str = ""
+  let str = ''
   for (let i = 0; i < binarray.length * 4; i += 3)
   {
     const triplet = (((binarray[i   >> 2] >> 8 * ( i   %4)) & 0xFF) << 16)

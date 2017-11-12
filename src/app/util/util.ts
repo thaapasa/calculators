@@ -36,7 +36,7 @@ export function combine(a: any, b: any): string {
     return `${a}${b}`
 }
 
-export function combineWith(separator: string) {
+export function combineWith(separator: string): (a: any, b: any) => string {
     return (a: any, b: any) => `${a}${separator}${b}`
 }
 
@@ -48,7 +48,7 @@ const consoleMethods = [
 ]
 
 // Avoid `console` errors in browsers that lack a console.
-export function fixConsole() {
+export function fixConsole(): void {
     if (window.console === undefined) {
         (window as any).console = {}
     }

@@ -2,10 +2,10 @@
 // public domain.  It would be nice if you left this header intact.
 // Base64 code from Tyler Akins -- http://rumkin.com
 
-const keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="
+const keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
 
-export function encode(input: string) {
-    let output = ""
+export function encode(input: string): string {
+    let output = ''
     let chr1, chr2, chr3
     let enc1, enc2, enc3, enc4
     let i = 0
@@ -33,14 +33,14 @@ export function encode(input: string) {
     return output
 }
 
-export function decode(input: string) {
-    let output = ""
+export function decode(input: string): string {
+    let output = ''
     let chr1, chr2, chr3
     let enc1, enc2, enc3, enc4
     let i = 0
 
     // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
-    input = input.replace(/[^A-Za-z0-9+\/=]/g, "")
+    input = input.replace(/[^A-Za-z0-9+\/=]/g, '')
 
     do {
         enc1 = keyStr.indexOf(input.charAt(i++))

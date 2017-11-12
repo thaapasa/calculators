@@ -1,10 +1,10 @@
-import {isDefined,isNumber} from "../util/util"
+import {isDefined,isNumber} from '../util/util'
 
 const binCharsRE = /[^01]/
 const octCharsRE = /[^0-7]/
 const decCharsRE = /[^0-9]/
 const hexCharsRE = /[^0-9A-Fa-f]/
-const numChars = "0123456789ABCDEF"
+const numChars = '0123456789ABCDEF'
 
 export function binaryStrToInt(value: string): number {
     return strToIntChecked(value, 2, binCharsRE)
@@ -40,20 +40,20 @@ export function intToBinaryStr(value: number): string {
 
 export function charToInt(value: string): number {
     if (!isDefined(value)) return NaN
-    if (typeof value == "number") return value
-    if (typeof value != "string" || value.length === 0) return NaN
+    if (typeof value == 'number') return value
+    if (typeof value != 'string' || value.length === 0) return NaN
     return value.charCodeAt(0)
 }
 
 export function intToChar(value: number): string | undefined {
-    return (typeof value === "number" && !isNaN(value)) ? String.fromCharCode(value) : undefined
+    return (typeof value === 'number' && !isNaN(value)) ? String.fromCharCode(value) : undefined
 }
 
 /* Helper functions */
-function strToIntChecked(value: string, radix: number, validChars: RegExp): number {
+function strToIntChecked(value: any, radix: number, validChars: RegExp): number {
     if (!isDefined(value)) return NaN
-    if (typeof value == "number") return value
-    if (typeof value != "string") return NaN
+    if (typeof value === 'number') return value
+    if (typeof value !== 'string') return NaN
     if (value.match(validChars)) return NaN
     return parseInt(value, radix)
 }
@@ -65,7 +65,7 @@ function toChar(value: number, radix: number): string | undefined {
 
 /*
 function intToStrBPCu(value: any, bitsPerChar: number): string | undefined {
-    if (!isDefined(value) || typeof value == "object" || isNaN(value)) return
+    if (!isDefined(value) || typeof value == 'object' || isNaN(value)) return
     return intToStrBPC(value, bitsPerChar)
 }
 */
@@ -79,7 +79,7 @@ function intToStrBPC(value: number, bitsPerChar: number): string {
         str.push(toChar(remaining & mask, radix))
         remaining >>= bitsPerChar
     }
-    if (str.length == 0) str.push("0")
-    return str.reverse().join("")
+    if (str.length == 0) str.push('0')
+    return str.reverse().join('')
 }
 

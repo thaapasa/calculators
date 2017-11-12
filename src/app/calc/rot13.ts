@@ -1,11 +1,11 @@
-const a = "a".charCodeAt(0)
-const A = "A".charCodeAt(0)
-const z = "z".charCodeAt(0)
-const Z = "Z".charCodeAt(0)
+const a = 'a'.charCodeAt(0)
+const A = 'A'.charCodeAt(0)
+const z = 'z'.charCodeAt(0)
+const Z = 'Z'.charCodeAt(0)
 
-export function rotN(input: string, n: number): string | undefined {
+export function rotN(input: string, n: number): string {
     if (input == null || input == undefined || typeof input !== "string")
-        return
+        return ''
 
     let output = []
     for (let i = 0; i < input.length; ++i) {
@@ -14,9 +14,9 @@ export function rotN(input: string, n: number): string | undefined {
         else if (c >= A && c <= Z) c = ((c - A) + n) % 26 + A
         output.push(String.fromCharCode(c))
     }
-    return output.join("")
+    return output.join('')
 }
 
-export default function rot13(input: string): string | undefined {
+export default function rot13(input: string): string {
     return rotN(input, 13)
 }
