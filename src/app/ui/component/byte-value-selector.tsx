@@ -65,7 +65,7 @@ interface SelectorState {
 interface SelectorProps {
     readonly value: any;
     readonly onValue?: (x: number) => any;
-    readonly name: string;
+    readonly name?: string;
     readonly floatingLabel?: string;
 };
 
