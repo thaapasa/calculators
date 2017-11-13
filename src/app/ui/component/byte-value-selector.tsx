@@ -123,7 +123,7 @@ export default class ByteValueSelector extends React.Component<SelectorProps, Se
             <TextField floatingLabelText={this.props.floatingLabel} floatingLabelFixed={true} hintText="255" style={styles.component} type="number" max-length="3" value={this.state.dec}
                        onChange={(e, t) => this.pushStringValue(t, 'dec')} min={0} max={255}/>
             <Slider value={this.state.slider} style={{
-                flexgrow: "1",
+                flexGrow: 1,
                 width: "10em",
                 height: "1em",
                 paddingTop: this.props.floatingLabel ? "0.75em" : "inherit"
