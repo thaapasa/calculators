@@ -64,7 +64,7 @@ interface SelectorState {
 
 interface SelectorProps {
     readonly value: any;
-    readonly onValue: (x: number) => any;
+    readonly onValue?: (x: number) => any;
     readonly name: string;
     readonly floatingLabel?: string;
 };
@@ -89,7 +89,8 @@ export default class ByteValueSelector extends React.Component<SelectorProps, Se
         })
 
         const newValStr = Bacon.mergeAll(types.map(t => this.inputStr[t].map(typeInfo[t].read)))
-        Bacon.combineAsArray(newValStr, this.curSrcStr).onValue(x => this.showValue(x[0], x[1]))
+        Bacon.combineAsArray(newValStr, this.curSrcStr.toProperty('parent'))
+            .onValue(x => this.showValue(x[0], x[1]))
     }
 
     public setValue = (value: number) => {
@@ -112,7 +113,7 @@ export default class ByteValueSelector extends React.Component<SelectorProps, Se
     private pushNumberValue = (value: number, src: NumericSelectorType) => {
         this.setState({ [src]: value } as Pick<SelectorState, NumericSelectorType>)
         this.curSrcStr.push(src)
-        this.inputStr.slider.push(value)
+        this.inputStr[src].push(value)
     }
 
     render() {
@@ -120,7 +121,7 @@ export default class ByteValueSelector extends React.Component<SelectorProps, Se
             <TextField floatingLabelText={this.props.floatingLabel} floatingLabelFixed={true} hintText="FF" style={styles.component} max-length="2" value={this.state.hex}
                        onChange={(e, t) => this.pushStringValue(t, 'hex')}/>
             <TextField floatingLabelText={this.props.floatingLabel} floatingLabelFixed={true} hintText="255" style={styles.component} type="number" max-length="3" value={this.state.dec}
-                       onChange={(e, t) => this.pushStringValue(t, 'dec')}/>
+                       onChange={(e, t) => this.pushStringValue(t, 'dec')} min={0} max={255}/>
             <Slider value={this.state.slider} style={{
                 flexgrow: "1",
                 width: "10em",
