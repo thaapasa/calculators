@@ -89,7 +89,7 @@ export default class ByteValueSelector extends React.Component<SelectorProps, Se
         })
 
         const newValStr = Bacon.mergeAll(types.map(t => this.inputStr[t].map(typeInfo[t].read)))
-        newValStr.combine(this.curSrcStr.toProperty('parent'), (v, s) => [v, s]).onValue(r => this.showValue(r[0] as number, r[1] as SelectorType))
+        Bacon.combineAsArray(newValStr, this.curSrcStr).onValue(x => this.showValue(x[0], x[1]))
     }
 
     public setValue = (value: number) => {
