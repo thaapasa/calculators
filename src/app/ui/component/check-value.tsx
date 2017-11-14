@@ -1,9 +1,9 @@
-import * as React from 'react';
-import * as Bacon from 'baconjs';
-import { GenerateButton } from './tool-button';
-import * as util from '../../util/util';
-import Item from './item';
-import TextField from 'material-ui/TextField';
+import * as React from 'react'
+import * as Bacon from 'baconjs'
+import { GenerateButton } from './tool-button'
+import * as util from '../../util/util'
+import Item from './item'
+import TextField from 'material-ui/TextField'
 
 const styles = {
     check: { width: '1em' },
@@ -32,19 +32,20 @@ export default class CheckValue extends React.Component<CheckProps, CheckState> 
     public state: CheckState = {
         input: '',
         value: '',
-        checkValue: ''
-    };
+        checkValue: '',
+    }
 
     private inputStyle = {
-        width: ''
-    };
+        width: '',
+    }
 
     private inputStream: Bacon.Bus<any, string>
 
     public constructor(props: CheckProps) {
         super(props)
-        if (this.props.width)
+        if (this.props.width) {
             this.inputStyle.width = this.props.width
+        }
     }
 
     public componentDidMount() {
@@ -65,13 +66,15 @@ export default class CheckValue extends React.Component<CheckProps, CheckState> 
     private streamToCheck(calculateCheck: (x: string) => string, combiner: (a: string, b: string) => string = util.combineWith('')) {
         this.inputStream = new Bacon.Bus<any, string>()
         const checkValue = this.inputStream.map(calculateCheck)
-        checkValue.onValue(checkValue => this.setState({ checkValue }))
+        checkValue.onValue(value => this.setState({ checkValue: value }))
         checkValue
             .combine(this.inputStream.toProperty(''), (chk, inp) => chk && combiner(inp, chk))
             .filter(util.nonEmpty)
             .onValue(v => {
                 this.setState({ value: v || '' })
-                this.props.onValue && this.props.onValue(v)
+                if (this.props.onValue) {
+                    this.props.onValue(v)
+                }
             })
     }
 
@@ -81,7 +84,7 @@ export default class CheckValue extends React.Component<CheckProps, CheckState> 
             <TextField type="text" id={`${this.props.id}-input`} onChange={this.inputChanged}
                 style={this.inputStyle} value={this.state.input} max-length={this.props['max-length']} />
             <TextField id={`${this.props.id}-check`}
-                className="letter" read-only='read-only' value={this.state.checkValue} style={styles.check} />
+                className="letter" read-only="read-only" value={this.state.checkValue} style={styles.check} />
             <input type="hidden" id={`${this.props.id}-value`} value={this.state.value} />
         </Item>
     }

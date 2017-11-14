@@ -54,13 +54,13 @@ export function decode(input: string): string {
 
         output = output + String.fromCharCode(chr1)
 
-        if (enc3 != 64) {
+        if (enc3 !== 64) {
             output = output + String.fromCharCode(chr2)
         }
-        if (enc4 != 64) {
+        if (enc4 !== 64) {
             output = output + String.fromCharCode(chr3)
         }
-    } while (i < input.length);
+    } while (i < input.length)
 
-    return output;
+    return output
 }

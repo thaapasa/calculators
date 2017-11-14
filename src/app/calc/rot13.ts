@@ -4,14 +4,18 @@ const z = 'z'.charCodeAt(0)
 const Z = 'Z'.charCodeAt(0)
 
 export function rotN(input: string, n: number): string {
-    if (input == null || input == undefined || typeof input !== "string")
+    if (input === null || input === undefined || typeof input !== 'string') {
         return ''
+    }
 
-    let output = []
+    const output = []
     for (let i = 0; i < input.length; ++i) {
         let c = input.charCodeAt(i)
-        if (c >= a && c <= z) c = ((c - a) + n) % 26 + a
-        else if (c >= A && c <= Z) c = ((c - A) + n) % 26 + A
+        if (c >= a && c <= z) {
+            c = ((c - a) + n) % 26 + a
+        } else if (c >= A && c <= Z) {
+            c = ((c - A) + n) % 26 + A
+        }
         output.push(String.fromCharCode(c))
     }
     return output.join('')

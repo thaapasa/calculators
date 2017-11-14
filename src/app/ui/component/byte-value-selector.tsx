@@ -1,11 +1,11 @@
-import * as React from "react"
-import {isNumber,identity} from "../../util/util"
-import {zeroPad} from "../../util/strings"
-import {strToInt,intToHexStr,hexStrToInt} from "../../calc/numbers"
-import Item from "../component/item"
-import TextField from "material-ui/TextField"
-import Slider from "material-ui/Slider"
-import * as Bacon from "baconjs"
+import * as React from 'react'
+import { isNumber, identity } from '../../util/util'
+import { zeroPad } from '../../util/strings'
+import { strToInt, intToHexStr, hexStrToInt } from '../../calc/numbers'
+import Item from '../component/item'
+import TextField from 'material-ui/TextField'
+import Slider from 'material-ui/Slider'
+import * as Bacon from 'baconjs'
 
 function isValidComp(value: number): value is number {
     return isNumber(value) && !isNaN(value) && value >= 0 && value <= 255
@@ -30,25 +30,25 @@ function sliderToVal(value: number): number {
 const styles = {
     component: {
         width: '3em',
-        marginRight: '1em'
+        marginRight: '1em',
     },
     itemValue: {
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
     },
 }
 
 const types = ['parent', 'dec', 'hex', 'slider']
 
 interface TypeInfoType<I> {
-    readonly read: (x: I) => number;
-    readonly write: (x: number) => I;
+    readonly read: (x: I) => number
+    readonly write: (x: number) => I
 }
 
 const typeInfo: { readonly [key: string]: TypeInfoType<any> } = {
-    'parent': { read: identity, write: identity },
-    'dec': { read: strToInt, write: toDecValue },
-    'hex': { read: hexStrToInt, write: toHexComp },
-    'slider': { read: sliderToVal, write: toSliderValue },
+    parent: { read: identity, write: identity },
+    dec: { read: strToInt, write: toDecValue },
+    hex: { read: hexStrToInt, write: toHexComp },
+    slider: { read: sliderToVal, write: toSliderValue },
 }
 
 type NumericSelectorType = 'parent' | 'slider';
@@ -56,18 +56,18 @@ type StringSelectorType = 'dec' | 'hex';
 type SelectorType = NumericSelectorType | StringSelectorType;
 
 interface SelectorState {
-    hex: string;
-    dec: string;
-    parent: number;
-    slider: number;
+    hex: string
+    dec: string
+    parent: number
+    slider: number
 }
 
 interface SelectorProps {
-    readonly value: any;
-    readonly onValue?: (x: number) => any;
-    readonly name?: string;
-    readonly floatingLabel?: string;
-};
+    readonly value: any
+    readonly onValue?: (x: number) => any
+    readonly name?: string
+    readonly floatingLabel?: string
+}
 
 export default class ByteValueSelector extends React.Component<SelectorProps, SelectorState> {
 
@@ -98,10 +98,12 @@ export default class ByteValueSelector extends React.Component<SelectorProps, Se
     }
 
     private showValue = (val: number, src: string) => {
-        let ns = {}
-        types.filter(t => t != src).forEach(t => ns[t] = typeInfo[t].write(val))
+        const ns = {}
+        types.filter(t => t !== src).forEach(t => ns[t] = typeInfo[t].write(val))
         this.setState(ns)
-        if (this.props.onValue && src != 'parent') this.props.onValue(val)
+        if (this.props.onValue && src !== 'parent') {
+            this.props.onValue(val)
+        }
     }
 
     private pushStringValue = (value: string, src: StringSelectorType) => {
@@ -116,23 +118,23 @@ export default class ByteValueSelector extends React.Component<SelectorProps, Se
         this.inputStr[src].push(value)
     }
 
-    render() {
-        const content = <div style={{ display: "flex", padding: "0 0.75em" }}>
+    public render() {
+        const content = <div style={{ display: 'flex', padding: '0 0.75em' }}>
             <TextField floatingLabelText={this.props.floatingLabel} floatingLabelFixed={true} hintText="FF" style={styles.component} max-length="2" value={this.state.hex}
-                       onChange={(e, t) => this.pushStringValue(t, 'hex')}/>
+                onChange={(e, t) => this.pushStringValue(t, 'hex')} />
             <TextField floatingLabelText={this.props.floatingLabel} floatingLabelFixed={true} hintText="255" style={styles.component} type="number" max-length="3" value={this.state.dec}
-                       onChange={(e, t) => this.pushStringValue(t, 'dec')} min={0} max={255}/>
+                onChange={(e, t) => this.pushStringValue(t, 'dec')} min={0} max={255} />
             <Slider value={this.state.slider} style={{
                 flexGrow: 1,
-                width: "10em",
-                height: "1em",
-                paddingTop: this.props.floatingLabel ? "0.75em" : "inherit"
+                width: '10em',
+                height: '1em',
+                paddingTop: this.props.floatingLabel ? '0.75em' : 'inherit',
             }} max={255} min={0} step={1}
-                    onChange={(e, v: number) => this.pushNumberValue(v, 'slider')}/>
+                onChange={(e, v: number) => this.pushNumberValue(v, 'slider')} />
         </div>
 
         return this.props.name ?
-            <Item name={this.props.name} valueStyle={styles.itemValue}>{ content }</Item> :
+            <Item name={this.props.name} valueStyle={styles.itemValue}>{content}</Item> :
             content
     }
 }

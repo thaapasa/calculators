@@ -1,4 +1,4 @@
-import {isDefined,isNumber} from '../util/util'
+import { isDefined, isNumber } from '../util/util'
 
 const binCharsRE = /[^01]/
 const octCharsRE = /[^0-7]/
@@ -39,9 +39,9 @@ export function intToBinaryStr(value: number): string {
 }
 
 export function charToInt(value: string): number {
-    if (!isDefined(value)) return NaN
-    if (typeof value == 'number') return value
-    if (typeof value != 'string' || value.length === 0) return NaN
+    if (!isDefined(value)) { return NaN }
+    if (typeof value === 'number') { return value }
+    if (typeof value !== 'string' || value.length === 0) { return NaN }
     return value.charCodeAt(0)
 }
 
@@ -51,15 +51,15 @@ export function intToChar(value: number): string | undefined {
 
 /* Helper functions */
 function strToIntChecked(value: any, radix: number, validChars: RegExp): number {
-    if (!isDefined(value)) return NaN
-    if (typeof value === 'number') return value
-    if (typeof value !== 'string') return NaN
-    if (value.match(validChars)) return NaN
+    if (!isDefined(value)) { return NaN }
+    if (typeof value === 'number') { return value }
+    if (typeof value !== 'string') { return NaN }
+    if (value.match(validChars)) {return NaN }
     return parseInt(value, radix)
 }
 
 function toChar(value: number, radix: number): string | undefined {
-    if (!isNumber(value) || value < 0 || value >= radix || value >= numChars.length) return
+    if (!isNumber(value) || value < 0 || value >= radix || value >= numChars.length) { return }
     return numChars.charAt(value)
 }
 
@@ -67,12 +67,11 @@ function intToStrBPC(value: number, bitsPerChar: number): string {
     const radix = 1 << bitsPerChar
     const mask = (1 << bitsPerChar) - 1
     let remaining = value
-    let str = []
+    const str = []
     while (remaining > 0) {
         str.push(toChar(remaining & mask, radix))
         remaining >>= bitsPerChar
     }
-    if (str.length == 0) str.push('0')
+    if (str.length === 0) { str.push('0') }
     return str.reverse().join('')
 }
-
