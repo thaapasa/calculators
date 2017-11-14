@@ -1,0 +1,28 @@
+{
+    "extends": ["tslint:latest"],
+    "rules": {
+      "indent": [true, "spaces", 4],
+      "semicolon": [true, "never"],
+      "trailing-comma": [true, {"multiline": "always", "singleline": "never"}],
+      "object-literal-key-quotes": [true, "as-needed"],
+      "quotemark": [true, "single", "jsx-double"],
+      "interface-name": [true, "never-prefix"],
+      "member-ordering": false,
+      "object-literal-sort-keys": false,
+      "ordered-imports": false,
+      "no-empty-interface": false,
+      "jsx-alignment": false,
+      "no-var-requires": false,
+      "no-submodule-imports": false,
+      "arrow-parens": false,
+      "no-console": false,
+      "max-line-length": false,
+      "no-unused-variable": true,
+      "no-object-literal-type-assertion": false,
+      "max-classes-per-file": false,
+      "one-variable-per-declaration": false,
+      "no-bitwise": false,
+      "no-implicit-dependencies": [true, "dev"]
+    }
+  }
+  
