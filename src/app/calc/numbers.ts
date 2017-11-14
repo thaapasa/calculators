@@ -63,13 +63,6 @@ function toChar(value: number, radix: number): string | undefined {
     return numChars.charAt(value)
 }
 
-/*
-function intToStrBPCu(value: any, bitsPerChar: number): string | undefined {
-    if (!isDefined(value) || typeof value == 'object' || isNaN(value)) return
-    return intToStrBPC(value, bitsPerChar)
-}
-*/
-
 function intToStrBPC(value: number, bitsPerChar: number): string {
     const radix = 1 << bitsPerChar
     const mask = (1 << bitsPerChar) - 1
