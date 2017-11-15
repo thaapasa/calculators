@@ -1,14 +1,14 @@
-import * as React from "react"
-import {Toolbar, ToolbarGroup, ToolbarTitle} from "material-ui/Toolbar"
-import Avatar from "material-ui/Avatar"
+import * as React from 'react'
+import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar'
+import Avatar from 'material-ui/Avatar'
 
-const styles = {
-    avatar: { marginLeft: "0.7em" },
-    titleText: { marginLeft: "0.7em" }
+const styles: { [key: string]: React.CSSProperties } = {
+    avatar: { marginLeft: '0.7em' },
+    titleText: { marginLeft: '0.7em' },
 }
 
 export default class CalculatorToolbar extends React.Component<{}, {}> {
-    render() {
+    public render() {
         return (
             <Toolbar className="topbar">
                 <ToolbarGroup firstChild={true}>
@@ -16,7 +16,7 @@ export default class CalculatorToolbar extends React.Component<{}, {}> {
                     <ToolbarTitle text="Laskurit" style={styles.titleText} />
                 </ToolbarGroup>
                 <ToolbarGroup>
-                    { this.props.children }
+                    {this.props.children}
                 </ToolbarGroup>
             </Toolbar>
         )

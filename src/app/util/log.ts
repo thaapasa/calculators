@@ -1,4 +1,4 @@
-export function log(msg: string, ...rest: any[]) {
+export function log(msg: string, ...rest: any[]): void {
     window.console.log.apply(null, arguments)
 }
 

@@ -27,7 +27,7 @@ function sliderToVal(value: number): number {
     return value
 }
 
-const styles = {
+const styles: { [key: string]: React.CSSProperties } = {
     component: {
         width: '3em',
         marginRight: '1em',

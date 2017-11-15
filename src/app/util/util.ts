@@ -9,22 +9,22 @@ export function isDefined(value: any): boolean {
 }
 
 export function isNumber(value: any): boolean {
-    return value !== undefined && value !== null && typeof value == "number" && !isNaN(value)
+    return value !== undefined && value !== null && typeof value === 'number' && !isNaN(value)
 }
 
 export function isString(value: any): boolean {
-    return value !== undefined && value !== null && typeof value == "string"
+    return value !== undefined && value !== null && typeof value === 'string'
 }
 
 export function isObject(value: any): boolean {
-    return value !== undefined && value !== null && typeof value == "object"
+    return value !== undefined && value !== null && typeof value === 'object'
 }
 
 export function isArray(value: any): boolean {
     return Array.isArray(value)
 }
 
-export function noop(): void {}
+export function noop(): void { return }
 
 export function identity<T>(value: T): T { return value }
 
@@ -48,7 +48,7 @@ const consoleMethods = [
     'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
     'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
     'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
-    'timeline', 'timelineEnd', 'timeStamp', 'trace', 'warn'
+    'timeline', 'timelineEnd', 'timeStamp', 'trace', 'warn',
 ]
 
 // Avoid `console` errors in browsers that lack a console.

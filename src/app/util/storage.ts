@@ -1,19 +1,19 @@
-import {isObject,isArray} from "./util"
+import { isObject, isArray } from './util'
 
 interface StorageType {
     [key: string]: string
 }
 const storage: StorageType = isObject(window.localStorage) ? window.localStorage : {}
 
-export function set(key: string, value: string): any {
+export function set(key: string, value: string): void {
     storage[key] = value
 }
 
-export function get(key: string) {
+export function get(key: string): string {
     return storage[key]
 }
 
-export function setArray(key: string, arr: string[]) {
+export function setArray(key: string, arr: string[]): void {
     if (isArray(arr)) {
         deleteArray(key)
         storage[`${key}.length`] = arr.length.toString()
@@ -23,7 +23,7 @@ export function setArray(key: string, arr: string[]) {
     }
 }
 
-export function deleteArray(key: string) {
+export function deleteArray(key: string): void {
     const n = parseInt(storage[`${key}.length`], 10)
     for (let i = 0; i < n; ++i) {
         delete storage[`${key}.${i}`]

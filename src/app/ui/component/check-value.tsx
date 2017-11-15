@@ -5,20 +5,20 @@ import * as util from '../../util/util'
 import Item from './item'
 import TextField from 'material-ui/TextField'
 
-const styles = {
+const styles: { [key: string]: React.CSSProperties } = {
     check: { width: '1em' },
     itemValue: { alignItems: 'flex-start' },
 }
 
 interface CheckProps {
-    width: string
-    check: any
-    combine: any
-    name: string
-    id: any
-    'max-length'?: string
-    generate: () => any
-    onValue: (x: any) => any
+    readonly width: string
+    readonly check: any
+    readonly combine: any
+    readonly name: string
+    readonly id: any
+    readonly 'max-length'?: string
+    readonly generate: () => any
+    readonly onValue: (x: any) => any
 }
 
 interface CheckState {
