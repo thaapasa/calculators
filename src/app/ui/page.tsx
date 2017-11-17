@@ -1,31 +1,33 @@
-import * as React from "react"
-import LastValue from "./last-value"
-import Numbers from "./numbers"
-import Colors from "./colors"
-import TextConversion from "./text-conversion"
-import Identifiers from "./identifiers"
-import DateTime from "./datetime"
-import Cryptography from "./cryptography"
-import Links from "./links"
-import TopBar from "./layout/topbar"
+import * as React from 'react'
+import LastValue from './last-value'
+import Numbers from './numbers'
+import Colors from './colors'
+import TextConversion from './text-conversion'
+import Identifiers from './identifiers'
+import DateTime from './datetime'
+import Cryptography from './cryptography'
+import Links from './links'
+import TopBar from './layout/topbar'
 
-export default class CalculatorPage extends React.Component<{}, any> {
+export default class CalculatorPage extends React.Component<{}, {}> {
+
+    private lastValue: LastValue | null
 
     constructor(props: {}) {
         super(props)
-        console.log("Initializing calculators")
-
-        this.showValue = this.showValue.bind(this)
+        console.log('Initializing calculators')
     }
 
-    showValue(value: any) {
-        (this.refs.lastValue as any).setValue(value)
+    private showValue = (value: string) => {
+        if (this.lastValue) {
+            this.lastValue.setValue(value)
+        }
     }
 
-    render() {
+    public render() {
         return <div className="everything">
             <TopBar>
-                <LastValue ref="lastValue" />
+                <LastValue ref={r => this.lastValue = r} />
             </TopBar>
             <div className="main-content">
                 <div className="section-row">

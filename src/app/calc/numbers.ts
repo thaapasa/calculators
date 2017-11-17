@@ -24,7 +24,7 @@ export function hexStrToInt(value: string): number {
 
 export function strToInt(v: string): number { return decimalStrToInt(v) }
 
-export function intToStr(value: number): string | undefined { return isDefined(value) ? value.toString() : undefined }
+export function intToStr(value: number): string { return isDefined(value) ? value.toString() : '' }
 
 export function intToHexStr(value: number): string {
     return intToStrBPC(value, 4)
@@ -45,8 +45,8 @@ export function charToInt(value: string): number {
     return value.charCodeAt(0)
 }
 
-export function intToChar(value: number): string | undefined {
-    return (typeof value === 'number' && !isNaN(value)) ? String.fromCharCode(value) : undefined
+export function intToChar(value: number): string {
+    return (typeof value === 'number' && !isNaN(value)) ? String.fromCharCode(value) : ''
 }
 
 /* Helper functions */

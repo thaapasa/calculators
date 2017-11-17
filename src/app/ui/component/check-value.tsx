@@ -12,10 +12,10 @@ const styles: { [key: string]: React.CSSProperties } = {
 
 interface CheckProps {
     readonly width: string
-    readonly check: any
-    readonly combine: any
+    readonly check: (x: string) => string
+    readonly combine: (a: string, b: string) => string
     readonly name: string
-    readonly id: any
+    readonly id: string | number
     readonly 'max-length'?: string
     readonly generate: () => any
     readonly onValue: (x: any) => any

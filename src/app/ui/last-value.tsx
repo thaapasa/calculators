@@ -1,27 +1,33 @@
-import * as React from "react"
-import { ClipboardButton } from "./component/tool-button"
-import log from "../util/log"
-import TextField from "material-ui/TextField"
-import {ToolbarGroup} from "material-ui/Toolbar"
+import * as React from 'react'
+import { ClipboardButton } from './component/tool-button'
+import log from '../util/log'
+import TextField from 'material-ui/TextField'
+import { ToolbarGroup } from 'material-ui/Toolbar'
 
-export default class LastValue extends React.Component<{}, any> {
+interface LastValueState {
+    value: string
+}
 
-    constructor(props: {}) {
-        super(props)
-        this.state = { value: "" }
-        this.setValue = this.setValue.bind(this)
-        this.copyToClipboard = this.copyToClipboard.bind(this)
+export default class LastValue extends React.Component<{}, LastValueState> {
+
+    private valueField: TextField | null
+
+    public state: LastValueState = {
+        value: '',
     }
 
-    setValue(v: any) {
-        this.setState({ value: v || "" })
+    public setValue = (v: string) => {
+        this.setState({ value: v || '' })
     }
 
-    copyToClipboard() {
-        const field = this.refs.lastValue as TextField
+    private changeValue = (_: any, v: string) => this.setValue(v)
+
+    private copyToClipboard = () => {
         try {
-            field.select()
-            document.execCommand("copy")
+            if (this.valueField !== null) {
+                this.valueField.select()
+                document.execCommand("copy")
+            }
         } catch (e) {
             log(`Could not copy: ${e}`)
         }
@@ -30,8 +36,8 @@ export default class LastValue extends React.Component<{}, any> {
     render() {
         return <ToolbarGroup>
             <ClipboardButton title="Kopioi leikepöydälle" onClick={this.copyToClipboard} />
-            <TextField value={ this.state.value } ref="lastValue" name="lastValue" fullWidth={true}
-                       hintText="Viimeisin arvo" onChange={(i, v) => this.setValue(v)}/>
+            <TextField value={this.state.value} ref={r => this.valueField = r} name="lastValue" fullWidth={true}
+                hintText="Viimeisin arvo" onChange={this.changeValue} />
         </ToolbarGroup>
     }
 }
