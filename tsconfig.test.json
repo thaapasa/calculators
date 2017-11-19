@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "outDir": "build/test",
+        "module": "commonjs",
+        "target": "es5",
+        "lib": ["es6", "dom"],
+        "allowJs": true,
+        "moduleResolution": "node"
+    },
+    "exclude": [
+        "node_modules",
+        "build",
+        "scripts",
+        "acceptance-tests",
+        "webpack",
+        "jest"
+    ],
+    "types": [
+        "typePatches"
+    ],
+    "typeRoots": ["./typings"]
+}

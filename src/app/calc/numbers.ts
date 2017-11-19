@@ -6,7 +6,7 @@ const decCharsRE = /[^0-9]/
 const hexCharsRE = /[^0-9A-Fa-f]/
 const numChars = '0123456789ABCDEF'
 
-export function binaryStrToInt(value: string): number {
+export function binaryStrToInt(value: string | number): number {
     return strToIntChecked(value, 2, binCharsRE)
 }
 
@@ -54,7 +54,7 @@ function strToIntChecked(value: any, radix: number, validChars: RegExp): number 
     if (!isDefined(value)) { return NaN }
     if (typeof value === 'number') { return value }
     if (typeof value !== 'string') { return NaN }
-    if (value.match(validChars)) {return NaN }
+    if (value.match(validChars)) { return NaN }
     return parseInt(value, radix)
 }
 
