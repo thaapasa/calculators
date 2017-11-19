@@ -70,6 +70,11 @@
 *.lst text
 *.prefs text
 
+# Enforce specific EOL characters
+
+# npm config
+package-lock.json eol=lf
+package.json eol=lf
 
 # Denote all files that are truly binary and should not be modified.
 
