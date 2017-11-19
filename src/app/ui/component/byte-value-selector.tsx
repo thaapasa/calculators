@@ -51,9 +51,9 @@ const typeInfo: { readonly [key: string]: TypeInfoType<any> } = {
     slider: { read: sliderToVal, write: toSliderValue },
 }
 
-type NumericSelectorType = 'parent' | 'slider';
-type StringSelectorType = 'dec' | 'hex';
-type SelectorType = NumericSelectorType | StringSelectorType;
+type NumericSelectorType = 'parent' | 'slider'
+type StringSelectorType = 'dec' | 'hex'
+type SelectorType = NumericSelectorType | StringSelectorType
 
 interface SelectorState {
     hex: string

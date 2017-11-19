@@ -17,7 +17,7 @@ interface ConverterInfo {
 const convertInfo: { [key: string]: ConverterInfo } = {
     base64: { encode: base64.encode, decode: base64.decode, name: 'Base64' },
     rot13: { encode: rot13, decode: rot13, name: 'ROT-13' },
-    hexStr: { encode: strings.toHexString, decode: strings.fromHexString, name: 'Heksamerkkijono' }
+    hexStr: { encode: strings.toHexString, decode: strings.fromHexString, name: 'Heksamerkkijono' },
 }
 const converters = Object.keys(convertInfo)
 

@@ -8,13 +8,13 @@ import { zeroPad } from '../util/strings'
 import TextField from 'material-ui/TextField'
 
 const texts = {
-    'binary': 'Binääri',
-    'octal': 'Oktaali',
-    'decimal': 'Desimaali',
-    'hex': 'Heksa',
-    'char': 'Merkki',
-    'unicode': 'Unicode',
-    'html': 'HTML-koodi'
+    binary: 'Binääri',
+    octal: 'Oktaali',
+    decimal: 'Desimaali',
+    hex: 'Heksa',
+    char: 'Merkki',
+    unicode: 'Unicode',
+    html: 'HTML-koodi',
 }
 
 interface TypeInfo {
@@ -26,28 +26,28 @@ interface TypeInfo {
 }
 
 function readZero(x: string): number {
-    return 0;
+    return 0
 }
 
 const types: { [key: string]: TypeInfo } = {
-    'binary': { read: numbers.binaryStrToInt, write: numbers.intToBinaryStr, inputType: 'number', maxLength: 50 },
-    'octal': { read: numbers.octalStrToInt, write: numbers.intToOctalStr, inputType: 'number', maxLength: 40 },
-    'decimal': { read: numbers.strToInt, write: numbers.intToStr, inputType: 'number', maxLength: 40 },
-    'hex': { read: numbers.hexStrToInt, write: numbers.intToHexStr, inputType: 'text', maxLength: 30 },
-    'char': { read: numbers.charToInt, write: numbers.intToChar, inputType: 'text', maxLength: 1 },
-    'unicode': { read: readZero, write: intToUnicodeStr, inputType: 'text', maxLength: 6, readOnly: true },
-    'html': { read: readZero, write: intToHTMLCode, inputType: 'text', maxLength: 10, readOnly: true }
+    binary: { read: numbers.binaryStrToInt, write: numbers.intToBinaryStr, inputType: 'number', maxLength: 50 },
+    octal: { read: numbers.octalStrToInt, write: numbers.intToOctalStr, inputType: 'number', maxLength: 40 },
+    decimal: { read: numbers.strToInt, write: numbers.intToStr, inputType: 'number', maxLength: 40 },
+    hex: { read: numbers.hexStrToInt, write: numbers.intToHexStr, inputType: 'text', maxLength: 30 },
+    char: { read: numbers.charToInt, write: numbers.intToChar, inputType: 'text', maxLength: 1 },
+    unicode: { read: readZero, write: intToUnicodeStr, inputType: 'text', maxLength: 6, readOnly: true },
+    html: { read: readZero, write: intToHTMLCode, inputType: 'text', maxLength: 10, readOnly: true },
 }
 const typeKeys = Object.keys(types)
 
 function intToUnicodeStr(value: number): string {
     const str = numbers.intToHexStr(value)
-    return typeof str == 'string' ? 'U+' + zeroPad(str, 4) : ''
+    return typeof str === 'string' ? 'U+' + zeroPad(str, 4) : ''
 }
 
 function intToHTMLCode(value: number): string {
     const str = numbers.intToStr(value)
-    return typeof str == 'string' ? `&#${str};` : ''
+    return typeof str === 'string' ? `&#${str};` : ''
 }
 
 interface NumbersProps {
@@ -58,8 +58,8 @@ export default class Numbers extends React.Component<NumbersProps, any> {
 
     public state: any = {
         selected: 'decimal',
-        unicode: ''
-    };
+        unicode: '',
+    }
 
     private currentInput: any
     private inputStream: any
@@ -76,11 +76,11 @@ export default class Numbers extends React.Component<NumbersProps, any> {
         const inputConverter = this.currentInput.map((t: any) => types[t].read)
         this.inputStream = new Bacon.Bus()
         const converted = this.inputStream
-            .combine(inputConverter, (i: any, c: any) => c(i)).map((v: any) => (typeof (v) == 'number' && !isNaN(v)) ? v : undefined)
+            .combine(inputConverter, (i: any, c: any) => c(i)).map((v: any) => (typeof (v) === 'number' && !isNaN(v)) ? v : undefined)
         this.selectedSrcStr = new Bacon.Bus()
         typeKeys.forEach(t => {
             const typeInfo = types[t]
-            const sourceIsThis = this.currentInput.map((name: any) => t == name)
+            const sourceIsThis = this.currentInput.map((name: any) => t === name)
             converted.combine(sourceIsThis, (c: any, i: any) => [c, i]).flatMapLatest((v: any) => v[1] ? emptyStream : converted)
                 .map(typeInfo.write)
                 .map((v: any) => util.isString(v) ? v : '')

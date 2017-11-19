@@ -10,8 +10,8 @@ import ByteValueSelector from './component/byte-value-selector'
 
 const styles: { [key: string]: React.CSSProperties } = {
     avatar: {
-        border: '1px solid #BBBBBB'
-    }
+        border: '1px solid #BBBBBB',
+    },
 }
 
 function toRGBColor(r: number, g: number, b: number): string {
@@ -31,7 +31,7 @@ function toHexComp(value: number): string {
 }
 
 function validateHex(value: number): string {
-    return (value && value[0] == '#') ? value.toString() : '#' + value
+    return (value && value[0] === '#') ? value.toString() : '#' + value
 }
 
 function hexToComponents(value: string): [number, number, number] {
@@ -52,7 +52,7 @@ type Component = 'r' | 'g' | 'b'
 
 const texts = {
     hex: 'Heksakoodi',
-    rgb: 'RGB-arvo'
+    rgb: 'RGB-arvo',
 }
 
 interface ColorsProps {
@@ -77,7 +77,7 @@ export default class Colors extends React.Component<ColorsProps, any> {
             b: 255,
             hex: '#FFFFFF',
             color: '#FFFFFF',
-            selected: 'hex'
+            selected: 'hex',
         }
     }
 
@@ -92,13 +92,13 @@ export default class Colors extends React.Component<ColorsProps, any> {
     }
 
     private updateComponents(r: any, g: any, b: any) {
-        const values = { r: r, g: g, b: b }
+        const values = { r, g, b }
         this.setState(values)
         this.components.forEach((c: any) => (this.refs[c] as ByteValueSelector).setValue(values[c]))
     }
 
     private setComponent(c: Component, val: number) {
-        let values = { r: this.state.r, g: this.state.g, b: this.state.b }
+        const values = { r: this.state.r, g: this.state.g, b: this.state.b }
         this.setState({ [c]: val })
         values[c] = val
         const hex = this.updateHex(values)
@@ -113,7 +113,7 @@ export default class Colors extends React.Component<ColorsProps, any> {
     }
 
     private sendToParent(val: string) {
-        this.props.onValue && this.props.onValue(val)
+        if (this.props.onValue) { this.props.onValue(val) }
     }
 
     private select(src: any) {
@@ -129,10 +129,10 @@ export default class Colors extends React.Component<ColorsProps, any> {
             <ByteValueSelector floatingLabel="Blue" value={this.state.b} onValue={v => this.setComponent('b', v)} ref="b" />
             <Item name="Heksa">
                 <TextField hintText="#FFFFFF" name="color-hex" value={this.state.hex} max-length="7"
-                    onChange={(e, t) => this.setFromHex(t)} onFocus={e => this.select("hex")} />
+                    onChange={(e, t) => this.setFromHex(t)} onFocus={e => this.select('hex')} />
             </Item>
             <Item name="RGB-arvo">
-                <TextField hintText="rgb(255,255,255)" name="color-rgb" value={toRGBColor(this.state.r, this.state.g, this.state.b)} read-only='read-only'
+                <TextField hintText="rgb(255,255,255)" name="color-rgb" value={toRGBColor(this.state.r, this.state.g, this.state.b)} read-only="read-only"
                     onFocus={e => this.select('rgb')} />
             </Item>
         </HalfSection>

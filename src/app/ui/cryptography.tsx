@@ -30,7 +30,7 @@ export default class Cryptography extends React.Component<CryptographyProps, any
         super(props)
         this.cryptoList = [
             { name: 'MD5', calculate: hex_md5, code: 'md5' },
-            { name: 'SHA-1', calculate: sha1, code: 'sha1' }
+            { name: 'SHA-1', calculate: sha1, code: 'sha1' },
         ]
         this.cryptos = {}
         this.cryptoList.forEach((c: any) => this.cryptos[c.code] = c)
@@ -47,8 +47,8 @@ export default class Cryptography extends React.Component<CryptographyProps, any
             l.valueStream = new Bacon.Bus<any, string>()
             const prop = l.valueStream.toProperty('')
             prop.combine(
-                this.cryptoSelectStream.toProperty(this.default).map(c => c == l.code),
-                (val, match) => [val, match]
+                this.cryptoSelectStream.toProperty(this.default).map(c => c === l.code),
+                (val, match) => [val, match],
             ).onValue(x => x[1] && this.props.onValue(x[0]))
         })
     }
@@ -81,7 +81,7 @@ export default class Cryptography extends React.Component<CryptographyProps, any
             calculate={c.calculate}
             onValue={v => c.valueStream && c.valueStream.push(v)}
             key={c.code}
-            onSelect={() => this.selectCrypto(c.code)} />;
+            onSelect={() => this.selectCrypto(c.code)} />
     }
 
 }

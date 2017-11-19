@@ -26,14 +26,14 @@ export default class LastValue extends React.Component<{}, LastValueState> {
         try {
             if (this.valueField !== null) {
                 this.valueField.select()
-                document.execCommand("copy")
+                document.execCommand('copy')
             }
         } catch (e) {
             log(`Could not copy: ${e}`)
         }
     }
 
-    render() {
+    public render() {
         return <ToolbarGroup>
             <ClipboardButton title="Kopioi leikepöydälle" onClick={this.copyToClipboard} />
             <TextField value={this.state.value} ref={r => this.valueField = r} name="lastValue" fullWidth={true}

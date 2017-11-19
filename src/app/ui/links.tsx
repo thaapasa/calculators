@@ -41,8 +41,8 @@ export default class Links extends React.Component<{}, LinksState> {
 
         this.linkStream = new Bacon.Bus<string, any>()
         const validated = this.linkStream.map(validate)
-        this.linkStream.onValue(v => this.setState({ link: v }));
-        validated.onValue(v => this.setState({ validatedLink: v }));
+        this.linkStream.onValue(v => this.setState({ link: v }))
+        validated.onValue(v => this.setState({ validatedLink: v }))
 
         this.linkStream.push('')
     }
@@ -58,7 +58,7 @@ export default class Links extends React.Component<{}, LinksState> {
 
     private deleteLink = (link: string) => {
         if (link) {
-            const links = this.state.storedLinks.filter(l => l != link)
+            const links = this.state.storedLinks.filter(l => l !== link)
             storage.setArray(linkKey, links)
             this.setState({ storedLinks: links })
         }

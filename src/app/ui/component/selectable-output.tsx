@@ -60,13 +60,12 @@ export default class SelectableOutput extends React.Component<SelectableOutputPr
         if (this.props.onSelect) { this.props.onSelect(event as any) }
     }
 
-    private ucIfChecked = (stream: Bacon.Property<any, Boolean>): Bacon.Property<any, str2str> => {
+    private ucIfChecked = (stream: Bacon.Property<any, boolean>): Bacon.Property<any, str2str> => {
         return stream.map(checked => checked ? toUpperCase : identity)
     }
 
     public render() {
-        const my = this
-        return <Item name={<Checkbox name={my.props.type + '-upper-case'} label={
+        return <Item name={<Checkbox name={this.props.type + '-upper-case'} label={
             <FontIcon className="material-icons" color={red500}>text_format</FontIcon>
         } onCheck={this.checkUpperCase} />} valueStyle={styles.itemValue} nameStyle={styles.itemName}>
             <TextField type="text" floatingLabelText={this.props.label} className="wide" value={this.state.value}
