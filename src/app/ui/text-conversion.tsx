@@ -18,6 +18,7 @@ const convertInfo: { [key: string]: ConverterInfo } = {
     base64: { encode: base64.encode, decode: base64.decode, name: 'Base64' },
     rot13: { encode: rot13, decode: rot13, name: 'ROT-13' },
     hexStr: { encode: strings.toHexString, decode: strings.fromHexString, name: 'Heksamerkkijono' },
+    urlEncode: { encode: x => encodeURIComponent(x), decode: x => decodeURIComponent(x), name: 'URL encode' },
 }
 const converters = Object.keys(convertInfo)
 

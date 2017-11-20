@@ -18,7 +18,7 @@ interface CryptoType {
 }
 
 export function hash(x: string, algorithm: string): string {
-    return crypto.createHash(algorithm).update(x).digest('hex');
+    return crypto.createHash(algorithm).update(x).digest('hex')
 }
 
 export default class Cryptography extends React.Component<CryptographyProps, any> {
