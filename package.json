@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "baconjs": "0.7.95",
+    "crypto-browserify": "3.12.0",
     "intl": "1.2.5",
     "intl-locales-supported": "1.0.0",
     "material-ui": "0.19.4",

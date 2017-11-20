@@ -2,10 +2,9 @@ import * as React from 'react'
 import * as Bacon from 'baconjs'
 import SelectableOutput from './component/selectable-output'
 import Section from './component/section'
-import { hex_md5 } from '../calc/md5'
-import { sha1 } from '../calc/sha1'
 import Item from './component/item'
 import TextField from 'material-ui/TextField'
+const crypto = require('crypto-browserify')
 
 interface CryptographyProps {
     readonly onValue: (x: any) => any
@@ -16,6 +15,10 @@ interface CryptoType {
     readonly calculate: (x: string) => string
     readonly code: string
     valueStream?: Bacon.Bus<any, string>
+}
+
+export function hash(x: string, algorithm: string): string {
+    return crypto.createHash(algorithm).update(x).digest('hex');
 }
 
 export default class Cryptography extends React.Component<CryptographyProps, any> {
@@ -29,8 +32,10 @@ export default class Cryptography extends React.Component<CryptographyProps, any
     constructor(props: CryptographyProps) {
         super(props)
         this.cryptoList = [
-            { name: 'MD5', calculate: hex_md5, code: 'md5' },
-            { name: 'SHA-1', calculate: sha1, code: 'sha1' },
+            { name: 'MD5', calculate: x => hash(x, 'md5'), code: 'md5' },
+            { name: 'SHA-1', calculate: x => hash(x, 'sha1'), code: 'sha1' },
+            { name: 'SHA-256', calculate: x => hash(x, 'sha256'), code: 'sha256' },
+            { name: 'SHA-512', calculate: x => hash(x, 'sha512'), code: 'sha512' },
         ]
         this.cryptos = {}
         this.cryptoList.forEach((c: any) => this.cryptos[c.code] = c)
