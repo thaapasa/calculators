@@ -91,7 +91,7 @@ export default class Colors extends React.Component<ColorsProps, any> {
         return hexd
     }
 
-    private updateComponents(r: any, g: any, b: any) {
+    private updateComponents = (r: any, g: any, b: any) => {
         const values = { r, g, b }
         this.setState(values)
         this.components.forEach((c: any) => (this.refs[c] as ByteValueSelector).setValue(values[c]))
@@ -108,7 +108,8 @@ export default class Colors extends React.Component<ColorsProps, any> {
     private setFromHex(value: any) {
         this.setState({ hex: value, color: validateHex(value) })
         const c = hexToComponents(value)
-        this.updateComponents.call(this, c)
+        const [r, g, b] = c
+        this.updateComponents(r, g, b)
         this.sendToParent(toRGBColor.call(this, c))
     }
 
