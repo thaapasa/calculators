@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/thaapasa/calculators.svg?branch=master)](https://travis-ci.org/thaapasa/calculators)
+
 # README #
 
 ## Calculators ##
@@ -18,7 +20,7 @@ Install dependencies:
 Build project:
 
     npm run build
-    
+
 Develop (watch for changes):
 
     npm start
