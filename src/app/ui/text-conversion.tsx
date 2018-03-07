@@ -63,13 +63,19 @@ export default class TextConversion extends React.Component<TextConversionProps,
 
     public render() {
         return <Section title="Tekstimuunnokset" subtitle={convertInfo[this.state.selected].name}>
-            <TextField onChange={(e, v) => this.sourceStr.push(v)} fullWidth={true} multiLine={true}
-                name="source" value={this.state.source} />
+            <div className="flex-row center">
+                <TextField className="flex" onChange={(e, v) => this.sourceStr.push(v)} fullWidth={true} multiLine={true}
+                    name="source" value={this.state.source} />
+                <div className="left-pad">{this.state.source.length}</div>
+            </div>
             <SelectField value={this.state.selected} onChange={(e, i, v) => this.selectedStr.push(v)} floatingLabelText="Konversio">
                 {converters.map(c => <MenuItem value={c} key={c} primaryText={convertInfo[c].name} />)}
             </SelectField>
-            <TextField onChange={(e, v) => this.targetStr.push(v)} fullWidth={true} multiLine={true}
-                name="target" value={this.state.target} />
+            <div className="flex-row center">
+                <TextField className="flex" onChange={(e, v) => this.targetStr.push(v)} fullWidth={true} multiLine={true}
+                    name="target" value={this.state.target} />
+                <div className="left-pad">{this.state.target.length}</div>
+            </div>
         </Section>
 
     }
