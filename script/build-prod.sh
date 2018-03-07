@@ -5,12 +5,12 @@ cd `dirname $0`/..
 
 mkdir -p deploy || exit -1
 
-echo 'Updating dependencies'
+echo "Updating dependencies"
 npm i || exit -1
 
 REV=`git rev-parse HEAD | cut -c 1-8`
 
-echo 'Building production package, revision $REV...'
+echo "Building production package, revision $REV..."
 npm run clean || exit -1
 npm run build || exit -1
 
@@ -18,6 +18,6 @@ cd build
 tar czvf ../deploy/calculators-$REV.tar.gz . || exit -1
 cd ..
 
-echo 'Build successful!'
+echo "Build successful!"
 
 popd >/dev/null
