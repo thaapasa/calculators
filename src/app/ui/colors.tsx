@@ -38,10 +38,13 @@ function hexToComponents(value: string): [number, number, number] {
     let r = 0
     let g = 0
     let b = 0
-    value.replace(/^#?([0-9A-Za-z]{2})([0-9A-Za-z]{2})([0-9A-Za-z]{2})$/, (m, rr, gg, bb) => {
-        r = hexStrToInt(rr)
-        g = hexStrToInt(gg)
-        b = hexStrToInt(bb)
+    const l = value.length <= 4 ? 1 : 2
+    const re = new RegExp(`^#?([0-9A-Za-z]{${l}})([0-9A-Za-z]{${l}})([0-9A-Za-z]{${l}})$`)
+
+    value.replace(re, (m, hr, hg, hb) => {
+        r = (r = hexStrToInt(hr)) + (l === 1 ? r << 4 : 0)
+        g = (g = hexStrToInt(hg)) + (l === 1 ? g << 4 : 0)
+        b = (b = hexStrToInt(hb)) + (l === 1 ? b << 4 : 0)
         return ''
     })
 
