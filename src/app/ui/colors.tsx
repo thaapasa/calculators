@@ -59,29 +59,28 @@ const texts = {
 }
 
 interface ColorsProps {
-    onValue: (x: any) => any
+    onValue: (x: string) => void
 }
 
-export default class Colors extends React.Component<ColorsProps, any> {
+interface ColorState {
+    r: number
+    g: number
+    b: number
+    hex: string
+    color: string
+    selected: 'hex' | 'rgb'
+}
 
-    private components: any
+export default class Colors extends React.Component<ColorsProps, ColorState> {
 
-    constructor(props: ColorsProps) {
-        super(props)
-
-        this.setComponent = this.setComponent.bind(this)
-        this.setFromHex = this.setFromHex.bind(this)
-        this.select = this.select.bind(this)
-
-        this.components = ['r', 'g', 'b']
-        this.state = {
-            r: 255,
-            g: 255,
-            b: 255,
-            hex: '#FFFFFF',
-            color: '#FFFFFF',
-            selected: 'hex',
-        }
+    private components = ['r', 'g', 'b']
+    public state: ColorState = {
+        r: 255,
+        g: 255,
+        b: 255,
+        hex: '#FFFFFF',
+        color: '#FFFFFF',
+        selected: 'hex',
     }
 
     public componentDidMount() {
@@ -90,39 +89,42 @@ export default class Colors extends React.Component<ColorsProps, any> {
 
     private updateHex(values: any): string {
         const hexd = toHexColor(values.r, values.g, values.b)
-        this.setState({ hex: hexd, color: hexd })
+        this.setState({ hex: hexd, color: hexd }, this.sendToParent)
         return hexd
     }
 
     private updateComponents = (r: any, g: any, b: any) => {
         const values = { r, g, b }
-        this.setState(values)
+        this.setState(values, this.sendToParent)
         this.components.forEach((c: any) => (this.refs[c] as ByteValueSelector).setValue(values[c]))
     }
 
-    private setComponent(c: Component, val: number) {
+    private setComponent = (c: Component, val: number) => {
         const values = { r: this.state.r, g: this.state.g, b: this.state.b }
-        this.setState({ [c]: val })
+        this.setState({ [c]: val } as any)
         values[c] = val
-        const hex = this.updateHex(values)
-        this.sendToParent(hex)
+        this.updateHex(values)
     }
 
-    private setFromHex(value: any) {
+    private setFromHex = (value: any) => {
         this.setState({ hex: value, color: validateHex(value) })
         const c = hexToComponents(value)
         const [r, g, b] = c
         this.updateComponents(r, g, b)
-        this.sendToParent(toRGBColor.call(this, c))
     }
 
-    private sendToParent(val: string) {
+    private getRGBColor() {
+        const { r, g, b } = this.state
+        return toRGBColor(r, g, b)
+    }
+
+    private sendToParent = () => {
+        const val = this.state.selected === 'rgb' ? this.getRGBColor() : this.state.hex
         if (this.props.onValue) { this.props.onValue(val) }
     }
 
-    private select(src: any) {
-        this.setState({ selected: src })
-        this.sendToParent(src)
+    private select = (src: 'hex' | 'rgb') => {
+        this.setState({ selected: src }, this.sendToParent)
     }
 
     public render() {
