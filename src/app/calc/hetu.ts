@@ -24,7 +24,7 @@ export function check(hetu: string): string {
 
     const num = parseInt(`${date}${order}`, 10)
     const checksum = num % 31
-    return (checksum < 10) ? check.toString() : hetuChecks[checksum - 10]
+    return (checksum < 10) ? checksum.toString() : hetuChecks[checksum - 10]
 }
 
 export function generate(): string {
