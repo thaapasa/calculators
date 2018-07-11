@@ -15,19 +15,19 @@ so you can calculate password hashes safely.
 
 Install dependencies:
 
-    npm install
+    yarn
 
 Build project:
 
-    npm run build
+    yarn build
 
 Develop (watch for changes):
 
-    npm start
+    yarn start
 
 Run tests:
 
-    npm test
+    yarn test
 
 ### See the results ###
 
