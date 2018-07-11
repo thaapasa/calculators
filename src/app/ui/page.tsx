@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import LastValue from './last-value'
 import Numbers from './numbers'
 import Colors from './colors'

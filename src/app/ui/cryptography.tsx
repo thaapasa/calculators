@@ -1,5 +1,5 @@
-import * as React from 'react'
-import * as Bacon from 'baconjs'
+import React from 'react'
+import Bacon from 'baconjs'
 import SelectableOutput from './component/selectable-output'
 import Section from './component/section'
 import Item from './component/item'

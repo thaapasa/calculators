@@ -1,5 +1,5 @@
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
+import React from 'react'
+import ReactDOM from 'react-dom'
 import CalculatorPage from './app/ui/page'
 import { fixConsole } from './app/util/util'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'

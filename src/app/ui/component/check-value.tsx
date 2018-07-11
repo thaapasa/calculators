@@ -1,5 +1,5 @@
-import * as React from 'react'
-import * as Bacon from 'baconjs'
+import React from 'react'
+import Bacon from 'baconjs'
 import { GenerateButton } from './tool-button'
 import * as util from '../../util/util'
 import Item from './item'

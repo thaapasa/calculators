@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { ClipboardButton } from './component/tool-button'
 import log from '../util/log'
 import TextField from 'material-ui/TextField'

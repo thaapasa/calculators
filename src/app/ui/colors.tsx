@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { HalfSection } from './component/section'
 import { isNumber } from '../util/util'
 import { zeroPad } from '../util/strings'

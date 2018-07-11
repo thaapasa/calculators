@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { isNumber, identity } from '../../util/util'
 import { zeroPad } from '../../util/strings'
 import { strToInt, intToHexStr, hexStrToInt } from '../../calc/numbers'

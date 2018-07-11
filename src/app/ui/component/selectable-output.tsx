@@ -1,5 +1,5 @@
-import * as React from 'react'
-import * as Bacon from 'baconjs'
+import React from 'react'
+import Bacon from 'baconjs'
 import { identity } from '../../util/util'
 import { toUpperCase } from '../../util/strings'
 import Item from './item'

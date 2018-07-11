@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar'
 import Avatar from 'material-ui/Avatar'
 
