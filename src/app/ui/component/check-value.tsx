@@ -12,8 +12,8 @@ const styles: { [key: string]: React.CSSProperties } = {
 
 interface CheckProps {
     readonly width: string
-    readonly check: (x: string) => string
-    readonly combine: (a: string, b: string) => string
+    readonly check?: (x: string) => string
+    readonly combine?: (a: string, b: string) => string
     readonly name: string
     readonly id: string | number
     readonly 'max-length'?: string
@@ -63,19 +63,25 @@ export default class CheckValue extends React.Component<CheckProps, CheckState> 
         this.inputStream.push(val)
     }
 
-    private streamToCheck(calculateCheck: (x: string) => string, combiner: (a: string, b: string) => string = util.combineWith('')) {
+    private streamToCheck(calculateCheck?: (x: string) => string, combiner: (a: string, b: string) => string = util.combineWith('')) {
         this.inputStream = new Bacon.Bus<any, string>()
-        const checkValue = this.inputStream.map(calculateCheck)
-        checkValue.onValue(value => this.setState({ checkValue: value }))
-        checkValue
-            .combine(this.inputStream.toProperty(''), (chk, inp) => chk && combiner(inp, chk))
-            .filter(util.nonEmpty)
-            .onValue(v => {
-                this.setState({ value: v || '' })
-                if (this.props.onValue) {
-                    this.props.onValue(v)
-                }
-            })
+        if (calculateCheck) {
+            const checkValue = this.inputStream.map(calculateCheck)
+            checkValue.onValue(value => this.setState({ checkValue: value }))
+            checkValue
+                .combine(this.inputStream.toProperty(''), (chk, inp) => chk && combiner(inp, chk))
+                .filter(util.nonEmpty)
+                .onValue(this.updateValue)
+        } else {
+            this.inputStream.onValue(this.updateValue)
+        }
+    }
+
+    private updateValue = (value: string) => {
+        this.setState({ value })
+        if (this.props.onValue) {
+            this.props.onValue(value)
+        }
     }
 
     public render() {
