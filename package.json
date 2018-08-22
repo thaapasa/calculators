@@ -7,41 +7,42 @@
   "scripts": {
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
-    "test": "jest",
-    "test-ci": "cross-env CI=TRUE jest",
+    "test": "jest --runInBand",
+    "test-ci": "cross-env CI=TRUE jest --runInBand",
     "deploy": "sh script/deploy.sh",
     "clean": "rm -rf build/",
-    "eject": "react-scripts-ts eject"
+    "eject": "react-scripts-ts eject",
+    "lint": "tslint --project ."
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/thaapasa/calculators"
   },
   "dependencies": {
-    "baconjs": "2.0.7",
+    "baconjs": "2.0.9",
     "cross-env": "5.2.0",
     "crypto-browserify": "3.12.0",
     "intl": "1.2.5",
     "intl-locales-supported": "1.0.0",
-    "material-ui": "0.20.1",
+    "material-ui": "0.20.2",
     "moment": "2.22.2",
-    "react": "16.4.1",
-    "react-dom": "16.4.1",
-    "uuid": "^3.3.2"
+    "react": "16.4.2",
+    "react-dom": "16.4.2",
+    "uuid": "3.3.2"
   },
   "devDependencies": {
     "@types/baconjs": "0.7.33",
-    "@types/jest": "23.1.5",
-    "@types/material-ui": "0.21.3",
-    "@types/react": "16.4.6",
-    "@types/react-dom": "16.0.6",
-    "@types/uuid": "^3.4.3",
-    "jest": "23.4.0",
-    "react-scripts-ts": "2.16.0",
-    "ts-jest": "23.0.0",
+    "@types/jest": "23.3.1",
+    "@types/material-ui": "0.21.5",
+    "@types/react": "16.4.11",
+    "@types/react-dom": "16.0.7",
+    "@types/uuid": "3.4.3",
+    "jest": "23.5.0",
+    "react-scripts-ts": "2.17.0",
+    "ts-jest": "23.1.4",
     "tslib": "1.9.3",
-    "tslint": "5.10.0",
-    "typescript": "2.9.2"
+    "tslint": "5.11.0",
+    "typescript": "3.0.1"
   },
   "jest": {
     "transform": {

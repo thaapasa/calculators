@@ -1,9 +1,6 @@
 import { isObject, isArray } from './util'
 
-interface StorageType {
-    [key: string]: string
-}
-const storage: StorageType = isObject(window.localStorage) ? window.localStorage : {}
+const storage = isObject(window.localStorage) ? window.localStorage : {}
 
 export function set(key: string, value: string): void {
     storage[key] = value
