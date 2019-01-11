@@ -7,18 +7,42 @@ import MenuItem from 'material-ui/MenuItem'
 import * as base64 from '../calc/base64'
 import rot13 from '../calc/rot13'
 import * as strings from '../util/strings'
+import * as xml2js from 'xml2js'
+import { parseBooleans, parseNumbers } from 'xml2js/lib/processors'
 
 interface ConverterInfo {
-    readonly encode: (x: string) => string
-    readonly decode: (x: string) => string
+    readonly encode: (x: string) => Promise<string> | string
+    readonly decode: (x: string) => Promise<string> | string
     readonly name: string
+}
+
+function xmlToJson(x: string): Promise<string> {
+    return new Promise<string>(resolve => xml2js.parseString(x, {
+        ignoreAttrs: false,
+        trim: true,
+        valueProcessors: [parseNumbers, parseBooleans],
+        explicitArray: false,
+    }, (err, res) => {
+        if (err) { resolve('Invalid XML') } else { resolve(JSON.stringify(res, null, 2)) }
+    }))
+}
+
+const xmlBuilder = new xml2js.Builder()
+
+function jsonToXml(x: string): string {
+    try {
+        return xmlBuilder.buildObject(JSON.parse(x)).toString()
+    } catch (e) {
+        return 'Invalid JSON'
+    }
 }
 
 const convertInfo: { [key: string]: ConverterInfo } = {
     base64: { encode: base64.encode, decode: base64.decode, name: 'Base64' },
     rot13: { encode: rot13, decode: rot13, name: 'ROT-13' },
     hexStr: { encode: strings.toHexString, decode: strings.fromHexString, name: 'Heksamerkkijono' },
-    urlEncode: { encode: x => encodeURIComponent(x), decode: x => decodeURIComponent(x), name: 'URL encode' },
+    urlEncode: { encode: async x => encodeURIComponent(x), decode: x => decodeURIComponent(x), name: 'URL encode' },
+    js2xml: { encode: jsonToXml, decode: xmlToJson, name: 'JSON to XML'  },
 }
 const converters = Object.keys(convertInfo)
 
@@ -54,10 +78,10 @@ export default class TextConversion extends React.Component<TextConversionProps,
         const selected = this.selectedStr.toProperty(converters[0]).skipDuplicates()
         selected.onValue(v => this.setState({ selected: v }))
         const encStr = this.sourceStr.combine(selected, (val, c) => (convertInfo[c].encode)(val))
-        encStr.onValue(v => this.setState({ target: v }))
+        encStr.onValue(async v => this.setState({ target: await v }))
         const decStr = this.targetStr.combine(selected, (val, c) => (convertInfo[c].decode)(val))
-        decStr.onValue(v => this.setState({ source: v }))
-        Bacon.mergeAll(encStr.changes(), decStr.changes()).onValue(v => this.props.onValue && this.props.onValue(v))
+        decStr.onValue(async v => this.setState({ source: await v }))
+        Bacon.mergeAll(encStr.changes(), decStr.changes()).onValue(async v => this.props.onValue && this.props.onValue(await v))
         this.selectedStr.push(converters[0])
     }
 
