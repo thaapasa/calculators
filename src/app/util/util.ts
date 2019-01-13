@@ -24,6 +24,12 @@ export function isArray(value: any): boolean {
     return Array.isArray(value)
 }
 
+export function flatten<T>(arr: T[][]): T[] {
+    const res: T[] = []
+    arr.forEach(list => list.forEach(i => res.push(i)))
+    return res
+}
+
 export function noop(): void { return }
 
 export function identity<T>(value: T): T { return value }
@@ -42,6 +48,12 @@ export function combineWith(separator: string): (a: any, b: any) => string {
 
 export function htmlBoolean(val: boolean, name: string): string | undefined {
     return val ? name : undefined
+}
+
+export function pairsToObject<T>(pairs: Array<[string, T]>): Record<string, T> {
+    const res: Record<string, T> = {}
+    pairs.forEach(p => res[p[0]] = p[1])
+    return res
 }
 
 const consoleMethods = [

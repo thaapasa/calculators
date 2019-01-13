@@ -7,8 +7,9 @@ import MenuItem from 'material-ui/MenuItem'
 import * as base64 from '../calc/base64'
 import rot13 from '../calc/rot13'
 import * as strings from '../util/strings'
-import * as xml2js from 'xml2js'
-import { parseBooleans, parseNumbers } from 'xml2js/lib/processors'
+import { jsonStringToXml, xmlToJsonString } from '../calc/xml-json'
+import { identity } from '../util/util'
+import { svgToReactNative } from '../calc/svg-react-native'
 
 interface ConverterInfo {
     readonly encode: (x: string) => Promise<string> | string
@@ -16,33 +17,13 @@ interface ConverterInfo {
     readonly name: string
 }
 
-function xmlToJson(x: string): Promise<string> {
-    return new Promise<string>(resolve => xml2js.parseString(x, {
-        ignoreAttrs: false,
-        trim: true,
-        valueProcessors: [parseNumbers, parseBooleans],
-        explicitArray: false,
-    }, (err, res) => {
-        if (err) { resolve('Invalid XML') } else { resolve(JSON.stringify(res, null, 2)) }
-    }))
-}
-
-const xmlBuilder = new xml2js.Builder()
-
-function jsonToXml(x: string): string {
-    try {
-        return xmlBuilder.buildObject(JSON.parse(x)).toString()
-    } catch (e) {
-        return 'Invalid JSON'
-    }
-}
-
 const convertInfo: { [key: string]: ConverterInfo } = {
-    base64: { encode: base64.encode, decode: base64.decode, name: 'Base64' },
-    rot13: { encode: rot13, decode: rot13, name: 'ROT-13' },
-    hexStr: { encode: strings.toHexString, decode: strings.fromHexString, name: 'Heksamerkkijono' },
+    js2xml: { encode: jsonStringToXml, decode: xmlToJsonString, name: 'JSON to XML'  },
+    svg2RN: { encode: svgToReactNative, decode: identity, name: 'SVG to React Native'  },
     urlEncode: { encode: async x => encodeURIComponent(x), decode: x => decodeURIComponent(x), name: 'URL encode' },
-    js2xml: { encode: jsonToXml, decode: xmlToJson, name: 'JSON to XML'  },
+    base64: { encode: base64.encode, decode: base64.decode, name: 'Base64' },
+    hexStr: { encode: strings.toHexString, decode: strings.fromHexString, name: 'Heksamerkkijono' },
+    rot13: { encode: rot13, decode: rot13, name: 'ROT-13' },
 }
 const converters = Object.keys(convertInfo)
 
