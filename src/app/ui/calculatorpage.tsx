@@ -2,7 +2,7 @@ import React from 'react'
 import LastValue from './last-value'
 import DateTime from './datetime'
 import TopBar from './layout/topbar'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { Router, Route, Switch } from 'react-router-dom'
 import CalculatorSinglePageLayout from './singlepage'
 import Numbers from './numbers'
 import Identifiers from './identifiers'
@@ -10,9 +10,16 @@ import Colors from './colors'
 import TextConversion from './text-conversion'
 import Cryptography from './cryptography'
 import Links from './links'
+import NavigationDrawer from './layout/drawer'
+import { history } from './history'
 
-export default class CalculatorPage extends React.Component<{}, {}> {
+interface PageState {
+    drawerOpen: boolean
+}
 
+export default class CalculatorPage extends React.Component<{}, PageState> {
+
+    public state: PageState = { drawerOpen: false }
     private lastValue = React.createRef<LastValue>()
 
     constructor(props: {}) {
@@ -28,11 +35,12 @@ export default class CalculatorPage extends React.Component<{}, {}> {
 
     public render() {
         return (
-            <Router>
+            <Router history={history}>
                 <div className="everything">
-                    <TopBar>
+                    <TopBar onToggleDrawer={this.toggleDrawer}>
                         <LastValue ref={this.lastValue} />
                     </TopBar>
+                    <NavigationDrawer open={this.state.drawerOpen} onToggle={this.toggleDrawer} />
                     <div className="main-content">
                         <Switch>
                             <Route path="/aika" render={this.renderTimePage} />
@@ -57,6 +65,8 @@ export default class CalculatorPage extends React.Component<{}, {}> {
             </Router>
         )
     }
+
+    private toggleDrawer = () => this.setState(s => ({ drawerOpen: !s.drawerOpen }))
 
     private renderFullPage = () => <CalculatorSinglePageLayout onValue={this.showValue} />
     private renderTimePage = () => <DateTime onValue={this.showValue} />

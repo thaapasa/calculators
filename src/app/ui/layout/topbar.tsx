@@ -7,12 +7,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     titleText: { marginLeft: '0.7em' },
 }
 
-export default class CalculatorToolbar extends React.Component<{}, {}> {
+interface ToolbarProps {
+    onToggleDrawer: () => void
+}
+
+export default class CalculatorToolbar extends React.Component<ToolbarProps> {
     public render() {
         return (
             <Toolbar className="topbar">
                 <ToolbarGroup firstChild={true}>
-                    <Avatar src="img/calculators.png" style={styles.avatar} />
+                    <Avatar src="img/calculators.png" style={styles.avatar} onClick={this.props.onToggleDrawer} />
                     <ToolbarTitle text="Laskurit" style={styles.titleText} />
                 </ToolbarGroup>
                 <ToolbarGroup>
