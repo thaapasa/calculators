@@ -29,13 +29,13 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
     }
 
     private goToFullpage = this.navigate('/')
-    private goToNumbers = this.navigate('/numerot')
-    private goToTime = this.navigate('/aika')
-    private goToIdentifiers = this.navigate('/tunnisteet')
-    private goToColors = this.navigate('/värit')
-    private goToLinks = this.navigate('/linkit')
-    private goToTextConversion = this.navigate('/tekstimuunnokset')
-    private goToCryptography = this.navigate('/kryptografia')
+    private goToNumbers = this.navigate('/p/numerot')
+    private goToTime = this.navigate('/p/aika')
+    private goToIdentifiers = this.navigate('/p/tunnisteet')
+    private goToColors = this.navigate('/p/värit')
+    private goToLinks = this.navigate('/p/linkit')
+    private goToTextConversion = this.navigate('/p/tekstimuunnokset')
+    private goToCryptography = this.navigate('/p/kryptografia')
 
     private navigate(path: string) {
         return () => {

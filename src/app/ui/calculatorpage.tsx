@@ -43,21 +43,21 @@ export default class CalculatorPage extends React.Component<{}, PageState> {
                     <NavigationDrawer open={this.state.drawerOpen} onToggle={this.toggleDrawer} />
                     <div className="main-content">
                         <Switch>
-                            <Route path="/aika" render={this.renderTimePage} />
-                            <Route path="/time" render={this.renderTimePage} />
-                            <Route path="/merkit" render={this.renderNumbers} />
-                            <Route path="/numerot" render={this.renderNumbers} />
-                            <Route path="/symbols" render={this.renderNumbers} />
-                            <Route path="/tunnisteet" render={this.renderIdentifiers} />
-                            <Route path="/identifiers" render={this.renderIdentifiers} />
-                            <Route path="/värit" render={this.renderColors} />
-                            <Route path="/colors" render={this.renderColors} />
-                            <Route path="/linkit" render={this.renderLinks} />
-                            <Route path="/links" render={this.renderLinks} />
-                            <Route path="/tekstimuunnokset" render={this.renderTextConversion} />
-                            <Route path="/textconversions" render={this.renderTextConversion} />
-                            <Route path="/kryptografia" render={this.renderCryptography} />
-                            <Route path="/cryptography" render={this.renderCryptography} />
+                            <Route path="/p/aika" render={this.renderTimePage} />
+                            <Route path="/p/time" render={this.renderTimePage} />
+                            <Route path="/p/merkit" render={this.renderNumbers} />
+                            <Route path="/p/numerot" render={this.renderNumbers} />
+                            <Route path="/p/symbols" render={this.renderNumbers} />
+                            <Route path="/p/tunnisteet" render={this.renderIdentifiers} />
+                            <Route path="/p/identifiers" render={this.renderIdentifiers} />
+                            <Route path="/p/värit" render={this.renderColors} />
+                            <Route path="/p/colors" render={this.renderColors} />
+                            <Route path="/p/linkit" render={this.renderLinks} />
+                            <Route path="/p/links" render={this.renderLinks} />
+                            <Route path="/p/tekstimuunnokset" render={this.renderTextConversion} />
+                            <Route path="/p/textconversions" render={this.renderTextConversion} />
+                            <Route path="/p/kryptografia" render={this.renderCryptography} />
+                            <Route path="/p/cryptography" render={this.renderCryptography} />
                             <Route render={this.renderFullPage} />
                         </Switch>
                     </div>
