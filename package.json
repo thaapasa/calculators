@@ -28,6 +28,8 @@
     "moment": "2.23.0",
     "react": "16.7.0",
     "react-dom": "16.7.0",
+    "react-router": "4.3.1",
+    "react-router-dom": "4.3.1",
     "uuid": "3.3.2",
     "xml2js": "0.4.19"
   },
@@ -37,6 +39,8 @@
     "@types/material-ui": "0.21.5",
     "@types/react": "16.7.18",
     "@types/react-dom": "16.0.11",
+    "@types/react-router": "4.4.3",
+    "@types/react-router-dom": "4.3.1",
     "@types/uuid": "3.4.4",
     "@types/xml2js": "0.4.3",
     "react-scripts-ts": "3.1.0",
