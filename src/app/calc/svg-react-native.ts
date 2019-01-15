@@ -1,60 +1,59 @@
-import * as xml2js from 'xml2js'
-import { xmlToJson } from './xml-json'
-import { pairsToObject, isArray, flatten } from '../util/util'
+import * as xmljs from 'xml-js'
 import log from '../util/log'
-import { hyphenCaseToCamelCase, hyphenCaseToPascalCase } from '../util/strings'
-
-const xmlBuilder = new xml2js.Builder({ headless: true })
+import { pairsToObject, flatten } from '../util/util'
+import { hyphenCaseToCamelCase, toUpperCaseFirst } from '../util/strings'
 
 export async function svgToReactNative(src: string): Promise<string> {
     try {
-        const { svg } = await xmlToJson<any>(src)
-        const result = fixSvgForRN(svg)
+        const xml: xmljs.Element = xmljs.xml2js(src, { compact: false }) as xmljs.Element
+        const svg = xml.elements && xml.elements.find(e => e.name === 'svg')
 
-        if (2 > 3) {
-            return JSON.stringify(result, null, 2)
+        delete xml.declaration
+
+        const result = {
+            ...xml,
+            elements: [fixSvgForRN(svg!)],
         }
-        return xmlBuilder.buildObject(result).toString()
+        return xmljs.js2xml(result, { compact: false, spaces: 2 })
     } catch (e) {
         log('Error when fixing XML:', e)
         return 'Invalid SVG'
     }
-
 }
 
-function fixSvgForRN(svg: any): any {
-    delete svg.title
-    delete svg.desc
-
-    svg.$ = { width: svg.$.width, height: svg.$.height, viewBox: svg.$.viewBox }
-
-    const Svg = pairsToObject(flatten(Object.keys(svg).map(k => fixKey(k, svg[k], false))))
-
-    return { Svg }
+function fixSvgForRN(svg: xmljs.Element): xmljs.Element {
+    const attrs = svg.attributes
+    return fixElement({
+        ...svg,
+        elements: svg.elements ? svg.elements.filter(e => e.name !== 'title' && e.name !== 'desc').map(fixElement) : undefined,
+        attributes: attrs ? { width: attrs.width, height: attrs.height, viewBox: attrs.viewBox } : undefined,
+    })
 }
 
-function fixKey(key: string, value: any, isAttributes: boolean): Array<[string, any]> {
+function fixElement(element: xmljs.Element): xmljs.Element {
+    return {
+        ...element,
+        name: toUpperCaseFirst(element.name || ''),
+        elements: element.elements && element.elements.map(fixElement),
+        attributes: element.attributes && fixAttributes(element.attributes),
+    }
+}
+
+function fixAttributes(attrs: xmljs.Attributes): xmljs.Attributes {
+    return pairsToObject(flatten(Object.keys(attrs).map(k => fixAttribute(k, attrs[k]))))
+}
+
+function fixAttribute(key: string, value?: string | number): Array<[string, string | number | undefined]> {
     if (key === 'style') {
-        const styles = value.split(';')
-        const sar = styles.filter(Boolean).map((def: string) => {
+        const styles = (value as string).split(';')
+        const sar: Array<[string, string]> = styles.filter(Boolean).map<[string, string]>((def: string) => {
             const [k, v] = def.split(':')
             return [hyphenCaseToCamelCase(k), v]
         })
         return sar
     }
-    const nsSepPos = key.indexOf(':')
-    const keyName = nsSepPos >= 0 ? key.substr(nsSepPos + 1) : key
-    const fixedKey = isAttributes ? hyphenCaseToCamelCase(keyName) : hyphenCaseToPascalCase(keyName)
-    const fixedValue = fixValue(key, value)
-    return [[fixedKey, fixedValue]]
-}
-
-function fixValue(key: string, value: any) {
-    if (isArray(value)) {
-         return value.map((v: any) => fixValue(key, v))
-    } else if (typeof value === 'object') {
-        return pairsToObject(flatten(Object.keys(value).map(k => fixKey(k, value[k], key === '$'))))
-    } else {
-        return value
+    if (key === 'serif:id') {
+        return []
     }
+    return [[hyphenCaseToCamelCase(key), value]]
 }

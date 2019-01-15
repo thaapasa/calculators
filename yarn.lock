@@ -8924,6 +8924,13 @@ xdg-basedir@^3.0.0:
   resolved "https://registry.yarnpkg.com/xdg-basedir/-/xdg-basedir-3.0.0.tgz#496b2cc109eca8dbacfe2dc72b603c17c5870ad4"
   integrity sha1-SWsswQnsqNus/i3HK2A8F8WHCtQ=
 
+xml-js@1.6.9:
+  version "1.6.9"
+  resolved "https://registry.yarnpkg.com/xml-js/-/xml-js-1.6.9.tgz#6e516ce53c64ea0043cbc6ee8500e5d693602757"
+  integrity sha512-Omi8lVfq3q3H0xnGcZKLQhoiOghTGN1xxfabah4FybYN1pyvUzh1X+cJ+vKKY3Zr255y1H5IUAT3u3lznshdbw==
+  dependencies:
+    sax "^1.2.4"
+
 xml-name-validator@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/xml-name-validator/-/xml-name-validator-2.0.1.tgz#4d8b8f1eccd3419aa362061becef515e1e559635"
