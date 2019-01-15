@@ -19,8 +19,8 @@ interface ConverterInfo {
 }
 
 const convertInfo: { [key: string]: ConverterInfo } = {
-    js2xml: { encode: jsonStringToXml, decode: xmlToJsonString, name: 'JSON to XML'  },
-    svg2RN: { encode: svgToReactNative, decode: identity, name: 'SVG to React Native'  },
+    js2xml: { encode: jsonStringToXml, decode: xmlToJsonString, name: 'JSON ⮂ XML'  },
+    svg2RN: { encode: svgToReactNative, decode: identity, name: 'SVG ⭢ React Native'  },
     urlEncode: { encode: async x => encodeURIComponent(x), decode: x => decodeURIComponent(x), name: 'URL encode' },
     base64: { encode: base64.encode, decode: base64.decode, name: 'Base64' },
     hexStr: { encode: strings.toHexString, decode: strings.fromHexString, name: 'Heksamerkkijono' },
@@ -83,16 +83,22 @@ export default class TextConversion extends React.Component<TextConversionProps,
 
     public render() {
         return <Section title="Tekstimuunnokset" subtitle={convertInfo[this.state.selected].name}>
-            <div className="flex-row center">
-                <TextField className="flex" onChange={(e, v) => this.sourceStr.push(v)} fullWidth={true} multiLine={true}
-                    name="source" value={this.state.source} />
-                <div className="left-pad">{this.state.source.length}</div>
-            </div>
             <SelectField value={this.state.selected} onChange={(e, i, v) => this.selectedStr.push(v)} floatingLabelText="Konversio">
                 {converters.map(c => <MenuItem value={c} key={c} primaryText={convertInfo[c].name} />)}
             </SelectField>
             <div className="flex-row center">
-                <TextField className="flex" onChange={(e, v) => this.targetStr.push(v)} fullWidth={true} multiLine={true}
+                <TextField className="flex"
+                    floatingLabelText="Lähde"
+                    onChange={(e, v) => this.sourceStr.push(v)}
+                    fullWidth={true} multiLine={true}
+                    name="source" value={this.state.source} />
+                <div className="left-pad">{this.state.source.length}</div>
+            </div>
+            <div className="flex-row center">
+                <TextField className="flex"
+                    floatingLabelText="Kohde"
+                    onChange={(e, v) => this.targetStr.push(v)}
+                    fullWidth={true} multiLine={true}
                     name="target" value={this.state.target} />
                 <div className="left-pad">{this.state.target.length}</div>
             </div>
