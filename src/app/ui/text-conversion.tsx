@@ -10,6 +10,7 @@ import * as strings from '../util/strings'
 import { jsonStringToXml, xmlToJsonString } from '../calc/xml-json'
 import { identity } from '../util/util'
 import { svgToReactNative } from '../calc/svg-react-native'
+import * as store from './store'
 
 interface ConverterInfo {
     readonly encode: (x: string) => Promise<string> | string
@@ -37,6 +38,16 @@ interface TextConversionState {
     selected: any
 }
 
+const CONVERTER_STORE_KEY = 'selectedTextConverter'
+
+function getConverterFromStore(): string {
+    return store.getValue<string>(CONVERTER_STORE_KEY) || converters[0]
+}
+
+function setConverterToStore(converterName: string): void {
+    store.putValue(CONVERTER_STORE_KEY, converterName)
+}
+
 export default class TextConversion extends React.Component<TextConversionProps, TextConversionState> {
 
     public state: TextConversionState = {
@@ -54,16 +65,20 @@ export default class TextConversion extends React.Component<TextConversionProps,
         this.targetStr = new Bacon.Bus<any, string>()
         this.selectedStr = new Bacon.Bus<any, string>()
 
+        const initialConverter = getConverterFromStore()
         this.sourceStr.onValue(v => this.setState({ source: v }))
         this.targetStr.onValue(v => this.setState({ target: v }))
-        const selected = this.selectedStr.toProperty(converters[0]).skipDuplicates()
-        selected.onValue(v => this.setState({ selected: v }))
+        const selected = this.selectedStr.toProperty(initialConverter).skipDuplicates()
+        selected.onValue(v => {
+            this.setState({ selected: v })
+            setConverterToStore(v)
+        })
         const encStr = this.sourceStr.combine(selected, (val, c) => (convertInfo[c].encode)(val))
         encStr.onValue(async v => this.setState({ target: await v }))
         const decStr = this.targetStr.combine(selected, (val, c) => (convertInfo[c].decode)(val))
         decStr.onValue(async v => this.setState({ source: await v }))
         Bacon.mergeAll(encStr.changes(), decStr.changes()).onValue(async v => this.props.onValue && this.props.onValue(await v))
-        this.selectedStr.push(converters[0])
+        this.selectedStr.push(initialConverter)
     }
 
     public render() {
