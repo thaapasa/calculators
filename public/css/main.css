@@ -83,6 +83,25 @@ html, body {
     padding-left: 16px;
 }
 
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.flex {
+    flex: 1;
+}
+
+.license-info {
+    padding: 16px;
+    font-size: 10pt;
+}
+
+.license-info a {
+    color: rgba(0, 0, 0, 0.6);
+}
+
 @media (min-width: 60em) {
     .section-half-size {
         width: 29em;
