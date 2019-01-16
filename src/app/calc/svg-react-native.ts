@@ -1,7 +1,7 @@
 import * as xmljs from 'xml-js'
 import log from '../util/log'
 import { pairsToObject, flatten } from '../util/util'
-import { hyphenCaseToCamelCase, toUpperCaseFirst } from '../util/strings'
+import { toUpperCaseFirst, hyphenCaseToCamelCase } from '../util/strings'
 
 export async function svgToReactNative(src: string): Promise<string> {
     try {
@@ -39,21 +39,30 @@ function fixElement(element: xmljs.Element): xmljs.Element {
     }
 }
 
+type AttributeValue = string | number | undefined
+
 function fixAttributes(attrs: xmljs.Attributes): xmljs.Attributes {
-    return pairsToObject(flatten(Object.keys(attrs).map(k => fixAttribute(k, attrs[k]))))
+    return renameAttributeKeys(expandStyleAttribute(removeExtraAttrs(attrs)))
 }
 
-function fixAttribute(key: string, value?: string | number): Array<[string, string | number | undefined]> {
-    if (key === 'style') {
-        const styles = (value as string).split(';')
-        const sar: Array<[string, string]> = styles.filter(Boolean).map<[string, string]>((def: string) => {
-            const [k, v] = def.split(':')
-            return [hyphenCaseToCamelCase(k), v]
-        })
-        return sar
-    }
-    if (key === 'serif:id') {
-        return []
-    }
-    return [[hyphenCaseToCamelCase(key), value]]
+const attributesToRemove = ['serif:id']
+const removeExtraAttrs = (attrs: xmljs.Attributes): xmljs.Attributes => {
+    const copy = { ...attrs }
+    attributesToRemove.forEach(a => delete copy[a])
+    return copy
 }
+
+const renameAttributeKeys = (attrs: xmljs.Attributes): xmljs.Attributes =>
+    pairsToObject(Object.keys(attrs).map<[string, AttributeValue]>(k => [hyphenCaseToCamelCase(k), attrs[k]]))
+
+const expandStyleAttribute = (attrs: xmljs.Attributes): xmljs.Attributes => {
+    const { style, ...rest } = attrs
+    return { ...rest, ...expandStyleValue(style)}
+}
+
+const expandStyleValue = (value?: string | number): xmljs.Attributes =>
+    value && typeof value === 'string' ?
+        pairsToObject(flatten(value.split(';')
+            .map<Array<[string, string]>>(d => d.indexOf(':') > 0 ?
+                [d.split(':', 2) as [string, string]] :
+                []))) : {}

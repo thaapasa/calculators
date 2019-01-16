@@ -19,8 +19,8 @@ interface ConverterInfo {
 }
 
 const convertInfo: { [key: string]: ConverterInfo } = {
-    js2xml: { encode: jsonStringToXml, decode: xmlToJsonString, name: 'JSON ⮂ XML'  },
-    svg2RN: { encode: svgToReactNative, decode: identity, name: 'SVG ⭢ React Native'  },
+    js2xml: { encode: jsonStringToXml, decode: xmlToJsonString, name: 'JSON ⇆ XML'  },
+    svg2RN: { encode: svgToReactNative, decode: identity, name: 'SVG → React Native'  },
     urlEncode: { encode: async x => encodeURIComponent(x), decode: x => decodeURIComponent(x), name: 'URL encode' },
     base64: { encode: base64.encode, decode: base64.decode, name: 'Base64' },
     hexStr: { encode: strings.toHexString, decode: strings.fromHexString, name: 'Heksamerkkijono' },
