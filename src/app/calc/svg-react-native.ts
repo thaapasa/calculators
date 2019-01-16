@@ -14,11 +14,35 @@ export async function svgToReactNative(src: string): Promise<string> {
             ...xml,
             elements: [fixSvgForRN(svg!)],
         }
-        return xmljs.js2xml(result, { compact: false, spaces: 2 })
+        const els = findElementNames(result.elements[0])
+        const rnXML = xmljs.js2xml(result, { compact: false, spaces: 2 })
+        return wrapAsJsx(rnXML, els)
     } catch (e) {
         log('Error when fixing XML:', e)
         return 'Invalid SVG'
     }
+}
+
+function wrapAsJsx(svg: string, elements: string[]): string {
+    return `import React from 'react';
+import { ${elements.join(', ')} } from 'react-native-svg';
+
+export const SvgImage = () => (
+  ${svg.split('\n').join('  \n')}
+);
+`
+}
+
+function findElementNames(el: xmljs.Element): string[] {
+    const res: Record<string, null> = {}
+    retrieveElementNames(el, res)
+    const names = Object.keys(res)
+    return names.sort()
+}
+
+function retrieveElementNames(el: xmljs.Element, rec: Record<string, null>) {
+    if (el.name) { rec[el.name] = null }
+    if (el.elements) { el.elements.forEach(e => retrieveElementNames(e, rec)) }
 }
 
 function fixSvgForRN(svg: xmljs.Element): xmljs.Element {
