@@ -29,7 +29,7 @@ function readZero(x: string): number {
     return 0
 }
 
-const types: { [key: string]: TypeInfo } = {
+const types: Record<string, TypeInfo> = {
     binary: { read: numbers.binaryStrToInt, write: numbers.intToBinaryStr, inputType: 'number', maxLength: 50 },
     octal: { read: numbers.octalStrToInt, write: numbers.intToOctalStr, inputType: 'number', maxLength: 40 },
     decimal: { read: numbers.strToInt, write: numbers.intToStr, inputType: 'number', maxLength: 40 },
@@ -54,21 +54,23 @@ interface NumbersProps {
     onValue: (x: any) => any
 }
 
-export default class Numbers extends React.Component<NumbersProps, any> {
+interface NumbersState {
+    selected: string,
+    unicode: string,
+    values: Record<string, string>
+}
 
-    public state: any = {
+export default class Numbers extends React.Component<NumbersProps, NumbersState> {
+
+    public state: NumbersState = {
         selected: 'decimal',
         unicode: '',
+        values: util.pairsToObject(Object.keys(types).map<[string, string]>(t => [t, ''])),
     }
 
     private currentInput: any
     private inputStream: any
     private selectedSrcStr: any
-
-    constructor(props: NumbersProps) {
-        super(props)
-        typeKeys.forEach(t => this.state[t] = '')
-    }
 
     public componentDidMount() {
         const emptyStream = Bacon.never()
@@ -84,8 +86,8 @@ export default class Numbers extends React.Component<NumbersProps, any> {
             converted.combine(sourceIsThis, (c: any, i: any) => [c, i]).flatMapLatest((v: any) => v[1] ? emptyStream : converted)
                 .map(typeInfo.write)
                 .map((v: any) => util.isString(v) ? v : '')
-                .onValue((v: any) => this.setState({ [t]: v }))
-            converted.onValue((v: any) => this.setState({ unicode: intToUnicodeStr(v), html: intToHTMLCode(v) }))
+                .onValue((v: any) => this.mergeValues({ [t]: v }))
+            converted.onValue((v: any) => this.mergeValues({ unicode: intToUnicodeStr(v), html: intToHTMLCode(v) }))
         })
         this.selectedSrcStr
             .map((t: any) => types[t].write)
@@ -93,10 +95,12 @@ export default class Numbers extends React.Component<NumbersProps, any> {
             .onValue((v: any) => this.props.onValue && this.props.onValue(v))
     }
 
+    private mergeValues = (x: any) => this.setState(s => ({ values: { ...s.values, ...x } }))
+
     private inputChanged = (event: any) => {
         const name = event.target.name
         const value = event.target.value
-        this.setState({ [name]: value })
+        this.mergeValues({ [name]: value })
         this.currentInput.push(name)
         this.inputStream.push(value)
     }
@@ -115,7 +119,7 @@ export default class Numbers extends React.Component<NumbersProps, any> {
                         name={t}
                         hintText={texts[t]}
                         max-length={types[t].maxLength}
-                        value={this.state[t]}
+                        value={this.state.values[t]}
                         onChange={this.inputChanged}
                         onFocus={this.selectSrc}
                         read-only={util.htmlBoolean(types[t].readOnly || false, 'readonly')}

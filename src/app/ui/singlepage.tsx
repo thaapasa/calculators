@@ -6,6 +6,7 @@ import Identifiers from './identifiers'
 import DateTime from './datetime'
 import Cryptography from './cryptography'
 import Links from './links'
+import ByteSizes from './bytesize'
 
 interface PageProps {
     onValue: (value: string) => void
@@ -24,7 +25,10 @@ export default class CalculatorSinglePageLayout extends React.Component<PageProp
                     <Identifiers onValue={this.props.onValue} />
                     <Colors onValue={this.props.onValue} />
                 </div>
-                <Links />
+                <div className="section-row">
+                    <ByteSizes onValue={this.props.onValue} />
+                    <Links />
+                </div>
                 <TextConversion onValue={this.props.onValue} />
                 <Cryptography onValue={this.props.onValue} />
             </>

@@ -22,6 +22,7 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
                     <MenuItem onClick={this.goToTime}>Aikaleimat</MenuItem>
                     <MenuItem onClick={this.goToIdentifiers}>Tunnisteet</MenuItem>
                     <MenuItem onClick={this.goToColors}>Värit</MenuItem>
+                    <MenuItem onClick={this.goToByteSize}>Tavukoot</MenuItem>
                     <MenuItem onClick={this.goToLinks}>Linkit</MenuItem>
                     <MenuItem onClick={this.goToTextConversion}>Tekstimuunnokset</MenuItem>
                     <MenuItem onClick={this.goToCryptography}>Kryptografia</MenuItem>
@@ -43,6 +44,7 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
     private goToTime = this.navigate('/p/aika')
     private goToIdentifiers = this.navigate('/p/tunnisteet')
     private goToColors = this.navigate('/p/värit')
+    private goToByteSize = this.navigate('/p/tavukoot')
     private goToLinks = this.navigate('/p/linkit')
     private goToTextConversion = this.navigate('/p/tekstimuunnokset')
     private goToCryptography = this.navigate('/p/kryptografia')

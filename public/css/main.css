@@ -36,12 +36,18 @@ html, body {
     margin: 1.5em 0;
 }
 
+.unit {
+    width: 20px;
+    text-align: right;
+    padding-top: 14px;
+    margin-left: 8px;
+}
 
 .calculator-item {
     margin: 0.2em 0.75em;
     display: flex;
     align-self: baseline;
-    align: baseline;
+    text-align: baseline;
 }
 
 .calculator-item > .name {
@@ -87,6 +93,14 @@ html, body {
     display: flex;
     flex-direction: column;
     height: 100%;
+    box-sizing: border-box;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .flex {

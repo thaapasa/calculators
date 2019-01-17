@@ -12,6 +12,7 @@ import Cryptography from './cryptography'
 import Links from './links'
 import NavigationDrawer from './layout/drawer'
 import { history } from './history'
+import ByteSizes from './bytesize'
 
 interface PageState {
     drawerOpen: boolean
@@ -52,6 +53,9 @@ export default class CalculatorPage extends React.Component<{}, PageState> {
                             <Route path="/p/identifiers" render={this.renderIdentifiers} />
                             <Route path="/p/värit" render={this.renderColors} />
                             <Route path="/p/colors" render={this.renderColors} />
+                            <Route path="/p/tavukoot" render={this.renderByteSizes} />
+                            <Route path="/p/bytesize" render={this.renderByteSizes} />
+                            <Route path="/p/bytesizes" render={this.renderByteSizes} />
                             <Route path="/p/linkit" render={this.renderLinks} />
                             <Route path="/p/links" render={this.renderLinks} />
                             <Route path="/p/tekstimuunnokset" render={this.renderTextConversion} />
@@ -73,6 +77,7 @@ export default class CalculatorPage extends React.Component<{}, PageState> {
     private renderNumbers = () => <Numbers onValue={this.showValue} />
     private renderIdentifiers = () => <Identifiers onValue={this.showValue} />
     private renderColors = () => <Colors onValue={this.showValue} />
+    private renderByteSizes = () => <ByteSizes onValue={this.showValue} />
     private renderLinks = () => <Links />
     private renderTextConversion = () => <TextConversion onValue={this.showValue} />
     private renderCryptography = () => <Cryptography onValue={this.showValue} />

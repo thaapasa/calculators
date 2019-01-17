@@ -1,5 +1,5 @@
 import React from 'react'
-import Section from './component/section'
+import { HalfSection } from './component/section'
 import Item from './component/item'
 import Bacon from 'baconjs'
 import { isString, isArray } from '../util/util'
@@ -65,7 +65,7 @@ export default class Links extends React.Component<{}, LinksState> {
     }
 
     public render() {
-        return <Section title="Linkit">
+        return <HalfSection title="Linkit">
             <Item name="Linkki">
                 <TextField name="link" value={this.state.link} fullWidth={true} onChange={(e, v) => this.linkStream.push(v)} />
             </Item>
@@ -80,7 +80,7 @@ export default class Links extends React.Component<{}, LinksState> {
                 }
 
             </List>
-        </Section>
+        </HalfSection>
 
     }
 }
