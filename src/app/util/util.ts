@@ -1,78 +1,107 @@
 // Returns a random integer between min (included) and max (excluded)
 // Using Math.round() will give you a non-uniform distribution!
 export function getRandomInt(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min)) + min
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 export function isDefined(value: any): boolean {
-    return value !== undefined && value !== null
+  return value !== undefined && value !== null;
 }
 
 export function isNumber(value: any): boolean {
-    return value !== undefined && value !== null && typeof value === 'number' && !isNaN(value)
+  return (
+    value !== undefined &&
+    value !== null &&
+    typeof value === 'number' &&
+    !isNaN(value)
+  );
 }
 
 export function isString(value: any): boolean {
-    return value !== undefined && value !== null && typeof value === 'string'
+  return value !== undefined && value !== null && typeof value === 'string';
 }
 
 export function isObject(value: any): boolean {
-    return value !== undefined && value !== null && typeof value === 'object'
+  return value !== undefined && value !== null && typeof value === 'object';
 }
 
 export function isArray(value: any): boolean {
-    return Array.isArray(value)
+  return Array.isArray(value);
 }
 
 export function flatten<T>(arr: T[][]): T[] {
-    const res: T[] = []
-    arr.forEach(list => list.forEach(i => res.push(i)))
-    return res
+  const res: T[] = [];
+  arr.forEach(list => list.forEach(i => res.push(i)));
+  return res;
 }
 
-export function noop(): void { return }
+export function noop(): void {
+  return;
+}
 
-export function identity<T>(value: T): T { return value }
+export function identity<T>(value: T): T {
+  return value;
+}
 
 export function nonEmpty(value: any): boolean {
-    return value && value.length && value.length > 0
+  return value && value.length && value.length > 0;
 }
 
 export function combine(a: any, b: any): string {
-    return `${a}${b}`
+  return `${a}${b}`;
 }
 
 export function combineWith(separator: string): (a: any, b: any) => string {
-    return (a: any, b: any) => `${a}${separator}${b}`
+  return (a: any, b: any) => `${a}${separator}${b}`;
 }
 
 export function htmlBoolean(val: boolean, name: string): string | undefined {
-    return val ? name : undefined
+  return val ? name : undefined;
 }
 
 export function pairsToObject<T>(pairs: Array<[string, T]>): Record<string, T> {
-    const res: Record<string, T> = {}
-    pairs.forEach(p => res[p[0]] = p[1])
-    return res
+  const res: Record<string, T> = {};
+  pairs.forEach(p => (res[p[0]] = p[1]));
+  return res;
 }
 
 const consoleMethods = [
-    'assert', 'clear', 'count', 'debug', 'dir', 'dirxml', 'error',
-    'exception', 'group', 'groupCollapsed', 'groupEnd', 'info', 'log',
-    'markTimeline', 'profile', 'profileEnd', 'table', 'time', 'timeEnd',
-    'timeline', 'timelineEnd', 'timeStamp', 'trace', 'warn',
-]
+  'assert',
+  'clear',
+  'count',
+  'debug',
+  'dir',
+  'dirxml',
+  'error',
+  'exception',
+  'group',
+  'groupCollapsed',
+  'groupEnd',
+  'info',
+  'log',
+  'markTimeline',
+  'profile',
+  'profileEnd',
+  'table',
+  'time',
+  'timeEnd',
+  'timeline',
+  'timelineEnd',
+  'timeStamp',
+  'trace',
+  'warn',
+];
 
 // Avoid `console` errors in browsers that lack a console.
 export function fixConsole(): void {
-    if (window.console === undefined) {
-        (window as any).console = {}
+  if (window.console === undefined) {
+    (window as any).console = {};
+  }
+  const c = window.console;
+  consoleMethods.forEach(method => {
+    // Only stub undefined methods.
+    if (!c[method]) {
+      c[method] = noop;
     }
-    const c = window.console
-    consoleMethods.forEach(method => {
-        // Only stub undefined methods.
-        if (!c[method]) {
-            c[method] = noop
-        }
-    })
+  });
 }

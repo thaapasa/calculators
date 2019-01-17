@@ -1,132 +1,192 @@
-import React from 'react'
-import { HalfSection } from './component/section'
-import Item from './component/item'
-import Bacon from 'baconjs'
-import * as numbers from '../calc/numbers'
-import * as util from '../util/util'
-import { zeroPad } from '../util/strings'
-import TextField from 'material-ui/TextField'
+import Bacon from 'baconjs';
+import TextField from 'material-ui/TextField';
+import React from 'react';
+import * as numbers from '../calc/numbers';
+import { zeroPad } from '../util/strings';
+import * as util from '../util/util';
+import Item from './component/item';
+import { HalfSection } from './component/section';
 
 const texts = {
-    binary: 'Binääri',
-    octal: 'Oktaali',
-    decimal: 'Desimaali',
-    hex: 'Heksa',
-    char: 'Merkki',
-    unicode: 'Unicode',
-    html: 'HTML-koodi',
-}
+  binary: 'Binääri',
+  octal: 'Oktaali',
+  decimal: 'Desimaali',
+  hex: 'Heksa',
+  char: 'Merkki',
+  unicode: 'Unicode',
+  html: 'HTML-koodi',
+};
 
 interface TypeInfo {
-    readonly read: (x: string) => number
-    readonly write: (x: number) => string
-    readonly inputType: 'number' | 'text'
-    readonly maxLength: number
-    readonly readOnly?: boolean
+  readonly read: (x: string) => number;
+  readonly write: (x: number) => string;
+  readonly inputType: 'number' | 'text';
+  readonly maxLength: number;
+  readonly readOnly?: boolean;
 }
 
 function readZero(x: string): number {
-    return 0
+  return 0;
 }
 
 const types: Record<string, TypeInfo> = {
-    binary: { read: numbers.binaryStrToInt, write: numbers.intToBinaryStr, inputType: 'number', maxLength: 50 },
-    octal: { read: numbers.octalStrToInt, write: numbers.intToOctalStr, inputType: 'number', maxLength: 40 },
-    decimal: { read: numbers.strToInt, write: numbers.intToStr, inputType: 'number', maxLength: 40 },
-    hex: { read: numbers.hexStrToInt, write: numbers.intToHexStr, inputType: 'text', maxLength: 30 },
-    char: { read: numbers.charToInt, write: numbers.intToChar, inputType: 'text', maxLength: 1 },
-    unicode: { read: readZero, write: intToUnicodeStr, inputType: 'text', maxLength: 6, readOnly: true },
-    html: { read: readZero, write: intToHTMLCode, inputType: 'text', maxLength: 10, readOnly: true },
-}
-const typeKeys = Object.keys(types)
+  binary: {
+    read: numbers.binaryStrToInt,
+    write: numbers.intToBinaryStr,
+    inputType: 'number',
+    maxLength: 50,
+  },
+  octal: {
+    read: numbers.octalStrToInt,
+    write: numbers.intToOctalStr,
+    inputType: 'number',
+    maxLength: 40,
+  },
+  decimal: {
+    read: numbers.strToInt,
+    write: numbers.intToStr,
+    inputType: 'number',
+    maxLength: 40,
+  },
+  hex: {
+    read: numbers.hexStrToInt,
+    write: numbers.intToHexStr,
+    inputType: 'text',
+    maxLength: 30,
+  },
+  char: {
+    read: numbers.charToInt,
+    write: numbers.intToChar,
+    inputType: 'text',
+    maxLength: 1,
+  },
+  unicode: {
+    read: readZero,
+    write: intToUnicodeStr,
+    inputType: 'text',
+    maxLength: 6,
+    readOnly: true,
+  },
+  html: {
+    read: readZero,
+    write: intToHTMLCode,
+    inputType: 'text',
+    maxLength: 10,
+    readOnly: true,
+  },
+};
+
+const typeKeys = Object.keys(types);
 
 function intToUnicodeStr(value: number): string {
-    const str = numbers.intToHexStr(value)
-    return typeof str === 'string' ? 'U+' + zeroPad(str, 4) : ''
+  const str = numbers.intToHexStr(value);
+  return typeof str === 'string' ? 'U+' + zeroPad(str, 4) : '';
 }
 
 function intToHTMLCode(value: number): string {
-    const str = numbers.intToStr(value)
-    return typeof str === 'string' ? `&#${str};` : ''
+  const str = numbers.intToStr(value);
+  return typeof str === 'string' ? `&#${str};` : '';
 }
 
 interface NumbersProps {
-    onValue: (x: any) => any
+  onValue: (x: any) => any;
 }
 
 interface NumbersState {
-    selected: string,
-    unicode: string,
-    values: Record<string, string>
+  selected: string;
+  unicode: string;
+  values: Record<string, string>;
 }
 
-export default class Numbers extends React.Component<NumbersProps, NumbersState> {
+export default class Numbers extends React.Component<
+  NumbersProps,
+  NumbersState
+> {
+  public state: NumbersState = {
+    selected: 'decimal',
+    unicode: '',
+    values: util.pairsToObject(
+      Object.keys(types).map<[string, string]>(t => [t, ''])
+    ),
+  };
 
-    public state: NumbersState = {
-        selected: 'decimal',
-        unicode: '',
-        values: util.pairsToObject(Object.keys(types).map<[string, string]>(t => [t, ''])),
-    }
+  private currentInput = new Bacon.Bus<any, string>();
+  private inputStream = new Bacon.Bus<any, string>();
+  private selectedSrcStr = new Bacon.Bus<any, string>();
 
-    private currentInput: any
-    private inputStream: any
-    private selectedSrcStr: any
+  public componentDidMount() {
+    const emptyStream = Bacon.never();
+    const inputConverter = this.currentInput
+      .map(t => types[t].read)
+      .toProperty(types.decimal.read);
 
-    public componentDidMount() {
-        const emptyStream = Bacon.never()
-        this.currentInput = new Bacon.Bus()
-        const inputConverter = this.currentInput.map((t: any) => types[t].read)
-        this.inputStream = new Bacon.Bus()
-        const converted = this.inputStream
-            .combine(inputConverter, (i: any, c: any) => c(i)).map((v: any) => (typeof (v) === 'number' && !isNaN(v)) ? v : undefined)
-        this.selectedSrcStr = new Bacon.Bus()
-        typeKeys.forEach(t => {
-            const typeInfo = types[t]
-            const sourceIsThis = this.currentInput.map((name: any) => t === name)
-            converted.combine(sourceIsThis, (c: any, i: any) => [c, i]).flatMapLatest((v: any) => v[1] ? emptyStream : converted)
-                .map(typeInfo.write)
-                .map((v: any) => util.isString(v) ? v : '')
-                .onValue((v: any) => this.mergeValues({ [t]: v }))
-            converted.onValue((v: any) => this.mergeValues({ unicode: intToUnicodeStr(v), html: intToHTMLCode(v) }))
+    const converted = this.inputStream
+      .combine(inputConverter, (i, c) => c(i))
+      .map((v: any) => (typeof v === 'number' && !isNaN(v) ? v : undefined));
+
+    typeKeys.forEach(t => {
+      const typeInfo = types[t];
+      const sourceIsThis = this.currentInput
+        .map(name => t === name)
+        .toProperty(false);
+      converted
+        .combine(sourceIsThis, (c: any, i: any) => [c, i])
+        .flatMapLatest((v: any) => (v[1] ? emptyStream : converted))
+        .map(typeInfo.write)
+        .map((v: any) => (util.isString(v) ? v : ''))
+        .onValue((v: any) => this.mergeValues({ [t]: v }));
+      converted.onValue((v: any) =>
+        this.mergeValues({
+          unicode: intToUnicodeStr(v),
+          html: intToHTMLCode(v),
         })
-        this.selectedSrcStr
-            .map((t: any) => types[t].write)
-            .combine(converted, (c: any, v: any) => c(v))
-            .onValue((v: any) => this.props.onValue && this.props.onValue(v))
-    }
+      );
+    });
+    this.selectedSrcStr
+      .map((t: any) => types[t].write)
+      .combine(converted, (c: any, v: any) => c(v))
+      .onValue((v: any) => this.props.onValue && this.props.onValue(v));
+  }
 
-    private mergeValues = (x: any) => this.setState(s => ({ values: { ...s.values, ...x } }))
+  public render() {
+    return (
+      <HalfSection title="Numerot" subtitle={texts[this.state.selected]}>
+        {typeKeys.map(t => (
+          <Item name={texts[t]} key={`${t}-item`}>
+            <TextField
+              type={types[t].inputType}
+              name={t}
+              hintText={texts[t]}
+              max-length={types[t].maxLength}
+              value={this.state.values[t]}
+              onChange={this.inputChanged}
+              onFocus={this.selectSrc}
+              read-only={util.htmlBoolean(
+                types[t].readOnly || false,
+                'readonly'
+              )}
+              key={t}
+            />
+          </Item>
+        ))}
+      </HalfSection>
+    );
+  }
 
-    private inputChanged = (event: any) => {
-        const name = event.target.name
-        const value = event.target.value
-        this.mergeValues({ [name]: value })
-        this.currentInput.push(name)
-        this.inputStream.push(value)
-    }
+  private mergeValues = (x: any) =>
+    this.setState(s => ({ values: { ...s.values, ...x } }));
 
-    private selectSrc = (event: any) => {
-        const src = event.target.name
-        this.setState({ selected: src })
-        this.selectedSrcStr.push(event.target.name)
-    }
+  private inputChanged = (event: any) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    this.mergeValues({ [name]: value });
+    this.currentInput.push(name);
+    this.inputStream.push(value);
+  };
 
-    public render() {
-        return <HalfSection title="Numerot" subtitle={texts[this.state.selected]}>
-            {
-                typeKeys.map(t => <Item name={texts[t]} key={`${t}-item`}>
-                    <TextField type={types[t].inputType}
-                        name={t}
-                        hintText={texts[t]}
-                        max-length={types[t].maxLength}
-                        value={this.state.values[t]}
-                        onChange={this.inputChanged}
-                        onFocus={this.selectSrc}
-                        read-only={util.htmlBoolean(types[t].readOnly || false, 'readonly')}
-                        key={t} />
-                </Item>)
-            }
-        </HalfSection>
-
-    }
+  private selectSrc = (event: any) => {
+    const src = event.target.name;
+    this.setState({ selected: src });
+    this.selectedSrcStr.push(event.target.name);
+  };
 }

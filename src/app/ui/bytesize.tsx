@@ -1,171 +1,197 @@
-import React, { CSSProperties } from 'react'
-import { HalfSection } from './component/section'
-import TextField from 'material-ui/TextField'
-import Bacon from 'baconjs'
-import {isString, pairsToObject } from '../util/util'
-import Item from './component/item'
+import Bacon from 'baconjs';
+import TextField from 'material-ui/TextField';
+import React, { CSSProperties } from 'react';
+import { isString, pairsToObject } from '../util/util';
+import Item from './component/item';
+import { HalfSection } from './component/section';
 
 interface TypeInfo {
-    readonly read: (x: string) => number
-    readonly write: (x: number) => string
-    readonly name: string
-    readonly hint: string
-    readonly unit: string
+  readonly read: (x: string) => number;
+  readonly write: (x: number) => string;
+  readonly name: string;
+  readonly hint: string;
+  readonly unit: string;
 }
 
-const KIBI = 1024
-const MEBI = KIBI * KIBI
-const GIBI = MEBI * KIBI
-const TEBI = GIBI * KIBI
+const KIBI = 1024;
+const MEBI = KIBI * KIBI;
+const GIBI = MEBI * KIBI;
+const TEBI = GIBI * KIBI;
 
-const KILO = 1000
-const MEGA = KILO * KILO
-const GIGA = MEGA * KILO
-const TERA = GIGA * KILO
+const KILO = 1000;
+const MEGA = KILO * KILO;
+const GIGA = MEGA * KILO;
+const TERA = GIGA * KILO;
 
-const converter = (name: string, unit: string, ratio: number, decimals: number = 3): TypeInfo => ({
-    name,
-    hint: unit,
-    unit,
-    read: x => Number(x) * ratio,
-    write: x => (x / ratio).toFixed(decimals),
-})
+const converter = (
+  name: string,
+  unit: string,
+  ratio: number,
+  decimals: number = 3
+): TypeInfo => ({
+  name,
+  hint: unit,
+  unit,
+  read: x => Number(x) * ratio,
+  write: x => (x / ratio).toFixed(decimals),
+});
 
 const types = {
-    byte: converter('Tavua', 'B', 1, 0),
-    kibi: converter('Kibitavua', 'KiB', KIBI),
-    mebi: converter('Mebitavua', 'MiB', MEBI),
-    gibi: converter('Gibitavua', 'GiB', GIBI),
-    tebi: converter('Tebitavua', 'TiB', TEBI),
-    kilo: converter('Kilotavua', 'Kt', KILO),
-    mega: converter('Megatavua', 'Mt', MEGA),
-    giga: converter('Gigatavua', 'Gt', GIGA),
-    tera: converter('Teratavua', 'Tt', TERA),
-}
-const typeKeys = Object.keys(types)
+  byte: converter('Tavua', 'B', 1, 0),
+  kibi: converter('Kibitavua', 'KiB', KIBI),
+  mebi: converter('Mebitavua', 'MiB', MEBI),
+  gibi: converter('Gibitavua', 'GiB', GIBI),
+  tebi: converter('Tebitavua', 'TiB', TEBI),
+  kilo: converter('Kilotavua', 'Kt', KILO),
+  mega: converter('Megatavua', 'Mt', MEGA),
+  giga: converter('Gigatavua', 'Gt', GIGA),
+  tera: converter('Teratavua', 'Tt', TERA),
+};
+const typeKeys = Object.keys(types);
 
-const leftColumn: string[] = ['kibi', 'mebi', 'gibi', 'tebi']
-const rightColumn: string[] = ['kilo', 'mega', 'giga', 'tera']
+const leftColumn: string[] = ['kibi', 'mebi', 'gibi', 'tebi'];
+const rightColumn: string[] = ['kilo', 'mega', 'giga', 'tera'];
 
 interface ByteSizeProps {
-    onValue: (x: any) => any
+  onValue: (x: any) => any;
 }
 
 interface ByteSizeState {
-    selected: string,
-    values: Record<string, string>
+  selected: string;
+  values: Record<string, string>;
 }
 
-const emptyStream = Bacon.never()
+const emptyStream = Bacon.never();
 
-export default class ByteSizes extends React.Component<ByteSizeProps, ByteSizeState> {
+export default class ByteSizes extends React.Component<
+  ByteSizeProps,
+  ByteSizeState
+> {
+  public state: ByteSizeState = {
+    selected: 'byte',
+    values: pairsToObject(
+      Object.keys(types).map<[string, string]>(t => [t, ''])
+    ),
+  };
 
-    public state: ByteSizeState = {
-        selected: 'byte',
-        values: pairsToObject(Object.keys(types).map<[string, string]>(t => [t, ''])),
-    }
+  private currentInput = new Bacon.Bus<any, string>();
+  private inputStream = new Bacon.Bus<any, string>();
+  private selectedSrcStr = new Bacon.Bus<any, string>();
 
-    private currentInput = new Bacon.Bus<any, string>()
-    private inputStream = new Bacon.Bus<any, string>()
-    private selectedSrcStr = new Bacon.Bus<any, string>()
+  public componentDidMount() {
+    this.currentInput = new Bacon.Bus();
+    const inputConverter = this.currentInput
+      .map(t => types[t].read)
+      .toProperty(Number);
+    const converted = this.inputStream
+      .combine(inputConverter, (i, c) => c(i))
+      .map(v => (typeof v === 'number' && !isNaN(v) ? v : undefined));
+    typeKeys.forEach(t => {
+      const typeInfo = types[t];
+      const sourceIsThis = this.currentInput
+        .map(name => t === name)
+        .toProperty(false);
+      converted
+        .combine(sourceIsThis, (c, i) => [c, i])
+        .flatMapLatest(v => (v[1] ? emptyStream : converted))
+        .map(typeInfo.write)
+        .map(v => (isString(v) ? v : ''))
+        .onValue(v => this.mergeValues({ [t]: v }));
+    });
+    this.selectedSrcStr
+      .toProperty('byte')
+      .map(t => types[t].write)
+      .combine(converted, (c, v) => v && c(v))
+      .onValue(v => v && this.props.onValue && this.props.onValue(v));
+  }
 
-    public componentDidMount() {
-        this.currentInput = new Bacon.Bus()
-        const inputConverter = this.currentInput.map(t => types[t].read).toProperty(Number)
-        const converted = this.inputStream
-            .combine(inputConverter, (i, c) => c(i))
-            .map(v => (typeof (v) === 'number' && !isNaN(v)) ? v : undefined)
-        typeKeys.forEach(t => {
-            const typeInfo = types[t]
-            const sourceIsThis = this.currentInput.map(name => t === name).toProperty(false)
-            converted
-                .combine(sourceIsThis, (c, i) => [c, i])
-                .flatMapLatest(v => v[1] ? emptyStream : converted)
-                .map(typeInfo.write)
-                .map(v => isString(v) ? v : '')
-                .onValue(v => this.mergeValues({ [t]: v }))
-        })
-        this.selectedSrcStr
-            .toProperty('byte')
-            .map(t => types[t].write)
-            .combine(converted, (c, v) => v && c(v))
-            .onValue(v => v && this.props.onValue && this.props.onValue(v))
-    }
+  public render() {
+    return (
+      <HalfSection title="Tavukoot" subtitle={types[this.state.selected].name}>
+        <Item name="Tavua">
+          <Editor
+            type="byte"
+            value={this.state.values.byte}
+            onChange={this.inputChanged}
+            onFocus={this.selectSrc}
+            fullWidth={true}
+          />
+        </Item>
+        <div className="flex-row">
+          <div className="flex">
+            {leftColumn.map(t => (
+              <Editor
+                key={t}
+                type={t}
+                value={this.state.values[t]}
+                onChange={this.inputChanged}
+                onFocus={this.selectSrc}
+              />
+            ))}
+          </div>
+          <div className="flex">
+            {rightColumn.map(t => (
+              <Editor
+                key={t}
+                type={t}
+                value={this.state.values[t]}
+                onChange={this.inputChanged}
+                onFocus={this.selectSrc}
+              />
+            ))}
+          </div>
+        </div>
+      </HalfSection>
+    );
+  }
 
-    private mergeValues = (x: any) => this.setState(s => ({ values: { ...s.values, ...x } }))
+  private mergeValues = (x: any) =>
+    this.setState(s => ({ values: { ...s.values, ...x } }));
 
-    private inputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const name = event.target.name
-        const value = event.target.value
-        this.mergeValues({ [name]: value })
-        this.currentInput.push(name)
-        this.inputStream.push(value)
-    }
+  private inputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    this.mergeValues({ [name]: value });
+    this.currentInput.push(name);
+    this.inputStream.push(value);
+  };
 
-    private selectSrc = (event: React.FocusEvent<HTMLInputElement>) => {
-        const src = event.target.name
-        this.setState({ selected: src })
-        this.selectedSrcStr.push(event.target.name)
-    }
-
-    public render() {
-        return (
-            <HalfSection title="Tavukoot" subtitle={types[this.state.selected].name}>
-                <Item name="Tavua">
-                    <Editor type="byte" value={this.state.values.byte}
-                    onChange={this.inputChanged} onFocus={this.selectSrc} fullWidth={true} />
-                </Item>
-                <div className="flex-row">
-                    <div className="flex">
-                        {
-                            leftColumn.map(t => (
-                                <Editor key={t} type={t} value={this.state.values[t]}
-                                    onChange={this.inputChanged} onFocus={this.selectSrc} />
-                            ))
-                        }
-                    </div>
-                    <div className="flex">
-                        {
-                            rightColumn.map(t => (
-                                <Editor key={t} type={t} value={this.state.values[t]}
-                                    onChange={this.inputChanged} onFocus={this.selectSrc} />
-                            ))
-                        }
-                    </div>
-                </div>
-            </HalfSection>
-        )
-    }
+  private selectSrc = (event: React.FocusEvent<HTMLInputElement>) => {
+    const src = event.target.name;
+    this.setState({ selected: src });
+    this.selectedSrcStr.push(event.target.name);
+  };
 }
 
 const Editor = (p: {
-    type: string,
-    value: string,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
-    onFocus: (e: React.FocusEvent<HTMLInputElement>) => void,
-    fullWidth?: boolean,
+  type: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
+  fullWidth?: boolean;
 }) => {
-    const info = types[p.type]
-    return (
-        <div className="flex-row">
-            <TextField
-                style={p.fullWidth ? undefined : HalfStyle}
-                name={p.type}
-                type="number"
-                hintText={info.name}
-                value={p.value}
-                onChange={p.onChange}
-                inputStyle={TextStyle}
-                onFocus={p.onFocus} />
-            <div className="unit">{info.unit}</div>
-        </div>
-    )
-}
+  const info = types[p.type];
+  return (
+    <div className="flex-row">
+      <TextField
+        style={p.fullWidth ? undefined : HalfStyle}
+        name={p.type}
+        type="number"
+        hintText={info.name}
+        value={p.value}
+        onChange={p.onChange}
+        inputStyle={TextStyle}
+        onFocus={p.onFocus}
+      />
+      <div className="unit">{info.unit}</div>
+    </div>
+  );
+};
 
 const TextStyle: CSSProperties = {
-    textAlign: 'right',
-}
+  textAlign: 'right',
+};
 
 const HalfStyle: CSSProperties = {
-    width: '160px',
-}
+  width: '160px',
+};

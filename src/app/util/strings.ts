@@ -1,60 +1,91 @@
-import { intToHexStr, hexStrToInt } from '../calc/numbers'
-import { isString } from './util'
+import { hexStrToInt, intToHexStr } from '../calc/numbers';
+import { isString } from './util';
 
-const zeroPadding = '0000000000000000000000000000000000000'
+const zeroPadding = '0000000000000000000000000000000000000';
 
 export function zeroPad(str: string, len: number, padRight: boolean = false) {
-    if (!padRight) {
-        return (zeroPadding + str).slice(-len)
-    } else {
-        return (str + zeroPadding).substring(0, len)
-    }
+  if (!padRight) {
+    return (zeroPadding + str).slice(-len);
+  } else {
+    return (str + zeroPadding).substring(0, len);
+  }
 }
 
-export function toUpperCase(value: string): string { return typeof value === 'string' ? value.toUpperCase() : '' }
-export function toLowerCase(value: string): string { return typeof value === 'string' ? value.toLowerCase() : '' }
+export function toUpperCase(value: string): string {
+  return typeof value === 'string' ? value.toUpperCase() : '';
+}
+export function toLowerCase(value: string): string {
+  return typeof value === 'string' ? value.toLowerCase() : '';
+}
 
 export function toUpperCaseFirst(value: string): string {
-    return value && value.length > 0 ? toUpperCase(value[0]) + value.slice(1) : value
+  return value && value.length > 0
+    ? toUpperCase(value[0]) + value.slice(1)
+    : value;
 }
 
 export function hyphenCaseToCamelCase(value: string): string {
-    if (!value) { return value }
-    const pairs = value.split('-')
-    return [pairs[0], ...pairs.slice(1).map(toUpperCaseFirst)].join('')
+  if (!value) {
+    return value;
+  }
+  const pairs = value.split('-');
+  return [pairs[0], ...pairs.slice(1).map(toUpperCaseFirst)].join('');
 }
 
 export function hyphenCaseToPascalCase(value: string): string {
-    if (!value) { return value }
-    const pairs = value.split('-')
-    return pairs.map(toUpperCaseFirst).join('')
+  if (!value) {
+    return value;
+  }
+  const pairs = value.split('-');
+  return pairs.map(toUpperCaseFirst).join('');
 }
 
-export function reverse(value: string): string { return typeof value === 'string' ? value.split('').reverse().join('') : '' }
+export function reverse(value: string): string {
+  return typeof value === 'string'
+    ? value
+        .split('')
+        .reverse()
+        .join('')
+    : '';
+}
 
 export function toHexString(value: string): string {
-    if (typeof value !== 'string') { return '' }
-    const output = []
-    for (let i = 0; i < value.length; ++i) {
-        output.push(zeroPad(intToHexStr(value.charCodeAt(i)) || '', 2))
-    }
-    return output.join('')
+  if (typeof value !== 'string') {
+    return '';
+  }
+  const output = [];
+  for (let i = 0; i < value.length; ++i) {
+    output.push(zeroPad(intToHexStr(value.charCodeAt(i)) || '', 2));
+  }
+  return output.join('');
 }
 
 export function fromHexString(value: string): string {
-    if (typeof value !== 'string') { return '' }
-    const output = []
-    for (let i = 0; i < value.length; i += 2) {
-        if (i <= value.length - 2) {
-            output.push(String.fromCharCode(hexStrToInt(`${value.charAt(i)}${value.charAt(i + 1)}`)))
-        }
+  if (typeof value !== 'string') {
+    return '';
+  }
+  const output = [];
+  for (let i = 0; i < value.length; i += 2) {
+    if (i <= value.length - 2) {
+      output.push(
+        String.fromCharCode(
+          hexStrToInt(`${value.charAt(i)}${value.charAt(i + 1)}`)
+        )
+      );
     }
-    return output.join('')
+  }
+  return output.join('');
 }
 
-export function startsWith(src: string, prefix: string, ignoreCase: boolean = false): boolean {
-    if (!isString(src) || !isString(prefix)) { return false }
-    const s = ignoreCase ? src.toLowerCase() : src
-    const p = ignoreCase ? prefix.toLowerCase() : prefix
-    return s.length >= p.length && s.substr(0, p.length) === p
+export function startsWith(
+  src: string,
+  prefix: string,
+  ignoreCase: boolean = false
+): boolean {
+  if (!isString(src) || !isString(prefix)) {
+    return false;
+  }
+  const s = ignoreCase ? src.toLowerCase() : src;
+  const p = ignoreCase ? prefix.toLowerCase() : prefix;
+  return s.length >= p.length && s.substr(0, p.length) === p;
 }

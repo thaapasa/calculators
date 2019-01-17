@@ -1,27 +1,29 @@
 {
-    "extends": ["tslint:latest"],
+    "extends": [
+      "tslint:recommended",
+      "tslint-plugin-prettier",
+      "tslint-config-prettier"
+    ],
+    "exclude": ["**/node_modules/**"],
     "rules": {
-      "indent": [true, "spaces", 4],
-      "semicolon": [true, "never"],
-      "trailing-comma": [true, {"multiline": "always", "singleline": "never"}],
-      "object-literal-key-quotes": [true, "as-needed"],
-      "quotemark": [true, "single", "jsx-double"],
-      "interface-name": [true, "never-prefix"],
-      "member-ordering": false,
-      "object-literal-sort-keys": false,
-      "ordered-imports": false,
-      "no-empty-interface": false,
-      "jsx-alignment": false,
-      "no-var-requires": false,
-      "no-submodule-imports": false,
-      "arrow-parens": false,
-      "no-console": false,
-      "max-line-length": false,
-      "no-object-literal-type-assertion": false,
+      "prettier": [true, { "singleQuote": true, "trailingComma": "es5" } ],
+      "semicolon": [true, "always", "ignore-bound-class-methods"],
+      "interface-name": false,
+      "member-access": false,
+      "quotemark": [true, "single", "jsx-double"], 
       "max-classes-per-file": false,
+      "object-literal-sort-keys": false,
+      "prefer-const": true,
+      "trailing-comma": [true, "always"],
       "one-variable-per-declaration": false,
       "no-bitwise": false,
-      "no-implicit-dependencies": [true, "dev"]
+      "no-console": false
+    },
+    "linterOptions": {
+      "exclude": [
+        "config/**/*.js",
+        "node_modules/**/*.ts"
+      ]
     }
   }
   
