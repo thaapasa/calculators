@@ -1,6 +1,8 @@
 import { Card, CardHeader, Drawer, MenuItem } from 'material-ui';
 import React from 'react';
+import styled from 'styled-components';
 import { history } from '../history';
+import { Flex, FlexColumn } from './elements';
 
 // tslint:disable-next-line no-var-requires
 const ver = require('../../../../package.json');
@@ -27,7 +29,7 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
         onRequestChange={this.props.onToggle}
         docked={false}
       >
-        <div className="flex-column">
+        <FlexColumn>
           <Card>
             <CardHeader
               title="Laskurit"
@@ -46,8 +48,8 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
             Tekstimuunnokset
           </MenuItem>
           <MenuItem onClick={this.goToCryptography}>Kryptografia</MenuItem>
-          <div className="flex" />
-          <div className="license-info">
+          <Flex />
+          <LicenseInfo>
             <div>
               Calculator icon made by{' '}
               <a href="https://www.freepik.com/" title="Freepik">
@@ -66,8 +68,8 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
                 CC 3.0 BY
               </a>
             </div>
-          </div>
-        </div>
+          </LicenseInfo>
+        </FlexColumn>
       </Drawer>
     );
   }
@@ -79,3 +81,11 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
     };
   }
 }
+
+const LicenseInfo = styled.div`
+  padding: 16px;
+  font-size: 10pt;
+  & a {
+    color: rgba(0, 0, 0, 0.6);
+  }
+`;

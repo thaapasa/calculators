@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Router, Switch } from 'react-router-dom';
+import styled from 'styled-components';
 import ByteSizes from './bytesize';
 import Colors from './colors';
 import Cryptography from './cryptography';
@@ -30,7 +31,7 @@ export default class CalculatorPage extends React.Component<{}, PageState> {
   public render() {
     return (
       <Router history={history}>
-        <div className="everything">
+        <Everything>
           <TopBar onToggleDrawer={this.toggleDrawer}>
             <LastValue ref={this.lastValue} />
           </TopBar>
@@ -38,7 +39,7 @@ export default class CalculatorPage extends React.Component<{}, PageState> {
             open={this.state.drawerOpen}
             onToggle={this.toggleDrawer}
           />
-          <div className="main-content">
+          <MainContent>
             <Switch>
               <Route path="/p/aika" render={this.renderTimePage} />
               <Route path="/p/time" render={this.renderTimePage} />
@@ -66,8 +67,8 @@ export default class CalculatorPage extends React.Component<{}, PageState> {
               <Route path="/p/cryptography" render={this.renderCryptography} />
               <Route render={this.renderFullPage} />
             </Switch>
-          </div>
-        </div>
+          </MainContent>
+        </Everything>
       </Router>
     );
   }
@@ -95,3 +96,15 @@ export default class CalculatorPage extends React.Component<{}, PageState> {
   );
   private renderCryptography = () => <Cryptography onValue={this.showValue} />;
 }
+
+const MainContent = styled.div`
+  z-index: 0;
+  position: relative;
+  max-width: 60em;
+  margin: 56px auto auto;
+  padding-top: 1px;
+`;
+
+const Everything = styled.div`
+  position: relative;
+`;

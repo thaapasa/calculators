@@ -1,9 +1,11 @@
 import Bacon from 'baconjs';
 import TextField from 'material-ui/TextField';
 import React, { CSSProperties } from 'react';
+import styled from 'styled-components';
 import { isString, pairsToObject } from '../util/util';
 import Item from './component/item';
 import { HalfSection } from './component/section';
+import { Flex, FlexRow } from './layout/elements';
 
 interface TypeInfo {
   readonly read: (x: string) => number;
@@ -117,8 +119,8 @@ export default class ByteSizes extends React.Component<
             fullWidth={true}
           />
         </Item>
-        <div className="flex-row">
-          <div className="flex">
+        <FlexRow>
+          <Flex>
             {leftColumn.map(t => (
               <Editor
                 key={t}
@@ -128,8 +130,8 @@ export default class ByteSizes extends React.Component<
                 onFocus={this.selectSrc}
               />
             ))}
-          </div>
-          <div className="flex">
+          </Flex>
+          <Flex>
             {rightColumn.map(t => (
               <Editor
                 key={t}
@@ -139,8 +141,8 @@ export default class ByteSizes extends React.Component<
                 onFocus={this.selectSrc}
               />
             ))}
-          </div>
-        </div>
+          </Flex>
+        </FlexRow>
       </HalfSection>
     );
   }
@@ -172,7 +174,7 @@ const Editor = (p: {
 }) => {
   const info = types[p.type];
   return (
-    <div className="flex-row">
+    <FlexRow>
       <TextField
         style={p.fullWidth ? undefined : HalfStyle}
         name={p.type}
@@ -183,8 +185,8 @@ const Editor = (p: {
         inputStyle={TextStyle}
         onFocus={p.onFocus}
       />
-      <div className="unit">{info.unit}</div>
-    </div>
+      <Unit>{info.unit}</Unit>
+    </FlexRow>
   );
 };
 
@@ -195,3 +197,10 @@ const TextStyle: CSSProperties = {
 const HalfStyle: CSSProperties = {
   width: '160px',
 };
+
+const Unit = styled.div`
+  width: 20px;
+  text-align: right;
+  padding-top: 14px;
+  margin-left: 8px;
+`;

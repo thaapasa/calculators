@@ -22,7 +22,6 @@ export default class LastValue extends React.Component<{}, LastValueState> {
           title="Kopioi leikepöydälle"
           onClick={this.copyToClipboard}
         />
-        />
         <TextField
           value={this.state.value}
           ref={this.valueField}

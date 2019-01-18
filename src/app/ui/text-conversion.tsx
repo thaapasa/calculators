@@ -3,6 +3,7 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import React from 'react';
+import styled from 'styled-components';
 import * as base64 from '../calc/base64';
 import rot13 from '../calc/rot13';
 import { svgToReactNative } from '../calc/svg-react-native';
@@ -11,6 +12,7 @@ import * as store from '../util/store';
 import * as strings from '../util/strings';
 import { identity } from '../util/util';
 import Section from './component/section';
+import { FlexRow, LeftPad } from './layout/elements';
 
 interface ConverterInfo {
   readonly encode: (x: string) => Promise<string> | string;
@@ -118,9 +120,8 @@ export default class TextConversion extends React.Component<
             <MenuItem value={c} key={c} primaryText={convertInfo[c].name} />
           ))}
         </SelectField>
-        <div className="flex-row center">
-          <TextField
-            className="flex"
+        <FlexRow className="center">
+          <FlexTextField
             floatingLabelText="Lähde"
             onChange={(e, v) => this.sourceStr.push(v)}
             fullWidth={true}
@@ -128,11 +129,10 @@ export default class TextConversion extends React.Component<
             name="source"
             value={this.state.source}
           />
-          <div className="left-pad">{this.state.source.length}</div>
-        </div>
-        <div className="flex-row center">
-          <TextField
-            className="flex"
+          <LeftPad>{this.state.source.length}</LeftPad>
+        </FlexRow>
+        <FlexRow className="center">
+          <FlexTextField
             floatingLabelText="Kohde"
             onChange={(e, v) => this.targetStr.push(v)}
             fullWidth={true}
@@ -140,9 +140,13 @@ export default class TextConversion extends React.Component<
             name="target"
             value={this.state.target}
           />
-          <div className="left-pad">{this.state.target.length}</div>
-        </div>
+          <LeftPad>{this.state.target.length}</LeftPad>
+        </FlexRow>
       </Section>
     );
   }
 }
+
+const FlexTextField = styled(TextField)`
+  flex: 1;
+`;
