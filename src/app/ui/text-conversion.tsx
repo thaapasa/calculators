@@ -7,10 +7,10 @@ import * as base64 from '../calc/base64';
 import rot13 from '../calc/rot13';
 import { svgToReactNative } from '../calc/svg-react-native';
 import { jsonStringToXml, xmlToJsonString } from '../calc/xml-json';
+import * as store from '../util/store';
 import * as strings from '../util/strings';
 import { identity } from '../util/util';
 import Section from './component/section';
-import * as store from './store';
 
 interface ConverterInfo {
   readonly encode: (x: string) => Promise<string> | string;
@@ -54,7 +54,7 @@ interface TextConversionState {
   selected: any;
 }
 
-const CONVERTER_STORE_KEY = 'selectedTextConverter';
+const CONVERTER_STORE_KEY = 'calculators:selectedTextConverter';
 
 function getConverterFromStore(): string {
   return store.getValue<string>(CONVERTER_STORE_KEY) || converters[0];
