@@ -28,14 +28,14 @@ const styles: { [key: string]: React.CSSProperties } = {
   item: {},
 };
 
-function readJavaTime(s: any): moment.Moment {
+function readJavaTime(s: string | number): moment.Moment {
   if (typeof s === 'string') {
     s = parseInt(s, 10);
   }
   return moment(s);
 }
 
-function readUnixTime(s: any): moment.Moment {
+function readUnixTime(s: string | number): moment.Moment {
   if (typeof s === 'string') {
     s = parseInt(s, 10);
   }
@@ -53,13 +53,26 @@ function pad(val: string | number, len: number): string {
   return zeroPad(val.toString(), len);
 }
 
-function readDate(v: any): object {
+const datePattern = 'D.M.YYYY';
+
+function readDate(v: string): string {
   const c = moment(v);
-  return c.isValid() ? { day: c.date(), month: c.month(), year: c.year() } : {};
+  return c.isValid() ? c.format(datePattern) : '';
 }
 
-function writeDate(v: moment.Moment): Date | null {
-  return v.isValid() ? v.toDate() : null;
+function writeDate(v: moment.Moment): Date | undefined {
+  return v.isValid() ? v.toDate() : undefined;
+}
+
+function readDateText(v: string): object | undefined {
+  const c = moment(v, datePattern);
+  return c.isValid()
+    ? { day: c.date(), month: c.month(), year: c.year() }
+    : undefined;
+}
+
+function writeDateText(v: moment.Moment): string {
+  return v.isValid() ? v.format(datePattern) : '';
 }
 
 const texts = {
@@ -76,7 +89,7 @@ const texts = {
 
 interface DateTimeType {
   readonly write: (x: any) => any;
-  readonly read?: (x: any) => any;
+  readonly read?: (x: string) => any;
   readonly src?: string;
   readonly reportValue?: boolean;
   readonly fullWidth?: boolean;
@@ -95,14 +108,14 @@ const typeInfo: { [key: string]: DateTimeType } = {
   focused: { write: identity },
   selected: { write: identity },
   iso8601: {
-    read: (v: any) => moment(v, moment.ISO_8601),
+    read: v => moment(v, moment.ISO_8601),
     write: (m: any) => (m.isValid() ? m.format() : ''),
     src: 'iso8601',
     reportValue: true,
     fullWidth: true,
   },
   iso8601utc: {
-    read: (v: any) => moment(v, moment.ISO_8601),
+    read: v => moment(v, moment.ISO_8601),
     write: (m: any) => (m.isValid() ? m.toISOString() : ''),
     src: 'iso8601utc',
     reportValue: true,
@@ -132,11 +145,20 @@ const typeInfo: { [key: string]: DateTimeType } = {
     write: (m: any) => (m.isValid() ? m.unix() : ''),
     fullWidth: true,
   },
-  date: {
+  datePicker: {
     read: readDate,
     src: 'value',
     write: writeDate,
+    style: styles.len7,
+    maxLength: 10,
+    inputStyle: styles.center,
+  },
+  date: {
+    read: readDateText,
+    src: 'value',
+    write: writeDateText,
     style: styles.len10,
+    reportValue: true,
     maxLength: 10,
     inputStyle: styles.center,
   },
@@ -191,7 +213,14 @@ const hints = {
   timeZone: '+02:00',
 };
 
-const valueTypes = ['date', 'hour', 'minute', 'second', 'millisecond'];
+const valueTypes = [
+  'date',
+  'dateText',
+  'hour',
+  'minute',
+  'second',
+  'millisecond',
+];
 
 function getDateTimePolyfill() {
   const IntlPolyfill = require('intl');
@@ -232,10 +261,15 @@ interface DateTimeState {
   reportTarget: string;
   foundNameDays: string[];
   locale: string;
-  date: any;
-  weekDay: any;
-  week: any;
+  datePicker: Date | undefined;
+  date: string;
+  weekDay: string;
+  week: string;
   nameDay: string;
+}
+
+function formatDateForPicker() {
+  return 'Valitse';
 }
 
 export default class DateTime extends React.Component<
@@ -246,9 +280,10 @@ export default class DateTime extends React.Component<
     reportTarget: '',
     foundNameDays: [],
     locale: 'fi',
-    date: null,
-    weekDay: null,
-    week: null,
+    datePicker: undefined,
+    date: '',
+    weekDay: '',
+    week: '',
     nameDay: '',
   };
 
@@ -259,7 +294,7 @@ export default class DateTime extends React.Component<
   constructor(props: DateTimeProps) {
     super(props);
     types.forEach(t => (this.state[t] = ''));
-    this.state.date = null;
+    this.state.datePicker = undefined;
   }
 
   public componentDidMount() {
@@ -279,6 +314,7 @@ export default class DateTime extends React.Component<
           : this.streams[t];
       }
     });
+    incoming.datePicker.onValue((v: string) => this.streams.date.push(v));
     incoming.value = Bacon.combineTemplate({
       date: incoming.date,
       hour: incoming.hour,
@@ -287,9 +323,9 @@ export default class DateTime extends React.Component<
       millisecond: incoming.millisecond,
     }).map((v: any) =>
       moment({
-        day: v.date.day,
-        month: v.date.month,
-        year: v.date.year,
+        day: v.date && v.date.day,
+        month: v.date && v.date.month,
+        year: v.date && v.date.year,
         hour: v.hour,
         minute: v.minute,
         second: v.second,
@@ -321,6 +357,7 @@ export default class DateTime extends React.Component<
           this.streams[t].push(output);
         }
       });
+      this.setState({ datePicker: typeInfo.datePicker.write(val) });
     });
     // Which value is reported to parent
     const reportTarget = incoming.focused.filter(
@@ -341,20 +378,7 @@ export default class DateTime extends React.Component<
         subtitle={texts.types[this.state.reportTarget]}
       >
         <Item name="Päivä" style={styles.item}>
-          <DatePicker
-            name="date"
-            container="inline"
-            value={this.state.date}
-            textFieldStyle={typeInfo.date.style}
-            autoOk={true}
-            DateTimeFormat={DateTimeFormat}
-            locale={this.state.locale}
-            hintText={hints.date}
-            inputStyle={typeInfo.date.inputStyle}
-            hintStyle={typeInfo.date.inputStyle}
-            fullWidth={false}
-            onChange={(a, v) => this.pushValue(v, 'date')}
-          />
+          {this.renderType('date')}
           (
           <TextField
             type="text"
@@ -368,6 +392,21 @@ export default class DateTime extends React.Component<
             onFocus={this.focusChanged}
           />
           )
+          <DatePicker
+            name="datePicker"
+            container="inline"
+            value={this.state.datePicker}
+            textFieldStyle={typeInfo.datePicker.style}
+            autoOk={true}
+            formatDate={formatDateForPicker}
+            DateTimeFormat={DateTimeFormat}
+            locale={this.state.locale}
+            hintText={hints.date}
+            inputStyle={typeInfo.datePicker.inputStyle}
+            hintStyle={typeInfo.datePicker.inputStyle}
+            fullWidth={false}
+            onChange={(a, v) => this.pushValue(v, 'datePicker')}
+          />
         </Item>
         <Item name="Kellonaika" style={styles.item}>
           {this.renderType('hour')}:{this.renderType('minute')}:
@@ -457,9 +496,9 @@ export default class DateTime extends React.Component<
   private pushDate = (date: any) => {
     if (isObject(date) && date.value && date.value.day && date.value.month) {
       this.streams.selected.push('value');
-      this.streams.date.push(
-        moment({ day: date.value.day, month: date.value.month - 1 }).toDate()
-      );
+      const d = moment({ day: date.value.day, month: date.value.month - 1 });
+      this.streams.date.push(writeDateText(d));
+      this.streams.datePicker.push(d.toDate());
     }
   };
 
