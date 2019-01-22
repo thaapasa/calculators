@@ -20,6 +20,22 @@ interface ConverterInfo {
   readonly name: string;
 }
 
+function toPrettyJSON(s: string): string {
+  try {
+    return JSON.stringify(JSON.parse(s), null, 2);
+  } catch (e) {
+    return s;
+  }
+}
+
+function toCompactJSON(s: string): string {
+  try {
+    return JSON.stringify(JSON.parse(s));
+  } catch (e) {
+    return s;
+  }
+}
+
 const convertInfo: { [key: string]: ConverterInfo } = {
   js2xml: {
     encode: jsonStringToXml,
@@ -30,6 +46,11 @@ const convertInfo: { [key: string]: ConverterInfo } = {
     encode: svgToReactNative,
     decode: identity,
     name: 'SVG → React Native',
+  },
+  jsonCompactPretty: {
+    encode: toPrettyJSON,
+    decode: toCompactJSON,
+    name: 'JSON compact ⇆ pretty',
   },
   urlEncode: {
     encode: async x => encodeURIComponent(x),
