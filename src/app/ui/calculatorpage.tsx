@@ -103,6 +103,7 @@ const MainContent = styled.div`
   max-width: 60em;
   margin: 56px auto auto;
   padding-top: 1px;
+  text-align: center;
 `;
 
 const Everything = styled.div`

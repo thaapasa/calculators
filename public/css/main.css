@@ -6,6 +6,7 @@ html, body {
 .section {
     padding-bottom: 0.3em;
     margin: 1.5em 0;
+    text-align: left;
 }
 
 @media (max-width: 60em) {
