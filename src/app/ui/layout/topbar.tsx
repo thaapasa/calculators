@@ -41,7 +41,7 @@ class CalculatorToolbar extends React.Component<
           />
           <ToolbarTitle text="Laskurit" style={styles.titleText} />
         </ToolbarGroup>
-        <ToolbarGroup>
+        <ToolbarGroup className="fullsize">
           <Link {...this.props} icon={ActionHome} route="/" tooltip="Kaikki" />
           <Link
             {...this.props}

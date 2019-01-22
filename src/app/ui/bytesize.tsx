@@ -116,7 +116,6 @@ export default class ByteSizes extends React.Component<
             value={this.state.values.byte}
             onChange={this.inputChanged}
             onFocus={this.selectSrc}
-            fullWidth={true}
           />
         </Item>
         <FlexRow>
@@ -170,13 +169,12 @@ const Editor = (p: {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
-  fullWidth?: boolean;
 }) => {
   const info = types[p.type];
   return (
     <FlexRow>
       <TextField
-        style={p.fullWidth ? undefined : HalfStyle}
+        style={TextFieldStyle}
         name={p.type}
         type="number"
         hintText={info.name}
@@ -194,13 +192,15 @@ const TextStyle: CSSProperties = {
   textAlign: 'right',
 };
 
-const HalfStyle: CSSProperties = {
-  width: '160px',
+const TextFieldStyle: CSSProperties = {
+  flex: 1,
+  width: 100,
 };
 
 const Unit = styled.div`
-  width: 20px;
+  width: 25px;
   text-align: right;
   padding-top: 14px;
+  padding-right: 8px;
   margin-left: 8px;
 `;
