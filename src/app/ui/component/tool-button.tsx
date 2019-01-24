@@ -1,8 +1,6 @@
+import { IconButton } from '@material-ui/core';
+import { Typography } from '@material-ui/core/styles/createTypography';
 import log from 'app/util/log';
-import { TextField } from 'material-ui';
-import FontIcon from 'material-ui/FontIcon';
-import IconButton from 'material-ui/IconButton';
-import { lightBlue600, red500 } from 'material-ui/styles/colors';
 import React from 'react';
 
 interface ToolbarProps {
@@ -17,7 +15,6 @@ export default class ToolButton extends React.Component<ToolbarProps, {}> {
   public render() {
     return (
       <IconButton
-        tooltip={this.props.title}
         title={this.props.title}
         onClick={this.props.onClick}
         className={this.props.className}
@@ -59,7 +56,7 @@ export function ClipboardButton({ title, onClick, className }: ButtonProps) {
   );
 }
 
-export function copyRefToClipboard(ref: React.RefObject<TextField>) {
+export function copyRefToClipboard(ref: React.RefObject<Typography>) {
   try {
     if (ref.current) {
       ref.current.select();

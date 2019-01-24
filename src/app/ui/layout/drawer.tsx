@@ -1,4 +1,4 @@
-import { Card, CardHeader, Drawer, MenuItem } from 'material-ui';
+import { Card, CardHeader, Drawer, MenuItem } from '@material-ui/core';
 import React from 'react';
 import styled from 'styled-components';
 import { history } from '../history';
@@ -26,14 +26,14 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
     return (
       <Drawer
         open={this.props.open}
-        onRequestChange={this.props.onToggle}
-        docked={false}
+        anchor="left"
+        onClose={this.props.onToggle}
       >
         <FlexColumn>
           <Card>
             <CardHeader
               title="Laskurit"
-              subtitle={`v. ${ver.version}`}
+              subheader={`v. ${ver.version}`}
               avatar="img/calculators.png"
             />
           </Card>
