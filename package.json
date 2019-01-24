@@ -3,7 +3,7 @@
   "version": "1.1.3",
   "license": "MIT",
   "description": "Handy calculator tools in an easily-accessible web page",
-  "homepage": "http://laskurit.pomeranssi.fi",
+  "homepage": "https://laskurit.pomeranssi.fi",
   "scripts": {
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",

@@ -13,7 +13,7 @@
             "type": "image/png"
         }
     ],
-    "start_url": "/",
+    "start_url": "https://laskurit.pomeranssi.fi/",
     "theme_color": "#fafafa",
     "background_color": "#fafafa",
     "display": "standalone"
