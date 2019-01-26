@@ -6,7 +6,14 @@ export const FlexRow = styled.div`
   width: 100%;
   box-sizing: border-box;
   &.center {
+    justify-content: center;
     align-items: center;
+  }
+  &.center-horizontal {
+    justify-content: center;
+  }
+  &.top {
+    align-items: flex-start;
   }
 `;
 

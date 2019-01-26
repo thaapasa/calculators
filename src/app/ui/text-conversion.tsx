@@ -12,6 +12,7 @@ import * as store from '../util/store';
 import * as strings from '../util/strings';
 import { identity } from '../util/util';
 import Section from './component/section';
+import { ClipboardButton, copyRefToClipboard } from './component/tool-button';
 import { FlexRow, LeftPad } from './layout/elements';
 
 interface ConverterInfo {
@@ -97,6 +98,9 @@ export default class TextConversion extends React.Component<
     selected: converters[0],
   };
 
+  private sourceRef = React.createRef<TextField>();
+  private targetRef = React.createRef<TextField>();
+
   private sourceStr = new Bacon.Bus<any, string>();
   private targetStr = new Bacon.Bus<any, string>();
   private selectedStr = new Bacon.Bus<any, string>();
@@ -141,23 +145,33 @@ export default class TextConversion extends React.Component<
             <MenuItem value={c} key={c} primaryText={convertInfo[c].name} />
           ))}
         </SelectField>
-        <FlexRow className="center">
+        <FlexRow className="center-horizontal top">
+          <ClipButton
+            title="Kopioi lähde leikepöydälle"
+            onClick={this.copySourceToClipboard}
+          />
           <FlexTextField
             floatingLabelText="Lähde"
             onChange={(e, v) => this.sourceStr.push(v)}
             fullWidth={true}
             multiLine={true}
+            ref={this.sourceRef}
             name="source"
             value={this.state.source}
           />
           <LeftPad>{this.state.source.length}</LeftPad>
         </FlexRow>
-        <FlexRow className="center">
+        <FlexRow className="center-horizontal top">
+          <ClipButton
+            title="Kopioi kohde leikepöydälle"
+            onClick={this.copyTargetToClipboard}
+          />
           <FlexTextField
             floatingLabelText="Kohde"
             onChange={(e, v) => this.targetStr.push(v)}
             fullWidth={true}
             multiLine={true}
+            ref={this.targetRef}
             name="target"
             value={this.state.target}
           />
@@ -166,8 +180,15 @@ export default class TextConversion extends React.Component<
       </Section>
     );
   }
+
+  private copySourceToClipboard = () => copyRefToClipboard(this.sourceRef);
+  private copyTargetToClipboard = () => copyRefToClipboard(this.targetRef);
 }
 
 const FlexTextField = styled(TextField)`
   flex: 1;
+`;
+
+const ClipButton = styled(ClipboardButton)`
+  margin-top: 24px !important;
 `;
