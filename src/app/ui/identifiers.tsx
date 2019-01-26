@@ -1,3 +1,4 @@
+import { checkLuhn } from 'app/calc/checks';
 import React from 'react';
 import * as uuid from 'uuid';
 import * as bankReference from '../calc/bankreference';
@@ -52,6 +53,13 @@ export default class Identifiers extends React.Component<IdentifiersProps, {}> {
           onValue={this.props.onValue}
           max-length="7"
           width="6em"
+        />
+        <CheckValue
+          name="Luhn modulo 10"
+          id="luhn"
+          check={checkLuhn}
+          onValue={this.props.onValue}
+          width="13em"
         />
         <CheckValue
           name="UUID v1"

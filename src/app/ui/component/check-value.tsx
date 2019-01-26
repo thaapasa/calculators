@@ -1,6 +1,7 @@
 import Bacon from 'baconjs';
 import TextField from 'material-ui/TextField';
 import React from 'react';
+import styled from 'styled-components';
 import * as util from '../../util/util';
 import Item from './item';
 import { GenerateButton } from './tool-button';
@@ -17,7 +18,7 @@ interface CheckProps {
   readonly name: string;
   readonly id: string | number;
   readonly 'max-length'?: string;
-  readonly generate: () => string;
+  readonly generate?: () => string;
   readonly onValue: (x: any) => any;
 }
 
@@ -57,7 +58,11 @@ export default class CheckValue extends React.Component<
   public render() {
     return (
       <Item name={this.props.name} valueStyle={styles.itemValue}>
-        <GenerateButton onClick={this.generate} title="Luo uusi" />
+        {this.props.generate ? (
+          <GenerateButton onClick={this.generate} title="Luo uusi" />
+        ) : (
+          <GeneratePlaceholder />
+        )}
         <TextField
           type="text"
           id={`${this.props.id}-input`}
@@ -83,6 +88,9 @@ export default class CheckValue extends React.Component<
   }
 
   private generate = () => {
+    if (!this.props.generate) {
+      return;
+    }
     const generated: string = this.props.generate().toString();
     this.setState({ input: generated });
     this.inputStream.push(generated);
@@ -119,3 +127,7 @@ export default class CheckValue extends React.Component<
     }
   };
 }
+
+const GeneratePlaceholder = styled.div`
+  width: 48px;
+`;
