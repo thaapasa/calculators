@@ -1,5 +1,4 @@
-import { Card, CardHeader, CardText } from 'material-ui/Card';
-import Divider from 'material-ui/Divider';
+import { Card, CardContent, CardHeader, Divider } from '@material-ui/core';
 import React from 'react';
 
 interface HalfSectionProps {
@@ -16,19 +15,14 @@ interface SectionProps extends HalfSectionProps {
 export default class Section extends React.Component<SectionProps, {}> {
   public render() {
     return (
-      <Card
-        initiallyExpanded={true}
-        className={'section ' + (this.props.className || '')}
-      >
+      <Card className={'section ' + (this.props.className || '')}>
         <CardHeader
           title={this.props.title}
-          actAsExpander={true}
-          showExpandableButton={true}
-          subtitle={this.props.subtitle}
+          subheader={this.props.subtitle}
           avatar={this.props.avatar}
         />
         <Divider />
-        <CardText expandable={true}>{this.props.children}</CardText>
+        <CardContent>{this.props.children}</CardContent>
       </Card>
     );
   }

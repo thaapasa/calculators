@@ -1,6 +1,6 @@
+import { TextField } from '@material-ui/core';
 import Bacon from 'baconjs';
-import TextField from 'material-ui/TextField';
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import * as util from '../../util/util';
 import Item from './item';
@@ -96,9 +96,9 @@ export default class CheckValue extends React.Component<
     this.inputStream.push(generated);
   };
 
-  private inputChanged = (_: any, val: string) => {
-    this.setState({ input: val });
-    this.inputStream.push(val);
+  private inputChanged = (e: ChangeEvent<HTMLInputElement>) => {
+    this.setState({ input: e.target.value });
+    this.inputStream.push(e.target.value);
   };
 
   private streamToCheck(

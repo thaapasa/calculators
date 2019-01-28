@@ -14,7 +14,6 @@ import { History, Location } from 'history';
 import React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { theme } from 'style';
-import styled from 'styled-components';
 
 const styles: { [key: string]: React.CSSProperties } = {
   avatar: { marginLeft: '0.7em' },

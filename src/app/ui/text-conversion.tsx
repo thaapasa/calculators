@@ -1,7 +1,5 @@
+import { MenuItem, TextField } from '@material-ui/core';
 import Bacon from 'baconjs';
-import MenuItem from 'material-ui/MenuItem';
-import SelectField from 'material-ui/SelectField';
-import TextField from 'material-ui/TextField';
 import React from 'react';
 import styled from 'styled-components';
 import * as base64 from '../calc/base64';
@@ -151,11 +149,10 @@ export default class TextConversion extends React.Component<
             onClick={this.copySourceToClipboard}
           />
           <FlexTextField
-            floatingLabelText="Lähde"
-            onChange={(e, v) => this.sourceStr.push(v)}
+            onChange={e => this.sourceStr.push(e.target.value)}
             fullWidth={true}
-            multiLine={true}
-            ref={this.sourceRef}
+            multiline={true}
+            inputRef={this.sourceRef}
             name="source"
             value={this.state.source}
           />
@@ -167,11 +164,10 @@ export default class TextConversion extends React.Component<
             onClick={this.copyTargetToClipboard}
           />
           <FlexTextField
-            floatingLabelText="Kohde"
-            onChange={(e, v) => this.targetStr.push(v)}
+            onChange={e => this.targetStr.push(e.target.value)}
             fullWidth={true}
-            multiLine={true}
-            ref={this.targetRef}
+            multiline={true}
+            inputRef={this.targetRef}
             name="target"
             value={this.state.target}
           />

@@ -1,8 +1,5 @@
+import { Checkbox, TextField } from '@material-ui/core';
 import Bacon from 'baconjs';
-import Checkbox from 'material-ui/Checkbox';
-import FontIcon from 'material-ui/FontIcon';
-import { red500 } from 'material-ui/styles/colors';
-import TextField from 'material-ui/TextField';
 import React from 'react';
 import { toUpperCase } from '../../util/strings';
 import { identity } from '../../util/util';

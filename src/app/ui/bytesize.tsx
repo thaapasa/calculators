@@ -1,5 +1,5 @@
+import { TextField } from '@material-ui/core';
 import Bacon from 'baconjs';
-import TextField from 'material-ui/TextField';
 import React, { CSSProperties } from 'react';
 import styled from 'styled-components';
 import { isString, pairsToObject } from '../util/util';
@@ -177,10 +177,9 @@ const Editor = (p: {
         style={TextFieldStyle}
         name={p.type}
         type="number"
-        hintText={info.name}
+        placeholder={info.name}
         value={p.value}
         onChange={p.onChange}
-        inputStyle={TextStyle}
         onFocus={p.onFocus}
       />
       <Unit>{info.unit}</Unit>

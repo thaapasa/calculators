@@ -1,9 +1,5 @@
+import { Divider, List, ListItem, TextField } from '@material-ui/core';
 import Bacon from 'baconjs';
-import Divider from 'material-ui/Divider';
-import { List, ListItem } from 'material-ui/List';
-import DeleteIcon from 'material-ui/svg-icons/action/delete';
-import AddIcon from 'material-ui/svg-icons/av/library-add';
-import TextField from 'material-ui/TextField';
 import React from 'react';
 import * as store from '../util/store';
 import { startsWith } from '../util/strings';
@@ -62,7 +58,7 @@ export default class Links extends React.Component<{}, LinksState> {
             name="link"
             value={this.state.link}
             fullWidth={true}
-            onChange={(e, v) => this.linkStream.push(v)}
+            onChange={e => this.linkStream.push(e.target.value)}
           />
         </Item>
         <List>
@@ -75,7 +71,7 @@ export default class Links extends React.Component<{}, LinksState> {
                 {this.state.validatedLink}
               </a>
             }
-            leftIcon={<AddIcon onClick={this.onClickAdd} />}
+            leftIcon={<AddIcob onClick={this.onClickAdd} />}
           />
           <Divider />
           {this.state.storedLinks.map(l => (

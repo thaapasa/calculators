@@ -1,5 +1,5 @@
+import { TextField } from '@material-ui/core';
 import Bacon from 'baconjs';
-import TextField from 'material-ui/TextField';
 import React from 'react';
 import * as numbers from '../calc/numbers';
 import { zeroPad } from '../util/strings';
@@ -156,7 +156,7 @@ export default class Numbers extends React.Component<
             <TextField
               type={types[t].inputType}
               name={t}
-              hintText={texts[t]}
+              placeholder={texts[t]}
               max-length={types[t].maxLength}
               value={this.state.values[t]}
               onChange={this.inputChanged}

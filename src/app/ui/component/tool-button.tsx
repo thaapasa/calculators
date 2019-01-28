@@ -1,5 +1,6 @@
-import { IconButton } from '@material-ui/core';
-import { Typography } from '@material-ui/core/styles/createTypography';
+import { Icon, IconButton } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import { TextFieldProps } from '@material-ui/core/TextField';
 import log from 'app/util/log';
 import React from 'react';
 
@@ -11,6 +12,17 @@ interface ToolbarProps {
   readonly className?: string;
 }
 
+export function copyRefToClipboard(ref: React.RefObject<TextField>) {
+  try {
+    if (ref.current) {
+      ref.current.select();
+      document.execCommand('copy');
+    }
+  } catch (e) {
+    log(`Could not copy: ${e}`);
+  }
+}
+
 export default class ToolButton extends React.Component<ToolbarProps, {}> {
   public render() {
     return (
@@ -19,9 +31,9 @@ export default class ToolButton extends React.Component<ToolbarProps, {}> {
         onClick={this.props.onClick}
         className={this.props.className}
       >
-        <FontIcon className="material-icons" color={this.props.color}>
+        <Icon className="material-icons" color="primary">
           {this.props.icon}
-        </FontIcon>
+        </Icon>
       </IconButton>
     );
   }
@@ -36,7 +48,7 @@ interface ButtonProps {
 export function GenerateButton({ title, onClick }: ButtonProps) {
   return (
     <ToolButton
-      color={lightBlue600}
+      color="primary"
       icon="add_circle"
       title={title}
       onClick={onClick}
@@ -47,22 +59,11 @@ export function GenerateButton({ title, onClick }: ButtonProps) {
 export function ClipboardButton({ title, onClick, className }: ButtonProps) {
   return (
     <ToolButton
-      color={red500}
+      color="primary"
       icon="content_copy"
       className={className}
       title={title}
       onClick={onClick}
     />
   );
-}
-
-export function copyRefToClipboard(ref: React.RefObject<Typography>) {
-  try {
-    if (ref.current) {
-      ref.current.select();
-      document.execCommand('copy');
-    }
-  } catch (e) {
-    log(`Could not copy: ${e}`);
-  }
 }

@@ -1,8 +1,6 @@
+import { TextField } from '@material-ui/core';
 import Bacon from 'baconjs';
 import areIntlLocalesSupported from 'intl-locales-supported';
-import AutoComplete from 'material-ui/AutoComplete';
-import DatePicker from 'material-ui/DatePicker';
-import TextField from 'material-ui/TextField';
 import moment from 'moment';
 import React from 'react';
 import { strToInt } from '../calc/numbers';
@@ -385,9 +383,7 @@ export default class DateTime extends React.Component<
             value={this.state.weekDay}
             style={styles.len2}
             name="weekDay"
-            hintText="la"
-            inputStyle={styles.center}
-            hintStyle={styles.center}
+            placeholder="la"
             read-only="read-only"
             onFocus={this.focusChanged}
           />
@@ -420,9 +416,7 @@ export default class DateTime extends React.Component<
             value={this.state.week}
             style={styles.len7}
             read-only="read-only"
-            inputStyle={styles.center}
-            hintStyle={styles.center}
-            hintText="2016/52"
+            placeholder="2016/52"
             onFocus={this.focusChanged}
           />
         </Item>
@@ -433,7 +427,7 @@ export default class DateTime extends React.Component<
             value={this.state.nameDay}
             fullWidth={true}
             read-only="read-only"
-            multiLine={true}
+            multiline={true}
             onFocus={this.focusChanged}
           />
         </Item>
@@ -441,7 +435,7 @@ export default class DateTime extends React.Component<
           <AutoComplete
             name="findNameDay"
             key="findNameDay"
-            hintText="Etsi nimipäivä"
+            placeholder="Etsi nimipäivä"
             fullWidth={true}
             filter={AutoComplete.noFilter}
             onNewRequest={this.pushDate}
@@ -482,9 +476,7 @@ export default class DateTime extends React.Component<
         style={info.style}
         max-length={info.maxLength}
         name={type}
-        hintText={hints[type]}
-        inputStyle={info.inputStyle}
-        hintStyle={info.inputStyle}
+        placeholder={hints[type]}
         fullWidth={info.fullWidth}
         onChange={this.inputChanged}
         onFocus={this.focusChanged}

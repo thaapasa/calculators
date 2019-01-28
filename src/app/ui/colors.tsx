@@ -1,5 +1,4 @@
-import Avatar from 'material-ui/Avatar';
-import TextField from 'material-ui/TextField';
+import { Avatar, TextField } from '@material-ui/core';
 import React from 'react';
 import { hexStrToInt, intToHexStr } from '../calc/numbers';
 import { zeroPad } from '../util/strings';
@@ -99,7 +98,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
         title="Väri"
         subtitle={texts[this.state.selected]}
         avatar={
-          <Avatar backgroundColor={this.state.color} style={styles.avatar}>
+          <Avatar color={this.state.color} style={styles.avatar}>
             &nbsp;
           </Avatar>
         }
@@ -124,21 +123,21 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
         />
         <Item name="Heksa">
           <TextField
-            hintText="#FFFFFF"
+            placeholder="#FFFFFF"
             name="color-hex"
             value={this.state.hex}
             max-length="7"
-            onChange={(e, t) => this.setFromHex(t)}
-            onFocus={e => this.select('hex')}
+            onChange={e => this.setFromHex(e.target.value)}
+            onFocus={_ => this.select('hex')}
           />
         </Item>
         <Item name="RGB-arvo">
           <TextField
-            hintText="rgb(255,255,255)"
+            placeholder="rgb(255,255,255)"
             name="color-rgb"
             value={toRGBColor(this.state.r, this.state.g, this.state.b)}
             read-only="read-only"
-            onFocus={e => this.select('rgb')}
+            onFocus={_ => this.select('rgb')}
           />
         </Item>
       </HalfSection>

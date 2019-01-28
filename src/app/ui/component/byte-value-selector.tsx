@@ -1,6 +1,6 @@
+import { TextField } from '@material-ui/core';
+import { Slider } from '@material-ui/lab';
 import * as Bacon from 'baconjs';
-import Slider from 'material-ui/Slider';
-import TextField from 'material-ui/TextField';
 import React from 'react';
 import { hexStrToInt, intToHexStr, strToInt } from '../../calc/numbers';
 import { zeroPad } from '../../util/strings';
@@ -107,25 +107,19 @@ export default class ByteValueSelector extends React.Component<
     const content = (
       <div style={{ display: 'flex', padding: '0 0.75em' }}>
         <TextField
-          floatingLabelText={this.props.floatingLabel}
-          floatingLabelFixed={true}
-          hintText="FF"
+          placeholder="FF"
           style={styles.component}
           max-length="2"
           value={this.state.hex}
-          onChange={(e, t) => this.pushStringValue(t, 'hex')}
+          onChange={e => this.pushStringValue(e.target.value, 'hex')}
         />
         <TextField
-          floatingLabelText={this.props.floatingLabel}
-          floatingLabelFixed={true}
-          hintText="255"
+          placeholder="255"
           style={styles.component}
           type="number"
           max-length="3"
           value={this.state.dec}
-          onChange={(e, t) => this.pushStringValue(t, 'dec')}
-          min={0}
-          max={255}
+          onChange={e => this.pushStringValue(e.target.value, 'dec')}
         />
         <Slider
           value={this.state.slider}
