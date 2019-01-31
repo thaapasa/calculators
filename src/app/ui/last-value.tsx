@@ -1,5 +1,6 @@
 import { TextField } from '@material-ui/core';
 import React from 'react';
+import styled from 'styled-components';
 import { ClipboardButton, copyRefToClipboard } from './component/tool-button';
 
 interface LastValueState {
@@ -15,7 +16,7 @@ export default class LastValue extends React.Component<{}, LastValueState> {
 
   public render() {
     return (
-      <>
+      <Container>
         <ClipboardButton
           title="Kopioi leikepöydälle"
           onClick={this.copyToClipboard}
@@ -28,7 +29,7 @@ export default class LastValue extends React.Component<{}, LastValueState> {
           placeholder="Viimeisin arvo"
           onChange={this.changeValue}
         />
-      </>
+      </Container>
     );
   }
 
@@ -40,3 +41,8 @@ export default class LastValue extends React.Component<{}, LastValueState> {
 
   private copyToClipboard = () => copyRefToClipboard(this.valueField);
 }
+
+const Container = styled.div`
+  display: inline-flex;
+  align-items: center;
+`;

@@ -1,4 +1,5 @@
 import { Icon, IconButton } from '@material-ui/core';
+import { FileCopy } from '@material-ui/icons';
 import log from 'app/util/log';
 import React from 'react';
 
@@ -56,12 +57,8 @@ export function GenerateButton({ title, onClick }: ButtonProps) {
 
 export function ClipboardButton({ title, onClick, className }: ButtonProps) {
   return (
-    <ToolButton
-      color="primary"
-      icon="content_copy"
-      className={className}
-      title={title}
-      onClick={onClick}
-    />
+    <IconButton className={className} title={title} onClick={onClick}>
+      <FileCopy />
+    </IconButton>
   );
 }
