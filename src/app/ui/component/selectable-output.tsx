@@ -1,4 +1,5 @@
 import { Checkbox, TextField } from '@material-ui/core';
+import { TextFormat } from '@material-ui/icons';
 import Bacon from 'baconjs';
 import React from 'react';
 import { toUpperCase } from '../../util/strings';
@@ -53,12 +54,8 @@ export default class SelectableOutput extends React.Component<
         name={
           <Checkbox
             name={this.props.type + '-upper-case'}
-            label={
-              <FontIcon className="material-icons" color={red500}>
-                text_format
-              </FontIcon>
-            }
-            onCheck={this.checkUpperCase}
+            icon={<TextFormat />}
+            onChange={this.checkUpperCase}
           />
         }
         valueStyle={styles.itemValue}
@@ -66,7 +63,6 @@ export default class SelectableOutput extends React.Component<
       >
         <TextField
           type="text"
-          floatingLabelText={this.props.label}
           className="wide"
           value={this.state.value}
           fullWidth={true}
@@ -100,7 +96,7 @@ export default class SelectableOutput extends React.Component<
     });
   };
 
-  private checkUpperCase = (event: React.MouseEvent<{}>, checked: boolean) => {
+  private checkUpperCase = (event: React.ChangeEvent, checked: boolean) => {
     this.ucStream.push(checked);
     if (this.props.onSelect) {
       this.props.onSelect(event as any);

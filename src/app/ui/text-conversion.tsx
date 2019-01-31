@@ -1,4 +1,4 @@
-import { MenuItem, TextField } from '@material-ui/core';
+import { MenuItem, Select, TextField } from '@material-ui/core';
 import Bacon from 'baconjs';
 import React from 'react';
 import styled from 'styled-components';
@@ -96,8 +96,8 @@ export default class TextConversion extends React.Component<
     selected: converters[0],
   };
 
-  private sourceRef = React.createRef<TextField>();
-  private targetRef = React.createRef<TextField>();
+  private sourceRef = React.createRef<HTMLInputElement>();
+  private targetRef = React.createRef<HTMLInputElement>();
 
   private sourceStr = new Bacon.Bus<any, string>();
   private targetStr = new Bacon.Bus<any, string>();
@@ -134,21 +134,22 @@ export default class TextConversion extends React.Component<
         title="Tekstimuunnokset"
         subtitle={convertInfo[this.state.selected].name}
       >
-        <SelectField
+        <Select
           value={this.state.selected}
-          onChange={(e, i, v) => this.selectedStr.push(v)}
-          floatingLabelText="Konversio"
+          onChange={e => this.selectedStr.push(e.target.value)}
         >
           {converters.map(c => (
-            <MenuItem value={c} key={c} primaryText={convertInfo[c].name} />
+            <MenuItem value={c} key={c}>
+              {convertInfo[c].name}
+            </MenuItem>
           ))}
-        </SelectField>
+        </Select>
         <FlexRow className="center-horizontal top">
           <ClipButton
             title="Kopioi lähde leikepöydälle"
             onClick={this.copySourceToClipboard}
           />
-          <FlexTextField
+          <TextField
             onChange={e => this.sourceStr.push(e.target.value)}
             fullWidth={true}
             multiline={true}
@@ -163,7 +164,7 @@ export default class TextConversion extends React.Component<
             title="Kopioi kohde leikepöydälle"
             onClick={this.copyTargetToClipboard}
           />
-          <FlexTextField
+          <TextField
             onChange={e => this.targetStr.push(e.target.value)}
             fullWidth={true}
             multiline={true}
@@ -180,10 +181,6 @@ export default class TextConversion extends React.Component<
   private copySourceToClipboard = () => copyRefToClipboard(this.sourceRef);
   private copyTargetToClipboard = () => copyRefToClipboard(this.targetRef);
 }
-
-const FlexTextField = styled(TextField)`
-  flex: 1;
-`;
 
 const ClipButton = styled(ClipboardButton)`
   margin-top: 24px !important;

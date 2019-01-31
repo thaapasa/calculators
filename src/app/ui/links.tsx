@@ -1,4 +1,10 @@
-import { Divider, List, ListItem, TextField } from '@material-ui/core';
+import {
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+} from '@material-ui/core';
 import Bacon from 'baconjs';
 import React from 'react';
 import * as store from '../util/store';
@@ -62,28 +68,14 @@ export default class Links extends React.Component<{}, LinksState> {
           />
         </Item>
         <List>
-          <ListItem
-            primaryText={
-              <a
-                href={this.state.validatedLink}
-                title={this.state.validatedLink}
-              >
-                {this.state.validatedLink}
-              </a>
-            }
-            leftIcon={<AddIcob onClick={this.onClickAdd} />}
-          />
+          <ListItem onClick={this.onClickAdd}>
+            <ListItemText>{this.state.validatedLink}</ListItemText>
+          </ListItem>
           <Divider />
           {this.state.storedLinks.map(l => (
-            <ListItem
-              key={l}
-              primaryText={
-                <a href={l} title={l}>
-                  {l}
-                </a>
-              }
-              leftIcon={<DeleteIcon onClick={m => this.deleteLink(l)} />}
-            />
+            <ListItem key={l} onClick={() => this.deleteLink(l)}>
+              <ListItemText>{l}</ListItemText>
+            </ListItem>
           ))}
         </List>
       </HalfSection>

@@ -187,10 +187,6 @@ const Editor = (p: {
   );
 };
 
-const TextStyle: CSSProperties = {
-  textAlign: 'right',
-};
-
 const TextFieldStyle: CSSProperties = {
   flex: 1,
   width: 100,

@@ -1,4 +1,4 @@
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import { MuiThemeProvider } from '@material-ui/core';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { theme } from 'style';
@@ -9,7 +9,7 @@ import { fixConsole } from './app/util/util';
 fixConsole();
 
 ReactDOM.render(
-  <MuiThemeProvider muiTheme={theme}>
+  <MuiThemeProvider theme={theme}>
     <CalculatorPage />
   </MuiThemeProvider>,
   document.getElementById('root')

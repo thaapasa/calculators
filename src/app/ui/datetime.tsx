@@ -1,18 +1,11 @@
 import { TextField } from '@material-ui/core';
 import Bacon from 'baconjs';
-import areIntlLocalesSupported from 'intl-locales-supported';
 import moment from 'moment';
 import React from 'react';
 import { strToInt } from '../calc/numbers';
 import { findNameDayFor, getNameDay } from '../util/namedays';
 import { zeroPad } from '../util/strings';
-import {
-  htmlBoolean,
-  identity,
-  isDefined,
-  isObject,
-  isString,
-} from '../util/util';
+import { htmlBoolean, identity, isDefined, isString } from '../util/util';
 import Item from './component/item';
 import { HalfSection } from './component/section';
 
@@ -220,6 +213,7 @@ const valueTypes = [
   'millisecond',
 ];
 
+/*
 function getDateTimePolyfill() {
   const IntlPolyfill = require('intl');
   const format = IntlPolyfill.DateTimeFormat;
@@ -230,6 +224,7 @@ function getDateTimePolyfill() {
 const DateTimeFormat = areIntlLocalesSupported(['fi'])
   ? global.Intl.DateTimeFormat
   : getDateTimePolyfill();
+*/
 
 const types = Object.keys(typeInfo);
 
@@ -266,9 +261,11 @@ interface DateTimeState {
   nameDay: string;
 }
 
+/*
 function formatDateForPicker() {
   return 'Valitse';
 }
+*/
 
 export default class DateTime extends React.Component<
   DateTimeProps,
@@ -388,20 +385,12 @@ export default class DateTime extends React.Component<
             onFocus={this.focusChanged}
           />
           )
-          <DatePicker
+          <TextField
+            type="datetime-local"
             name="datePicker"
-            container="inline"
-            value={this.state.datePicker}
-            textFieldStyle={typeInfo.datePicker.style}
-            autoOk={true}
-            formatDate={formatDateForPicker}
-            DateTimeFormat={DateTimeFormat}
-            locale={this.state.locale}
-            hintText={hints.date}
-            inputStyle={typeInfo.datePicker.inputStyle}
-            hintStyle={typeInfo.datePicker.inputStyle}
+            placeholder={hints.date}
             fullWidth={false}
-            onChange={(a, v) => this.pushValue(v, 'datePicker')}
+            onChange={a => this.pushValue(a.target.value, 'datePicker')}
           />
         </Item>
         <Item name="Kellonaika" style={styles.item}>
@@ -432,15 +421,12 @@ export default class DateTime extends React.Component<
           />
         </Item>
         <Item name="Etsi nimipäivä">
-          <AutoComplete
+          <TextField
             name="findNameDay"
             key="findNameDay"
             placeholder="Etsi nimipäivä"
             fullWidth={true}
-            filter={AutoComplete.noFilter}
-            onNewRequest={this.pushDate}
-            dataSource={this.state.foundNameDays}
-            onUpdateInput={this.handleFindNameDay}
+            onChange={this.handleFindNameDay}
           />
         </Item>
         <Item name="Java/JS time">{this.renderType('javaTime')}</Item>
@@ -485,6 +471,7 @@ export default class DateTime extends React.Component<
     );
   }
 
+  /*
   private pushDate = (date: any) => {
     if (isObject(date) && date.value && date.value.day && date.value.month) {
       this.streams.selected.push('value');
@@ -493,6 +480,7 @@ export default class DateTime extends React.Component<
       this.streams.datePicker.push(d.toDate());
     }
   };
+*/
 
   private handleFindNameDay = (val: any) => {
     const res: any[] = [];

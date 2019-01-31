@@ -1,6 +1,4 @@
 import { Icon, IconButton } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
-import { TextFieldProps } from '@material-ui/core/TextField';
 import log from 'app/util/log';
 import React from 'react';
 
@@ -12,7 +10,7 @@ interface ToolbarProps {
   readonly className?: string;
 }
 
-export function copyRefToClipboard(ref: React.RefObject<TextField>) {
+export function copyRefToClipboard(ref: React.RefObject<HTMLInputElement>) {
   try {
     if (ref.current) {
       ref.current.select();

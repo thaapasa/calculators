@@ -13,7 +13,6 @@ import TextFormatIcon from '@material-ui/icons/TextFormat';
 import { History, Location } from 'history';
 import React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { theme } from 'style';
 
 const styles: { [key: string]: React.CSSProperties } = {
   avatar: { marginLeft: '0.7em' },
@@ -103,9 +102,7 @@ class Link extends React.Component<{
   render() {
     return (
       <IconButton onClick={this.onClick}>
-        <this.props.icon
-          color={this.selected ? theme.palette!.accent1Color : undefined}
-        />
+        <this.props.icon color={this.selected ? 'primary' : 'default'} />
       </IconButton>
     );
   }
