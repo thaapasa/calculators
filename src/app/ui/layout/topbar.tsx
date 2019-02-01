@@ -13,6 +13,7 @@ import TextFormatIcon from '@material-ui/icons/TextFormat';
 import { History, Location } from 'history';
 import React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
+import styled from 'styled-components';
 import { Logo } from './logo';
 
 interface ToolbarProps {
@@ -28,65 +29,65 @@ class CalculatorToolbar extends React.Component<
     return (
       <AppBar>
         <Toolbar>
-          <Logo
-            onClick={this.props.onToggleDrawer}
-            className={classes.avatar}
+          <Flex>
+            <Logo
+              onClick={this.props.onToggleDrawer}
+              className={classes.avatar}
+            />
+            <Typography variant="h6" color="inherit" className={classes.styles}>
+              Laskurit
+            </Typography>
+          </Flex>
+          <Link {...this.props} icon={HomeIcon} route="/" tooltip="Kaikki" />
+          <Link
+            {...this.props}
+            icon={AccessTimeIcon}
+            route={['/p/aika', '/p/time']}
+            tooltip="Aikaleimat"
           />
-          <Typography variant="h6" color="inherit" className={classes.styles}>
-            Laskurit
-          </Typography>
-          <div className={classes.navigation}>
-            <Link {...this.props} icon={HomeIcon} route="/" tooltip="Kaikki" />
-            <Link
-              {...this.props}
-              icon={AccessTimeIcon}
-              route={['/p/aika', '/p/time']}
-              tooltip="Aikaleimat"
-            />
-            <Link
-              {...this.props}
-              icon={ExposurePlus1Icon}
-              route={['/p/numerot', '/p/merkit', '/p/symbols']}
-              tooltip="Numerot ja merkit"
-            />
-            <Link
-              {...this.props}
-              icon={PermIdentityIcon}
-              route={['/p/tunnisteet', '/p/identifiers']}
-              tooltip="Tunnisteet"
-            />
-            <Link
-              {...this.props}
-              icon={ColorLensIcon}
-              route={['/p/värit', '/p/colors']}
-              tooltip="Värit"
-            />
-            <Link
-              {...this.props}
-              icon={CodeIcon}
-              route={['/p/tavukoot', '/p/bytesize', '/p/bytesizes']}
-              tooltip="Tavukoot"
-            />
-            <Link
-              {...this.props}
-              icon={LinkIcon}
-              route={['/p/linkit', '/p/links']}
-              tooltip="Linkit"
-            />
-            <Link
-              {...this.props}
-              icon={TextFormatIcon}
-              route={['/p/tekstimuunnokset', '/p/textconversions']}
-              tooltip="Tekstimuunnokset"
-            />
-            <Link
-              {...this.props}
-              icon={EnhancedEncryptionIcon}
-              route={['/p/kryptografia', '/p/cryptography']}
-              tooltip="Kryptografia"
-            />
-          </div>
-          <div className={classes.itself}>{this.props.children}</div>
+          <Link
+            {...this.props}
+            icon={ExposurePlus1Icon}
+            route={['/p/numerot', '/p/merkit', '/p/symbols']}
+            tooltip="Numerot ja merkit"
+          />
+          <Link
+            {...this.props}
+            icon={PermIdentityIcon}
+            route={['/p/tunnisteet', '/p/identifiers']}
+            tooltip="Tunnisteet"
+          />
+          <Link
+            {...this.props}
+            icon={ColorLensIcon}
+            route={['/p/värit', '/p/colors']}
+            tooltip="Värit"
+          />
+          <Link
+            {...this.props}
+            icon={CodeIcon}
+            route={['/p/tavukoot', '/p/bytesize', '/p/bytesizes']}
+            tooltip="Tavukoot"
+          />
+          <Link
+            {...this.props}
+            icon={LinkIcon}
+            route={['/p/linkit', '/p/links']}
+            tooltip="Linkit"
+          />
+          <Link
+            {...this.props}
+            icon={TextFormatIcon}
+            route={['/p/tekstimuunnokset', '/p/textconversions']}
+            tooltip="Tekstimuunnokset"
+          />
+          <Link
+            {...this.props}
+            icon={EnhancedEncryptionIcon}
+            route={['/p/kryptografia', '/p/cryptography']}
+            tooltip="Kryptografia"
+          />
+          <Flex className="right">{this.props.children}</Flex>
         </Toolbar>
       </AppBar>
     );
@@ -97,15 +98,19 @@ const styles = {
   avatar: {
     marginRight: 16,
   },
-  navigation: {
-    flexGrow: 1,
-    display: 'inline-flex',
-    justifyContent: 'center',
-  },
   itself: {
     display: 'inline-flex',
   },
 };
+
+const Flex = styled.div`
+  display: inline-flex;
+  flex: 1;
+  justify-content: flex-start;
+  &.right {
+    justify-content: flex-end;
+  }
+`;
 
 export default withRouter(withStyles(styles)(CalculatorToolbar));
 
