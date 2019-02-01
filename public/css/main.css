@@ -9,13 +9,13 @@ html, body {
     text-align: left;
 }
 
-@media (max-width: 60em) {
+@media (max-width: 63em) {
     .fullsize {
         display: none !important;
     }    
 }
 
-@media (min-width: 60em) {
+@media (min-width: 63em) {
     .section-half-size {
         width: 29em;
         display: inline-block;
