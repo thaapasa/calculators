@@ -2,9 +2,11 @@ import {
   Divider,
   List,
   ListItem,
+  ListItemIcon,
   ListItemText,
   TextField,
 } from '@material-ui/core';
+import { Delete, NoteAdd } from '@material-ui/icons';
 import Bacon from 'baconjs';
 import React from 'react';
 import * as store from '../util/store';
@@ -46,7 +48,7 @@ export default class Links extends React.Component<{}, LinksState> {
     storedLinks: getLinksFromStore(),
   };
 
-  private linkStream = new Bacon.Bus<string, any>();
+  private linkStream = new Bacon.Bus<any, string>();
 
   public componentDidMount() {
     const validated = this.linkStream.map(l => validate(l));
@@ -58,7 +60,7 @@ export default class Links extends React.Component<{}, LinksState> {
 
   public render() {
     return (
-      <HalfSection title="Linkit">
+      <HalfSection title="Linkit" image="/img/header-links.jpg">
         <Item name="Linkki">
           <TextField
             name="link"
@@ -68,13 +70,23 @@ export default class Links extends React.Component<{}, LinksState> {
           />
         </Item>
         <List>
-          <ListItem onClick={this.onClickAdd}>
-            <ListItemText>{this.state.validatedLink}</ListItemText>
+          <ListItem>
+            <ListItemIcon onClick={this.onClickAdd}>
+              <NoteAdd />
+            </ListItemIcon>
+            <ListItemText>
+              <Link href={this.state.validatedLink} />
+            </ListItemText>
           </ListItem>
           <Divider />
           {this.state.storedLinks.map(l => (
-            <ListItem key={l} onClick={() => this.deleteLink(l)}>
-              <ListItemText>{l}</ListItemText>
+            <ListItem key={l}>
+              <ListItemIcon onClick={() => this.deleteLink(l)}>
+                <Delete />
+              </ListItemIcon>
+              <ListItemText>
+                <Link href={l} />
+              </ListItemText>
             </ListItem>
           ))}
         </List>
@@ -105,3 +117,9 @@ export default class Links extends React.Component<{}, LinksState> {
     }
   };
 }
+
+const Link = ({ href }: { href: string }) => (
+  <a href={href} target="_blank">
+    {href}
+  </a>
+);
