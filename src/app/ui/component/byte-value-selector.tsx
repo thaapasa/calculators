@@ -30,7 +30,7 @@ function sliderToVal(value: number): number {
 
 const ComponentField = styled(TextField)`
   width: 4em;
-  margin-right: 1em;
+  margin-right: 1em !important;
 ` as typeof TextField;
 
 const ByteSlider = styled(Slider)`

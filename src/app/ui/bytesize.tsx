@@ -109,7 +109,11 @@ export default class ByteSizes extends React.Component<
 
   public render() {
     return (
-      <HalfSection title="Tavukoot" subtitle={types[this.state.selected].name}>
+      <HalfSection
+        title="Tavukoot"
+        subtitle={types[this.state.selected].name}
+        image="/img/header-bytesize.jpg"
+      >
         <Item name="Tavua">
           <Editor
             type="byte"
@@ -118,8 +122,8 @@ export default class ByteSizes extends React.Component<
             onFocus={this.selectSrc}
           />
         </Item>
-        <FlexRow>
-          <Flex>
+        <Item>
+          <Column>
             {leftColumn.map(t => (
               <Editor
                 key={t}
@@ -129,8 +133,8 @@ export default class ByteSizes extends React.Component<
                 onFocus={this.selectSrc}
               />
             ))}
-          </Flex>
-          <Flex>
+          </Column>
+          <Column>
             {rightColumn.map(t => (
               <Editor
                 key={t}
@@ -140,8 +144,8 @@ export default class ByteSizes extends React.Component<
                 onFocus={this.selectSrc}
               />
             ))}
-          </Flex>
-        </FlexRow>
+          </Column>
+        </Item>
       </HalfSection>
     );
   }
@@ -172,7 +176,7 @@ const Editor = (p: {
 }) => {
   const info = types[p.type];
   return (
-    <FlexRow>
+    <EditorRow>
       <TextField
         style={TextFieldStyle}
         name={p.type}
@@ -183,9 +187,20 @@ const Editor = (p: {
         onFocus={p.onFocus}
       />
       <Unit>{info.unit}</Unit>
-    </FlexRow>
+    </EditorRow>
   );
 };
+
+const EditorRow = styled(FlexRow)`
+  margin: 12px 0px;
+  align-items: center;
+`;
+
+const Column = styled(Flex)`
+  &:first-of-type {
+    margin-right: 16px;
+  }
+`;
 
 const TextFieldStyle: CSSProperties = {
   flex: 1,
@@ -195,7 +210,6 @@ const TextFieldStyle: CSSProperties = {
 const Unit = styled.div`
   width: 25px;
   text-align: right;
-  padding-top: 14px;
   padding-right: 8px;
   margin-left: 8px;
 `;

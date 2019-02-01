@@ -4,7 +4,7 @@ import styled from 'styled-components';
 interface ItemProps {
   readonly className?: string;
   readonly style?: React.CSSProperties;
-  readonly name: string | JSX.Element;
+  readonly name?: string | JSX.Element;
   readonly valueClassName?: 'top';
 }
 
@@ -12,7 +12,11 @@ export default class Item extends React.Component<ItemProps, {}> {
   public render() {
     return (
       <CalculatorItem className={this.props.className} style={this.props.style}>
-        <div className="name">{this.props.name}</div>
+        {this.props.name ? (
+          <div className="name">{this.props.name}</div>
+        ) : (
+          undefined
+        )}
         <div className={`value ${this.props.valueClassName || ''}`}>
           {this.props.children}
         </div>
@@ -23,9 +27,13 @@ export default class Item extends React.Component<ItemProps, {}> {
 
 const CalculatorItem = styled.div`
   margin: 0.2em 0.75em;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: flex-start;
+
+  &.inline {
+    display: inline-flex;
+  }
 
   & > .name {
     width: 8em;
