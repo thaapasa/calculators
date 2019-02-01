@@ -37,55 +37,57 @@ class CalculatorToolbar extends React.Component<
               Laskurit
             </Typography>
           </Flex>
-          <Link {...this.props} icon={HomeIcon} route="/" tooltip="Kaikki" />
-          <Link
-            {...this.props}
-            icon={AccessTimeIcon}
-            route={['/p/aika', '/p/time']}
-            tooltip="Aikaleimat"
-          />
-          <Link
-            {...this.props}
-            icon={ExposurePlus1Icon}
-            route={['/p/numerot', '/p/merkit', '/p/symbols']}
-            tooltip="Numerot ja merkit"
-          />
-          <Link
-            {...this.props}
-            icon={PermIdentityIcon}
-            route={['/p/tunnisteet', '/p/identifiers']}
-            tooltip="Tunnisteet"
-          />
-          <Link
-            {...this.props}
-            icon={ColorLensIcon}
-            route={['/p/värit', '/p/colors']}
-            tooltip="Värit"
-          />
-          <Link
-            {...this.props}
-            icon={CodeIcon}
-            route={['/p/tavukoot', '/p/bytesize', '/p/bytesizes']}
-            tooltip="Tavukoot"
-          />
-          <Link
-            {...this.props}
-            icon={LinkIcon}
-            route={['/p/linkit', '/p/links']}
-            tooltip="Linkit"
-          />
-          <Link
-            {...this.props}
-            icon={TextFormatIcon}
-            route={['/p/tekstimuunnokset', '/p/textconversions']}
-            tooltip="Tekstimuunnokset"
-          />
-          <Link
-            {...this.props}
-            icon={EnhancedEncryptionIcon}
-            route={['/p/kryptografia', '/p/cryptography']}
-            tooltip="Kryptografia"
-          />
+          <FullWidthOnly>
+            <Link {...this.props} icon={HomeIcon} route="/" tooltip="Kaikki" />
+            <Link
+              {...this.props}
+              icon={AccessTimeIcon}
+              route={['/p/aika', '/p/time']}
+              tooltip="Aikaleimat"
+            />
+            <Link
+              {...this.props}
+              icon={ExposurePlus1Icon}
+              route={['/p/numerot', '/p/merkit', '/p/symbols']}
+              tooltip="Numerot ja merkit"
+            />
+            <Link
+              {...this.props}
+              icon={PermIdentityIcon}
+              route={['/p/tunnisteet', '/p/identifiers']}
+              tooltip="Tunnisteet"
+            />
+            <Link
+              {...this.props}
+              icon={ColorLensIcon}
+              route={['/p/värit', '/p/colors']}
+              tooltip="Värit"
+            />
+            <Link
+              {...this.props}
+              icon={CodeIcon}
+              route={['/p/tavukoot', '/p/bytesize', '/p/bytesizes']}
+              tooltip="Tavukoot"
+            />
+            <Link
+              {...this.props}
+              icon={LinkIcon}
+              route={['/p/linkit', '/p/links']}
+              tooltip="Linkit"
+            />
+            <Link
+              {...this.props}
+              icon={TextFormatIcon}
+              route={['/p/tekstimuunnokset', '/p/textconversions']}
+              tooltip="Tekstimuunnokset"
+            />
+            <Link
+              {...this.props}
+              icon={EnhancedEncryptionIcon}
+              route={['/p/kryptografia', '/p/cryptography']}
+              tooltip="Kryptografia"
+            />
+          </FullWidthOnly>
           <Flex className="right">{this.props.children}</Flex>
         </Toolbar>
       </AppBar>
@@ -99,6 +101,12 @@ const Flex = styled.div`
   justify-content: flex-start;
   &.right {
     justify-content: flex-end;
+  }
+`;
+
+const FullWidthOnly = styled.div`
+  @media (max-width: 63em) {
+    display: none;
   }
 `;
 
