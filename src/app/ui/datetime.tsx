@@ -5,7 +5,7 @@ import React from 'react';
 import { strToInt } from '../calc/numbers';
 import { findNameDayFor, getNameDay } from '../util/namedays';
 import { zeroPad } from '../util/strings';
-import { htmlBoolean, identity, isDefined, isString } from '../util/util';
+import { identity, isDefined, isString } from '../util/util';
 import Item from './component/item';
 import { HalfSection } from './component/section';
 
@@ -15,7 +15,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   len4: { width: '3.5em' },
   len7: { width: '4.2em' },
   len10: { width: '6em' },
-  center: { textAlign: 'center', width: '100%' },
+  center: { textAlign: 'center' },
   item: {},
 };
 
@@ -85,114 +85,107 @@ interface DateTimeType {
   readonly reportValue?: boolean;
   readonly fullWidth?: boolean;
   readonly style?: React.CSSProperties;
-  readonly inputStyle?: React.CSSProperties;
   readonly maxLength?: number;
   readonly readOnly?: boolean;
 }
 
-const typeInfo: { [key: string]: DateTimeType } = {
+const typeInfo = {
   week: {
     write: (val: any) => toStateValue(val, toIsoWeek),
     reportValue: true,
-    inputStyle: styles.center,
-  },
-  focused: { write: identity },
-  selected: { write: identity },
+    style: styles.center,
+  } as DateTimeType,
+  focused: { write: identity } as DateTimeType,
+  selected: { write: identity } as DateTimeType,
   iso8601: {
     read: v => moment(v, moment.ISO_8601),
     write: (m: any) => (m.isValid() ? m.format() : ''),
     src: 'iso8601',
     reportValue: true,
     fullWidth: true,
-  },
+  } as DateTimeType,
   iso8601utc: {
     read: v => moment(v, moment.ISO_8601),
     write: (m: any) => (m.isValid() ? m.toISOString() : ''),
     src: 'iso8601utc',
     reportValue: true,
     fullWidth: true,
-  },
+  } as DateTimeType,
   nameDay: {
     write: (val: any) =>
       toStateValue(val, (v: any) => getNameDay(v.month() + 1, v.date())),
     reportValue: true,
-    inputStyle: styles.center,
-  },
+    style: styles.center,
+  } as DateTimeType,
   weekDay: {
     write: (val: any) =>
       toStateValue(val, (v: any) => texts.weekDay[v.isoWeekday()]),
-  },
+    style: styles.center,
+  } as DateTimeType,
   javaTime: {
     read: readJavaTime,
     src: 'javaTime',
     reportValue: true,
     write: (m: any) => (m.isValid() ? m.valueOf() : ''),
     fullWidth: true,
-  },
+  } as DateTimeType,
   unixTime: {
     read: readUnixTime,
     src: 'unixTime',
     reportValue: true,
     write: (m: any) => (m.isValid() ? m.unix() : ''),
     fullWidth: true,
-  },
+  } as DateTimeType,
   datePicker: {
     read: readDate,
     src: 'value',
     write: writeDate,
-    style: styles.len7,
+    style: { ...styles.len7, ...styles.center },
     maxLength: 10,
-    inputStyle: styles.center,
-  },
+  } as DateTimeType,
   date: {
     read: readDateText,
     src: 'value',
     write: writeDateText,
-    style: styles.len10,
+    style: { ...styles.len10, ...styles.center },
     reportValue: true,
     maxLength: 10,
-    inputStyle: styles.center,
-  },
+  } as DateTimeType,
   hour: {
     read: strToInt,
     src: 'value',
     write: (m: any) => (m.isValid() ? pad(m.hour(), 2) : ''),
-    style: styles.len2,
+    style: { ...styles.len2, ...styles.center },
     maxLength: 2,
-    inputStyle: styles.center,
-  },
+  } as DateTimeType,
   minute: {
     read: strToInt,
     src: 'value',
     write: (m: any) => (m.isValid() ? pad(m.minute(), 2) : ''),
-    style: styles.len2,
+    style: { ...styles.len2, ...styles.center },
     maxLength: 2,
-    inputStyle: styles.center,
-  },
+  } as DateTimeType,
   second: {
     read: strToInt,
     src: 'value',
     write: (m: any) => (m.isValid() ? pad(m.second(), 2) : ''),
-    style: styles.len2,
+    style: { ...styles.len2, ...styles.center },
     maxLength: 2,
-    inputStyle: styles.center,
-  },
+  } as DateTimeType,
   millisecond: {
     read: strToInt,
     src: 'value',
     write: (m: any) => (m.isValid() ? pad(m.millisecond(), 3) : ''),
-    style: styles.len3,
+    style: { ...styles.len3, ...styles.center },
     maxLength: 3,
-    inputStyle: styles.center,
-  },
+  } as DateTimeType,
   timeZone: {
     write: (m: any) => (m.isValid() ? m.format('Z') : ''),
-    style: styles.len7,
+    style: { ...styles.len7, ...styles.center },
     maxLength: 6,
-    inputStyle: styles.center,
     readOnly: true,
-  },
-  direct: { write: identity, src: 'direct' },
+  } as DateTimeType,
+  direct: { write: identity, src: 'direct' } as DateTimeType,
 };
 
 const hints = {
@@ -382,17 +375,10 @@ export default class DateTime extends React.Component<
             style={styles.len2}
             name="weekDay"
             placeholder="la"
-            read-only="read-only"
+            inputProps={{ readOnly: true }}
             onFocus={this.focusChanged}
           />
           )
-          <TextField
-            type="datetime-local"
-            name="datePicker"
-            placeholder={hints.date}
-            fullWidth={false}
-            onChange={a => this.pushValue(a.target.value, 'datePicker')}
-          />
         </Item>
         <Item name="Kellonaika" style={styles.item}>
           {this.renderType('hour')}:{this.renderType('minute')}:
@@ -405,7 +391,7 @@ export default class DateTime extends React.Component<
             name="week"
             value={this.state.week}
             style={styles.len7}
-            read-only="read-only"
+            inputProps={{ readOnly: true }}
             placeholder="2016/52"
             onFocus={this.focusChanged}
           />
@@ -416,7 +402,7 @@ export default class DateTime extends React.Component<
             name="nameDay"
             value={this.state.nameDay}
             fullWidth={true}
-            read-only="read-only"
+            inputProps={{ readOnly: true }}
             multiline={true}
             onFocus={this.focusChanged}
           />
@@ -454,20 +440,22 @@ export default class DateTime extends React.Component<
     this.streams[src].push(val);
   };
 
-  private renderType(type: any) {
-    const info = typeInfo[type];
+  private renderType(type: string) {
+    const info = typeInfo[type] as DateTimeType;
     return (
       <TextField
         type="text"
         value={this.state[type]}
         style={info.style}
-        max-length={info.maxLength}
+        inputProps={{
+          maxLength: info.maxLength,
+          readOnly: info.readOnly || false,
+        }}
         name={type}
         placeholder={hints[type]}
         fullWidth={info.fullWidth}
         onChange={this.inputChanged}
         onFocus={this.focusChanged}
-        read-only={htmlBoolean(info.readOnly || false, 'read-only')}
       />
     );
   }
