@@ -97,8 +97,11 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
       <HalfSection
         title="Väri"
         subtitle={texts[this.state.selected]}
+        image="/img/header-colors.jpg"
         avatar={
-          <Avatar color={this.state.color} style={styles.avatar}>
+          <Avatar
+            style={{ ...styles.avatar, backgroundColor: this.state.color }}
+          >
             &nbsp;
           </Avatar>
         }
