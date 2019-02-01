@@ -371,6 +371,7 @@ export default class DateTime extends React.Component<
       <HalfSection
         title="Aikaleimat"
         subtitle={texts.types[this.state.reportTarget]}
+        image="/img/header-datetime.jpg"
       >
         <Item name="Päivä" style={styles.item}>
           {this.renderType('date')}
