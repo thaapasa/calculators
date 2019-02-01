@@ -6,9 +6,13 @@ import * as util from '../../util/util';
 import Item from './item';
 import { GenerateButton } from './tool-button';
 
-const styles: { [key: string]: React.CSSProperties } = {
-  check: { width: '1em' },
-};
+const CheckItem = styled(Item)`
+  height: 48px;
+`;
+
+const CheckField = styled(TextField)`
+  width: 1em;
+` as typeof TextField;
 
 interface CheckProps {
   readonly width: string;
@@ -56,7 +60,7 @@ export default class CheckValue extends React.Component<
 
   public render() {
     return (
-      <Item name={this.props.name} valueClassName="left">
+      <CheckItem name={this.props.name} valueClassName="top">
         {this.props.generate ? (
           <GenerateButton onClick={this.generate} title="Luo uusi" />
         ) : (
@@ -70,19 +74,18 @@ export default class CheckValue extends React.Component<
           value={this.state.input}
           max-length={this.props['max-length']}
         />
-        <TextField
+        <CheckField
           id={`${this.props.id}-check`}
           className="letter"
           read-only="read-only"
           value={this.state.checkValue}
-          style={styles.check}
         />
         <input
           type="hidden"
           id={`${this.props.id}-value`}
           value={this.state.value}
         />
-      </Item>
+      </CheckItem>
     );
   }
 
@@ -129,4 +132,5 @@ export default class CheckValue extends React.Component<
 
 const GeneratePlaceholder = styled.div`
   width: 48px;
+  height: 48px;
 `;

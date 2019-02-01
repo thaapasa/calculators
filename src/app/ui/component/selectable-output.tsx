@@ -60,7 +60,7 @@ export default class SelectableOutput extends React.Component<
             onChange={this.checkUpperCase}
           />
         }
-        valueClassName="left"
+        valueClassName="top"
       >
         <TextField
           type="text"

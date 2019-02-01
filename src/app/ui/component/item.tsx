@@ -5,7 +5,7 @@ interface ItemProps {
   readonly className?: string;
   readonly style?: React.CSSProperties;
   readonly name: string | JSX.Element;
-  readonly valueClassName?: 'left';
+  readonly valueClassName?: 'top';
 }
 
 export default class Item extends React.Component<ItemProps, {}> {
@@ -37,8 +37,9 @@ const CalculatorItem = styled.div`
     display: inline-flex;
     width: auto;
     flex-wrap: nowrap;
+    align-items: center;
 
-    &.left {
+    &.top {
       align-items: flex-start;
     }
   }

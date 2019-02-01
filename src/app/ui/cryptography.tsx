@@ -74,6 +74,7 @@ export default class Cryptography extends React.Component<
       <Section
         title="Kryptografia"
         subtitle={this.cryptos[this.state.selected].name}
+        image="/img/header-cryptography.jpg"
       >
         <Item name="Syöte">
           <TextField

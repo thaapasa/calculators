@@ -135,7 +135,7 @@ export default class ByteValueSelector extends React.Component<
     );
 
     return this.props.name ? (
-      <Item name={this.props.name} valueClassName="left">
+      <Item name={this.props.name} valueClassName="top">
         {content}
       </Item>
     ) : (
