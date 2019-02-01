@@ -1,4 +1,4 @@
-import { Icon, IconButton } from '@material-ui/core';
+import { Icon, IconButton, PropTypes } from '@material-ui/core';
 import { FileCopy } from '@material-ui/icons';
 import log from 'app/util/log';
 import React from 'react';
@@ -39,9 +39,10 @@ export default class ToolButton extends React.Component<ToolbarProps, {}> {
 }
 
 interface ButtonProps {
-  readonly title: string;
-  readonly onClick: () => any;
-  readonly className?: string;
+  title: string;
+  onClick: () => any;
+  className?: string;
+  color?: PropTypes.Color;
 }
 
 export function GenerateButton({ title, onClick }: ButtonProps) {
@@ -55,9 +56,9 @@ export function GenerateButton({ title, onClick }: ButtonProps) {
   );
 }
 
-export function ClipboardButton({ title, onClick, className }: ButtonProps) {
+export function ClipboardButton(p: ButtonProps) {
   return (
-    <IconButton className={className} title={title} onClick={onClick}>
+    <IconButton {...p}>
       <FileCopy />
     </IconButton>
   );

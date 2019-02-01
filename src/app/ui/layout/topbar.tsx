@@ -124,8 +124,11 @@ class Link extends React.Component<{
 }> {
   render() {
     return (
-      <IconButton onClick={this.onClick}>
-        <this.props.icon color={this.selected ? 'secondary' : 'action'} />
+      <IconButton
+        onClick={this.onClick}
+        color={this.selected ? 'inherit' : 'default'}
+      >
+        <this.props.icon />
       </IconButton>
     );
   }

@@ -20,12 +20,14 @@ export default class LastValue extends React.Component<{}, LastValueState> {
         <ClipboardButton
           title="Kopioi leikepöydälle"
           onClick={this.copyToClipboard}
+          color="secondary"
         />
         <TextField
           value={this.state.value}
           inputRef={this.valueField}
           name="lastValue"
           fullWidth={true}
+          color="inherit"
           placeholder="Viimeisin arvo"
           onChange={this.changeValue}
         />
