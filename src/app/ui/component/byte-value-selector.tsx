@@ -35,7 +35,7 @@ const ComponentField = styled(TextField)`
 
 const ByteSlider = styled(Slider)`
   &.high {
-    margin.top: 12px;
+    margin-top: 18px;
   }
 ` as typeof Slider;
 
