@@ -9,7 +9,7 @@ import Item from './item';
 
 const StyledItem = styled(Item)`
   & > .name {
-    margin-top: 1.7em;
+    margin-top: 1.2em;
   }
 `;
 
@@ -54,16 +54,20 @@ export default class SelectableOutput extends React.Component<
     return (
       <StyledItem
         name={
-          <Checkbox
-            name={this.props.type + '-upper-case'}
-            icon={<TextFormat />}
-            onChange={this.checkUpperCase}
-          />
+          <>
+            <Checkbox
+              name={this.props.type + '-upper-case'}
+              onChange={this.checkUpperCase}
+            />
+            <TextFormat />
+          </>
         }
         valueClassName="top"
       >
         <TextField
           type="text"
+          label={this.props.label}
+          placeholder={this.props.label}
           className="wide"
           value={this.state.value}
           fullWidth={true}

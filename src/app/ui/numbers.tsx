@@ -1,6 +1,7 @@
 import { TextField } from '@material-ui/core';
 import Bacon from 'baconjs';
 import React from 'react';
+import styled from 'styled-components';
 import * as numbers from '../calc/numbers';
 import { zeroPad } from '../util/strings';
 import * as util from '../util/util';
@@ -129,7 +130,7 @@ export default class Numbers extends React.Component<
         image="/img/header-numbers.jpg"
       >
         {typeKeys.map(t => (
-          <Item name={texts[t]} key={`${t}-item`}>
+          <NumberItem name={texts[t]} key={`${t}-item`}>
             <TextField
               type={types[t].inputType}
               name={t}
@@ -143,7 +144,7 @@ export default class Numbers extends React.Component<
               }}
               key={t}
             />
-          </Item>
+          </NumberItem>
         ))}
       </HalfSection>
     );
@@ -199,3 +200,7 @@ export default class Numbers extends React.Component<
     this.selectedSrcStr.push(event.target.name);
   };
 }
+
+const NumberItem = styled(Item)`
+  margin-top: 8px;
+` as typeof TextField;
