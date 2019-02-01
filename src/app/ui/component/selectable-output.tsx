@@ -2,14 +2,16 @@ import { Checkbox, TextField } from '@material-ui/core';
 import { TextFormat } from '@material-ui/icons';
 import Bacon from 'baconjs';
 import React from 'react';
+import styled from 'styled-components';
 import { toUpperCase } from '../../util/strings';
 import { identity } from '../../util/util';
 import Item from './item';
 
-const styles: { [key: string]: React.CSSProperties } = {
-  itemName: { marginTop: '1.7em' },
-  itemValue: { alignItems: 'flex-start' },
-};
+const StyledItem = styled(Item)`
+  & > .name {
+    margin-top: 1.7em;
+  }
+`;
 
 interface SelectableOutputProps {
   readonly type: string;
@@ -50,7 +52,7 @@ export default class SelectableOutput extends React.Component<
 
   public render() {
     return (
-      <Item
+      <StyledItem
         name={
           <Checkbox
             name={this.props.type + '-upper-case'}
@@ -58,8 +60,7 @@ export default class SelectableOutput extends React.Component<
             onChange={this.checkUpperCase}
           />
         }
-        valueStyle={styles.itemValue}
-        nameStyle={styles.itemName}
+        valueClassName="left"
       >
         <TextField
           type="text"
@@ -70,7 +71,7 @@ export default class SelectableOutput extends React.Component<
           name="output"
           onFocus={this.props.onSelect}
         />
-      </Item>
+      </StyledItem>
     );
   }
 

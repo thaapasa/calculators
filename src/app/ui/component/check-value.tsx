@@ -8,7 +8,6 @@ import { GenerateButton } from './tool-button';
 
 const styles: { [key: string]: React.CSSProperties } = {
   check: { width: '1em' },
-  itemValue: { alignItems: 'flex-start' },
 };
 
 interface CheckProps {
@@ -57,7 +56,7 @@ export default class CheckValue extends React.Component<
 
   public render() {
     return (
-      <Item name={this.props.name} valueStyle={styles.itemValue}>
+      <Item name={this.props.name} valueClassName="left">
         {this.props.generate ? (
           <GenerateButton onClick={this.generate} title="Luo uusi" />
         ) : (

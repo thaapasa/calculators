@@ -1,5 +1,6 @@
 import { Avatar, TextField } from '@material-ui/core';
 import React from 'react';
+import styled from 'styled-components';
 import { hexStrToInt, intToHexStr } from '../calc/numbers';
 import { zeroPad } from '../util/strings';
 import { isNumber } from '../util/util';
@@ -7,11 +8,9 @@ import ByteValueSelector from './component/byte-value-selector';
 import Item from './component/item';
 import { HalfSection } from './component/section';
 
-const styles: { [key: string]: React.CSSProperties } = {
-  avatar: {
-    border: '1px solid #BBBBBB',
-  },
-};
+const ColorAvatar = styled(Avatar)`
+  border: 1px solid #bbbbbb;
+` as typeof Avatar;
 
 function toRGBColor(r: number, g: number, b: number): string {
   return isNumber(r) && isNumber(g) && isNumber(b)
@@ -99,11 +98,9 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
         subtitle={texts[this.state.selected]}
         image="/img/header-colors.jpg"
         avatar={
-          <Avatar
-            style={{ ...styles.avatar, backgroundColor: this.state.color }}
-          >
+          <ColorAvatar style={{ backgroundColor: this.state.color }}>
             &nbsp;
-          </Avatar>
+          </ColorAvatar>
         }
       >
         <ByteValueSelector

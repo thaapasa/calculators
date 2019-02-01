@@ -5,18 +5,15 @@ interface ItemProps {
   readonly className?: string;
   readonly style?: React.CSSProperties;
   readonly name: string | JSX.Element;
-  readonly nameStyle?: React.CSSProperties;
-  readonly valueStyle?: React.CSSProperties;
+  readonly valueClassName?: 'left';
 }
 
 export default class Item extends React.Component<ItemProps, {}> {
   public render() {
     return (
       <CalculatorItem className={this.props.className} style={this.props.style}>
-        <div className="name" style={this.props.nameStyle}>
-          {this.props.name}
-        </div>
-        <div className="value" style={this.props.valueStyle}>
+        <div className="name">{this.props.name}</div>
+        <div className={`value ${this.props.valueClassName || ''}`}>
           {this.props.children}
         </div>
       </CalculatorItem>
@@ -40,6 +37,10 @@ const CalculatorItem = styled.div`
     display: inline-flex;
     width: auto;
     flex-wrap: nowrap;
+
+    &.left {
+      align-items: flex-start;
+    }
   }
 
   &.multiline > .value {

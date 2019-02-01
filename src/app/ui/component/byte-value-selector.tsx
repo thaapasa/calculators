@@ -28,18 +28,16 @@ function sliderToVal(value: number): number {
   return value;
 }
 
-const styles = {
-  component: {
-    width: '4em',
-    marginRight: '1em',
-  },
-  itemValue: {
-    alignItems: 'flex-start',
-  },
-  higherSlider: {
-    marginTop: '12px',
-  },
-};
+const ComponentField = styled(TextField)`
+  width: 4em;
+  margin-right: 1em;
+` as typeof TextField;
+
+const ByteSlider = styled(Slider)`
+  &.high {
+    margin.top: 12px;
+  }
+` as typeof Slider;
 
 const types = ['parent', 'dec', 'hex', 'slider'];
 
@@ -110,28 +108,26 @@ export default class ByteValueSelector extends React.Component<
   public render() {
     const content = (
       <Row>
-        <TextField
+        <ComponentField
           label={this.props.floatingLabel}
           placeholder="FF"
-          style={styles.component}
           inputProps={{ maxLength: 2 }}
           value={this.state.hex}
           onChange={e => this.pushStringValue(e.target.value, 'hex')}
         />
-        <TextField
+        <ComponentField
           label={this.props.floatingLabel}
           placeholder="255"
           type="number"
-          style={styles.component}
           inputProps={{ maxLength: 3 }}
           value={this.state.dec}
           onChange={e => this.pushStringValue(e.target.value, 'dec')}
         />
-        <Slider
+        <ByteSlider
           value={this.state.slider}
           max={255}
           min={0}
-          style={this.props.floatingLabel ? styles.higherSlider : undefined}
+          className={this.props.floatingLabel ? 'high' : undefined}
           step={1}
           onChange={(e, v: number) => this.pushNumberValue(v, 'slider')}
         />
@@ -139,7 +135,7 @@ export default class ByteValueSelector extends React.Component<
     );
 
     return this.props.name ? (
-      <Item name={this.props.name} valueStyle={styles.itemValue}>
+      <Item name={this.props.name} valueClassName="left">
         {content}
       </Item>
     ) : (

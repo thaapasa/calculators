@@ -1,4 +1,4 @@
-import { AppBar, IconButton, Typography, withStyles } from '@material-ui/core';
+import { AppBar, IconButton, Typography } from '@material-ui/core';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import Toolbar from '@material-ui/core/Toolbar';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
@@ -18,23 +18,22 @@ import { Logo } from './logo';
 
 interface ToolbarProps {
   onToggleDrawer: () => void;
-  classes: any;
 }
 
+const TopLogo = styled(Logo)`
+  margin-right: 16px;
+` as typeof Logo;
+
 class CalculatorToolbar extends React.Component<
-  RouteComponentProps<{}> & ToolbarProps
+  RouteComponentProps & ToolbarProps
 > {
   public render() {
-    const { classes } = this.props;
     return (
       <AppBar>
         <Toolbar>
           <Flex>
-            <Logo
-              onClick={this.props.onToggleDrawer}
-              className={classes.avatar}
-            />
-            <Typography variant="h6" color="inherit" className={classes.styles}>
+            <TopLogo onClick={this.props.onToggleDrawer} />
+            <Typography variant="h6" color="inherit">
               Laskurit
             </Typography>
           </Flex>
@@ -94,15 +93,6 @@ class CalculatorToolbar extends React.Component<
   }
 }
 
-const styles = {
-  avatar: {
-    marginRight: 16,
-  },
-  itself: {
-    display: 'inline-flex',
-  },
-};
-
 const Flex = styled.div`
   display: inline-flex;
   flex: 1;
@@ -112,7 +102,7 @@ const Flex = styled.div`
   }
 `;
 
-export default withRouter(withStyles(styles)(CalculatorToolbar));
+export default withRouter(CalculatorToolbar);
 
 class Link extends React.Component<{
   route: string | string[];
