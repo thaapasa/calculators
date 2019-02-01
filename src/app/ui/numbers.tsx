@@ -25,7 +25,7 @@ interface TypeInfo {
   readonly readOnly?: boolean;
 }
 
-function readZero(x: string): number {
+function readZero(_: string): number {
   return 0;
 }
 
@@ -98,6 +98,8 @@ interface NumbersState {
   values: Record<string, string>;
 }
 
+const emptyStream = Bacon.never<any, number>();
+
 export default class Numbers extends React.Component<
   NumbersProps,
   NumbersState
@@ -114,57 +116,31 @@ export default class Numbers extends React.Component<
   private inputStream = new Bacon.Bus<any, string>();
   private selectedSrcStr = new Bacon.Bus<any, string>();
 
-  public componentDidMount() {
-    const emptyStream = Bacon.never();
-    const inputConverter = this.currentInput
-      .map(t => types[t].read)
-      .toProperty(types.decimal.read);
-
-    const converted = this.inputStream
-      .combine(inputConverter, (i, c) => c(i))
-      .map((v: any) => (typeof v === 'number' && !isNaN(v) ? v : undefined));
-
-    typeKeys.forEach(t => {
-      const typeInfo = types[t];
-      const sourceIsThis = this.currentInput
-        .map(name => t === name)
-        .toProperty(false);
-      converted
-        .combine(sourceIsThis, (c: any, i: any) => [c, i])
-        .flatMapLatest((v: any) => (v[1] ? emptyStream : converted))
-        .map(typeInfo.write)
-        .map((v: any) => (util.isString(v) ? v : ''))
-        .onValue((v: any) => this.mergeValues({ [t]: v }));
-      converted.onValue((v: any) =>
-        this.mergeValues({
-          unicode: intToUnicodeStr(v),
-          html: intToHTMLCode(v),
-        })
-      );
-    });
-    this.selectedSrcStr
-      .map((t: any) => types[t].write)
-      .combine(converted, (c: any, v: any) => c(v))
-      .onValue((v: any) => this.props.onValue && this.props.onValue(v));
+  constructor(props: NumbersProps) {
+    super(props);
+    this.initializeStreams();
   }
 
   public render() {
     return (
-      <HalfSection title="Numerot" subtitle={texts[this.state.selected]}>
+      <HalfSection
+        title="Numerot"
+        subtitle={texts[this.state.selected]}
+        image="/img/header-numbers.jpg"
+      >
         {typeKeys.map(t => (
           <Item name={texts[t]} key={`${t}-item`}>
             <TextField
               type={types[t].inputType}
               name={t}
               placeholder={texts[t]}
-              max-length={types[t].maxLength}
               value={this.state.values[t]}
               onChange={this.inputChanged}
               onFocus={this.selectSrc}
-              read-only={util.htmlBoolean(
-                types[t].readOnly || false,
-                'readonly'
-              )}
+              inputProps={{
+                maxLength: types[t].maxLength,
+                readOnly: types[t].readOnly || false,
+              }}
               key={t}
             />
           </Item>
@@ -173,7 +149,40 @@ export default class Numbers extends React.Component<
     );
   }
 
-  private mergeValues = (x: any) =>
+  private initializeStreams() {
+    const inputConverter = this.currentInput
+      .map(t => types[t].read)
+      .toProperty(types.decimal.read);
+
+    const converted = this.inputStream
+      .combine(inputConverter, (i, c) => c(i))
+      .map(v => (typeof v === 'number' && !isNaN(v) ? v : undefined));
+
+    typeKeys.forEach(t => {
+      const typeInfo = types[t];
+      const sourceIsThis = this.currentInput
+        .map(name => t === name)
+        .toProperty(false);
+      converted
+        .combine(sourceIsThis, (c, i) => [c, i])
+        .flatMapLatest(v => (v[1] ? emptyStream : converted))
+        .map(v => typeInfo.write(v || 0))
+        .map(v => (util.isString(v) ? v : ''))
+        .onValue(v => this.mergeValues({ [t]: v }));
+      converted.onValue(v =>
+        this.mergeValues({
+          unicode: intToUnicodeStr(v || 0),
+          html: intToHTMLCode(v || 0),
+        })
+      );
+    });
+    this.selectedSrcStr
+      .map(t => types[t].write)
+      .combine(converted, (c, v) => c(v || 0))
+      .onValue(v => this.props.onValue && this.props.onValue(v));
+  }
+
+  private mergeValues = (x: Record<string, string>) =>
     this.setState(s => ({ values: { ...s.values, ...x } }));
 
   private inputChanged = (event: any) => {

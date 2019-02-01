@@ -26,23 +26,20 @@ export default class Item extends React.Component<ItemProps, {}> {
 
 const CalculatorItem = styled.div`
   margin: 0.2em 0.75em;
-  display: flex;
-  align-self: baseline;
-  text-align: baseline;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
 
   & > .name {
     width: 8em;
-    padding-top: 1em;
   }
 
   & > .value {
     flex-grow: 1;
-    align-self: baseline;
     white-space: nowrap;
     display: inline-flex;
     width: auto;
     flex-wrap: nowrap;
-    align-items: baseline;
   }
 
   &.multiline > .value {

@@ -1,21 +1,37 @@
-import { Card, CardContent, CardHeader, Divider } from '@material-ui/core';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Divider,
+  StyledComponentProps,
+  withStyles,
+} from '@material-ui/core';
 import React from 'react';
 
 interface HalfSectionProps {
-  readonly title: string;
-  readonly subtitle?: string;
-  readonly avatar?: JSX.Element;
-  readonly className?: string;
+  title: string;
+  subtitle?: string;
+  avatar?: JSX.Element;
+  className?: string;
+  image?: string;
 }
 
 interface SectionProps extends HalfSectionProps {
-  readonly className?: string;
+  className?: string;
 }
 
-export default class Section extends React.Component<SectionProps, {}> {
+class SectionImpl extends React.Component<SectionProps & StyledComponentProps> {
   public render() {
     return (
       <Card className={'section ' + (this.props.className || '')}>
+        {this.props.image ? (
+          <CardMedia
+            image={this.props.image}
+            title={this.props.title}
+            className={this.props.classes!.media}
+          />
+        ) : null}
         <CardHeader
           title={this.props.title}
           subheader={this.props.subtitle}
@@ -28,20 +44,19 @@ export default class Section extends React.Component<SectionProps, {}> {
   }
 }
 
-export function HalfSection({
-  title,
-  subtitle,
-  avatar,
-  children,
-}: HalfSectionProps & { children: React.ReactNode }) {
+const Section = withStyles({
+  media: {
+    height: 88,
+  },
+})(SectionImpl);
+export default Section;
+
+export function HalfSection(
+  p: HalfSectionProps & { children: React.ReactNode }
+) {
   return (
-    <Section
-      title={title}
-      subtitle={subtitle}
-      avatar={avatar}
-      className="section-half-size"
-    >
-      {children}
+    <Section className="section-half-size" {...p}>
+      {p.children}
     </Section>
   );
 }
