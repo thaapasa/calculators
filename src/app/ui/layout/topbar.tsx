@@ -1,10 +1,4 @@
-import {
-  AppBar,
-  Avatar,
-  IconButton,
-  Typography,
-  withStyles,
-} from '@material-ui/core';
+import { AppBar, IconButton, Typography, withStyles } from '@material-ui/core';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import Toolbar from '@material-ui/core/Toolbar';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
@@ -19,6 +13,7 @@ import TextFormatIcon from '@material-ui/icons/TextFormat';
 import { History, Location } from 'history';
 import React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
+import { Logo } from './logo';
 
 interface ToolbarProps {
   onToggleDrawer: () => void;
@@ -33,8 +28,7 @@ class CalculatorToolbar extends React.Component<
     return (
       <AppBar>
         <Toolbar>
-          <Avatar
-            src="img/calculators.png"
+          <Logo
             onClick={this.props.onToggleDrawer}
             className={classes.avatar}
           />

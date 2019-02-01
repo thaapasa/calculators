@@ -27,7 +27,6 @@ export default class LastValue extends React.Component<{}, LastValueState> {
           inputRef={this.valueField}
           name="lastValue"
           fullWidth={true}
-          color="inherit"
           placeholder="Viimeisin arvo"
           onChange={this.changeValue}
         />
