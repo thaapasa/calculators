@@ -1,4 +1,10 @@
-import { MenuItem, Select, TextField } from '@material-ui/core';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from '@material-ui/core';
 import Bacon from 'baconjs';
 import React from 'react';
 import styled from 'styled-components';
@@ -133,23 +139,28 @@ export default class TextConversion extends React.Component<
       <Section
         title="Tekstimuunnokset"
         subtitle={convertInfo[this.state.selected].name}
+        image="/img/header-text-conversion.jpg"
       >
-        <Select
-          value={this.state.selected}
-          onChange={e => this.selectedStr.push(e.target.value)}
-        >
-          {converters.map(c => (
-            <MenuItem value={c} key={c}>
-              {convertInfo[c].name}
-            </MenuItem>
-          ))}
-        </Select>
-        <FlexRow className="center-horizontal top">
-          <ClipButton
+        <FormControl>
+          <InputLabel htmlFor="conversion">Muunnos</InputLabel>
+          <StyledSelect
+            inputProps={{ id: 'conversion' }}
+            value={this.state.selected}
+            onChange={e => this.selectedStr.push(e.target.value)}
+          >
+            {converters.map(c => (
+              <MenuItem value={c} key={c}>
+                {convertInfo[c].name}
+              </MenuItem>
+            ))}
+          </StyledSelect>
+        </FormControl>
+        <TextRow className="center-horizontal top">
+          <ClipboardButton
             title="Kopioi lähde leikepöydälle"
             onClick={this.copySourceToClipboard}
           />
-          <TextField
+          <TextEdit
             onChange={e => this.sourceStr.push(e.target.value)}
             fullWidth={true}
             multiline={true}
@@ -157,14 +168,14 @@ export default class TextConversion extends React.Component<
             name="source"
             value={this.state.source}
           />
-          <LeftPad>{this.state.source.length}</LeftPad>
-        </FlexRow>
-        <FlexRow className="center-horizontal top">
-          <ClipButton
+          <LenghtArea>{this.state.source.length}</LenghtArea>
+        </TextRow>
+        <TextRow className="center-horizontal top">
+          <ClipboardButton
             title="Kopioi kohde leikepöydälle"
             onClick={this.copyTargetToClipboard}
           />
-          <TextField
+          <TextEdit
             onChange={e => this.targetStr.push(e.target.value)}
             fullWidth={true}
             multiline={true}
@@ -172,8 +183,8 @@ export default class TextConversion extends React.Component<
             name="target"
             value={this.state.target}
           />
-          <LeftPad>{this.state.target.length}</LeftPad>
-        </FlexRow>
+          <LenghtArea>{this.state.target.length}</LenghtArea>
+        </TextRow>
       </Section>
     );
   }
@@ -182,6 +193,18 @@ export default class TextConversion extends React.Component<
   private copyTargetToClipboard = () => copyRefToClipboard(this.targetRef);
 }
 
-const ClipButton = styled(ClipboardButton)`
-  margin-top: 24px !important;
+const StyledSelect = styled(Select)`
+  width: 260px;
+` as typeof Select;
+
+const LenghtArea = styled(LeftPad)`
+  margin-top: 16px;
 `;
+
+const TextRow = styled(FlexRow)`
+  margin-top: 8px;
+`;
+
+const TextEdit = styled(TextField)`
+  margin-top: 8px !important;
+` as typeof TextField;
