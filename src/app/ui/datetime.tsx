@@ -2,20 +2,21 @@ import { TextField } from '@material-ui/core';
 import Bacon from 'baconjs';
 import moment from 'moment';
 import React from 'react';
+import styled from 'styled-components';
 import { strToInt } from '../calc/numbers';
-import { findNameDayFor, getNameDay } from '../util/namedays';
+import { findNameDayFor, getNameDay, MonthDay } from '../util/namedays';
 import { zeroPad } from '../util/strings';
 import { identity, isDefined, isString } from '../util/util';
+import AutoComplete from './component/autocomplete';
 import Item from './component/item';
 import { HalfSection } from './component/section';
 
 const styles: { [key: string]: React.CSSProperties } = {
-  len2: { width: '1.8em' },
-  len3: { width: '2.6em' },
+  len2: { width: '1.7em' },
+  len3: { width: '2.4em' },
   len4: { width: '3.5em' },
   len7: { width: '4.2em' },
   len10: { width: '6em' },
-  center: { textAlign: 'center' },
   item: {},
 };
 
@@ -140,14 +141,14 @@ const typeInfo = {
     read: readDate,
     src: 'value',
     write: writeDate,
-    style: { ...styles.len7, ...styles.center },
+    style: styles.len7,
     maxLength: 10,
   } as DateTimeType,
   date: {
     read: readDateText,
     src: 'value',
     write: writeDateText,
-    style: { ...styles.len10, ...styles.center },
+    style: styles.len10,
     reportValue: true,
     maxLength: 10,
   } as DateTimeType,
@@ -155,33 +156,33 @@ const typeInfo = {
     read: strToInt,
     src: 'value',
     write: (m: any) => (m.isValid() ? pad(m.hour(), 2) : ''),
-    style: { ...styles.len2, ...styles.center },
+    style: styles.len2,
     maxLength: 2,
   } as DateTimeType,
   minute: {
     read: strToInt,
     src: 'value',
     write: (m: any) => (m.isValid() ? pad(m.minute(), 2) : ''),
-    style: { ...styles.len2, ...styles.center },
+    style: styles.len2,
     maxLength: 2,
   } as DateTimeType,
   second: {
     read: strToInt,
     src: 'value',
     write: (m: any) => (m.isValid() ? pad(m.second(), 2) : ''),
-    style: { ...styles.len2, ...styles.center },
+    style: styles.len2,
     maxLength: 2,
   } as DateTimeType,
   millisecond: {
     read: strToInt,
     src: 'value',
     write: (m: any) => (m.isValid() ? pad(m.millisecond(), 3) : ''),
-    style: { ...styles.len3, ...styles.center },
+    style: styles.len3,
     maxLength: 3,
   } as DateTimeType,
   timeZone: {
     write: (m: any) => (m.isValid() ? m.format('Z') : ''),
-    style: { ...styles.len7, ...styles.center },
+    style: styles.len7,
     maxLength: 6,
     readOnly: true,
   } as DateTimeType,
@@ -205,19 +206,6 @@ const valueTypes = [
   'second',
   'millisecond',
 ];
-
-/*
-function getDateTimePolyfill() {
-  const IntlPolyfill = require('intl');
-  const format = IntlPolyfill.DateTimeFormat;
-  require('intl/locale-data/jsonp/fi');
-  return format;
-}
-
-const DateTimeFormat = areIntlLocalesSupported(['fi'])
-  ? global.Intl.DateTimeFormat
-  : getDateTimePolyfill();
-*/
 
 const types = Object.keys(typeInfo);
 
@@ -243,9 +231,15 @@ interface DateTimeProps {
   onValue: (x: any) => any;
 }
 
+interface NameDayItem {
+  text: string;
+  name: string;
+  value: MonthDay;
+}
+
 interface DateTimeState {
   reportTarget: string;
-  foundNameDays: string[];
+  foundNameDays: NameDayItem[];
   locale: string;
   datePicker: Date | undefined;
   date: string;
@@ -253,12 +247,6 @@ interface DateTimeState {
   week: string;
   nameDay: string;
 }
-
-/*
-function formatDateForPicker() {
-  return 'Valitse';
-}
-*/
 
 export default class DateTime extends React.Component<
   DateTimeProps,
@@ -366,10 +354,10 @@ export default class DateTime extends React.Component<
         subtitle={texts.types[this.state.reportTarget]}
         image="/img/header-datetime.jpg"
       >
-        <Item name="Päivä" style={styles.item}>
+        <TimeItem name="Päivä" style={styles.item}>
           {this.renderType('date')}
           (
-          <TextField
+          <TimeField
             type="text"
             value={this.state.weekDay}
             style={styles.len2}
@@ -379,14 +367,14 @@ export default class DateTime extends React.Component<
             onFocus={this.focusChanged}
           />
           )
-        </Item>
-        <Item name="Kellonaika" style={styles.item}>
+        </TimeItem>
+        <TimeItem name="Kellonaika" style={styles.item}>
           {this.renderType('hour')}:{this.renderType('minute')}:
           {this.renderType('second')}.{this.renderType('millisecond')}
           {this.renderType('timeZone')}
-        </Item>
-        <Item name="Viikko">
-          <TextField
+        </TimeItem>
+        <TimeItem name="Viikko">
+          <TimeField
             type="text"
             name="week"
             value={this.state.week}
@@ -395,47 +383,59 @@ export default class DateTime extends React.Component<
             placeholder="2016/52"
             onFocus={this.focusChanged}
           />
-        </Item>
-        <Item name="Nimipäivä">
-          <TextField
+        </TimeItem>
+        <TimeItem name="Nimipäivä">
+          <TimeField
             type="text"
             name="nameDay"
             value={this.state.nameDay}
             fullWidth={true}
-            inputProps={{ readOnly: true }}
             multiline={true}
             onFocus={this.focusChanged}
           />
-        </Item>
-        <Item name="Etsi nimipäivä">
-          <TextField
-            name="findNameDay"
-            key="findNameDay"
-            placeholder="Etsi nimipäivä"
-            fullWidth={true}
-            onChange={this.handleFindNameDay}
-          />
-        </Item>
-        <Item name="Java/JS time">{this.renderType('javaTime')}</Item>
-        <Item name="Unixtime">{this.renderType('unixTime')}</Item>
-        <Item name="ISO-8601">{this.renderType('iso8601')}</Item>
-        <Item name="ISO-8601 UTC">{this.renderType('iso8601utc')}</Item>
+        </TimeItem>
+        <TimeItem name="Etsi nimipäivä">
+          <AutoCompleteWrapper>
+            <AutoComplete
+              name="findNameDay"
+              placeholder="Etsi nimipäivä"
+              getSuggestions={findNameDays}
+              renderSuggestion={renderMonthDayItem}
+              getSuggestionValue={monthDayToInputValue}
+              onSelectSuggestion={this.selectNameDay}
+              fullWidth={true}
+            />
+          </AutoCompleteWrapper>
+        </TimeItem>
+        <TimeItem name="Java/JS time">{this.renderType('javaTime')}</TimeItem>
+        <TimeItem name="Unixtime">{this.renderType('unixTime')}</TimeItem>
+        <TimeItem name="ISO-8601">{this.renderType('iso8601')}</TimeItem>
+        <TimeItem name="ISO-8601 UTC">{this.renderType('iso8601utc')}</TimeItem>
       </HalfSection>
     );
   }
 
-  private inputChanged = (event: any) => {
+  private selectNameDay = (day: NameDayItem) => {
+    const m = moment()
+      .startOf('day')
+      .month(day.value.month - 1)
+      .date(day.value.day);
+    const date = m.format(datePattern);
+    this.pushValue(date, 'date');
+  };
+
+  private inputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     const src = event.target.name;
     const val = event.target.value;
     this.pushValue(val, src);
   };
 
-  private focusChanged = (event: any) => {
+  private focusChanged = (event: React.FocusEvent<HTMLInputElement>) => {
     const src = event.target.name;
     this.streams.focused.push(src);
   };
 
-  private pushValue = (val: any, src: any) => {
+  private pushValue = (val: string | moment.Moment, src: any) => {
     this.streams.selected.push(typeInfo[src].src);
     this.streams[src].push(val);
   };
@@ -443,7 +443,7 @@ export default class DateTime extends React.Component<
   private renderType(type: string) {
     const info = typeInfo[type] as DateTimeType;
     return (
-      <TextField
+      <TimeField
         type="text"
         value={this.state[type]}
         style={info.style}
@@ -459,30 +459,40 @@ export default class DateTime extends React.Component<
       />
     );
   }
-
-  /*
-  private pushDate = (date: any) => {
-    if (isObject(date) && date.value && date.value.day && date.value.month) {
-      this.streams.selected.push('value');
-      const d = moment({ day: date.value.day, month: date.value.month - 1 });
-      this.streams.date.push(writeDateText(d));
-      this.streams.datePicker.push(d.toDate());
-    }
-  };
-*/
-
-  private handleFindNameDay = (val: any) => {
-    const res: any[] = [];
-    if (isString(val) && val.length >= 2) {
-      const matches = findNameDayFor(val);
-      Object.keys(matches).forEach(name => {
-        const date = matches[name];
-        res.push({
-          text: `${name}: ${date.day}.${date.month}.`,
-          value: date,
-        });
-      });
-    }
-    this.setState({ foundNameDays: res });
-  };
 }
+
+const TimeItem = styled(Item)`
+  margin-top: 8px;
+`;
+
+const TimeField = styled(TextField)`
+  & input,
+  & textarea {
+    margin-left: 4px;
+  }
+` as typeof TextField;
+
+const findNameDays = (input: string): NameDayItem[] => {
+  const res: NameDayItem[] = [];
+  if (isString(input) && input.length >= 2) {
+    const matches = findNameDayFor(input);
+    Object.keys(matches).forEach(name => {
+      const date = matches[name];
+      res.push({
+        text: `${name}: ${date.day}.${date.month}.`,
+        name,
+        value: date,
+      });
+    });
+  }
+  return res;
+};
+
+const renderMonthDayItem = (m: NameDayItem) => m.text;
+const monthDayToInputValue = (m: NameDayItem) => m.name;
+
+const AutoCompleteWrapper = styled.div`
+  & input {
+    margin-left: 4px;
+  }
+`;

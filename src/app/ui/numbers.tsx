@@ -203,4 +203,4 @@ export default class Numbers extends React.Component<
 
 const NumberItem = styled(Item)`
   margin-top: 8px;
-` as typeof TextField;
+`;
