@@ -1,15 +1,18 @@
+import { TextField } from '@material-ui/core';
 import Bacon from 'baconjs';
-import TextField from 'material-ui/TextField';
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import * as util from '../../util/util';
 import Item from './item';
 import { GenerateButton } from './tool-button';
 
-const styles: { [key: string]: React.CSSProperties } = {
-  check: { width: '1em' },
-  itemValue: { alignItems: 'flex-start' },
-};
+const CheckItem = styled(Item)`
+  height: 48px;
+`;
+
+const CheckField = styled(TextField)`
+  width: 1em;
+` as typeof TextField;
 
 interface CheckProps {
   readonly width: string;
@@ -57,7 +60,7 @@ export default class CheckValue extends React.Component<
 
   public render() {
     return (
-      <Item name={this.props.name} valueStyle={styles.itemValue}>
+      <CheckItem name={this.props.name} valueClassName="top">
         {this.props.generate ? (
           <GenerateButton onClick={this.generate} title="Luo uusi" />
         ) : (
@@ -71,19 +74,18 @@ export default class CheckValue extends React.Component<
           value={this.state.input}
           max-length={this.props['max-length']}
         />
-        <TextField
+        <CheckField
           id={`${this.props.id}-check`}
           className="letter"
           read-only="read-only"
           value={this.state.checkValue}
-          style={styles.check}
         />
         <input
           type="hidden"
           id={`${this.props.id}-value`}
           value={this.state.value}
         />
-      </Item>
+      </CheckItem>
     );
   }
 
@@ -96,9 +98,9 @@ export default class CheckValue extends React.Component<
     this.inputStream.push(generated);
   };
 
-  private inputChanged = (_: any, val: string) => {
-    this.setState({ input: val });
-    this.inputStream.push(val);
+  private inputChanged = (e: ChangeEvent<HTMLInputElement>) => {
+    this.setState({ input: e.target.value });
+    this.inputStream.push(e.target.value);
   };
 
   private streamToCheck(
@@ -130,4 +132,5 @@ export default class CheckValue extends React.Component<
 
 const GeneratePlaceholder = styled.div`
   width: 48px;
+  height: 48px;
 `;

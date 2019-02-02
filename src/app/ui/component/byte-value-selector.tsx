@@ -1,7 +1,8 @@
+import { TextField } from '@material-ui/core';
+import { Slider } from '@material-ui/lab';
 import * as Bacon from 'baconjs';
-import Slider from 'material-ui/Slider';
-import TextField from 'material-ui/TextField';
 import React from 'react';
+import styled from 'styled-components';
 import { hexStrToInt, intToHexStr, strToInt } from '../../calc/numbers';
 import { zeroPad } from '../../util/strings';
 import { identity, isNumber } from '../../util/util';
@@ -27,15 +28,16 @@ function sliderToVal(value: number): number {
   return value;
 }
 
-const styles: { [key: string]: React.CSSProperties } = {
-  component: {
-    width: '3em',
-    marginRight: '1em',
-  },
-  itemValue: {
-    alignItems: 'flex-start',
-  },
-};
+const ComponentField = styled(TextField)`
+  width: 4em;
+  margin-right: 1em !important;
+` as typeof TextField;
+
+const ByteSlider = styled(Slider)`
+  &.high {
+    margin-top: 18px;
+  }
+` as typeof Slider;
 
 const types = ['parent', 'dec', 'hex', 'slider'];
 
@@ -105,46 +107,35 @@ export default class ByteValueSelector extends React.Component<
 
   public render() {
     const content = (
-      <div style={{ display: 'flex', padding: '0 0.75em' }}>
-        <TextField
-          floatingLabelText={this.props.floatingLabel}
-          floatingLabelFixed={true}
-          hintText="FF"
-          style={styles.component}
-          max-length="2"
+      <Row>
+        <ComponentField
+          label={this.props.floatingLabel}
+          placeholder="FF"
+          inputProps={{ maxLength: 2 }}
           value={this.state.hex}
-          onChange={(e, t) => this.pushStringValue(t, 'hex')}
+          onChange={e => this.pushStringValue(e.target.value, 'hex')}
         />
-        <TextField
-          floatingLabelText={this.props.floatingLabel}
-          floatingLabelFixed={true}
-          hintText="255"
-          style={styles.component}
+        <ComponentField
+          label={this.props.floatingLabel}
+          placeholder="255"
           type="number"
-          max-length="3"
+          inputProps={{ maxLength: 3 }}
           value={this.state.dec}
-          onChange={(e, t) => this.pushStringValue(t, 'dec')}
-          min={0}
-          max={255}
+          onChange={e => this.pushStringValue(e.target.value, 'dec')}
         />
-        <Slider
+        <ByteSlider
           value={this.state.slider}
-          style={{
-            flexGrow: 1,
-            width: '10em',
-            height: '1em',
-            paddingTop: this.props.floatingLabel ? '0.75em' : 'inherit',
-          }}
           max={255}
           min={0}
+          className={this.props.floatingLabel ? 'high' : undefined}
           step={1}
           onChange={(e, v: number) => this.pushNumberValue(v, 'slider')}
         />
-      </div>
+      </Row>
     );
 
     return this.props.name ? (
-      <Item name={this.props.name} valueStyle={styles.itemValue}>
+      <Item name={this.props.name} valueClassName="top">
         {content}
       </Item>
     ) : (
@@ -173,3 +164,10 @@ export default class ByteValueSelector extends React.Component<
     this.inputStr[src].push(value);
   };
 }
+
+const Row = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 12px;
+`;

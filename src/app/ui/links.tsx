@@ -1,9 +1,13 @@
+import {
+  Divider,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  TextField,
+} from '@material-ui/core';
+import { Delete, NoteAdd } from '@material-ui/icons';
 import Bacon from 'baconjs';
-import Divider from 'material-ui/Divider';
-import { List, ListItem } from 'material-ui/List';
-import DeleteIcon from 'material-ui/svg-icons/action/delete';
-import AddIcon from 'material-ui/svg-icons/av/library-add';
-import TextField from 'material-ui/TextField';
 import React from 'react';
 import * as store from '../util/store';
 import { startsWith } from '../util/strings';
@@ -44,7 +48,7 @@ export default class Links extends React.Component<{}, LinksState> {
     storedLinks: getLinksFromStore(),
   };
 
-  private linkStream = new Bacon.Bus<string, any>();
+  private linkStream = new Bacon.Bus<any, string>();
 
   public componentDidMount() {
     const validated = this.linkStream.map(l => validate(l));
@@ -56,38 +60,34 @@ export default class Links extends React.Component<{}, LinksState> {
 
   public render() {
     return (
-      <HalfSection title="Linkit">
+      <HalfSection title="Linkit" image="/img/header-links.jpg">
         <Item name="Linkki">
           <TextField
             name="link"
             value={this.state.link}
             fullWidth={true}
-            onChange={(e, v) => this.linkStream.push(v)}
+            onChange={e => this.linkStream.push(e.target.value)}
           />
         </Item>
         <List>
-          <ListItem
-            primaryText={
-              <a
-                href={this.state.validatedLink}
-                title={this.state.validatedLink}
-              >
-                {this.state.validatedLink}
-              </a>
-            }
-            leftIcon={<AddIcon onClick={this.onClickAdd} />}
-          />
+          <ListItem>
+            <ListItemIcon onClick={this.onClickAdd}>
+              <NoteAdd />
+            </ListItemIcon>
+            <ListItemText>
+              <Link href={this.state.validatedLink} />
+            </ListItemText>
+          </ListItem>
           <Divider />
           {this.state.storedLinks.map(l => (
-            <ListItem
-              key={l}
-              primaryText={
-                <a href={l} title={l}>
-                  {l}
-                </a>
-              }
-              leftIcon={<DeleteIcon onClick={m => this.deleteLink(l)} />}
-            />
+            <ListItem key={l}>
+              <ListItemIcon onClick={() => this.deleteLink(l)}>
+                <Delete />
+              </ListItemIcon>
+              <ListItemText>
+                <Link href={l} />
+              </ListItemText>
+            </ListItem>
           ))}
         </List>
       </HalfSection>
@@ -117,3 +117,9 @@ export default class Links extends React.Component<{}, LinksState> {
     }
   };
 }
+
+const Link = ({ href }: { href: string }) => (
+  <a href={href} target="_blank">
+    {href}
+  </a>
+);

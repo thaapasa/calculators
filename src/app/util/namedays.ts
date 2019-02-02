@@ -490,7 +490,7 @@ export function getNameDay(month: number, day: number): string | undefined {
     : undefined;
 }
 
-interface MonthDay {
+export interface MonthDay {
   readonly month: number;
   readonly day: number;
 }

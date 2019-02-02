@@ -1,6 +1,6 @@
+import { TextField } from '@material-ui/core';
 import Bacon from 'baconjs';
 import crypto = require('crypto-browserify');
-import TextField from 'material-ui/TextField';
 import React from 'react';
 import Item from './component/item';
 import Section from './component/section';
@@ -74,12 +74,13 @@ export default class Cryptography extends React.Component<
       <Section
         title="Kryptografia"
         subtitle={this.cryptos[this.state.selected].name}
+        image="/img/header-cryptography.jpg"
       >
         <Item name="Syöte">
           <TextField
             onChange={this.inputChanged}
             fullWidth={true}
-            multiLine={true}
+            multiline={true}
             name="input"
           />
         </Item>

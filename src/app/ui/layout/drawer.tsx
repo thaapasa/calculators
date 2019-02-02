@@ -1,8 +1,9 @@
-import { Card, CardHeader, Drawer, MenuItem } from 'material-ui';
+import { Card, CardHeader, Drawer, MenuItem } from '@material-ui/core';
 import React from 'react';
 import styled from 'styled-components';
 import { history } from '../history';
 import { Flex, FlexColumn } from './elements';
+import { Logo } from './logo';
 
 // tslint:disable-next-line no-var-requires
 const ver = require('../../../../package.json');
@@ -22,19 +23,20 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
   private goToLinks = this.navigate('/p/linkit');
   private goToTextConversion = this.navigate('/p/tekstimuunnokset');
   private goToCryptography = this.navigate('/p/kryptografia');
+
   public render() {
     return (
       <Drawer
         open={this.props.open}
-        onRequestChange={this.props.onToggle}
-        docked={false}
+        anchor="left"
+        onClose={this.props.onToggle}
       >
-        <FlexColumn>
+        <DrawerCol>
           <Card>
             <CardHeader
               title="Laskurit"
-              subtitle={`v. ${ver.version}`}
-              avatar="img/calculators.png"
+              subheader={`v. ${ver.version}`}
+              avatar={<Logo />}
             />
           </Card>
           <MenuItem onClick={this.goToFullpage}>Kaikki</MenuItem>
@@ -69,7 +71,7 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
               </a>
             </div>
           </LicenseInfo>
-        </FlexColumn>
+        </DrawerCol>
       </Drawer>
     );
   }
@@ -88,4 +90,8 @@ const LicenseInfo = styled.div`
   & a {
     color: rgba(0, 0, 0, 0.6);
   }
+`;
+
+const DrawerCol = styled(FlexColumn)`
+  width: 290px;
 `;

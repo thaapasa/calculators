@@ -23,7 +23,7 @@ function generateRandomString() {
 export default class Identifiers extends React.Component<IdentifiersProps, {}> {
   public render() {
     return (
-      <HalfSection title="Tunnisteet">
+      <HalfSection title="Tunnisteet" image="/img/header-identifiers.jpg">
         <CheckValue
           name="Henkilötunnus"
           id="hetu"

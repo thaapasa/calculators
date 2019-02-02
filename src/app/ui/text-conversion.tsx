@@ -1,7 +1,11 @@
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from '@material-ui/core';
 import Bacon from 'baconjs';
-import MenuItem from 'material-ui/MenuItem';
-import SelectField from 'material-ui/SelectField';
-import TextField from 'material-ui/TextField';
 import React from 'react';
 import styled from 'styled-components';
 import * as base64 from '../calc/base64';
@@ -98,8 +102,8 @@ export default class TextConversion extends React.Component<
     selected: converters[0],
   };
 
-  private sourceRef = React.createRef<TextField>();
-  private targetRef = React.createRef<TextField>();
+  private sourceRef = React.createRef<HTMLInputElement>();
+  private targetRef = React.createRef<HTMLInputElement>();
 
   private sourceStr = new Bacon.Bus<any, string>();
   private targetStr = new Bacon.Bus<any, string>();
@@ -135,48 +139,54 @@ export default class TextConversion extends React.Component<
       <Section
         title="Tekstimuunnokset"
         subtitle={convertInfo[this.state.selected].name}
+        image="/img/header-text-conversion.jpg"
       >
-        <SelectField
-          value={this.state.selected}
-          onChange={(e, i, v) => this.selectedStr.push(v)}
-          floatingLabelText="Konversio"
-        >
-          {converters.map(c => (
-            <MenuItem value={c} key={c} primaryText={convertInfo[c].name} />
-          ))}
-        </SelectField>
-        <FlexRow className="center-horizontal top">
-          <ClipButton
+        <FormControl>
+          <InputLabel htmlFor="conversion">Muunnos</InputLabel>
+          <StyledSelect
+            inputProps={{ id: 'conversion' }}
+            value={this.state.selected}
+            onChange={e => this.selectedStr.push(e.target.value)}
+          >
+            {converters.map(c => (
+              <MenuItem value={c} key={c}>
+                {convertInfo[c].name}
+              </MenuItem>
+            ))}
+          </StyledSelect>
+        </FormControl>
+        <TextRow className="center-horizontal top">
+          <ClipboardButton
             title="Kopioi lähde leikepöydälle"
             onClick={this.copySourceToClipboard}
+            color="secondary"
           />
-          <FlexTextField
-            floatingLabelText="Lähde"
-            onChange={(e, v) => this.sourceStr.push(v)}
+          <TextEdit
+            onChange={e => this.sourceStr.push(e.target.value)}
             fullWidth={true}
-            multiLine={true}
-            ref={this.sourceRef}
+            multiline={true}
+            inputRef={this.sourceRef}
             name="source"
             value={this.state.source}
           />
-          <LeftPad>{this.state.source.length}</LeftPad>
-        </FlexRow>
-        <FlexRow className="center-horizontal top">
-          <ClipButton
+          <LenghtArea>{this.state.source.length}</LenghtArea>
+        </TextRow>
+        <TextRow className="center-horizontal top">
+          <ClipboardButton
             title="Kopioi kohde leikepöydälle"
             onClick={this.copyTargetToClipboard}
+            color="secondary"
           />
-          <FlexTextField
-            floatingLabelText="Kohde"
-            onChange={(e, v) => this.targetStr.push(v)}
+          <TextEdit
+            onChange={e => this.targetStr.push(e.target.value)}
             fullWidth={true}
-            multiLine={true}
-            ref={this.targetRef}
+            multiline={true}
+            inputRef={this.targetRef}
             name="target"
             value={this.state.target}
           />
-          <LeftPad>{this.state.target.length}</LeftPad>
-        </FlexRow>
+          <LenghtArea>{this.state.target.length}</LenghtArea>
+        </TextRow>
       </Section>
     );
   }
@@ -185,10 +195,18 @@ export default class TextConversion extends React.Component<
   private copyTargetToClipboard = () => copyRefToClipboard(this.targetRef);
 }
 
-const FlexTextField = styled(TextField)`
-  flex: 1;
+const StyledSelect = styled(Select)`
+  width: 260px;
+` as typeof Select;
+
+const LenghtArea = styled(LeftPad)`
+  margin-top: 16px;
 `;
 
-const ClipButton = styled(ClipboardButton)`
-  margin-top: 24px !important;
+const TextRow = styled(FlexRow)`
+  margin-top: 8px;
 `;
+
+const TextEdit = styled(TextField)`
+  margin-top: 8px !important;
+` as typeof TextField;

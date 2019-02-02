@@ -1,17 +1,17 @@
+import { Checkbox, TextField } from '@material-ui/core';
+import { TextFormat } from '@material-ui/icons';
 import Bacon from 'baconjs';
-import Checkbox from 'material-ui/Checkbox';
-import FontIcon from 'material-ui/FontIcon';
-import { red500 } from 'material-ui/styles/colors';
-import TextField from 'material-ui/TextField';
 import React from 'react';
+import styled from 'styled-components';
 import { toUpperCase } from '../../util/strings';
 import { identity } from '../../util/util';
 import Item from './item';
 
-const styles: { [key: string]: React.CSSProperties } = {
-  itemName: { marginTop: '1.7em' },
-  itemValue: { alignItems: 'flex-start' },
-};
+const StyledItem = styled(Item)`
+  & > .name {
+    margin-top: 1.2em;
+  }
+`;
 
 interface SelectableOutputProps {
   readonly type: string;
@@ -52,24 +52,22 @@ export default class SelectableOutput extends React.Component<
 
   public render() {
     return (
-      <Item
+      <StyledItem
         name={
-          <Checkbox
-            name={this.props.type + '-upper-case'}
-            label={
-              <FontIcon className="material-icons" color={red500}>
-                text_format
-              </FontIcon>
-            }
-            onCheck={this.checkUpperCase}
-          />
+          <>
+            <Checkbox
+              name={this.props.type + '-upper-case'}
+              onChange={this.checkUpperCase}
+            />
+            <TextFormat color="secondary" />
+          </>
         }
-        valueStyle={styles.itemValue}
-        nameStyle={styles.itemName}
+        valueClassName="top"
       >
         <TextField
           type="text"
-          floatingLabelText={this.props.label}
+          label={this.props.label}
+          placeholder={this.props.label}
           className="wide"
           value={this.state.value}
           fullWidth={true}
@@ -77,7 +75,7 @@ export default class SelectableOutput extends React.Component<
           name="output"
           onFocus={this.props.onSelect}
         />
-      </Item>
+      </StyledItem>
     );
   }
 
@@ -103,7 +101,7 @@ export default class SelectableOutput extends React.Component<
     });
   };
 
-  private checkUpperCase = (event: React.MouseEvent<{}>, checked: boolean) => {
+  private checkUpperCase = (event: React.ChangeEvent, checked: boolean) => {
     this.ucStream.push(checked);
     if (this.props.onSelect) {
       this.props.onSelect(event as any);

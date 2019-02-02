@@ -55,10 +55,6 @@ export function combineWith(separator: string): (a: any, b: any) => string {
   return (a: any, b: any) => `${a}${separator}${b}`;
 }
 
-export function htmlBoolean(val: boolean, name: string): string | undefined {
-  return val ? name : undefined;
-}
-
 export function pairsToObject<T>(pairs: Array<[string, T]>): Record<string, T> {
   const res: Record<string, T> = {};
   pairs.forEach(p => (res[p[0]] = p[1]));
