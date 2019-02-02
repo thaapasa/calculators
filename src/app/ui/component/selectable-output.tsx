@@ -59,7 +59,7 @@ export default class SelectableOutput extends React.Component<
               name={this.props.type + '-upper-case'}
               onChange={this.checkUpperCase}
             />
-            <TextFormat />
+            <TextFormat color="secondary" />
           </>
         }
         valueClassName="top"

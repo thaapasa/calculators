@@ -159,6 +159,7 @@ export default class TextConversion extends React.Component<
           <ClipboardButton
             title="Kopioi lähde leikepöydälle"
             onClick={this.copySourceToClipboard}
+            color="secondary"
           />
           <TextEdit
             onChange={e => this.sourceStr.push(e.target.value)}
@@ -174,6 +175,7 @@ export default class TextConversion extends React.Component<
           <ClipboardButton
             title="Kopioi kohde leikepöydälle"
             onClick={this.copyTargetToClipboard}
+            color="secondary"
           />
           <TextEdit
             onChange={e => this.targetStr.push(e.target.value)}
