@@ -52,7 +52,7 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
           <MenuItem onClick={this.goToCryptography}>Kryptografia</MenuItem>
           <Flex />
           <LicenseInfo>
-            <div>
+            <LicenseRow>
               Calculator icon made by{' '}
               <a href="https://www.freepik.com/" title="Freepik">
                 Freepik
@@ -69,7 +69,13 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
               >
                 CC 3.0 BY
               </a>
-            </div>
+            </LicenseRow>
+            <LicenseRow>
+              Section header images have been taken from{' '}
+              <a href="https://unsplash.com/" title="Freepik">
+                Unsplash
+              </a>
+            </LicenseRow>
           </LicenseInfo>
         </DrawerCol>
       </Drawer>
@@ -94,4 +100,14 @@ const LicenseInfo = styled.div`
 
 const DrawerCol = styled(FlexColumn)`
   width: 290px;
+`;
+
+const LicenseRow = styled.div`
+  margin-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  &:last-of-type {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
 `;
