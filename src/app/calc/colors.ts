@@ -46,7 +46,7 @@ export function hexToComponents(value: string): [number, number, number] {
 }
 
 // https://stackoverflow.com/questions/39118528/rgb-to-hsl-conversion
-function rgb2hsl(r: number, g: number, b: number) {
+export function rgb2hsl(r: number, g: number, b: number) {
   // see https://en.wikipedia.org/wiki/HSL_and_HSV#Formal_derivation
   // convert r,g,b [0,255] range to [0,1]
   (r = r / 255), (g = g / 255), (b = b / 255);

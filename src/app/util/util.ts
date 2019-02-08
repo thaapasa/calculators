@@ -61,6 +61,10 @@ export function pairsToObject<T>(pairs: Array<[string, T]>): Record<string, T> {
   return res;
 }
 
+export function objectKeys<T>(object: T): ReadonlyArray<keyof T> {
+  return Object.keys(object) as any;
+}
+
 const consoleMethods = [
   'assert',
   'clear',

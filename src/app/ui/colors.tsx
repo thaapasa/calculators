@@ -5,6 +5,7 @@ import {
   toRGBColor,
   validateHex,
 } from 'app/calc/colors';
+import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
 import React from 'react';
 import styled from 'styled-components';
 import ByteValueSelector from './component/byte-value-selector';
@@ -35,6 +36,19 @@ interface ColorState {
   selected: 'hex' | 'rgb';
 }
 
+interface RGBValue {
+  r: number;
+  g: number;
+  b: number;
+}
+
+const foo: Record<string, StreamDefinition<RGBValue>> = {
+  component: {
+    read: (_: string) => ({ r: 0, g: 24, b: 123 } as RGBValue),
+    write: (r: RGBValue) => '#f0f',
+  },
+};
+
 export default class Colors extends React.Component<ColorsProps, ColorState> {
   public state: ColorState = {
     r: 255,
@@ -46,9 +60,16 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
   };
 
   private components = ['r', 'g', 'b'];
+  private streams = new StreamCombiner({
+    component: {
+      read: (_: string) => ({ r: 0, g: 24, b: 123 } as RGBValue),
+      write: (_: RGBValue) => '#f0f',
+    },
+  });
 
   public componentDidMount() {
     this.updateHex({ r: this.state.r, g: this.state.g, b: this.state.b });
+    this.streams.inputs.cosmponent({} as any);
   }
 
   public render() {
