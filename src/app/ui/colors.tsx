@@ -42,11 +42,11 @@ interface RGBValue {
   b: number;
 }
 
-const foo: Record<string, StreamDefinition<RGBValue>> = {
+const foo = {
   component: {
     read: (_: string) => ({ r: 0, g: 24, b: 123 } as RGBValue),
     write: (r: RGBValue) => '#f0f',
-  },
+  } as StreamDefinition<RGBValue>,
 };
 
 export default class Colors extends React.Component<ColorsProps, ColorState> {
@@ -60,16 +60,10 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
   };
 
   private components = ['r', 'g', 'b'];
-  private streams = new StreamCombiner({
-    component: {
-      read: (_: string) => ({ r: 0, g: 24, b: 123 } as RGBValue),
-      write: (_: RGBValue) => '#f0f',
-    },
-  });
+  private streams = new StreamCombiner(foo);
 
   public componentDidMount() {
     this.updateHex({ r: this.state.r, g: this.state.g, b: this.state.b });
-    this.streams.inputs.cosmponent({} as any);
   }
 
   public render() {
@@ -84,6 +78,12 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
           </ColorAvatar>
         }
       >
+        <ByteValueSelector
+          floatingLabel="Red"
+          value={this.state.r}
+          onValue={this.streams.inputs.component}
+          ref="r"
+        />
         <ByteValueSelector
           floatingLabel="Red"
           value={this.state.r}
