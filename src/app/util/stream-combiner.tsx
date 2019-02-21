@@ -11,15 +11,14 @@ export interface StreamDefinition<T> {
 export class StreamCombiner<
   T,
   I,
-  S extends { [k in keyof I]: StreamDefinition<T> },
-  K extends keyof S
+  S extends { [k in keyof I]: StreamDefinition<T> }
 > {
-  inputs: Record<K, InputChangeHandler>;
+  inputs: Record<keyof S, InputChangeHandler>;
   convertedOutputs: Record<keyof S, B.EventStream<any, string>>;
 
-  private inputBuses: Record<K, B.Bus<any, string>>;
-  private convertedInputs: Record<K, B.EventStream<any, T>>;
-  private selectedInputStream = new B.Bus<any, K>();
+  private inputBuses: Record<keyof S, B.Bus<any, string>>;
+  private convertedInputs: Record<keyof S, B.EventStream<any, T>>;
+  private selectedInputStream = new B.Bus<any, keyof S>();
   private outputBuses: Record<keyof S, B.Bus<any, T>>;
 
   constructor(inputs: S) {
@@ -28,10 +27,9 @@ export class StreamCombiner<
 
     this.inputs = mapObject(
       (_, k) => (e: InputChangeType) => {
-        const key = k as K;
         const val = typeof e === 'object' ? e.target.value : String(e);
-        this.inputBuses[key].push(val);
-        this.selectedInputStream.push(key);
+        this.inputBuses[k].push(val);
+        this.selectedInputStream.push(k);
       },
       inputs
     );
@@ -45,12 +43,12 @@ export class StreamCombiner<
       inputs
     );
 
-    B.combineTemplate({
+    B.combineTemplate<any, { selected: keyof S; inputs: Record<keyof S, T> }>({
       inputs: this.convertedInputs,
       selected: this.selectedInputStream,
-    }).onValue((f: any) => {
-      const selected = f.selected as K;
-      const value = f.inputs[selected] as T;
+    }).onValue(f => {
+      const selected = f.selected;
+      const value = f.inputs[selected];
       objectKeys(inputs)
         .filter(k => k !== selected)
         .forEach(key => this.outputBuses[key].push(value));

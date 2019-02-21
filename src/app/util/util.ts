@@ -67,14 +67,11 @@ export function objectKeys<T>(object: T): ReadonlyArray<keyof T> {
   return Object.keys(object) as any;
 }
 
-export function mapObject<
-  S,
-  T,
-  O,
-  X extends { [k in keyof O]: S },
-  K extends keyof X
->(f: (v: S, k: K, obj: X) => T, obj: X): Record<K, T> {
-  return R.mapObjIndexed(f as any, obj) as Record<K, T>;
+export function mapObject<S, T, O, X extends { [k in keyof O]: S }>(
+  f: (v: S, k: keyof X, obj: X) => T,
+  obj: X
+): Record<keyof X, T> {
+  return R.mapObjIndexed(f as any, obj) as Record<keyof X, T>;
 }
 
 const consoleMethods = [

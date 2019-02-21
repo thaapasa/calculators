@@ -71,7 +71,8 @@ export function hexToRGB(value: string): RGBValue {
 }
 
 export function rgbToHex(rgb: RGBValue): string {
-  return toHexColor(rgb.r, rgb.g, rgb.b);
+  console.log('rgbToHex', rgb);
+  return toHexColor(Number(rgb.r), Number(rgb.g), Number(rgb.b));
 }
 
 // https://stackoverflow.com/questions/39118528/rgb-to-hsl-conversion

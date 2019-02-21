@@ -5,7 +5,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { hexStrToInt, intToHexStr, strToInt } from '../../calc/numbers';
 import { zeroPad } from '../../util/strings';
-import { identity, isNumber } from '../../util/util';
+import { isNumber } from '../../util/util';
 import Item from '../component/item';
 
 function isValidComp(value: number): value is number {
@@ -24,9 +24,7 @@ function toHexComp(value: number): string {
   return isValidComp(value) ? zeroPad(intToHexStr(value), 2) : '';
 }
 
-function sliderToVal(value: number): number {
-  return value;
-}
+const sliderToVal: (value: string | number) => number = Number;
 
 const ComponentField = styled(TextField)`
   width: 4em;
@@ -41,16 +39,16 @@ const ByteSlider = styled(Slider)`
 
 const types = ['parent', 'dec', 'hex', 'slider'];
 
-interface TypeInfoType<I> {
-  readonly read: (x: I) => number;
-  readonly write: (x: number) => I;
+interface TypeInfoType {
+  readonly read: (x: string | number) => number;
+  readonly write: (x: string | number) => string | number;
 }
 
-const typeInfo: { readonly [key: string]: TypeInfoType<any> } = {
-  parent: { read: identity, write: identity },
-  dec: { read: strToInt, write: toDecValue },
-  hex: { read: hexStrToInt, write: toHexComp },
-  slider: { read: sliderToVal, write: toSliderValue },
+const typeInfo: { readonly [key: string]: TypeInfoType } = {
+  parent: { read: Number, write: String },
+  dec: { read: strToInt, write: x => toDecValue(Number(x)) },
+  hex: { read: hexStrToInt, write: x => toHexComp(Number(x)) },
+  slider: { read: sliderToVal, write: x => toSliderValue(Number(x)) },
 };
 
 type NumericSelectorType = 'parent' | 'slider';
@@ -65,8 +63,8 @@ interface SelectorState {
 }
 
 interface SelectorProps {
-  readonly value: any;
-  readonly onValue?: (x: number) => any;
+  readonly value: string | number;
+  readonly onValue?: (x: number) => void;
   readonly name?: string;
   readonly floatingLabel?: string;
 }
@@ -99,6 +97,12 @@ export default class ByteValueSelector extends React.Component<
       newValStr,
       this.curSrcStr.toProperty('parent')
     ).onValue(x => this.showValue(x[0], x[1]));
+  }
+
+  public componentDidUpdate(prevProps: SelectorProps) {
+    if (prevProps.value !== this.props.value) {
+      this.showValue(Number(this.props.value), 'parent');
+    }
   }
 
   public setValue = (value: number) => {
@@ -144,6 +148,7 @@ export default class ByteValueSelector extends React.Component<
   }
 
   private showValue = (val: number, src: string) => {
+    console.log('BVS value', val);
     const ns = {};
     types.filter(t => t !== src).forEach(t => (ns[t] = typeInfo[t].write(val)));
     this.setState(ns);

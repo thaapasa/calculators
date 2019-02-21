@@ -10,19 +10,19 @@ export function binaryStrToInt(value: string | number): number {
   return strToIntChecked(value, 2, binCharsRE);
 }
 
-export function octalStrToInt(value: string): number {
+export function octalStrToInt(value: string | number): number {
   return strToIntChecked(value, 8, octCharsRE);
 }
 
-export function decimalStrToInt(value: string): number {
+export function decimalStrToInt(value: string | number): number {
   return strToIntChecked(value, 10, decCharsRE);
 }
 
-export function hexStrToInt(value: string): number {
+export function hexStrToInt(value: string | number): number {
   return strToIntChecked(value, 16, hexCharsRE);
 }
 
-export function strToInt(v: string): number {
+export function strToInt(v: string | number): number {
   return decimalStrToInt(v);
 }
 
