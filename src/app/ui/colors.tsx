@@ -1,10 +1,14 @@
 import { Avatar, TextField } from '@material-ui/core';
 import {
   hexToComponents,
+  hexToRGB,
+  rgbToHex,
+  RGBValue,
   toHexColor,
   toRGBColor,
   validateHex,
 } from 'app/calc/colors';
+import { InputCombiner } from 'app/util/input-combiner';
 import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
 import React from 'react';
 import styled from 'styled-components';
@@ -15,8 +19,6 @@ import { HalfSection } from './component/section';
 const ColorAvatar = styled(Avatar)`
   border: 1px solid #bbbbbb;
 ` as typeof Avatar;
-
-type Component = 'r' | 'g' | 'b';
 
 const texts = {
   hex: 'Heksakoodi',
@@ -33,19 +35,15 @@ interface ColorState {
   b: number;
   hex: string;
   color: string;
-  selected: 'hex' | 'rgb';
+  selected: 'hex' | 'rgb' | 'hsl';
 }
 
-interface RGBValue {
-  r: number;
-  g: number;
-  b: number;
-}
+const rgbCombiner = new InputCombiner({ r: 0, g: 0, b: 0 }, rgbToHex, hexToRGB);
 
-const foo = {
-  component: {
-    read: (_: string) => ({ r: 0, g: 24, b: 123 } as RGBValue),
-    write: (r: RGBValue) => '#f0f',
+const types = {
+  rgb: {
+    read: hexToRGB,
+    write: rgbToHex,
   } as StreamDefinition<RGBValue>,
 };
 
@@ -60,10 +58,21 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
   };
 
   private components = ['r', 'g', 'b'];
-  private streams = new StreamCombiner(foo);
+  private streams = new StreamCombiner(types);
+  private disposers: Array<() => void> = [];
+
+  constructor(props: ColorsProps) {
+    super(props);
+    this.disposers.push(rgbCombiner.combined.onValue(this.streams.inputs.rgb));
+    this.disposers.push(rgbCombiner.bindOutputs(this));
+  }
 
   public componentDidMount() {
     this.updateHex({ r: this.state.r, g: this.state.g, b: this.state.b });
+  }
+
+  public componentWillUnmount() {
+    this.disposers.forEach(d => d());
   }
 
   public render() {
@@ -80,27 +89,18 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
       >
         <ByteValueSelector
           floatingLabel="Red"
-          value={this.state.r}
-          onValue={this.streams.inputs.component}
-          ref="r"
-        />
-        <ByteValueSelector
-          floatingLabel="Red"
-          value={this.state.r}
-          onValue={v => this.setComponent('r', v)}
-          ref="r"
+          value={rgbCombiner.outputs.r}
+          onValue={rgbCombiner.inputs.r}
         />
         <ByteValueSelector
           floatingLabel="Green"
-          value={this.state.g}
-          onValue={v => this.setComponent('g', v)}
-          ref="g"
+          value={rgbCombiner.outputs.g}
+          onValue={rgbCombiner.inputs.g}
         />
         <ByteValueSelector
           floatingLabel="Blue"
-          value={this.state.b}
-          onValue={v => this.setComponent('b', v)}
-          ref="b"
+          value={rgbCombiner.outputs.b}
+          onValue={rgbCombiner.inputs.b}
         />
         <Item name="Heksa">
           <TextField
@@ -137,13 +137,6 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
     this.components.forEach((c: any) =>
       (this.refs[c] as ByteValueSelector).setValue(values[c])
     );
-  };
-
-  private setComponent = (c: Component, val: number) => {
-    const values = { r: this.state.r, g: this.state.g, b: this.state.b };
-    this.setState({ [c]: val } as any);
-    values[c] = val;
-    this.updateHex(values);
   };
 
   private setFromHex = (value: any) => {

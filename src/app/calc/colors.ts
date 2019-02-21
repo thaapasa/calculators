@@ -2,6 +2,12 @@ import { zeroPad } from 'app/util/strings';
 import { isNumber } from 'app/util/util';
 import { hexStrToInt, intToHexStr } from './numbers';
 
+export interface RGBValue {
+  r: number;
+  g: number;
+  b: number;
+}
+
 export function toRGBColor(r: number, g: number, b: number): string {
   return isNumber(r) && isNumber(g) && isNumber(b)
     ? `rgb(${r}, ${g}, ${b})`
@@ -43,6 +49,29 @@ export function hexToComponents(value: string): [number, number, number] {
   });
 
   return [r, g, b];
+}
+
+export function hexToRGB(value: string): RGBValue {
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  const l = value.length <= 4 ? 1 : 2;
+  const re = new RegExp(
+    `^#?([0-9A-Za-z]{${l}})([0-9A-Za-z]{${l}})([0-9A-Za-z]{${l}})$`
+  );
+
+  value.replace(re, (_, hr, hg, hb) => {
+    r = (r = hexStrToInt(hr)) + (l === 1 ? r << 4 : 0);
+    g = (g = hexStrToInt(hg)) + (l === 1 ? g << 4 : 0);
+    b = (b = hexStrToInt(hb)) + (l === 1 ? b << 4 : 0);
+    return '';
+  });
+
+  return { r, g, b };
+}
+
+export function rgbToHex(rgb: RGBValue): string {
+  return toHexColor(rgb.r, rgb.g, rgb.b);
 }
 
 // https://stackoverflow.com/questions/39118528/rgb-to-hsl-conversion
