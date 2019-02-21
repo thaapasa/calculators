@@ -1,8 +1,8 @@
 import { Avatar, TextField } from '@material-ui/core';
-import { hexToRGB, rgbToHex, RGBValue } from 'app/calc/colors';
+import { hexToRGB, rgbToHex, rgbToRGBStr, RGBValue } from 'app/calc/colors';
 import { InputCombiner } from 'app/util/input-combiner';
 import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
-import { noop } from 'app/util/util';
+
 import React from 'react';
 import styled from 'styled-components';
 import ByteValueSelector from './component/byte-value-selector';
@@ -26,7 +26,9 @@ interface ColorState {
   r: string;
   g: string;
   b: string;
-  hex: string;
+  rgb: string;
+  hexString: string;
+  rgbString: string;
   color: string;
   selected: 'hex' | 'rgb' | 'hsl';
 }
@@ -42,6 +44,14 @@ const types = {
     read: hexToRGB,
     write: rgbToHex,
   } as StreamDefinition<RGBValue>,
+  hexString: {
+    read: hexToRGB,
+    write: rgbToHex,
+  } as StreamDefinition<RGBValue>,
+  rgbString: {
+    read: () => ({ r: 0, g: 0, b: 0 }),
+    write: rgbToRGBStr,
+  } as StreamDefinition<RGBValue>,
 };
 
 export default class Colors extends React.Component<ColorsProps, ColorState> {
@@ -49,7 +59,9 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
     r: '0',
     g: '0',
     b: '0',
-    hex: '',
+    rgb: '',
+    hexString: '',
+    rgbString: '',
     color: '',
     selected: 'hex',
   };
@@ -61,6 +73,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
     super(props);
     this.disposers.push(rgbCombiner.combined.onValue(this.streams.inputs.rgb));
     this.disposers.push(rgbCombiner.bindOutputs(this));
+    this.disposers.push(this.streams.bindOutputs(this));
   }
 
   public componentDidMount() {
@@ -102,19 +115,19 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
           <TextField
             placeholder="#FFFFFF"
             name="color-hex"
-            value={this.state.hex}
+            value={this.state.hexString}
             max-length="7"
-            onChange={noop}
-            onFocus={_ => this.select('hex')}
+            onChange={this.streams.inputs.hexString}
+            onFocus={() => this.select('hex')}
           />
         </Item>
         <Item name="RGB-arvo">
           <TextField
             placeholder="rgb(255,255,255)"
             name="color-rgb"
-            value={'moi'}
+            value={this.state.rgbString}
             read-only="read-only"
-            onFocus={_ => this.select('rgb')}
+            onFocus={() => this.select('rgb')}
           />
         </Item>
       </HalfSection>
@@ -122,7 +135,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
   }
 
   private sendToParent = () => {
-    const val = this.state.hex;
+    const val = this.state.hexString;
     if (this.props.onValue) {
       this.props.onValue(val);
     }

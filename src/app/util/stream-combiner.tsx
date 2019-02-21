@@ -14,32 +14,29 @@ export class StreamCombiner<
   S extends { [k in keyof I]: StreamDefinition<T> }
 > {
   inputs: Record<keyof S, InputChangeHandler>;
-  convertedOutputs: Record<keyof S, B.EventStream<any, string>>;
 
   private inputBuses: Record<keyof S, B.Bus<any, string>>;
-  private convertedInputs: Record<keyof S, B.EventStream<any, T>>;
+  private convertedInputs: Record<keyof S, B.Property<any, T>>;
   private selectedInputStream = new B.Bus<any, keyof S>();
-  private outputBuses: Record<keyof S, B.Bus<any, T>>;
+  private outputBuses: Record<keyof S, B.Bus<any, string>>;
 
   constructor(inputs: S) {
     this.inputBuses = R.map(() => new B.Bus<any, string>(), inputs);
-    this.outputBuses = R.map(() => new B.Bus<any, T>(), inputs);
+    this.outputBuses = R.map(() => new B.Bus<any, string>(), inputs);
 
     this.inputs = mapObject(
       (_, k) => (e: InputChangeType) => {
         const val = typeof e === 'object' ? e.target.value : String(e);
-        this.inputBuses[k].push(val);
+        console.log('Input', k, val);
         this.selectedInputStream.push(k);
+        this.inputBuses[k].push(val);
+        this.outputBuses[k].push(val);
       },
       inputs
     );
 
     this.convertedInputs = mapObject(
-      (_, k) => this.inputBuses[k].map(inputs[k].read),
-      inputs
-    );
-    this.convertedOutputs = mapObject(
-      (_, k) => this.outputBuses[k].map(inputs[k].write),
+      (_, k) => this.inputBuses[k].toProperty('').map(inputs[k].read),
       inputs
     );
 
@@ -51,7 +48,14 @@ export class StreamCombiner<
       const value = f.inputs[selected];
       objectKeys(inputs)
         .filter(k => k !== selected)
-        .forEach(key => this.outputBuses[key].push(value));
+        .forEach(k => this.outputBuses[k].push(inputs[k].write(value)));
     });
   }
+
+  bindOutputs = (r: React.Component<any, Record<keyof S, string>>) => {
+    const disposers = objectKeys(this.outputBuses).map(k =>
+      this.outputBuses[k].onValue(v => r.setState({ [k]: v } as any))
+    );
+    return () => disposers.forEach(d => d());
+  };
 }

@@ -14,6 +14,10 @@ export function toRGBColor(r: number, g: number, b: number): string {
     : '';
 }
 
+export function rgbToRGBStr(c: RGBValue): string {
+  return c ? `rgb(${Number(c.r)}, ${Number(c.g)}, ${Number(c.b)})` : '';
+}
+
 export function toHexColor(r: number, g: number, b: number): string {
   return isNumber(r) && isNumber(g) && isNumber(b)
     ? `#${toHexComp(r)}${toHexComp(g)}${toHexComp(b)}`
