@@ -9,19 +9,17 @@ export class InputCombiner<I, S extends { [k in keyof I]: string }> {
   // Combined value can be observed via this
   combined: B.Observable<any, string>;
 
-  // Set the value from outside
-  outputBus = new B.Bus<any, string>();
-  // Overwrite the input values; when the value has been overwritten
-  outputs: Record<keyof S, B.EventStream<any, string>>;
-
   private inputBuses: Record<keyof S, B.Bus<any, string>>;
   private initialValues: S;
+  private triggerOutput = new B.Bus<any, void>();
+  private write: (val: string) => S;
 
   constructor(
     initialValues: S,
     read: (inputs: S) => string,
     write: (val: string) => S
   ) {
+    this.write = write;
     this.initialValues = initialValues;
     this.inputBuses = R.map(() => new B.Bus<any, string>(), initialValues);
 
@@ -29,35 +27,28 @@ export class InputCombiner<I, S extends { [k in keyof I]: string }> {
       (_, k) => (e: InputChangeType) => {
         const val = typeof e === 'object' ? e.target.value : String(e);
         this.inputBuses[k].push(val);
+        this.triggerOutput.push();
       },
       initialValues
     );
 
-    this.combined = B.combineTemplate<any, S>(this.inputBuses).map(read);
-    this.combined.onValue(c => console.log('Feeeee', c));
-    const convertedOutput = this.outputBus.map(write);
-    this.outputs = mapObject(
-      (_, k) => convertedOutput.map(o => o[k]),
-      initialValues
-    );
-    this.init = () => {
-      console.log('Init!', this.initialValues);
-      objectKeys(this.initialValues).forEach(k => {
-        console.log('Do', k);
-        this.inputs[k](this.initialValues[k]);
-      });
-      this.outputBus.push(read(this.initialValues));
-    };
+    this.combined = B.combineTemplate<any, S>(this.inputBuses)
+      .sampledBy(this.triggerOutput)
+      .map(read);
   }
 
-  init() {
-    // Overwritten in constructor
+  init(r: React.Component<any, Record<keyof S, string>>) {
+    objectKeys(this.initialValues).forEach(k => {
+      this.inputs[k](this.initialValues[k]);
+    });
+    r.setState(this.initialValues);
   }
 
-  bindOutputs = (r: React.Component<any, Record<keyof S, string>>) => {
-    const disposers = objectKeys(this.outputs).map(k =>
-      this.outputs[k].onValue(v => r.setState({ [k]: v } as any))
-    );
-    return () => disposers.forEach(d => d());
+  setValue = (value: string, propagate: boolean = false) => {
+    const r = this.write(value);
+    objectKeys(r).forEach(k => this.inputBuses[k].push(r[k]));
+    if (propagate) {
+      this.triggerOutput.push();
+    }
   };
 }

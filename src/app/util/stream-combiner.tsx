@@ -32,7 +32,6 @@ export class StreamCombiner<
     this.inputs = mapObject(
       (_, k) => (e: InputChangeType) => {
         const val = typeof e === 'object' ? e.target.value : String(e);
-        console.log('Input', k, val);
         inputBuses[k].push(val);
         // Input to bus k is directly piped to output of k
         selectedInputStream.push([k, val]);
@@ -51,7 +50,6 @@ export class StreamCombiner<
         selected,
       }))
       .onValue(f => {
-        console.log('New set', f);
         const selected = f.selected[0];
         const value = f.values[selected];
         const outputRecord = mapObject(
@@ -70,7 +68,12 @@ export class StreamCombiner<
   }
 
   // Bind a React class to see the outputs in its state
-  bindOutputs = (r: React.Component<any, Record<keyof S, string>>) => {
-    return this.outputRecord.onValue(o => r.setState(o));
+  bindOutputs = (
+    r: React.Component<any, Record<keyof S, string>>,
+    process?: (o: Record<keyof S, string>) => void
+  ) => {
+    return this.outputRecord.onValue(o =>
+      r.setState(o, process ? () => process(o) : undefined)
+    );
   };
 }

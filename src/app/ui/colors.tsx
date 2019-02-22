@@ -71,8 +71,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
   constructor(props: ColorsProps) {
     super(props);
     this.disposers.push(rgbCombiner.combined.onValue(this.streams.inputs.rgb));
-    this.disposers.push(rgbCombiner.bindOutputs(this));
-    this.disposers.push(this.streams.bindOutputs(this));
+    this.disposers.push(this.streams.bindOutputs(this, this.sendToParent));
     this.disposers.push(
       this.streams.output
         .filter(o => o.selected !== 'rgb')
@@ -81,7 +80,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
   }
 
   public componentDidMount() {
-    rgbCombiner.init();
+    rgbCombiner.init(this);
   }
 
   public componentWillUnmount() {
@@ -102,24 +101,24 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
       >
         <ByteValueSelector
           floatingLabel="Red"
-          value={this.state.r}
+          setValue={this.state.r}
           onValue={rgbCombiner.inputs.r}
         />
         <ByteValueSelector
           floatingLabel="Green"
-          value={this.state.g}
+          setValue={this.state.g}
           onValue={rgbCombiner.inputs.g}
         />
         <ByteValueSelector
           floatingLabel="Blue"
-          value={this.state.b}
+          setValue={this.state.b}
           onValue={rgbCombiner.inputs.b}
         />
         <Item name="Heksa">
           <TextField
             placeholder="#FFFFFF"
             value={this.state.hexString}
-            max-length="7"
+            inputProps={{ maxLength: 7 }}
             onChange={this.streams.inputs.hexString}
             onFocus={() => this.select('hex')}
           />
@@ -128,7 +127,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
           <TextField
             placeholder="rgb(255,255,255)"
             value={this.state.rgbString}
-            read-only="read-only"
+            inputProps={{ readOnly: true }}
             onFocus={() => this.select('rgb')}
           />
         </Item>
@@ -154,6 +153,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
   }
 
   private setRGB = (rgb: string) => {
+    rgbCombiner.setValue(rgb);
     this.setState(mapObject(String, hexToRGB(rgb)));
   };
 

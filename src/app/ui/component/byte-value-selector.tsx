@@ -63,7 +63,7 @@ interface SelectorState {
 }
 
 interface SelectorProps {
-  readonly value: string | number;
+  readonly setValue: string | number;
   readonly onValue?: (x: number) => void;
   readonly name?: string;
   readonly floatingLabel?: string;
@@ -86,7 +86,7 @@ export default class ByteValueSelector extends React.Component<
     super(props);
 
     types.forEach(t => {
-      this.state[t] = typeInfo[t].write(this.props.value);
+      this.state[t] = typeInfo[t].write(this.props.setValue);
       this.inputStr[t] = new Bacon.Bus<any, string | number>();
     });
 
@@ -100,14 +100,10 @@ export default class ByteValueSelector extends React.Component<
   }
 
   public componentDidUpdate(prevProps: SelectorProps) {
-    if (prevProps.value !== this.props.value) {
-      this.showValue(Number(this.props.value), 'parent');
+    if (prevProps.setValue !== this.props.setValue) {
+      this.setValue(Number(this.props.setValue));
     }
   }
-
-  public setValue = (value: number) => {
-    this.pushNumberValue(value, 'parent');
-  };
 
   public render() {
     const content = (
@@ -131,8 +127,8 @@ export default class ByteValueSelector extends React.Component<
           value={this.state.slider}
           max={255}
           min={0}
-          className={this.props.floatingLabel ? 'high' : undefined}
           step={1}
+          className={this.props.floatingLabel ? 'high' : undefined}
           onChange={(e, v: number) => this.pushNumberValue(v, 'slider')}
         />
       </Row>
@@ -147,8 +143,11 @@ export default class ByteValueSelector extends React.Component<
     );
   }
 
+  private setValue = (value: number) => {
+    this.showValue(value, 'parent');
+  };
+
   private showValue = (val: number, src: string) => {
-    console.log('BVS value', val);
     const ns = {};
     types.filter(t => t !== src).forEach(t => (ns[t] = typeInfo[t].write(val)));
     this.setState(ns);
