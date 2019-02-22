@@ -10,19 +10,19 @@ export function binaryStrToInt(value: string | number): number {
   return strToIntChecked(value, 2, binCharsRE);
 }
 
-export function octalStrToInt(value: string): number {
+export function octalStrToInt(value: string | number): number {
   return strToIntChecked(value, 8, octCharsRE);
 }
 
-export function decimalStrToInt(value: string): number {
+export function decimalStrToInt(value: string | number): number {
   return strToIntChecked(value, 10, decCharsRE);
 }
 
-export function hexStrToInt(value: string): number {
+export function hexStrToInt(value: string | number): number {
   return strToIntChecked(value, 16, hexCharsRE);
 }
 
-export function strToInt(v: string): number {
+export function strToInt(v: string | number): number {
   return decimalStrToInt(v);
 }
 
@@ -30,15 +30,15 @@ export function intToStr(value: number): string {
   return isDefined(value) ? value.toString() : '';
 }
 
-export function intToHexStr(value: number): string {
+export function intToHexStr(value: number | string): string {
   return intToStrBPC(value, 4);
 }
 
-export function intToOctalStr(value: number): string {
+export function intToOctalStr(value: number | string): string {
   return intToStrBPC(value, 3);
 }
 
-export function intToBinaryStr(value: number): string {
+export function intToBinaryStr(value: number | string): string {
   return intToStrBPC(value, 1);
 }
 
@@ -94,10 +94,10 @@ function toChar(value: number, radix: number): string | undefined {
   return numChars.charAt(value);
 }
 
-function intToStrBPC(value: number, bitsPerChar: number): string {
+function intToStrBPC(value: number | string, bitsPerChar: number): string {
   const radix = 1 << bitsPerChar;
   const mask = (1 << bitsPerChar) - 1;
-  let remaining = value;
+  let remaining = Number(value);
   const str = [];
   while (remaining > 0) {
     str.push(toChar(remaining & mask, radix));

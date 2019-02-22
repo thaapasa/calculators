@@ -1,9 +1,18 @@
 import { Avatar, TextField } from '@material-ui/core';
+import {
+  hexToRGB,
+  hslToRGB,
+  rgbToHex,
+  rgbToHSL,
+  rgbToRGBStr,
+  RGBValue,
+} from 'app/calc/colors';
+import { InputCombiner } from 'app/util/input-combiner';
+import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
+
+import { mapObject } from 'app/util/util';
 import React from 'react';
 import styled from 'styled-components';
-import { hexStrToInt, intToHexStr } from '../calc/numbers';
-import { zeroPad } from '../util/strings';
-import { isNumber } from '../util/util';
 import ByteValueSelector from './component/byte-value-selector';
 import Item from './component/item';
 import { HalfSection } from './component/section';
@@ -11,51 +20,6 @@ import { HalfSection } from './component/section';
 const ColorAvatar = styled(Avatar)`
   border: 1px solid #bbbbbb;
 ` as typeof Avatar;
-
-function toRGBColor(r: number, g: number, b: number): string {
-  return isNumber(r) && isNumber(g) && isNumber(b)
-    ? `rgb(${r}, ${g}, ${b})`
-    : '';
-}
-
-function toHexColor(r: number, g: number, b: number): string {
-  return isNumber(r) && isNumber(g) && isNumber(b)
-    ? `#${toHexComp(r)}${toHexComp(g)}${toHexComp(b)}`
-    : '';
-}
-
-function isValidComp(value: any): value is number {
-  return isNumber(value) && !isNaN(value) && value >= 0 && value <= 255;
-}
-
-function toHexComp(value: number): string {
-  return isValidComp(value) ? zeroPad(intToHexStr(value), 2) : '';
-}
-
-function validateHex(value: number): string {
-  return value && value[0] === '#' ? value.toString() : '#' + value;
-}
-
-function hexToComponents(value: string): [number, number, number] {
-  let r = 0;
-  let g = 0;
-  let b = 0;
-  const l = value.length <= 4 ? 1 : 2;
-  const re = new RegExp(
-    `^#?([0-9A-Za-z]{${l}})([0-9A-Za-z]{${l}})([0-9A-Za-z]{${l}})$`
-  );
-
-  value.replace(re, (m, hr, hg, hb) => {
-    r = (r = hexStrToInt(hr)) + (l === 1 ? r << 4 : 0);
-    g = (g = hexStrToInt(hg)) + (l === 1 ? g << 4 : 0);
-    b = (b = hexStrToInt(hb)) + (l === 1 ? b << 4 : 0);
-    return '';
-  });
-
-  return [r, g, b];
-}
-
-type Component = 'r' | 'g' | 'b';
 
 const texts = {
   hex: 'Heksakoodi',
@@ -67,28 +31,91 @@ interface ColorsProps {
 }
 
 interface ColorState {
-  r: number;
-  g: number;
-  b: number;
-  hex: string;
-  color: string;
+  rgb: string;
+  r: string;
+  g: string;
+  b: string;
+  hsl: string;
+  h: string;
+  s: string;
+  l: string;
+  hexString: string;
+  rgbString: string;
   selected: 'hex' | 'rgb';
 }
 
+const rgbCombiner = new InputCombiner(
+  { r: 255, g: 255, b: 255 },
+  rgbToHex,
+  hexToRGB
+);
+
+const hslCombiner = new InputCombiner(
+  { h: 255, s: 255, l: 255 },
+  x => rgbToHex(hslToRGB(x)),
+  x => rgbToHSL(hexToRGB(x))
+);
+
+const types = {
+  rgb: {
+    read: hexToRGB,
+    write: rgbToHex,
+  } as StreamDefinition<RGBValue>,
+  hexString: {
+    read: hexToRGB,
+    write: rgbToHex,
+  } as StreamDefinition<RGBValue>,
+  rgbString: {
+    read: () => ({ r: 0, g: 0, b: 0 }),
+    write: rgbToRGBStr,
+  } as StreamDefinition<RGBValue>,
+  hsl: {
+    read: hexToRGB,
+    write: rgbToHex,
+  } as StreamDefinition<RGBValue>,
+};
+
 export default class Colors extends React.Component<ColorsProps, ColorState> {
   public state: ColorState = {
-    r: 255,
-    g: 255,
-    b: 255,
-    hex: '#FFFFFF',
-    color: '#FFFFFF',
+    r: '0',
+    g: '0',
+    b: '0',
+    rgb: '',
+    h: '0',
+    s: '0',
+    l: '0',
+    hsl: '',
+    hexString: '',
+    rgbString: '',
     selected: 'hex',
   };
 
-  private components = ['r', 'g', 'b'];
+  private streams = new StreamCombiner(types);
+  private disposers: Array<() => void> = [];
+
+  constructor(props: ColorsProps) {
+    super(props);
+    this.disposers.push(rgbCombiner.combined.onValue(this.streams.inputs.rgb));
+    this.disposers.push(hslCombiner.combined.onValue(this.streams.inputs.hsl));
+    this.disposers.push(this.streams.bindOutputs(this, this.sendToParent));
+    this.disposers.push(
+      this.streams.output
+        .filter(o => o.selected !== 'rgb')
+        .onValue(o => this.setRGB(o.output.rgb))
+    );
+    this.disposers.push(
+      this.streams.output
+        .filter(o => o.selected !== 'hsl')
+        .onValue(o => this.setHSL(o.output.hsl))
+    );
+  }
 
   public componentDidMount() {
-    this.updateHex({ r: this.state.r, g: this.state.g, b: this.state.b });
+    rgbCombiner.init(this);
+  }
+
+  public componentWillUnmount() {
+    this.disposers.forEach(d => d());
   }
 
   public render() {
@@ -98,90 +125,92 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
         subtitle={texts[this.state.selected]}
         image="/img/header-colors.jpg"
         avatar={
-          <ColorAvatar style={{ backgroundColor: this.state.color }}>
+          <ColorAvatar style={{ backgroundColor: this.validatedColor }}>
             &nbsp;
           </ColorAvatar>
         }
       >
         <ByteValueSelector
           floatingLabel="Red"
-          value={this.state.r}
-          onValue={v => this.setComponent('r', v)}
-          ref="r"
+          setValue={this.state.r}
+          onValue={rgbCombiner.inputs.r}
         />
         <ByteValueSelector
           floatingLabel="Green"
-          value={this.state.g}
-          onValue={v => this.setComponent('g', v)}
-          ref="g"
+          setValue={this.state.g}
+          onValue={rgbCombiner.inputs.g}
         />
         <ByteValueSelector
           floatingLabel="Blue"
-          value={this.state.b}
-          onValue={v => this.setComponent('b', v)}
-          ref="b"
+          setValue={this.state.b}
+          onValue={rgbCombiner.inputs.b}
         />
         <Item name="Heksa">
           <TextField
             placeholder="#FFFFFF"
-            name="color-hex"
-            value={this.state.hex}
-            max-length="7"
-            onChange={e => this.setFromHex(e.target.value)}
-            onFocus={_ => this.select('hex')}
+            value={this.state.hexString}
+            inputProps={{ maxLength: 7 }}
+            onChange={this.streams.inputs.hexString}
+            onFocus={() => this.select('hex')}
           />
         </Item>
         <Item name="RGB-arvo">
           <TextField
             placeholder="rgb(255,255,255)"
-            name="color-rgb"
-            value={toRGBColor(this.state.r, this.state.g, this.state.b)}
-            read-only="read-only"
-            onFocus={_ => this.select('rgb')}
+            value={this.state.rgbString}
+            inputProps={{ readOnly: true }}
+            onFocus={() => this.select('rgb')}
           />
         </Item>
+        <ByteValueSelector
+          floatingLabel="Hue"
+          setValue={this.state.h}
+          onValue={hslCombiner.inputs.h}
+        />
+        <ByteValueSelector
+          floatingLabel="Sat"
+          setValue={this.state.s}
+          onValue={hslCombiner.inputs.s}
+        />
+        <ByteValueSelector
+          floatingLabel="Lum"
+          setValue={this.state.l}
+          onValue={hslCombiner.inputs.l}
+        />
       </HalfSection>
     );
   }
 
-  private updateHex(values: any): string {
-    const hexd = toHexColor(values.r, values.g, values.b);
-    this.setState({ hex: hexd, color: hexd }, this.sendToParent);
-    return hexd;
+  get validatedColor(): string | undefined {
+    const color = this.state.hexString;
+    return color && color.length > 3 && color.startsWith('#')
+      ? color
+      : undefined;
   }
 
-  private updateComponents = (r: any, g: any, b: any) => {
-    const values = { r, g, b };
-    this.setState(values, this.sendToParent);
-    this.components.forEach((c: any) =>
-      (this.refs[c] as ByteValueSelector).setValue(values[c])
-    );
-  };
-
-  private setComponent = (c: Component, val: number) => {
-    const values = { r: this.state.r, g: this.state.g, b: this.state.b };
-    this.setState({ [c]: val } as any);
-    values[c] = val;
-    this.updateHex(values);
-  };
-
-  private setFromHex = (value: any) => {
-    this.setState({ hex: value, color: validateHex(value) });
-    const c = hexToComponents(value);
-    const [r, g, b] = c;
-    this.updateComponents(r, g, b);
-  };
-
-  private getRGBColor() {
-    const { r, g, b } = this.state;
-    return toRGBColor(r, g, b);
+  get selectedValue(): string {
+    switch (this.state.selected) {
+      case 'rgb':
+        return this.state.rgbString;
+      case 'hex':
+      default:
+        return this.state.hexString;
+    }
   }
+
+  private setRGB = (rgbHex: string) => {
+    rgbCombiner.setValue(rgbHex);
+    this.setState(mapObject(String, hexToRGB(rgbHex)));
+  };
+
+  private setHSL = (rgbHex: string) => {
+    hslCombiner.setValue(rgbHex);
+    this.setState(mapObject(String, rgbToHSL(hexToRGB(rgbHex))));
+  };
 
   private sendToParent = () => {
-    const val =
-      this.state.selected === 'rgb' ? this.getRGBColor() : this.state.hex;
     if (this.props.onValue) {
-      this.props.onValue(val);
+      this.props.onValue(this.selectedValue);
     }
   };
 

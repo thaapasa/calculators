@@ -1,3 +1,5 @@
+import * as R from 'ramda';
+
 // Returns a random integer between min (included) and max (excluded)
 // Using Math.round() will give you a non-uniform distribution!
 export function getRandomInt(min: number, max: number): number {
@@ -59,6 +61,17 @@ export function pairsToObject<T>(pairs: Array<[string, T]>): Record<string, T> {
   const res: Record<string, T> = {};
   pairs.forEach(p => (res[p[0]] = p[1]));
   return res;
+}
+
+export function objectKeys<T>(object: T): ReadonlyArray<keyof T> {
+  return Object.keys(object) as any;
+}
+
+export function mapObject<S, T, O, X extends { [k in keyof O]: S }>(
+  f: (v: S, k: keyof X, obj: X) => T,
+  obj: X
+): Record<keyof X, T> {
+  return R.mapObjIndexed(f as any, obj) as Record<keyof X, T>;
 }
 
 const consoleMethods = [
