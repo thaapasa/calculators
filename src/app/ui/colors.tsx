@@ -29,7 +29,6 @@ interface ColorState {
   rgb: string;
   hexString: string;
   rgbString: string;
-  color: string;
   selected: 'hex' | 'rgb' | 'hsl';
 }
 
@@ -62,7 +61,6 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
     rgb: '',
     hexString: '',
     rgbString: '',
-    color: '',
     selected: 'hex',
   };
 
@@ -91,7 +89,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
         subtitle={texts[this.state.selected]}
         image="/img/header-colors.jpg"
         avatar={
-          <ColorAvatar style={{ backgroundColor: this.state.color }}>
+          <ColorAvatar style={{ backgroundColor: this.validatedColor }}>
             &nbsp;
           </ColorAvatar>
         }
@@ -134,10 +132,26 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
     );
   }
 
+  get validatedColor(): string | undefined {
+    const color = this.state.hexString;
+    return color && color.length > 3 && color.startsWith('#')
+      ? color
+      : undefined;
+  }
+
+  get selectedValue(): string {
+    switch (this.state.selected) {
+      case 'rgb':
+        return this.state.rgbString;
+      case 'hex':
+      default:
+        return this.state.hexString;
+    }
+  }
+
   private sendToParent = () => {
-    const val = this.state.hexString;
     if (this.props.onValue) {
-      this.props.onValue(val);
+      this.props.onValue(this.selectedValue);
     }
   };
 
