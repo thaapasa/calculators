@@ -1,10 +1,17 @@
 import { zeroPad } from 'app/util/strings';
+import { mapObject } from 'app/util/util';
 import { hexStrToInt, intToHexStr } from './numbers';
 
 export interface RGBValue {
   r: number;
   g: number;
   b: number;
+}
+
+export interface HSLValue {
+  h: number;
+  s: number;
+  l: number;
 }
 
 export function rgbToRGBStr(c: RGBValue): string {
@@ -15,7 +22,11 @@ export function toHexComp(value: number | string): string {
   return zeroPad(intToHexStr(value), 2);
 }
 
-export function hexToRGB(value: string): RGBValue {
+function toByteRange(val: number): number {
+  return Math.min(Math.floor(val * 256), 255);
+}
+
+function hexToParts(value: string): [number, number, number] {
   let r = 0;
   let g = 0;
   let b = 0;
@@ -31,50 +42,103 @@ export function hexToRGB(value: string): RGBValue {
     return '';
   });
 
+  return [r, g, b];
+}
+
+export function hexToRGB(value: string): RGBValue {
+  const [r, g, b] = hexToParts(value);
   return { r, g, b };
+}
+
+export function hexToHSL(value: string): HSLValue {
+  const [h, s, l] = hexToParts(value);
+  return { h, s, l };
 }
 
 export function rgbToHex(rgb: RGBValue): string {
   return `#${toHexComp(rgb.r)}${toHexComp(rgb.g)}${toHexComp(rgb.b)}`;
 }
 
-// https://stackoverflow.com/questions/39118528/rgb-to-hsl-conversion
-export function rgb2hsl(r: number, g: number, b: number) {
-  // see https://en.wikipedia.org/wiki/HSL_and_HSV#Formal_derivation
-  // convert r,g,b [0,255] range to [0,1]
-  (r = r / 255), (g = g / 255), (b = b / 255);
-  // get the min and max of r,g,b
+export function hslToHex(hsl: HSLValue): string {
+  return `#${toHexComp(hsl.h)}${toHexComp(hsl.s)}${toHexComp(hsl.l)}`;
+}
+
+// See https://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
+
+function hue2rgb(p: number, q: number, t: number): number {
+  if (t < 0) {
+    t += 1;
+  }
+  if (t > 1) {
+    t -= 1;
+  }
+  if (t < 1 / 6) {
+    return p + (q - p) * 6 * t;
+  }
+  if (t < 1 / 2) {
+    return q;
+  }
+  if (t < 2 / 3) {
+    return p + (q - p) * (2 / 3 - t) * 6;
+  }
+  return p;
+}
+
+/**
+ * Converts an HSL color value to RGB. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+ * All values are assumed to be in the range [0, 255].
+ */
+export function hslToRGB(hsl: HSLValue): RGBValue {
+  let r, g, b;
+  let { h, s, l } = hsl;
+  (h /= 255), (s /= 255), (l /= 255);
+
+  if (s === 0) {
+    r = g = b = l; // achromatic
+  } else {
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1 / 3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1 / 3);
+  }
+
+  return mapObject(toByteRange, { r, g, b });
+}
+
+/**
+ * Converts an RGB color value to HSL. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+ * All values are assumed to be in the range [0, 255].
+ */
+export function rgbToHSL(rgb: RGBValue): HSLValue {
+  let { r, g, b } = rgb;
+  (r /= 255), (g /= 255), (b /= 255);
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
-  // lightness is the average of the largest and smallest color components
-  let lum = (max + min) / 2;
-  let hue = 0;
-  let sat;
+  let h = 0,
+    s = 0;
+  const l = (max + min) / 2;
+
   if (max === min) {
-    // no saturation
-    hue = 0;
-    sat = 0;
+    h = s = 0; // achromatic
   } else {
-    const c = max - min; // chroma
-    // saturation is simply the chroma scaled to fill
-    // the interval [0, 1] for every combination of hue and lightness
-    sat = c / (1 - Math.abs(2 * lum - 1));
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
     switch (max) {
       case r:
-        // hue = (g - b) / c;
-        hue = ((g - b) / c) % 6;
-        // hue = (g - b) / c + (g < b ? 6 : 0);
+        h = (g - b) / d + (g < b ? 6 : 0);
         break;
       case g:
-        hue = (b - r) / c + 2;
+        h = (b - r) / d + 2;
         break;
       case b:
-        hue = (r - g) / c + 4;
+        h = (r - g) / d + 4;
         break;
     }
+    h /= 6;
   }
-  hue = Math.round(hue * 60); // °
-  sat = Math.round(sat * 100); // %
-  lum = Math.round(lum * 100); // %
-  return [hue, sat, lum];
+
+  return mapObject(toByteRange, { h, s, l });
 }

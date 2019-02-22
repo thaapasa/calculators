@@ -1,5 +1,12 @@
 import { Avatar, TextField } from '@material-ui/core';
-import { hexToRGB, rgbToHex, rgbToRGBStr, RGBValue } from 'app/calc/colors';
+import {
+  hexToRGB,
+  hslToRGB,
+  rgbToHex,
+  rgbToHSL,
+  rgbToRGBStr,
+  RGBValue,
+} from 'app/calc/colors';
 import { InputCombiner } from 'app/util/input-combiner';
 import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
 
@@ -24,10 +31,14 @@ interface ColorsProps {
 }
 
 interface ColorState {
+  rgb: string;
   r: string;
   g: string;
   b: string;
-  rgb: string;
+  hsl: string;
+  h: string;
+  s: string;
+  l: string;
   hexString: string;
   rgbString: string;
   selected: 'hex' | 'rgb';
@@ -37,6 +48,12 @@ const rgbCombiner = new InputCombiner(
   { r: 255, g: 255, b: 255 },
   rgbToHex,
   hexToRGB
+);
+
+const hslCombiner = new InputCombiner(
+  { h: 255, s: 255, l: 255 },
+  x => rgbToHex(hslToRGB(x)),
+  x => rgbToHSL(hexToRGB(x))
 );
 
 const types = {
@@ -52,6 +69,10 @@ const types = {
     read: () => ({ r: 0, g: 0, b: 0 }),
     write: rgbToRGBStr,
   } as StreamDefinition<RGBValue>,
+  hsl: {
+    read: hexToRGB,
+    write: rgbToHex,
+  } as StreamDefinition<RGBValue>,
 };
 
 export default class Colors extends React.Component<ColorsProps, ColorState> {
@@ -60,6 +81,10 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
     g: '0',
     b: '0',
     rgb: '',
+    h: '0',
+    s: '0',
+    l: '0',
+    hsl: '',
     hexString: '',
     rgbString: '',
     selected: 'hex',
@@ -71,11 +96,17 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
   constructor(props: ColorsProps) {
     super(props);
     this.disposers.push(rgbCombiner.combined.onValue(this.streams.inputs.rgb));
+    this.disposers.push(hslCombiner.combined.onValue(this.streams.inputs.hsl));
     this.disposers.push(this.streams.bindOutputs(this, this.sendToParent));
     this.disposers.push(
       this.streams.output
         .filter(o => o.selected !== 'rgb')
         .onValue(o => this.setRGB(o.output.rgb))
+    );
+    this.disposers.push(
+      this.streams.output
+        .filter(o => o.selected !== 'hsl')
+        .onValue(o => this.setHSL(o.output.hsl))
     );
   }
 
@@ -131,6 +162,21 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
             onFocus={() => this.select('rgb')}
           />
         </Item>
+        <ByteValueSelector
+          floatingLabel="Hue"
+          setValue={this.state.h}
+          onValue={hslCombiner.inputs.h}
+        />
+        <ByteValueSelector
+          floatingLabel="Sat"
+          setValue={this.state.s}
+          onValue={hslCombiner.inputs.s}
+        />
+        <ByteValueSelector
+          floatingLabel="Lum"
+          setValue={this.state.l}
+          onValue={hslCombiner.inputs.l}
+        />
       </HalfSection>
     );
   }
@@ -152,9 +198,14 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
     }
   }
 
-  private setRGB = (rgb: string) => {
-    rgbCombiner.setValue(rgb);
-    this.setState(mapObject(String, hexToRGB(rgb)));
+  private setRGB = (rgbHex: string) => {
+    rgbCombiner.setValue(rgbHex);
+    this.setState(mapObject(String, hexToRGB(rgbHex)));
+  };
+
+  private setHSL = (rgbHex: string) => {
+    hslCombiner.setValue(rgbHex);
+    this.setState(mapObject(String, rgbToHSL(hexToRGB(rgbHex))));
   };
 
   private sendToParent = () => {
