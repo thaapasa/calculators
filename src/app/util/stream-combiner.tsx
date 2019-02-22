@@ -1,7 +1,7 @@
 import * as B from 'baconjs';
 import * as R from 'ramda';
 import { InputChangeHandler, InputChangeType } from './stream-defs';
-import { mapObject } from './util';
+import { mapObject, objectKeys } from './util';
 
 export interface StreamDefinition<T> {
   read: (input: string) => T;
@@ -15,8 +15,12 @@ export class StreamCombiner<
 > {
   // Send inputs via these input handlers; input will be propagated to other streams
   inputs: Record<keyof S, InputChangeHandler>;
+  output: B.EventStream<
+    any,
+    { selected: keyof S; output: Record<keyof S, string> }
+  >;
   // This is used to listen for the outputs
-  private output = new B.Bus<any, Record<keyof S, string>>();
+  private outputRecord = new B.Bus<any, Record<keyof S, string>>();
 
   constructor(inputs: S) {
     const inputBuses: Record<keyof S, B.Bus<any, string>> = R.map(
@@ -29,9 +33,9 @@ export class StreamCombiner<
       (_, k) => (e: InputChangeType) => {
         const val = typeof e === 'object' ? e.target.value : String(e);
         console.log('Input', k, val);
+        inputBuses[k].push(val);
         // Input to bus k is directly piped to output of k
         selectedInputStream.push([k, val]);
-        inputBuses[k].push(val);
       },
       inputs
     );
@@ -41,26 +45,32 @@ export class StreamCombiner<
       inputs
     );
 
-    B.combineTemplate<
-      any,
-      { selected: [keyof S, string]; inputs: Record<keyof S, T> }
-    >({
-      inputs: convertedInputs,
-      selected: selectedInputStream,
-    }).onValue(f => {
-      console.log('New set', f);
-      const selected = f.selected[0];
-      const value = f.inputs[selected];
-      const outputRecord = mapObject(
-        (_, k) => (k === selected ? f.selected[1] : inputs[k].write(value)),
-        inputs
-      );
-      this.output.push(outputRecord);
-    });
+    B.combineTemplate<any, Record<keyof S, T>>(convertedInputs)
+      .sampledBy(selectedInputStream, (values, selected) => ({
+        values,
+        selected,
+      }))
+      .onValue(f => {
+        console.log('New set', f);
+        const selected = f.selected[0];
+        const value = f.values[selected];
+        const outputRecord = mapObject(
+          (_, k) => (k === selected ? f.selected[1] : inputs[k].write(value)),
+          inputs
+        );
+        this.outputRecord.push(outputRecord);
+      });
+
+    this.output = selectedInputStream
+      .toProperty([objectKeys(inputs)[0], ''])
+      .sampledBy(this.outputRecord, (selected, output) => ({
+        output,
+        selected: selected[0],
+      }));
   }
 
   // Bind a React class to see the outputs in its state
   bindOutputs = (r: React.Component<any, Record<keyof S, string>>) => {
-    return this.output.onValue(o => r.setState(o));
+    return this.outputRecord.onValue(o => r.setState(o));
   };
 }

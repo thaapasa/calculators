@@ -3,6 +3,7 @@ import { hexToRGB, rgbToHex, rgbToRGBStr, RGBValue } from 'app/calc/colors';
 import { InputCombiner } from 'app/util/input-combiner';
 import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
 
+import { mapObject } from 'app/util/util';
 import React from 'react';
 import styled from 'styled-components';
 import ByteValueSelector from './component/byte-value-selector';
@@ -29,7 +30,7 @@ interface ColorState {
   rgb: string;
   hexString: string;
   rgbString: string;
-  selected: 'hex' | 'rgb' | 'hsl';
+  selected: 'hex' | 'rgb';
 }
 
 const rgbCombiner = new InputCombiner(
@@ -72,6 +73,11 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
     this.disposers.push(rgbCombiner.combined.onValue(this.streams.inputs.rgb));
     this.disposers.push(rgbCombiner.bindOutputs(this));
     this.disposers.push(this.streams.bindOutputs(this));
+    this.disposers.push(
+      this.streams.output
+        .filter(o => o.selected !== 'rgb')
+        .onValue(o => this.setRGB(o.output.rgb))
+    );
   }
 
   public componentDidMount() {
@@ -112,7 +118,6 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
         <Item name="Heksa">
           <TextField
             placeholder="#FFFFFF"
-            name="color-hex"
             value={this.state.hexString}
             max-length="7"
             onChange={this.streams.inputs.hexString}
@@ -122,7 +127,6 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
         <Item name="RGB-arvo">
           <TextField
             placeholder="rgb(255,255,255)"
-            name="color-rgb"
             value={this.state.rgbString}
             read-only="read-only"
             onFocus={() => this.select('rgb')}
@@ -148,6 +152,10 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
         return this.state.hexString;
     }
   }
+
+  private setRGB = (rgb: string) => {
+    this.setState(mapObject(String, hexToRGB(rgb)));
+  };
 
   private sendToParent = () => {
     if (this.props.onValue) {
