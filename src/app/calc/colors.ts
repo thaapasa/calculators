@@ -18,6 +18,8 @@ export interface HSLValue {
 
 export type HSLKey = 'h' | 's' | 'l';
 
+export const HSLMaxValue = 719;
+
 export function rgbToRGBStr(c: RGBValue): string {
   return c ? `rgb(${Number(c.r)}, ${Number(c.g)}, ${Number(c.b)})` : '';
 }
@@ -28,6 +30,10 @@ export function toHexComp(value: number | string): string {
 
 function toByteRange(val: number): number {
   return Math.min(Math.floor(val * 256), 255);
+}
+
+function toHSLRange(val: number): number {
+  return Math.min(Math.floor(val * (HSLMaxValue + 1)), HSLMaxValue);
 }
 
 function hexToParts(value: string): [number, number, number] {
@@ -54,17 +60,8 @@ export function hexToRGB(value: string): RGBValue {
   return { r, g, b };
 }
 
-export function hexToHSL(value: string): HSLValue {
-  const [h, s, l] = hexToParts(value);
-  return { h, s, l };
-}
-
 export function rgbToHex(rgb: RGBValue): string {
   return `#${toHexComp(rgb.r)}${toHexComp(rgb.g)}${toHexComp(rgb.b)}`;
-}
-
-export function hslToHex(hsl: HSLValue): string {
-  return `#${toHexComp(hsl.h)}${toHexComp(hsl.s)}${toHexComp(hsl.l)}`;
 }
 
 // See https://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
@@ -91,12 +88,13 @@ function hue2rgb(p: number, q: number, t: number): number {
 /**
  * Converts an HSL color value to RGB. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * All values are assumed to be in the range [0, 255].
+ * All RGB values are assumed to be in the range [0, 255], and
+ * all HSL values are assumed to be in the range [0, HSLMaxValue].
  */
 export function hslToRGB(hsl: HSLValue): RGBValue {
   let r, g, b;
   let { h, s, l } = hsl;
-  (h /= 255), (s /= 255), (l /= 255);
+  (h /= HSLMaxValue), (s /= HSLMaxValue), (l /= HSLMaxValue);
 
   if (s === 0) {
     r = g = b = l; // achromatic
@@ -114,7 +112,8 @@ export function hslToRGB(hsl: HSLValue): RGBValue {
 /**
  * Converts an RGB color value to HSL. Conversion formula
  * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
- * All values are assumed to be in the range [0, 255].
+ * All values are assumed to be in the range [0, 255], and
+ * all HSL values are assumed to be in the range [0, HSLMaxValue].
  */
 export function rgbToHSL(rgb: RGBValue): HSLValue {
   let { r, g, b } = rgb;
@@ -144,5 +143,5 @@ export function rgbToHSL(rgb: RGBValue): HSLValue {
     h /= 6;
   }
 
-  return mapObject(toByteRange, { h, s, l });
+  return mapObject(toHSLRange, { h, s, l });
 }

@@ -2,6 +2,7 @@ import { Avatar, TextField } from '@material-ui/core';
 import {
   hexToRGB,
   HSLKey,
+  HSLMaxValue,
   hslToRGB,
   HSLValue,
   rgbToHex,
@@ -224,8 +225,9 @@ const HSLSlider = ({
   <HSLItem name={texts[hsl]}>
     <Slider
       value={component.state[hsl]}
-      max={255}
       min={0}
+      max={HSLMaxValue}
+      step={1}
       onChange={(_, v) => {
         hslCombiner.inputs[hsl](v);
         component.setState({ [hsl]: v } as any);
