@@ -19,6 +19,7 @@ import { mapObject } from 'app/util/util';
 import React from 'react';
 import styled from 'styled-components';
 import ByteValueSelector from './component/byte-value-selector';
+import { ColorBar } from './component/color-bar';
 import Item from './component/item';
 import { HalfSection } from './component/section';
 
@@ -223,6 +224,7 @@ const HSLSlider = ({
   component: React.Component<any, { [k in HSLKey]: number }>;
 }) => (
   <HSLItem name={texts[hsl]}>
+    <ColorBar getColor={p => ({ r: p * 100, g: 0, b: 0 })} />
     <Slider
       value={component.state[hsl]}
       min={0}
@@ -238,4 +240,7 @@ const HSLSlider = ({
 
 const HSLItem = styled(Item)`
   margin-top: 16px;
+  & .value {
+    flex-direction: column;
+  }
 `;
