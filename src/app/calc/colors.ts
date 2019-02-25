@@ -8,11 +8,15 @@ export interface RGBValue {
   b: number;
 }
 
+export type RGBKey = 'r' | 'g' | 'b';
+
 export interface HSLValue {
   h: number;
   s: number;
   l: number;
 }
+
+export type HSLKey = 'h' | 's' | 'l';
 
 export function rgbToRGBStr(c: RGBValue): string {
   return c ? `rgb(${Number(c.r)}, ${Number(c.g)}, ${Number(c.b)})` : '';

@@ -1,6 +1,7 @@
 import { Avatar, TextField } from '@material-ui/core';
 import {
   hexToRGB,
+  HSLKey,
   hslToRGB,
   HSLValue,
   rgbToHex,
@@ -11,6 +12,7 @@ import {
 import { InputCombiner } from 'app/util/input-combiner';
 import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
 
+import { Slider } from '@material-ui/lab';
 import { numberify } from 'app/calc/numbers';
 import { mapObject } from 'app/util/util';
 import React from 'react';
@@ -26,6 +28,9 @@ const ColorAvatar = styled(Avatar)`
 const texts = {
   hex: 'Heksakoodi',
   rgb: 'RGB-arvo',
+  h: 'H: Sävy',
+  s: 'S: Väri',
+  l: 'L: Valo',
 };
 
 interface ColorsProps {
@@ -38,9 +43,9 @@ interface ColorState {
   g: string;
   b: string;
   hsl: string;
-  h: string;
-  s: string;
-  l: string;
+  h: number;
+  s: number;
+  l: number;
   hexString: string;
   rgbString: string;
   selected: 'hex' | 'rgb';
@@ -83,9 +88,9 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
     g: '0',
     b: '0',
     rgb: '',
-    h: '0',
-    s: '0',
-    l: '0',
+    h: 0,
+    s: 0,
+    l: 0,
     hsl: '',
     hexString: '',
     rgbString: '',
@@ -164,21 +169,9 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
             onFocus={() => this.select('rgb')}
           />
         </Item>
-        <ByteValueSelector
-          floatingLabel="Hue"
-          setValue={this.state.h}
-          onValue={hslCombiner.inputs.h}
-        />
-        <ByteValueSelector
-          floatingLabel="Sat"
-          setValue={this.state.s}
-          onValue={hslCombiner.inputs.s}
-        />
-        <ByteValueSelector
-          floatingLabel="Lum"
-          setValue={this.state.l}
-          onValue={hslCombiner.inputs.l}
-        />
+        <HSLSlider hsl="h" component={this} />
+        <HSLSlider hsl="s" component={this} />
+        <HSLSlider hsl="l" component={this} />
       </HalfSection>
     );
   }
@@ -207,7 +200,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
 
   private setHSL = (hsl: HSLValue) => {
     hslCombiner.setValue(hsl);
-    this.setState(mapObject(String, hsl));
+    this.setState(hsl);
   };
 
   private sendToParent = () => {
@@ -220,3 +213,27 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
     this.setState({ selected: src }, this.sendToParent);
   };
 }
+
+const HSLSlider = ({
+  hsl,
+  component,
+}: {
+  hsl: HSLKey;
+  component: React.Component<any, { [k in HSLKey]: number }>;
+}) => (
+  <HSLItem name={texts[hsl]}>
+    <Slider
+      value={component.state[hsl]}
+      max={255}
+      min={0}
+      onChange={(_, v) => {
+        hslCombiner.inputs[hsl](v);
+        component.setState({ [hsl]: v } as any);
+      }}
+    />
+  </HSLItem>
+);
+
+const HSLItem = styled(Item)`
+  margin-top: 16px;
+`;
