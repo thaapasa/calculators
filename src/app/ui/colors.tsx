@@ -2,6 +2,7 @@ import { Avatar, TextField } from '@material-ui/core';
 import {
   hexToRGB,
   hslToRGB,
+  HSLValue,
   rgbToHex,
   rgbToHSL,
   rgbToRGBStr,
@@ -10,6 +11,7 @@ import {
 import { InputCombiner } from 'app/util/input-combiner';
 import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
 
+import { numberify } from 'app/calc/numbers';
 import { mapObject } from 'app/util/util';
 import React from 'react';
 import styled from 'styled-components';
@@ -52,27 +54,27 @@ const rgbCombiner = new InputCombiner(
 
 const hslCombiner = new InputCombiner(
   { h: 255, s: 255, l: 255 },
-  x => rgbToHex(hslToRGB(x)),
-  x => rgbToHSL(hexToRGB(x))
+  numberify,
+  numberify
 );
 
 const types = {
   rgb: {
     read: hexToRGB,
     write: rgbToHex,
-  } as StreamDefinition<RGBValue>,
+  } as StreamDefinition<string, RGBValue>,
   hexString: {
     read: hexToRGB,
     write: rgbToHex,
-  } as StreamDefinition<RGBValue>,
+  } as StreamDefinition<string, RGBValue>,
   rgbString: {
     read: () => ({ r: 0, g: 0, b: 0 }),
     write: rgbToRGBStr,
-  } as StreamDefinition<RGBValue>,
+  } as StreamDefinition<string, RGBValue>,
   hsl: {
-    read: hexToRGB,
-    write: rgbToHex,
-  } as StreamDefinition<RGBValue>,
+    read: hslToRGB,
+    write: rgbToHSL,
+  } as StreamDefinition<HSLValue, RGBValue>,
 };
 
 export default class Colors extends React.Component<ColorsProps, ColorState> {
@@ -203,9 +205,9 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
     this.setState(mapObject(String, hexToRGB(rgbHex)));
   };
 
-  private setHSL = (rgbHex: string) => {
-    hslCombiner.setValue(rgbHex);
-    this.setState(mapObject(String, rgbToHSL(hexToRGB(rgbHex))));
+  private setHSL = (hsl: HSLValue) => {
+    hslCombiner.setValue(hsl);
+    this.setState(mapObject(String, hsl));
   };
 
   private sendToParent = () => {

@@ -3,7 +3,7 @@ import React from 'react';
 export type InputChangeEvent = React.ChangeEvent<
   HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
 >;
-export type InputChangeType = InputChangeEvent | string | number;
+export type InputChangeType<T = any> = T | string;
 export type InputChangeHandler = (input: InputChangeType) => void;
 
 export function isInputChangeEvent(x: unknown): x is InputChangeEvent {

@@ -1,10 +1,14 @@
-import { isDefined, isNumber } from '../util/util';
+import { isDefined, isNumber, mapObject } from '../util/util';
 
 const binCharsRE = /[^01]/;
 const octCharsRE = /[^0-7]/;
 const decCharsRE = /[^0-9]/;
 const hexCharsRE = /[^0-9A-Fa-f]/;
 const numChars = '0123456789ABCDEF';
+
+export function numberify<T>(t: T) {
+  return mapObject(Number, t);
+}
 
 export function binaryStrToInt(value: string | number): number {
   return strToIntChecked(value, 2, binCharsRE);
