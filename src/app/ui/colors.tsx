@@ -44,10 +44,10 @@ const colors = {
     hslToRGB({ h: (h * HSLMaxValue) / 359, s: HSLMaxValue, l: HSLMaxValue / 2 })
   ),
   s: R.range(0, 255).map(s =>
-    hslToRGB({ h: HSLMaxValue, s: (s * HSLMaxValue) / 255, l: HSLMaxValue / 2 })
+    hslToRGB({ h: 0, s: (s * HSLMaxValue) / 255, l: HSLMaxValue / 2 })
   ),
   l: R.range(0, 255).map(l =>
-    hslToRGB({ h: HSLMaxValue, s: HSLMaxValue, l: (l * HSLMaxValue) / 255 })
+    hslToRGB({ h: 0, s: 0, l: (l * HSLMaxValue) / 255 })
   ),
 };
 
