@@ -12,6 +12,7 @@ import {
 } from 'app/calc/colors';
 import { InputCombiner } from 'app/util/input-combiner';
 import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
+import * as R from 'ramda';
 
 import { Slider } from '@material-ui/lab';
 import { numberify } from 'app/calc/numbers';
@@ -33,6 +34,21 @@ const texts = {
   h: 'H: Sävy',
   s: 'S: Väri',
   l: 'L: Valo',
+};
+
+const colors = {
+  r: R.range(0, 255).map(r => ({ r, g: 0, b: 0 })),
+  g: R.range(0, 255).map(g => ({ r: 0, g, b: 0 })),
+  b: R.range(0, 255).map(b => ({ r: 0, g: 0, b })),
+  h: R.range(0, 359).map(h =>
+    hslToRGB({ h: (h * HSLMaxValue) / 359, s: HSLMaxValue, l: HSLMaxValue / 2 })
+  ),
+  s: R.range(0, 255).map(s =>
+    hslToRGB({ h: HSLMaxValue, s: (s * HSLMaxValue) / 255, l: HSLMaxValue / 2 })
+  ),
+  l: R.range(0, 255).map(l =>
+    hslToRGB({ h: HSLMaxValue, s: HSLMaxValue, l: (l * HSLMaxValue) / 255 })
+  ),
 };
 
 interface ColorsProps {
@@ -224,7 +240,7 @@ const HSLSlider = ({
   component: React.Component<any, { [k in HSLKey]: number }>;
 }) => (
   <HSLItem name={texts[hsl]}>
-    <ColorBar getColor={p => ({ r: p * 100, g: 0, b: 0 })} />
+    <ColorBar colors={colors[hsl]} />
     <Slider
       value={component.state[hsl]}
       min={0}
