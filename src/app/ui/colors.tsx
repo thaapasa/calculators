@@ -12,6 +12,7 @@ import {
 } from 'app/calc/colors';
 import { InputCombiner } from 'app/util/input-combiner';
 import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
+import * as R from 'ramda';
 
 import { Slider } from '@material-ui/lab';
 import { numberify } from 'app/calc/numbers';
@@ -19,6 +20,7 @@ import { mapObject } from 'app/util/util';
 import React from 'react';
 import styled from 'styled-components';
 import ByteValueSelector from './component/byte-value-selector';
+import { ColorBar } from './component/color-bar';
 import Item from './component/item';
 import { HalfSection } from './component/section';
 
@@ -32,6 +34,21 @@ const texts = {
   h: 'H: Sävy',
   s: 'S: Väri',
   l: 'L: Valo',
+};
+
+const colors = {
+  r: R.range(0, 255).map(r => ({ r, g: 0, b: 0 })),
+  g: R.range(0, 255).map(g => ({ r: 0, g, b: 0 })),
+  b: R.range(0, 255).map(b => ({ r: 0, g: 0, b })),
+  h: R.range(0, 359).map(h =>
+    hslToRGB({ h: (h * HSLMaxValue) / 359, s: HSLMaxValue, l: HSLMaxValue / 2 })
+  ),
+  s: R.range(0, 255).map(s =>
+    hslToRGB({ h: 0, s: (s * HSLMaxValue) / 255, l: HSLMaxValue / 2 })
+  ),
+  l: R.range(0, 255).map(l =>
+    hslToRGB({ h: 0, s: 0, l: (l * HSLMaxValue) / 255 })
+  ),
 };
 
 interface ColorsProps {
@@ -142,16 +159,19 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
           floatingLabel="Red"
           setValue={this.state.r}
           onValue={rgbCombiner.inputs.r}
+          topContent={<ColorBar colors={colors.r} />}
         />
         <ByteValueSelector
           floatingLabel="Green"
           setValue={this.state.g}
           onValue={rgbCombiner.inputs.g}
+          topContent={<ColorBar colors={colors.g} />}
         />
         <ByteValueSelector
           floatingLabel="Blue"
           setValue={this.state.b}
           onValue={rgbCombiner.inputs.b}
+          topContent={<ColorBar colors={colors.b} />}
         />
         <Item name="Heksa">
           <TextField
@@ -223,6 +243,7 @@ const HSLSlider = ({
   component: React.Component<any, { [k in HSLKey]: number }>;
 }) => (
   <HSLItem name={texts[hsl]}>
+    <ColorBar colors={colors[hsl]} />
     <Slider
       value={component.state[hsl]}
       min={0}
@@ -238,4 +259,7 @@ const HSLSlider = ({
 
 const HSLItem = styled(Item)`
   margin-top: 16px;
+  & .value {
+    flex-direction: column;
+  }
 `;
