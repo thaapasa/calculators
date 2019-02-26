@@ -31,12 +31,6 @@ const ComponentField = styled(TextField)`
   margin-right: 1em !important;
 ` as typeof TextField;
 
-const ByteSlider = styled(Slider)`
-  &.high {
-    margin-top: 18px;
-  }
-` as typeof Slider;
-
 const types = ['parent', 'dec', 'hex', 'slider'];
 
 interface TypeInfoType {
@@ -63,10 +57,11 @@ interface SelectorState {
 }
 
 interface SelectorProps {
-  readonly setValue: string | number;
-  readonly onValue?: (x: number) => void;
-  readonly name?: string;
-  readonly floatingLabel?: string;
+  setValue: string | number;
+  onValue?: (x: number) => void;
+  name?: string;
+  floatingLabel?: string;
+  topContent?: any;
 }
 
 export default class ByteValueSelector extends React.Component<
@@ -106,6 +101,15 @@ export default class ByteValueSelector extends React.Component<
   }
 
   public render() {
+    const slider = (
+      <Slider
+        value={this.state.slider}
+        max={255}
+        min={0}
+        step={1}
+        onChange={(e, v: number) => this.pushNumberValue(v, 'slider')}
+      />
+    );
     const content = (
       <Row>
         <ComponentField
@@ -123,14 +127,10 @@ export default class ByteValueSelector extends React.Component<
           value={this.state.dec}
           onChange={e => this.pushStringValue(e.target.value, 'dec')}
         />
-        <ByteSlider
-          value={this.state.slider}
-          max={255}
-          min={0}
-          step={1}
-          className={this.props.floatingLabel ? 'high' : undefined}
-          onChange={(e, v: number) => this.pushNumberValue(v, 'slider')}
-        />
+        <Column className={this.props.floatingLabel ? 'high' : undefined}>
+          {this.props.topContent}
+          {slider}
+        </Column>
       </Row>
     );
 
@@ -174,4 +174,11 @@ const Row = styled.div`
   justify-content: flex-start;
   align-items: center;
   margin: 12px;
+`;
+
+const Column = styled.div`
+  width: 100%;
+  &.high {
+    margin-top: 18px;
+  }
 `;

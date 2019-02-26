@@ -159,16 +159,19 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
           floatingLabel="Red"
           setValue={this.state.r}
           onValue={rgbCombiner.inputs.r}
+          topContent={<ColorBar colors={colors.r} />}
         />
         <ByteValueSelector
           floatingLabel="Green"
           setValue={this.state.g}
           onValue={rgbCombiner.inputs.g}
+          topContent={<ColorBar colors={colors.g} />}
         />
         <ByteValueSelector
           floatingLabel="Blue"
           setValue={this.state.b}
           onValue={rgbCombiner.inputs.b}
+          topContent={<ColorBar colors={colors.b} />}
         />
         <Item name="Heksa">
           <TextField
