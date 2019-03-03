@@ -43,12 +43,10 @@ const colors = {
   h: R.range(0, 359).map(h =>
     hslToRGB({ h: (h * HSLMaxValue) / 359, s: HSLMaxValue, l: HSLMaxValue / 2 })
   ),
-  s: R.range(0, 255).map(s =>
-    hslToRGB({ h: 0, s: (s * HSLMaxValue) / 255, l: HSLMaxValue / 2 })
-  ),
-  l: R.range(0, 255).map(l =>
-    hslToRGB({ h: 0, s: 0, l: (l * HSLMaxValue) / 255 })
-  ),
+  s: (h: number, l: number) =>
+    R.range(0, 255).map(s => hslToRGB({ h, s: (s * HSLMaxValue) / 255, l })),
+  l: (h: number, s: number) =>
+    R.range(0, 255).map(l => hslToRGB({ h, s, l: (l * HSLMaxValue) / 255 })),
 };
 
 interface ColorsProps {
@@ -190,9 +188,17 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
             onFocus={() => this.select('rgb')}
           />
         </Item>
-        <HSLSlider hsl="h" component={this} />
-        <HSLSlider hsl="s" component={this} />
-        <HSLSlider hsl="l" component={this} />
+        <HSLSlider hsl="h" component={this} colorBar={colors.h} />
+        <HSLSlider
+          hsl="s"
+          component={this}
+          colorBar={colors.s(this.state.h, this.state.l)}
+        />
+        <HSLSlider
+          hsl="l"
+          component={this}
+          colorBar={colors.l(this.state.h, this.state.s)}
+        />
       </HalfSection>
     );
   }
@@ -236,14 +242,16 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
 }
 
 const HSLSlider = ({
+  colorBar,
   hsl,
   component,
 }: {
   hsl: HSLKey;
+  colorBar: RGBValue[];
   component: React.Component<any, { [k in HSLKey]: number }>;
 }) => (
   <HSLItem name={texts[hsl]}>
-    <ColorBar colors={colors[hsl]} />
+    <ColorBar colors={colorBar} />
     <Slider
       value={component.state[hsl]}
       min={0}
