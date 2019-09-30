@@ -8,9 +8,9 @@ import {
 import Bacon from 'baconjs';
 import React from 'react';
 import styled from 'styled-components';
+import svgToReactNative from 'svg-rn';
 import * as base64 from '../calc/base64';
 import rot13 from '../calc/rot13';
-import { svgToReactNative } from '../calc/svg-react-native';
 import { jsonStringToXml, xmlToJsonString } from '../calc/xml-json';
 import * as store from '../util/store';
 import * as strings from '../util/strings';

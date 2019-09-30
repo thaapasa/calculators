@@ -2080,6 +2080,11 @@ commander@^2.12.1:
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.19.0.tgz#f6198aa84e5b83c46054b94ddedbfed5ee9ff12a"
   integrity sha512-6tvAOO+D6OENvRAh524Dh9jcfKTYDQAqvqezbCW82xj5X0pSrcpxtvRKHLG0yBY6SD7PSDrJaj+0AiOcKVd1Xg==
 
+commander@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-3.0.2.tgz#6837c3fb677ad9933d1cfba42dd14d5117d6b39e"
+  integrity sha512-Gar0ASD4BDyKC4hl4DwHqDrmvjoxWKZigVnAbn5H1owvm4CxCPdb0HQDehwNYMJpla5+M2tPmPARzhtYuwpHow==
+
 commander@~2.13.0:
   version "2.13.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.13.0.tgz#6964bca67685df7c1f1430c584f07d7597885b9c"
@@ -8350,6 +8355,14 @@ supports-color@^5.1.0, supports-color@^5.3.0, supports-color@^5.4.0, supports-co
   dependencies:
     has-flag "^3.0.0"
 
+svg-rn@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/svg-rn/-/svg-rn-0.0.4.tgz#af839413dcead2365110968783b0af739d779664"
+  integrity sha512-aEtNJqoNHWR/wf7Z2JJp12IqDStQoU/JvxInvAJqWgDJK5wPmJbUSYEZ7/16UjmyfQp6kYs2FIrrr83EiaQCBg==
+  dependencies:
+    commander "^3.0.2"
+    xml-js "^1.6.11"
+
 svgo@^0.7.0:
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/svgo/-/svgo-0.7.2.tgz#9f5772413952135c6fefbf40afe6a4faa88b4bb5"
@@ -9314,6 +9327,13 @@ xml-js@1.6.9:
   version "1.6.9"
   resolved "https://registry.yarnpkg.com/xml-js/-/xml-js-1.6.9.tgz#6e516ce53c64ea0043cbc6ee8500e5d693602757"
   integrity sha512-Omi8lVfq3q3H0xnGcZKLQhoiOghTGN1xxfabah4FybYN1pyvUzh1X+cJ+vKKY3Zr255y1H5IUAT3u3lznshdbw==
+  dependencies:
+    sax "^1.2.4"
+
+xml-js@^1.6.11:
+  version "1.6.11"
+  resolved "https://registry.yarnpkg.com/xml-js/-/xml-js-1.6.11.tgz#927d2f6947f7f1c19a316dd8eea3614e8b18f8e9"
+  integrity sha512-7rVi2KMfwfWFl+GpPg6m80IVMWXLRjO+PxTq7V2CDhoGak0wzYzFgUY2m4XJ47OGdXd8eLE8EmwfAmdjw7lC1g==
   dependencies:
     sax "^1.2.4"
 
