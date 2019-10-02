@@ -76,9 +76,9 @@ export default class ByteSizes extends React.Component<
     ),
   };
 
-  private currentInput = new Bacon.Bus<any, string>();
-  private inputStream = new Bacon.Bus<any, string>();
-  private selectedSrcStr = new Bacon.Bus<any, string>();
+  private currentInput = new Bacon.Bus<string>();
+  private inputStream = new Bacon.Bus<string>();
+  private selectedSrcStr = new Bacon.Bus<string>();
 
   public componentDidMount() {
     this.currentInput = new Bacon.Bus();

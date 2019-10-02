@@ -113,9 +113,9 @@ export default class TextConversion extends React.Component<
   private sourceRef = React.createRef<HTMLInputElement>();
   private targetRef = React.createRef<HTMLInputElement>();
 
-  private sourceStr = new Bacon.Bus<any, string>();
-  private targetStr = new Bacon.Bus<any, string>();
-  private selectedStr = new Bacon.Bus<any, string>();
+  private sourceStr = new Bacon.Bus<string>();
+  private targetStr = new Bacon.Bus<string>();
+  private selectedStr = new Bacon.Bus<string>();
 
   public componentDidMount() {
     const initialConverter = getConverterFromStore();

@@ -14,7 +14,7 @@ interface CryptoType {
   readonly name: string;
   readonly calculate: (x: string) => string;
   readonly code: string;
-  valueStream?: Bacon.Bus<any, string>;
+  valueStream?: Bacon.Bus<string>;
 }
 
 export function hash(x: string, algorithm: string): string {
@@ -31,8 +31,8 @@ export default class Cryptography extends React.Component<
   private cryptoList: CryptoType[];
   private cryptos: { [key: string]: CryptoType };
   private default: string;
-  private inputStream = new Bacon.Bus<any, string>();
-  private cryptoSelectStream = new Bacon.Bus<any, string>();
+  private inputStream = new Bacon.Bus<string>();
+  private cryptoSelectStream = new Bacon.Bus<string>();
 
   constructor(props: CryptographyProps) {
     super(props);
@@ -56,7 +56,7 @@ export default class Cryptography extends React.Component<
       )
     );
     this.cryptoList.forEach(l => {
-      l.valueStream = new Bacon.Bus<any, string>();
+      l.valueStream = new Bacon.Bus<string>();
       const prop = l.valueStream.toProperty('');
       prop
         .combine(

@@ -48,7 +48,7 @@ export default class Links extends React.Component<{}, LinksState> {
     storedLinks: getLinksFromStore(),
   };
 
-  private linkStream = new Bacon.Bus<any, string>();
+  private linkStream = new Bacon.Bus<string>();
 
   public componentDidMount() {
     const validated = this.linkStream.map(l => validate(l));

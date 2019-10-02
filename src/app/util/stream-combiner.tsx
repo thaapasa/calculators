@@ -20,19 +20,16 @@ export class StreamCombiner<
 > {
   // Send inputs via these input handlers; input will be propagated to other streams
   inputs: Record<keyof O, InputChangeHandler>;
-  output: B.EventStream<
-    any,
-    { selected: keyof O; output: Record<keyof O, any> }
-  >;
+  output: B.EventStream<{ selected: keyof O; output: Record<keyof O, any> }>;
   // This is used to listen for the outputs
-  private outputRecord = new B.Bus<any, Record<keyof O, S | string>>();
+  private outputRecord = new B.Bus<Record<keyof O, S | string>>();
 
   constructor(inputs: O) {
-    const inputBuses: Record<keyof O, B.Bus<any, S | string>> = R.map(
-      () => new B.Bus<any, S>(),
+    const inputBuses: Record<keyof O, B.Bus<S | string>> = R.map(
+      () => new B.Bus<S | string>(),
       inputs
     );
-    const selectedInputStream = new B.Bus<any, [keyof O, S | string]>();
+    const selectedInputStream = new B.Bus<[keyof O, S | string]>();
 
     this.inputs = mapObject(
       (_, k) => (e: InputChangeType<S>) => {
@@ -49,7 +46,7 @@ export class StreamCombiner<
       inputs
     );
 
-    B.combineTemplate<any, Record<keyof O, T>>(convertedInputs)
+    B.combineTemplate<Record<keyof O, T>>(convertedInputs)
       .sampledBy(selectedInputStream, (values, selected) => ({
         values,
         selected,

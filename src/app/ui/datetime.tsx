@@ -263,7 +263,7 @@ export default class DateTime extends React.Component<
     nameDay: '',
   };
 
-  private streams: { [key: string]: Bacon.Bus<any, any> } = {
+  private streams: { [key: string]: Bacon.Bus<any> } = {
     focused: new Bacon.Bus(),
   };
 

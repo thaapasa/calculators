@@ -73,21 +73,21 @@ export default class ByteValueSelector extends React.Component<
     parent: 0,
     slider: 0,
   };
-  private curSrcStr = new Bacon.Bus<any, SelectorType>();
-  private inputStr: { [key: string]: Bacon.Bus<any, string | number> } = {};
+  private curSrcStr = new Bacon.Bus<SelectorType>();
+  private inputStr: { [key: string]: Bacon.Bus<string | number> } = {};
 
   constructor(props: SelectorProps) {
     super(props);
 
     types.forEach(t => {
       this.state[t] = typeInfo[t].write(this.props.setValue);
-      this.inputStr[t] = new Bacon.Bus<any, string | number>();
+      this.inputStr[t] = new Bacon.Bus<string | number>();
     });
 
     const newValStr = Bacon.mergeAll(
       types.map(t => this.inputStr[t].map(typeInfo[t].read))
     );
-    Bacon.combineAsArray<any, number | string>(
+    Bacon.combineAsArray<number | string>(
       newValStr,
       this.curSrcStr.toProperty('parent')
     ).onValue(x => this.showValue(x[0] as number, x[1] as string));

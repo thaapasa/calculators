@@ -45,7 +45,7 @@ export default class CheckValue extends React.Component<
     width: '',
   };
 
-  private inputStream: Bacon.Bus<any, string> = new Bacon.Bus<any, string>();
+  private inputStream: Bacon.Bus<string> = new Bacon.Bus<string>();
 
   public constructor(props: CheckProps) {
     super(props);

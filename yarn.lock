@@ -208,14 +208,6 @@
     prop-types "^15.7.2"
     react-is "^16.8.6"
 
-"@types/baconjs@0.7.33":
-  version "0.7.33"
-  resolved "https://registry.yarnpkg.com/@types/baconjs/-/baconjs-0.7.33.tgz#4f6d0afb702636d109768b6ebde2d71f8b2d9648"
-  integrity sha512-M/JxUV/KPmP2nhBHf4nON7wO2jx5VtWauCdqffysMv3dzrW2ujd7mcE34uxpkMzzHboqT02vuSUFgI4Dq+tGOw==
-  dependencies:
-    "@types/jquery" "*"
-    "@types/node" "*"
-
 "@types/history@*":
   version "4.7.3"
   resolved "https://registry.yarnpkg.com/@types/history/-/history-4.7.3.tgz#856c99cdc1551d22c22b18b5402719affec9839a"
@@ -232,13 +224,6 @@
   integrity sha512-jcDDXdjTcrQzdN06+TSVsPPqxvsZA/5QkYfIZlq1JMw7FdP5AZylbOc+6B/cuDurctRe+MziUMtQ3xQdrbjqyQ==
   dependencies:
     "@types/jest-diff" "*"
-
-"@types/jquery@*":
-  version "3.3.31"
-  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.3.31.tgz#27c706e4bf488474e1cb54a71d8303f37c93451b"
-  integrity sha512-Lz4BAJihoFw5nRzKvg4nawXPzutkv7wmfQ5121avptaSIXlDNJCUuxZxX/G+9EVidZGuO0UBlk+YjKbwRKJigg==
-  dependencies:
-    "@types/sizzle" "*"
 
 "@types/json5@^0.0.29":
   version "0.0.29"
@@ -315,11 +300,6 @@
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
-
-"@types/sizzle@*":
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.2.tgz#a811b8c18e2babab7d542b3365887ae2e4d9de47"
-  integrity sha512-7EJYyKTL7tFR8+gDbB6Wwz/arpGa0Mywk1TJbNzKzHtzbwVmY4HR9WqS5VV7dsBUKQmPNr192jHr/VpBluj/hg==
 
 "@types/styled-components@4.1.19":
   version "4.1.19"
@@ -1474,10 +1454,10 @@ babylon@^6.18.0:
   resolved "https://registry.yarnpkg.com/babylon/-/babylon-6.18.0.tgz#af2f3b88fa6f5c1e4c634d1a0f8eac4f55b395e3"
   integrity sha512-q/UEjfGJ2Cm3oKV71DJz9d25TPnq5rhBVL2Q4fA5wcC3jcrdn7+SssEybFIxwAvvP+YCsCYNKughoF33GxgycQ==
 
-baconjs@2.0.10:
-  version "2.0.10"
-  resolved "https://registry.yarnpkg.com/baconjs/-/baconjs-2.0.10.tgz#314db112ab60220ccb4d4bd476d957d82faaed36"
-  integrity sha512-Du95L77dWRZfWWXdXllahfuF15Jt1Kt3Od9UjviTK69OuCdWXt0TBOJf2WDLg2X14lvIawjXfU5vsJ70cdqVfQ==
+baconjs@3.0.10:
+  version "3.0.10"
+  resolved "https://registry.yarnpkg.com/baconjs/-/baconjs-3.0.10.tgz#89fd61df149cd85a52d87cb157222b303a4ba65b"
+  integrity sha512-fPMIEtvyG0/jpYC5A307kDfA11lcXsKQugwV8poPnSnG2bmY3gSRa8oL4EVz2L4YCgV16csJ9T+wANG/5cLh0A==
 
 balanced-match@^0.4.2:
   version "0.4.2"
