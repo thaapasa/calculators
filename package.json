@@ -21,7 +21,6 @@
   "dependencies": {
     "@material-ui/core": "4.5.0",
     "@material-ui/icons": "4.4.3",
-    "@material-ui/lab": "4.0.0-alpha.28",
     "baconjs": "2.0.10",
     "cross-env": "6.0.3",
     "crypto-browserify": "3.12.0",
