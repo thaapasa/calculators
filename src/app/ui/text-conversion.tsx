@@ -41,6 +41,14 @@ function toCompactJSON(s: string): string {
   }
 }
 
+function svgToRn(s: string): string {
+  try {
+    return svgToReactNative(s);
+  } catch (e) {
+    return 'Virheellinen SVG';
+  }
+}
+
 const convertInfo: { [key: string]: ConverterInfo } = {
   js2xml: {
     encode: jsonStringToXml,
@@ -48,7 +56,7 @@ const convertInfo: { [key: string]: ConverterInfo } = {
     name: 'JSON ⇆ XML',
   },
   svg2RN: {
-    encode: svgToReactNative,
+    encode: svgToRn,
     decode: identity,
     name: 'SVG → React Native',
   },
@@ -146,7 +154,7 @@ export default class TextConversion extends React.Component<
           <StyledSelect
             inputProps={{ id: 'conversion' }}
             value={this.state.selected}
-            onChange={e => this.selectedStr.push(e.target.value)}
+            onChange={e => this.selectedStr.push(e.target.value as any)}
           >
             {converters.map(c => (
               <MenuItem value={c} key={c}>

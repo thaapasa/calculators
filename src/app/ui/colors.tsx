@@ -1,4 +1,4 @@
-import { Avatar, TextField } from '@material-ui/core';
+import { Avatar, Slider, TextField } from '@material-ui/core';
 import {
   hexToRGB,
   HSLKey,
@@ -14,7 +14,6 @@ import { InputCombiner } from 'app/util/input-combiner';
 import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
 import * as R from 'ramda';
 
-import { Slider } from '@material-ui/lab';
 import { numberify } from 'app/calc/numbers';
 import { mapObject } from 'app/util/util';
 import React from 'react';
