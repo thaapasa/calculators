@@ -1,5 +1,5 @@
 import { TextField } from '@material-ui/core';
-import Bacon from 'baconjs';
+import * as Bacon from 'baconjs';
 import React from 'react';
 import styled from 'styled-components';
 import * as numbers from '../calc/numbers';
@@ -99,7 +99,7 @@ interface NumbersState {
   values: Record<string, string>;
 }
 
-const emptyStream = Bacon.never<any, number>();
+const emptyStream = Bacon.never<number>();
 
 export default class Numbers extends React.Component<
   NumbersProps,

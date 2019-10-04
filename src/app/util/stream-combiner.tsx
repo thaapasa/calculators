@@ -46,14 +46,14 @@ export class StreamCombiner<
       inputs
     );
 
-    B.combineTemplate<Record<keyof O, T>>(convertedInputs)
-      .sampledBy(selectedInputStream, (values, selected) => ({
-        values,
-        selected,
-      }))
+    B.combineTemplate({
+      values: B.combineTemplate(convertedInputs),
+      selected: selectedInputStream,
+    })
+      .sampledBy(selectedInputStream)
       .onValue(f => {
         const selected = f.selected[0];
-        const value = f.values[selected];
+        const value = (f.values as any)[selected];
         const outputRecord = mapObject(
           (_, k) => (k === selected ? f.selected[1] : inputs[k].write(value)),
           inputs
@@ -61,12 +61,14 @@ export class StreamCombiner<
         this.outputRecord.push(outputRecord);
       });
 
-    this.output = selectedInputStream
-      .toProperty([objectKeys(inputs)[0], ''])
-      .sampledBy(this.outputRecord, (selected, output) => ({
-        output,
-        selected: selected[0],
-      }));
+    const sel = selectedInputStream
+      .map(s => s[0])
+      .toProperty(objectKeys(inputs)[0]);
+
+    this.output = B.combineTemplate({
+      selected: sel,
+      output: this.outputRecord,
+    }).sampledBy(this.outputRecord);
   }
 
   // Bind a React class to see the outputs in its state

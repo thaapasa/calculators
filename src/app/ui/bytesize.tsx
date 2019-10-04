@@ -1,5 +1,5 @@
 import { TextField } from '@material-ui/core';
-import Bacon from 'baconjs';
+import * as Bacon from 'baconjs';
 import React, { CSSProperties } from 'react';
 import styled from 'styled-components';
 import { isString, pairsToObject } from '../util/util';

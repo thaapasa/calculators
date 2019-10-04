@@ -1,5 +1,5 @@
 import { TextField } from '@material-ui/core';
-import Bacon from 'baconjs';
+import * as Bacon from 'baconjs';
 import crypto = require('crypto-browserify');
 import React from 'react';
 import Item from './component/item';

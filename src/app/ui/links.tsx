@@ -7,7 +7,7 @@ import {
   TextField,
 } from '@material-ui/core';
 import { Delete, NoteAdd } from '@material-ui/icons';
-import Bacon from 'baconjs';
+import * as Bacon from 'baconjs';
 import React from 'react';
 import * as store from '../util/store';
 import { startsWith } from '../util/strings';

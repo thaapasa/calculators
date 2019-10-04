@@ -1,5 +1,5 @@
 import { TextField } from '@material-ui/core';
-import Bacon from 'baconjs';
+import * as Bacon from 'baconjs';
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
 import * as util from '../../util/util';

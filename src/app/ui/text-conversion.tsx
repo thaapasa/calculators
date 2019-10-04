@@ -5,7 +5,7 @@ import {
   Select,
   TextField,
 } from '@material-ui/core';
-import Bacon from 'baconjs';
+import * as Bacon from 'baconjs';
 import React from 'react';
 import styled from 'styled-components';
 import svgToReactNative from 'svg-rn';

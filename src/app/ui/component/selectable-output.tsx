@@ -1,6 +1,6 @@
 import { Checkbox, TextField } from '@material-ui/core';
 import { TextFormat } from '@material-ui/icons';
-import Bacon from 'baconjs';
+import * as Bacon from 'baconjs';
 import React from 'react';
 import styled from 'styled-components';
 import { toUpperCase } from '../../util/strings';
@@ -106,8 +106,8 @@ export default class SelectableOutput extends React.Component<
   };
 
   private ucIfChecked = (
-    stream: Bacon.Property<any, boolean>
-  ): Bacon.Property<any, str2str> => {
+    stream: Bacon.Property<boolean>
+  ): Bacon.Property<str2str> => {
     return stream.map(checked => (checked ? toUpperCase : identity));
   };
 }
