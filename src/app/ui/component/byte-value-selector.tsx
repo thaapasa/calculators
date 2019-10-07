@@ -28,7 +28,7 @@ const sliderToVal: (value: string | number) => number = Number;
 const ComponentField = styled(TextField)`
   width: 4em;
   margin-right: 1em !important;
-` as typeof TextField;
+`;
 
 const types = ['parent', 'dec', 'hex', 'slider'];
 

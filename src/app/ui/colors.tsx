@@ -25,7 +25,7 @@ import { HalfSection } from './component/section';
 
 const ColorAvatar = styled(Avatar)`
   border: 1px solid #bbbbbb;
-` as typeof Avatar;
+`;
 
 const texts = {
   hex: 'Heksakoodi',

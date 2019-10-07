@@ -205,7 +205,7 @@ export default class TextConversion extends React.Component<
 
 const StyledSelect = styled(Select)`
   width: 260px;
-` as typeof Select;
+`;
 
 const LenghtArea = styled(LeftPad)`
   margin-top: 16px;
@@ -217,4 +217,4 @@ const TextRow = styled(FlexRow)`
 
 const TextEdit = styled(TextField)`
   margin-top: 8px !important;
-` as typeof TextField;
+`;

@@ -123,4 +123,4 @@ const FloatingPaper = styled(Paper)`
   position: absolute;
   padding-right: 32px;
   z-index: 1;
-` as typeof Paper;
+`;

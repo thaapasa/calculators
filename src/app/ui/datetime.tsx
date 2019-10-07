@@ -471,7 +471,7 @@ const TimeField = styled(TextField)`
   & textarea {
     margin-left: 4px;
   }
-` as typeof TextField;
+`;
 
 const findNameDays = (input: string): NameDayItem[] => {
   const res: NameDayItem[] = [];

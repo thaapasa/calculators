@@ -32,10 +32,3 @@ Run tests:
 ### See the results
 
 After building, open the file `build/index.html` in your browser.
-
-## Miscellaneous
-
-`styled-components` and `@material-ui/core` do not work well together because of typing issues.
-See https://github.com/DefinitelyTyped/DefinitelyTyped/issues/29832.
-
-Use `const Whatever = styled(Button)... as typeof Button;` to work around the issue.

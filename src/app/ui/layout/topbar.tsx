@@ -22,7 +22,7 @@ interface ToolbarProps {
 
 const TopLogo = styled(Logo)`
   margin-right: 16px;
-` as typeof Logo;
+`;
 
 class CalculatorToolbar extends React.Component<
   RouteComponentProps & ToolbarProps

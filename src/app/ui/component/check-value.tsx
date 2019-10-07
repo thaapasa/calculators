@@ -12,7 +12,7 @@ const CheckItem = styled(Item)`
 
 const CheckField = styled(TextField)`
   width: 1em;
-` as typeof TextField;
+`;
 
 interface CheckProps {
   readonly width: string;
