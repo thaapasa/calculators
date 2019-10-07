@@ -1,5 +1,4 @@
-import { TextField } from '@material-ui/core';
-import { Slider } from '@material-ui/lab';
+import { Slider, TextField } from '@material-ui/core';
 import * as Bacon from 'baconjs';
 import React from 'react';
 import styled from 'styled-components';
@@ -74,24 +73,25 @@ export default class ByteValueSelector extends React.Component<
     parent: 0,
     slider: 0,
   };
-  private curSrcStr = new Bacon.Bus<any, SelectorType>();
-  private inputStr: { [key: string]: Bacon.Bus<any, string | number> } = {};
+  private curSrcStr = new Bacon.Bus<SelectorType>();
+  private inputStr: { [key: string]: Bacon.Bus<string | number> } = {};
 
   constructor(props: SelectorProps) {
     super(props);
 
     types.forEach(t => {
+      // eslint-disable-next-line
       this.state[t] = typeInfo[t].write(this.props.setValue);
-      this.inputStr[t] = new Bacon.Bus<any, string | number>();
+      this.inputStr[t] = new Bacon.Bus<string | number>();
     });
 
     const newValStr = Bacon.mergeAll(
       types.map(t => this.inputStr[t].map(typeInfo[t].read))
     );
-    Bacon.combineAsArray(
+    Bacon.combineAsArray<number | string>(
       newValStr,
       this.curSrcStr.toProperty('parent')
-    ).onValue(x => this.showValue(x[0], x[1]));
+    ).onValue(x => this.showValue(x[0] as number, x[1] as string));
   }
 
   public componentDidUpdate(prevProps: SelectorProps) {
@@ -107,7 +107,9 @@ export default class ByteValueSelector extends React.Component<
         max={255}
         min={0}
         step={1}
-        onChange={(e, v: number) => this.pushNumberValue(v, 'slider')}
+        onChange={(e, v: number | number[]) =>
+          this.pushNumberValue(Array.isArray(v) ? v[0] : v, 'slider')
+        }
       />
     );
     const content = (

@@ -1,5 +1,5 @@
 import { TextField } from '@material-ui/core';
-import Bacon from 'baconjs';
+import * as Bacon from 'baconjs';
 import React, { CSSProperties } from 'react';
 import styled from 'styled-components';
 import { isString, pairsToObject } from '../util/util';
@@ -76,9 +76,9 @@ export default class ByteSizes extends React.Component<
     ),
   };
 
-  private currentInput = new Bacon.Bus<any, string>();
-  private inputStream = new Bacon.Bus<any, string>();
-  private selectedSrcStr = new Bacon.Bus<any, string>();
+  private currentInput = new Bacon.Bus<string>();
+  private inputStream = new Bacon.Bus<string>();
+  private selectedSrcStr = new Bacon.Bus<string>();
 
   public componentDidMount() {
     this.currentInput = new Bacon.Bus();

@@ -1,4 +1,5 @@
-import rot13 from '../../app/calc/rot13';
+import 'jest';
+import rot13 from './rot13';
 
 describe('ROT-13', () => {
   it('should calculate empty string correctly', () => {

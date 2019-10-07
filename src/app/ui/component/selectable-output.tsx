@@ -1,6 +1,6 @@
 import { Checkbox, TextField } from '@material-ui/core';
 import { TextFormat } from '@material-ui/icons';
-import Bacon from 'baconjs';
+import * as Bacon from 'baconjs';
 import React from 'react';
 import styled from 'styled-components';
 import { toUpperCase } from '../../util/strings';
@@ -35,8 +35,8 @@ export default class SelectableOutput extends React.Component<
     value: '',
   };
 
-  private inputStream = new Bacon.Bus<any, string>();
-  private ucStream = new Bacon.Bus<any, boolean>();
+  private inputStream = new Bacon.Bus<string>();
+  private ucStream = new Bacon.Bus<boolean>();
 
   public componentDidMount() {
     this.streamCalculation(
@@ -80,16 +80,13 @@ export default class SelectableOutput extends React.Component<
   }
 
   private streamCalculation = (
-    inputStream: Bacon.Bus<any, string>,
+    inputStream: Bacon.Bus<string>,
     calculation: str2str,
-    calcMapper: Bacon.Property<any, str2str>
+    calcMapper: Bacon.Property<str2str>
   ) => {
-    const calculated: Bacon.Observable<any, string> = inputStream.map(
-      calculation
-    );
+    const calculated: Bacon.Observable<string> = inputStream.map(calculation);
     const mapped = calcMapper
       ? (calculated.combine(calcMapper, (val, m) => m(val)) as Bacon.Property<
-          any,
           string
         >)
       : calculated;
@@ -109,8 +106,8 @@ export default class SelectableOutput extends React.Component<
   };
 
   private ucIfChecked = (
-    stream: Bacon.Property<any, boolean>
-  ): Bacon.Property<any, str2str> => {
+    stream: Bacon.Property<boolean>
+  ): Bacon.Property<str2str> => {
     return stream.map(checked => (checked ? toUpperCase : identity));
   };
 }

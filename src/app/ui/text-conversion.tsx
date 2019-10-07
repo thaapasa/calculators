@@ -5,7 +5,7 @@ import {
   Select,
   TextField,
 } from '@material-ui/core';
-import Bacon from 'baconjs';
+import * as Bacon from 'baconjs';
 import React from 'react';
 import styled from 'styled-components';
 import svgToReactNative from 'svg-rn';
@@ -41,6 +41,14 @@ function toCompactJSON(s: string): string {
   }
 }
 
+function svgToRn(s: string): string {
+  try {
+    return svgToReactNative(s);
+  } catch (e) {
+    return 'Virheellinen SVG';
+  }
+}
+
 const convertInfo: { [key: string]: ConverterInfo } = {
   js2xml: {
     encode: jsonStringToXml,
@@ -48,7 +56,7 @@ const convertInfo: { [key: string]: ConverterInfo } = {
     name: 'JSON ⇆ XML',
   },
   svg2RN: {
-    encode: svgToReactNative,
+    encode: svgToRn,
     decode: identity,
     name: 'SVG → React Native',
   },
@@ -105,9 +113,9 @@ export default class TextConversion extends React.Component<
   private sourceRef = React.createRef<HTMLInputElement>();
   private targetRef = React.createRef<HTMLInputElement>();
 
-  private sourceStr = new Bacon.Bus<any, string>();
-  private targetStr = new Bacon.Bus<any, string>();
-  private selectedStr = new Bacon.Bus<any, string>();
+  private sourceStr = new Bacon.Bus<string>();
+  private targetStr = new Bacon.Bus<string>();
+  private selectedStr = new Bacon.Bus<string>();
 
   public componentDidMount() {
     const initialConverter = getConverterFromStore();
@@ -146,7 +154,7 @@ export default class TextConversion extends React.Component<
           <StyledSelect
             inputProps={{ id: 'conversion' }}
             value={this.state.selected}
-            onChange={e => this.selectedStr.push(e.target.value)}
+            onChange={e => this.selectedStr.push(e.target.value as any)}
           >
             {converters.map(c => (
               <MenuItem value={c} key={c}>

@@ -7,21 +7,25 @@ import {
 } from './stream-defs';
 import { mapObject, objectKeys } from './util';
 
-export class InputCombiner<T, I, S extends { [k in keyof I]: string }> {
+export class InputCombiner<Target, Source extends Record<any, any>> {
   // Attachment points for input values. Send as string values or bind to input change events.
-  inputs: Record<keyof S, InputChangeHandler>;
+  inputs: Record<keyof Source, InputChangeHandler>;
   // Combined value can be observed via this
-  combined: B.Observable<any, T>;
+  combined: B.Observable<Target>;
 
-  private inputBuses: Record<keyof S, B.Bus<any, string>>;
-  private initialValues: S;
-  private triggerOutput = new B.Bus<any, void>();
-  private write: (val: T) => S;
+  private inputBuses: Record<keyof Source, B.Bus<string>>;
+  private initialValues: Source;
+  private triggerOutput = new B.Bus<void>();
+  private write: (val: Target) => Source;
 
-  constructor(initialValues: S, read: (inputs: S) => T, write: (val: T) => S) {
+  constructor(
+    initialValues: Source,
+    read: (inputs: Source) => Target,
+    write: (val: Target) => Source
+  ) {
     this.write = write;
     this.initialValues = initialValues;
-    this.inputBuses = R.map(() => new B.Bus<any, string>(), initialValues);
+    this.inputBuses = R.map(() => new B.Bus<string>(), initialValues);
 
     this.inputs = mapObject(
       (_, k) => (e: InputChangeType) => {
@@ -32,19 +36,21 @@ export class InputCombiner<T, I, S extends { [k in keyof I]: string }> {
       initialValues
     );
 
-    this.combined = B.combineTemplate<any, S>(this.inputBuses)
-      .sampledBy(this.triggerOutput)
-      .map(read);
+    const combinedOutput = B.combineTemplate(this.inputBuses).sampledBy(
+      this.triggerOutput
+    );
+
+    this.combined = combinedOutput.map(read) as any;
   }
 
-  init(r: React.Component<any, Record<keyof S, string>>) {
+  init(r: React.Component<any, Record<keyof Source, string>>) {
     objectKeys(this.initialValues).forEach(k => {
       this.inputs[k](this.initialValues[k]);
     });
     r.setState(this.initialValues);
   }
 
-  setValue = (value: T, propagate: boolean = false) => {
+  setValue = (value: Target, propagate: boolean = false) => {
     const r = this.write(value);
     objectKeys(r).forEach(k => this.inputBuses[k].push(r[k]));
     if (propagate) {

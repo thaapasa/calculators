@@ -7,7 +7,7 @@ import {
   TextField,
 } from '@material-ui/core';
 import { Delete, NoteAdd } from '@material-ui/icons';
-import Bacon from 'baconjs';
+import * as Bacon from 'baconjs';
 import React from 'react';
 import * as store from '../util/store';
 import { startsWith } from '../util/strings';
@@ -48,7 +48,7 @@ export default class Links extends React.Component<{}, LinksState> {
     storedLinks: getLinksFromStore(),
   };
 
-  private linkStream = new Bacon.Bus<any, string>();
+  private linkStream = new Bacon.Bus<string>();
 
   public componentDidMount() {
     const validated = this.linkStream.map(l => validate(l));
@@ -119,7 +119,7 @@ export default class Links extends React.Component<{}, LinksState> {
 }
 
 const Link = ({ href }: { href: string }) => (
-  <a href={href} target="_blank">
+  <a href={href} target="_blank" rel="noopener noreferrer">
     {href}
   </a>
 );

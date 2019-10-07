@@ -1,4 +1,5 @@
-import { hash } from '../../app/ui/cryptography';
+import 'jest';
+import { hash } from './cryptography';
 
 describe('MD5', () => {
   it('should calculate empty string correctly', () => {

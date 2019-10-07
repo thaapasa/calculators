@@ -1,4 +1,4 @@
-import { Avatar, TextField } from '@material-ui/core';
+import { Avatar, Slider, TextField } from '@material-ui/core';
 import {
   hexToRGB,
   HSLKey,
@@ -14,7 +14,6 @@ import { InputCombiner } from 'app/util/input-combiner';
 import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
 import * as R from 'ramda';
 
-import { Slider } from '@material-ui/lab';
 import { numberify } from 'app/calc/numbers';
 import { mapObject } from 'app/util/util';
 import React from 'react';
@@ -79,23 +78,28 @@ const hslCombiner = new InputCombiner(
   numberify
 );
 
-const types = {
+type TypeKeys = 'rgb' | 'hexString' | 'rgbString' | 'hsl';
+type SliderStreamType =
+  | StreamDefinition<string, RGBValue>
+  | StreamDefinition<HSLValue, RGBValue>;
+
+const types: Record<TypeKeys, SliderStreamType> = {
   rgb: {
     read: hexToRGB,
     write: rgbToHex,
-  } as StreamDefinition<string, RGBValue>,
+  },
   hexString: {
     read: hexToRGB,
     write: rgbToHex,
-  } as StreamDefinition<string, RGBValue>,
+  },
   rgbString: {
     read: () => ({ r: 0, g: 0, b: 0 }),
     write: rgbToRGBStr,
-  } as StreamDefinition<string, RGBValue>,
+  },
   hsl: {
     read: hslToRGB,
     write: rgbToHSL,
-  } as StreamDefinition<HSLValue, RGBValue>,
+  },
 };
 
 export default class Colors extends React.Component<ColorsProps, ColorState> {

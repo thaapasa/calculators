@@ -7,35 +7,30 @@ import {
 } from './stream-defs';
 import { mapObject, objectKeys } from './util';
 
-export interface StreamDefinition<S, T> {
-  read: (input: S | string) => T;
-  write: (input: T) => S;
+export interface StreamDefinition<Source, Target> {
+  read: (input: Source) => Target;
+  write: (input: Target) => Source;
 }
 
-export class StreamCombiner<
-  S,
-  T,
-  I,
-  O extends { [k in keyof I]: StreamDefinition<S, T> }
-> {
+export class StreamCombiner<InputKeys extends string, Target> {
   // Send inputs via these input handlers; input will be propagated to other streams
-  inputs: Record<keyof O, InputChangeHandler>;
-  output: B.EventStream<
-    any,
-    { selected: keyof O; output: Record<keyof O, any> }
-  >;
+  inputs: Record<InputKeys, InputChangeHandler>;
+  output: B.EventStream<{
+    selected: InputKeys;
+    output: Record<InputKeys, any>;
+  }>;
   // This is used to listen for the outputs
-  private outputRecord = new B.Bus<any, Record<keyof O, S | string>>();
+  private outputRecord = new B.Bus<Record<InputKeys, Target>>();
 
-  constructor(inputs: O) {
-    const inputBuses: Record<keyof O, B.Bus<any, S | string>> = R.map(
-      () => new B.Bus<any, S>(),
+  constructor(inputs: Record<InputKeys, StreamDefinition<any, Target>>) {
+    const inputBuses: Record<InputKeys, B.Bus<any>> = R.map(
+      () => new B.Bus<any>(),
       inputs
     );
-    const selectedInputStream = new B.Bus<any, [keyof O, S | string]>();
+    const selectedInputStream = new B.Bus<[InputKeys, any]>();
 
     this.inputs = mapObject(
-      (_, k) => (e: InputChangeType<S>) => {
+      (_, k) => (e: InputChangeType<any>) => {
         const val = isInputChangeEvent(e) ? e.target.value : e;
         inputBuses[k].push(val);
         // Input to bus k is directly piped to output of k
@@ -49,14 +44,14 @@ export class StreamCombiner<
       inputs
     );
 
-    B.combineTemplate<any, Record<keyof O, T>>(convertedInputs)
-      .sampledBy(selectedInputStream, (values, selected) => ({
-        values,
-        selected,
-      }))
+    B.combineTemplate({
+      values: B.combineTemplate(convertedInputs),
+      selected: selectedInputStream,
+    })
+      .sampledBy(selectedInputStream)
       .onValue(f => {
         const selected = f.selected[0];
-        const value = f.values[selected];
+        const value = (f.values as any)[selected];
         const outputRecord = mapObject(
           (_, k) => (k === selected ? f.selected[1] : inputs[k].write(value)),
           inputs
@@ -64,18 +59,20 @@ export class StreamCombiner<
         this.outputRecord.push(outputRecord);
       });
 
-    this.output = selectedInputStream
-      .toProperty([objectKeys(inputs)[0], ''])
-      .sampledBy(this.outputRecord, (selected, output) => ({
-        output,
-        selected: selected[0],
-      }));
+    const sel = selectedInputStream
+      .map(s => s[0])
+      .toProperty(objectKeys(inputs)[0]);
+
+    this.output = B.combineTemplate({
+      selected: sel,
+      output: this.outputRecord,
+    }).sampledBy(this.outputRecord);
   }
 
   // Bind a React class to see the outputs in its state
   bindOutputs = (
-    r: React.Component<any, Record<keyof O, string | S>>,
-    process?: (o: Record<keyof O, string | S>) => void
+    r: React.Component<any, Record<InputKeys, any>>,
+    process?: (o: Record<InputKeys, any>) => void
   ) => {
     return this.outputRecord.onValue(o =>
       r.setState(o, process ? () => process(o) : undefined)

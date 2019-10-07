@@ -1,5 +1,5 @@
 import { TextField } from '@material-ui/core';
-import Bacon from 'baconjs';
+import * as Bacon from 'baconjs';
 import moment from 'moment';
 import React from 'react';
 import styled from 'styled-components';
@@ -263,12 +263,13 @@ export default class DateTime extends React.Component<
     nameDay: '',
   };
 
-  private streams: { [key: string]: Bacon.Bus<any, any> } = {
+  private streams: { [key: string]: Bacon.Bus<any> } = {
     focused: new Bacon.Bus(),
   };
 
   constructor(props: DateTimeProps) {
     super(props);
+    // eslint-disable-next-line
     types.forEach(t => (this.state[t] = ''));
     this.state.datePicker = undefined;
   }
