@@ -1,4 +1,5 @@
-import * as n from '../../app/calc/numbers';
+import 'jest';
+import * as n from './numbers';
 
 describe('Numbers', () => {
   describe('binary string -> int', () => {

@@ -1,4 +1,5 @@
-import { toUpperCaseFirst } from '../../app/util/strings';
+import 'jest';
+import { toUpperCaseFirst } from './strings';
 
 describe('toUpperCaseFirst', () => {
   it('should uppercase first letter', () => {

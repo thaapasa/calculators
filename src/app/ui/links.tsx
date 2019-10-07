@@ -119,7 +119,7 @@ export default class Links extends React.Component<{}, LinksState> {
 }
 
 const Link = ({ href }: { href: string }) => (
-  <a href={href} target="_blank">
+  <a href={href} target="_blank" rel="noopener noreferrer">
     {href}
   </a>
 );

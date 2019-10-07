@@ -94,7 +94,9 @@ function hue2rgb(p: number, q: number, t: number): number {
 export function hslToRGB(hsl: HSLValue): RGBValue {
   let r, g, b;
   let { h, s, l } = hsl;
-  (h /= HSLMaxValue), (s /= HSLMaxValue), (l /= HSLMaxValue);
+  h /= HSLMaxValue;
+  s /= HSLMaxValue;
+  l /= HSLMaxValue;
 
   if (s === 0) {
     r = g = b = l; // achromatic
@@ -117,7 +119,10 @@ export function hslToRGB(hsl: HSLValue): RGBValue {
  */
 export function rgbToHSL(rgb: RGBValue): HSLValue {
   let { r, g, b } = rgb;
-  (r /= 255), (g /= 255), (b /= 255);
+  r /= 255;
+  g /= 255;
+  b /= 255;
+
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   let h = 0,
