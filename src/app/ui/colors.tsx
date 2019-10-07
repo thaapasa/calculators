@@ -78,23 +78,28 @@ const hslCombiner = new InputCombiner(
   numberify
 );
 
-const types = {
+type TypeKeys = 'rgb' | 'hexString' | 'rgbString' | 'hsl';
+type SliderStreamType =
+  | StreamDefinition<string, RGBValue>
+  | StreamDefinition<HSLValue, RGBValue>;
+
+const types: Record<TypeKeys, SliderStreamType> = {
   rgb: {
     read: hexToRGB,
     write: rgbToHex,
-  } as StreamDefinition<string, RGBValue>,
+  },
   hexString: {
     read: hexToRGB,
     write: rgbToHex,
-  } as StreamDefinition<string, RGBValue>,
+  },
   rgbString: {
     read: () => ({ r: 0, g: 0, b: 0 }),
     write: rgbToRGBStr,
-  } as StreamDefinition<string, RGBValue>,
+  },
   hsl: {
     read: hslToRGB,
     write: rgbToHSL,
-  } as StreamDefinition<HSLValue, RGBValue>,
+  },
 };
 
 export default class Colors extends React.Component<ColorsProps, ColorState> {
