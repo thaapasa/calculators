@@ -2,7 +2,7 @@ import { TextField } from '@material-ui/core';
 import * as Bacon from 'baconjs';
 import React, { CSSProperties } from 'react';
 import styled from 'styled-components';
-import { isString, pairsToObject } from '../util/util';
+import { allFieldsOfType, isString, pairsToObject } from '../util/util';
 import Item from './component/item';
 import { HalfSection } from './component/section';
 import { Flex, FlexRow } from './layout/elements';
@@ -38,7 +38,7 @@ const converter = (
   write: x => (x / ratio).toFixed(decimals),
 });
 
-const types = {
+const types = allFieldsOfType<TypeInfo>()({
   byte: converter('Tavua', 'B', 1, 0),
   kibi: converter('Kibitavua', 'KiB', KIBI),
   mebi: converter('Mebitavua', 'MiB', MEBI),
@@ -48,7 +48,7 @@ const types = {
   mega: converter('Megatavua', 'Mt', MEGA),
   giga: converter('Gigatavua', 'Gt', GIGA),
   tera: converter('Teratavua', 'Tt', TERA),
-};
+});
 const typeKeys = Object.keys(types);
 
 const leftColumn: string[] = ['kibi', 'mebi', 'gibi', 'tebi'];

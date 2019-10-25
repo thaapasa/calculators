@@ -30,7 +30,7 @@ function readZero(_: string): number {
   return 0;
 }
 
-const types: Record<string, TypeInfo> = {
+const types = util.allFieldsOfType<TypeInfo>()({
   binary: {
     read: numbers.binaryStrToInt,
     write: numbers.intToBinaryStr,
@@ -75,7 +75,7 @@ const types: Record<string, TypeInfo> = {
     maxLength: 10,
     readOnly: true,
   },
-};
+});
 
 const typeKeys = Object.keys(types);
 

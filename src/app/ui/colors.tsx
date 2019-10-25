@@ -15,7 +15,7 @@ import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
 import * as R from 'ramda';
 
 import { numberify } from 'app/calc/numbers';
-import { mapObject } from 'app/util/util';
+import { allFieldsOfType, mapObject } from 'app/util/util';
 import React from 'react';
 import styled from 'styled-components';
 import ByteValueSelector from './component/byte-value-selector';
@@ -78,12 +78,11 @@ const hslCombiner = new InputCombiner(
   numberify
 );
 
-type TypeKeys = 'rgb' | 'hexString' | 'rgbString' | 'hsl';
 type SliderStreamType =
   | StreamDefinition<string, RGBValue>
   | StreamDefinition<HSLValue, RGBValue>;
 
-const types: Record<TypeKeys, SliderStreamType> = {
+const types = allFieldsOfType<SliderStreamType>()({
   rgb: {
     read: hexToRGB,
     write: rgbToHex,
@@ -100,7 +99,7 @@ const types: Record<TypeKeys, SliderStreamType> = {
     read: hslToRGB,
     write: rgbToHSL,
   },
-};
+});
 
 export default class Colors extends React.Component<ColorsProps, ColorState> {
   public state: ColorState = {

@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { strToInt } from '../calc/numbers';
 import { findNameDayFor, getNameDay, MonthDay } from '../util/namedays';
 import { zeroPad } from '../util/strings';
-import { identity, isDefined, isString } from '../util/util';
+import { allFieldsOfType, identity, isDefined, isString } from '../util/util';
 import AutoComplete from './component/autocomplete';
 import Item from './component/item';
 import { HalfSection } from './component/section';
@@ -90,60 +90,60 @@ interface DateTimeType {
   readonly readOnly?: boolean;
 }
 
-const typeInfo = {
+const typeInfo = allFieldsOfType<DateTimeType>()({
   week: {
     write: (val: any) => toStateValue(val, toIsoWeek),
     reportValue: true,
     style: styles.center,
-  } as DateTimeType,
-  focused: { write: identity } as DateTimeType,
-  selected: { write: identity } as DateTimeType,
+  },
+  focused: { write: identity },
+  selected: { write: identity },
   iso8601: {
     read: v => moment(v, moment.ISO_8601),
     write: (m: any) => (m.isValid() ? m.format() : ''),
     src: 'iso8601',
     reportValue: true,
     fullWidth: true,
-  } as DateTimeType,
+  },
   iso8601utc: {
     read: v => moment(v, moment.ISO_8601),
     write: (m: any) => (m.isValid() ? m.toISOString() : ''),
     src: 'iso8601utc',
     reportValue: true,
     fullWidth: true,
-  } as DateTimeType,
+  },
   nameDay: {
     write: (val: any) =>
       toStateValue(val, (v: any) => getNameDay(v.month() + 1, v.date())),
     reportValue: true,
     style: styles.center,
-  } as DateTimeType,
+  },
   weekDay: {
     write: (val: any) =>
       toStateValue(val, (v: any) => texts.weekDay[v.isoWeekday()]),
     style: styles.center,
-  } as DateTimeType,
+  },
   javaTime: {
     read: readJavaTime,
     src: 'javaTime',
     reportValue: true,
     write: (m: any) => (m.isValid() ? m.valueOf() : ''),
     fullWidth: true,
-  } as DateTimeType,
+  },
   unixTime: {
     read: readUnixTime,
     src: 'unixTime',
     reportValue: true,
     write: (m: any) => (m.isValid() ? m.unix() : ''),
     fullWidth: true,
-  } as DateTimeType,
+  },
   datePicker: {
     read: readDate,
     src: 'value',
     write: writeDate,
     style: styles.len7,
     maxLength: 10,
-  } as DateTimeType,
+  },
   date: {
     read: readDateText,
     src: 'value',
@@ -151,43 +151,43 @@ const typeInfo = {
     style: styles.len10,
     reportValue: true,
     maxLength: 10,
-  } as DateTimeType,
+  },
   hour: {
     read: strToInt,
     src: 'value',
     write: (m: any) => (m.isValid() ? pad(m.hour(), 2) : ''),
     style: styles.len2,
     maxLength: 2,
-  } as DateTimeType,
+  },
   minute: {
     read: strToInt,
     src: 'value',
     write: (m: any) => (m.isValid() ? pad(m.minute(), 2) : ''),
     style: styles.len2,
     maxLength: 2,
-  } as DateTimeType,
+  },
   second: {
     read: strToInt,
     src: 'value',
     write: (m: any) => (m.isValid() ? pad(m.second(), 2) : ''),
     style: styles.len2,
     maxLength: 2,
-  } as DateTimeType,
+  },
   millisecond: {
     read: strToInt,
     src: 'value',
     write: (m: any) => (m.isValid() ? pad(m.millisecond(), 3) : ''),
     style: styles.len3,
     maxLength: 3,
-  } as DateTimeType,
+  },
   timeZone: {
     write: (m: any) => (m.isValid() ? m.format('Z') : ''),
     style: styles.len7,
     maxLength: 6,
     readOnly: true,
-  } as DateTimeType,
-  direct: { write: identity, src: 'direct' } as DateTimeType,
-};
+  },
+  direct: { write: identity, src: 'direct' },
+});
 
 const hints = {
   date: '31.12.2016',

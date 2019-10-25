@@ -74,6 +74,10 @@ export function mapObject<S, T, O, X extends { [k in keyof O]: S }>(
   return R.mapObjIndexed(f as any, obj) as Record<keyof X, T>;
 }
 
+export function allFieldsOfType<T>() {
+  return <X extends Record<any, T>>(obj: X): Record<keyof X, T> => obj;
+}
+
 const consoleMethods = [
   'assert',
   'clear',

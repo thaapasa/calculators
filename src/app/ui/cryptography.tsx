@@ -24,11 +24,17 @@ export function hash(x: string, algorithm: string): string {
     .digest('hex');
 }
 
+const cryptoList: CryptoType[] = [
+  { name: 'MD5', calculate: x => hash(x, 'md5'), code: 'md5' },
+  { name: 'SHA-1', calculate: x => hash(x, 'sha1'), code: 'sha1' },
+  { name: 'SHA-256', calculate: x => hash(x, 'sha256'), code: 'sha256' },
+  { name: 'SHA-512', calculate: x => hash(x, 'sha512'), code: 'sha512' },
+];
+
 export default class Cryptography extends React.Component<
   CryptographyProps,
   any
 > {
-  private cryptoList: CryptoType[];
   private cryptos: { [key: string]: CryptoType };
   private default: string;
   private inputStream = new Bacon.Bus<string>();
@@ -36,26 +42,20 @@ export default class Cryptography extends React.Component<
 
   constructor(props: CryptographyProps) {
     super(props);
-    this.cryptoList = [
-      { name: 'MD5', calculate: x => hash(x, 'md5'), code: 'md5' },
-      { name: 'SHA-1', calculate: x => hash(x, 'sha1'), code: 'sha1' },
-      { name: 'SHA-256', calculate: x => hash(x, 'sha256'), code: 'sha256' },
-      { name: 'SHA-512', calculate: x => hash(x, 'sha512'), code: 'sha512' },
-    ];
     this.cryptos = {};
-    this.cryptoList.forEach((c: any) => (this.cryptos[c.code] = c));
-    this.default = this.cryptoList[0].code;
+    cryptoList.forEach((c: any) => (this.cryptos[c.code] = c));
+    this.default = cryptoList[0].code;
 
     this.state = { input: '', selected: this.default };
   }
 
   public componentDidMount() {
     this.inputStream.onValue(v =>
-      this.cryptoList.forEach(c =>
+      cryptoList.forEach(c =>
         (this.refs[c.code] as SelectableOutput).setValue(v)
       )
     );
-    this.cryptoList.forEach(l => {
+    cryptoList.forEach(l => {
       l.valueStream = new Bacon.Bus<string>();
       const prop = l.valueStream.toProperty('');
       prop
@@ -84,7 +84,7 @@ export default class Cryptography extends React.Component<
             name="input"
           />
         </Item>
-        {this.cryptoList.map(this.renderCrypto)}
+        {cryptoList.map(this.renderCrypto)}
       </Section>
     );
   }
