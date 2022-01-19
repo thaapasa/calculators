@@ -21,7 +21,11 @@ export type HSLKey = 'h' | 's' | 'l';
 export const HSLMaxValue = 719;
 
 export function rgbToRGBStr(c: RGBValue): string {
-  return c ? `rgb(${Number(c.r)}, ${Number(c.g)}, ${Number(c.b)})` : '';
+  return c ? `rgb(${decToDisplayFloat(c.r)}, ${decToDisplayFloat(c.g)}, ${decToDisplayFloat(c.b)})` : '';
+}
+
+function decToDisplayFloat(x: string | number): string {
+  return (Number(x) / 255).toFixed(3)
 }
 
 export function toHexComp(value: number | string): string {

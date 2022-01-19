@@ -114,21 +114,28 @@ export default class ByteValueSelector extends React.Component<
     );
     const content = (
       <Row>
-        <ComponentField
-          label={this.props.floatingLabel}
-          placeholder="FF"
-          inputProps={{ maxLength: 2 }}
-          value={this.state.hex}
-          onChange={e => this.pushStringValue(e.target.value, 'hex')}
-        />
-        <ComponentField
-          label={this.props.floatingLabel}
-          placeholder="255"
-          type="number"
-          inputProps={{ maxLength: 3 }}
-          value={this.state.dec}
-          onChange={e => this.pushStringValue(e.target.value, 'dec')}
-        />
+        <Column>
+          <Row>
+            <ComponentField
+              label={this.props.floatingLabel}
+              placeholder="FF"
+              inputProps={{ maxLength: 2 }}
+              value={this.state.hex}
+              onChange={e => this.pushStringValue(e.target.value, 'hex')}
+            />
+            <ComponentField
+              label={this.props.floatingLabel}
+              placeholder="255"
+              type="number"
+              inputProps={{ maxLength: 3 }}
+              value={this.state.dec}
+              onChange={e => this.pushStringValue(e.target.value, 'dec')}
+            />
+          </Row>
+          <Row>
+            <TextField inputProps={{ readOnly: true }} value={String(Number(this.state.dec) / 255)} />
+          </Row>
+        </Column>
         <Column className={this.props.floatingLabel ? 'high' : undefined}>
           {this.props.topContent}
           {slider}

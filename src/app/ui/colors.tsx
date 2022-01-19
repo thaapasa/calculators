@@ -185,7 +185,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
         </Item>
         <Item name="RGB-arvo">
           <TextField
-            placeholder="rgb(255,255,255)"
+            placeholder="rgb(1.0,1.0,1.0)"
             value={this.state.rgbString}
             inputProps={{ readOnly: true }}
             onFocus={() => this.select('rgb')}
