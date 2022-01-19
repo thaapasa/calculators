@@ -19,16 +19,16 @@ export default class CalculatorSinglePageLayout extends React.Component<
     return (
       <>
         <div className="section-row">
-          <Numbers onValue={this.props.onValue} />
-          <DateTime onValue={this.props.onValue} />
-        </div>
-        <div className="section-row">
+        <DateTime onValue={this.props.onValue} />
           <Identifiers onValue={this.props.onValue} />
-          <Colors onValue={this.props.onValue} />
         </div>
         <div className="section-row">
-          <ByteSizes onValue={this.props.onValue} />
+          <Colors onValue={this.props.onValue} />
           <Links />
+        </div>
+        <div className="section-row">
+          <Numbers onValue={this.props.onValue} />
+          <ByteSizes onValue={this.props.onValue} />
         </div>
         <TextConversion onValue={this.props.onValue} />
         <Cryptography onValue={this.props.onValue} />
