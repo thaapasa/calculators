@@ -1,4 +1,5 @@
-import { Avatar, Slider, TextField } from '@material-ui/core';
+import { Avatar, Chip, Divider, IconButton, Slider, TextField } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 import {
   hexToRGB,
   HSLKey,
@@ -22,6 +23,7 @@ import ByteValueSelector from './component/byte-value-selector';
 import { ColorBar } from './component/color-bar';
 import Item from './component/item';
 import { HalfSection } from './component/section';
+import * as store from '../util/store';
 
 const ColorAvatar = styled(Avatar)`
   border: 1px solid #bbbbbb;
@@ -52,6 +54,11 @@ interface ColorsProps {
   onValue: (x: string) => void;
 }
 
+interface StoredColor {
+  name: string
+  hex: string
+}
+
 interface ColorState {
   rgb: string;
   r: string;
@@ -64,6 +71,7 @@ interface ColorState {
   hexString: string;
   rgbString: string;
   selected: 'hex' | 'rgb';
+  colorList: StoredColor[];
 }
 
 const rgbCombiner = new InputCombiner(
@@ -101,6 +109,17 @@ const types = allFieldsOfType<SliderStreamType>()({
   },
 });
 
+const COLORS_STORE_KEY = 'calculators:colors';
+
+function getColorsFromStore(): StoredColor[] {
+  return store.getValue(COLORS_STORE_KEY) || [];
+}
+
+function storeColors(colors: StoredColor[]) {
+  console.log("Storing colors", colors)
+  store.putValue(COLORS_STORE_KEY, colors);
+}
+
 export default class Colors extends React.Component<ColorsProps, ColorState> {
   public state: ColorState = {
     r: '0',
@@ -114,6 +133,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
     hexString: '',
     rgbString: '',
     selected: 'hex',
+    colorList: [],
   };
 
   private streams = new StreamCombiner(types);
@@ -138,6 +158,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
 
   public componentDidMount() {
     rgbCombiner.init(this);
+    this.setState({ colorList: getColorsFromStore() })
   }
 
   public componentWillUnmount() {
@@ -154,6 +175,11 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
           <ColorAvatar style={{ backgroundColor: this.validatedColor }}>
             &nbsp;
           </ColorAvatar>
+        }
+        action={
+          <IconButton aria-label="settings" onClick={this.storeColor}>
+            <AddIcon />
+          </IconButton>
         }
       >
         <ByteValueSelector
@@ -202,8 +228,30 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
           component={this}
           colorBar={colors.l(this.state.h, this.state.s)}
         />
+        {this.state.colorList.length > 0 ? (
+          <>
+            <Divider />
+            {this.state.colorList.map((c, i) => this.renderColorChip(c, i))}
+          </>
+        ): null}
       </HalfSection>
     );
+  }
+
+  private setAllFromHex(hex: string) {
+    this.streams.inputs.hexString(hex);
+  }
+
+  private renderColorChip(color: StoredColor, index: number) {
+    return (
+      <PaddedChip 
+        key={index}
+        avatar={<Avatar style={{ backgroundColor: color.hex }} />}
+        label={color.name} 
+        onDelete={() => this.removeColor(index)}
+        onClick={() => this.setAllFromHex(color.hex)}
+      />
+    )
   }
 
   get validatedColor(): string | undefined {
@@ -221,6 +269,27 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
       default:
         return this.state.hexString;
     }
+  }
+
+  private storeColor = () => {
+    const name = window.prompt("Anna värin nimi")
+    if (name) {
+      this.setState(
+        s => ({ ...s, colorList: [...s.colorList, { name, hex: s.hexString }] }), 
+        () => storeColors(this.state.colorList)
+      );
+    }
+  }
+
+  private removeColor = (index: number) => {
+    this.setState(
+      s => {
+        const colorList = [...s.colorList]
+        colorList.splice(index, 1)
+        return { ...s, colorList }
+      }, 
+      () => storeColors(this.state.colorList)
+    );
   }
 
   private setRGB = (rgbHex: string) => {
@@ -274,3 +343,7 @@ const HSLItem = styled(Item)`
     flex-direction: column;
   }
 `;
+
+const PaddedChip = styled(Chip)`
+  margin: 8px 4px;
+`

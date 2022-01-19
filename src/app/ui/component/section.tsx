@@ -15,6 +15,7 @@ interface HalfSectionProps {
   avatar?: JSX.Element;
   className?: string;
   image?: string;
+  action?: React.ReactNode;
 }
 
 interface SectionProps extends HalfSectionProps {
@@ -36,6 +37,7 @@ class SectionImpl extends React.Component<SectionProps & StyledComponentProps> {
           title={this.props.title}
           subheader={this.props.subtitle}
           avatar={this.props.avatar}
+          action={this.props.action}
         />
         <Divider />
         <CardContent>{this.props.children}</CardContent>
