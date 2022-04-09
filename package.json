@@ -28,7 +28,7 @@
     "intl": "1.2.5",
     "intl-locales-supported": "1.6.0",
     "luhn-js": "1.1.1",
-    "moment": "2.24.0",
+    "moment": "2.29.2",
     "ramda": "0.26.1",
     "react": "16.10.2",
     "react-autosuggest": "9.4.3",
