@@ -10,7 +10,6 @@ import { Delete, NoteAdd } from '@material-ui/icons';
 import * as Bacon from 'baconjs';
 import React from 'react';
 import * as store from '../util/store';
-import { startsWith } from '../util/strings';
 import { isString } from '../util/util';
 import Item from './component/item';
 import { HalfSection } from './component/section';
@@ -19,7 +18,7 @@ function validate(link: string): string {
   if (!isString(link)) {
     return '';
   }
-  if (startsWith(link, 'http://', true) || startsWith(link, 'https://', true)) {
+  if (link.includes("://")) {
     return link;
   }
   return 'http://' + link;
