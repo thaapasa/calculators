@@ -21,11 +21,7 @@ export class ColorBar extends React.Component<ColorBarProps> {
   public render() {
     return (
       <Bar className={this.props.className}>
-        <Canvas
-          ref={this.canvas}
-          width={this.props.colors.length}
-          height={10}
-        />
+        <Canvas ref={this.canvas} width={this.props.colors.length} height={10} />
       </Bar>
     );
   }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Router, Switch } from 'react-router-dom';
 import styled from 'styled-components';
+
 import ByteSizes from './bytesize';
 import Colors from './colors';
 import Cryptography from './cryptography';
@@ -35,10 +36,7 @@ export default class CalculatorPage extends React.Component<{}, PageState> {
           <TopBar onToggleDrawer={this.toggleDrawer}>
             <LastValue ref={this.lastValue} />
           </TopBar>
-          <NavigationDrawer
-            open={this.state.drawerOpen}
-            onToggle={this.toggleDrawer}
-          />
+          <NavigationDrawer open={this.state.drawerOpen} onToggle={this.toggleDrawer} />
           <MainContent>
             <Switch>
               <Route path="/p/aika" render={this.renderTimePage} />
@@ -55,14 +53,8 @@ export default class CalculatorPage extends React.Component<{}, PageState> {
               <Route path="/p/bytesizes" render={this.renderByteSizes} />
               <Route path="/p/linkit" render={this.renderLinks} />
               <Route path="/p/links" render={this.renderLinks} />
-              <Route
-                path="/p/tekstimuunnokset"
-                render={this.renderTextConversion}
-              />
-              <Route
-                path="/p/textconversions"
-                render={this.renderTextConversion}
-              />
+              <Route path="/p/tekstimuunnokset" render={this.renderTextConversion} />
+              <Route path="/p/textconversions" render={this.renderTextConversion} />
               <Route path="/p/kryptografia" render={this.renderCryptography} />
               <Route path="/p/cryptography" render={this.renderCryptography} />
               <Route render={this.renderFullPage} />
@@ -79,21 +71,16 @@ export default class CalculatorPage extends React.Component<{}, PageState> {
     }
   };
 
-  private toggleDrawer = () =>
-    this.setState(s => ({ drawerOpen: !s.drawerOpen }));
+  private toggleDrawer = () => this.setState(s => ({ drawerOpen: !s.drawerOpen }));
 
-  private renderFullPage = () => (
-    <CalculatorSinglePageLayout onValue={this.showValue} />
-  );
+  private renderFullPage = () => <CalculatorSinglePageLayout onValue={this.showValue} />;
   private renderTimePage = () => <DateTime onValue={this.showValue} />;
   private renderNumbers = () => <Numbers onValue={this.showValue} />;
   private renderIdentifiers = () => <Identifiers onValue={this.showValue} />;
   private renderColors = () => <Colors onValue={this.showValue} />;
   private renderByteSizes = () => <ByteSizes onValue={this.showValue} />;
   private renderLinks = () => <Links />;
-  private renderTextConversion = () => (
-    <TextConversion onValue={this.showValue} />
-  );
+  private renderTextConversion = () => <TextConversion onValue={this.showValue} />;
   private renderCryptography = () => <Cryptography onValue={this.showValue} />;
 }
 

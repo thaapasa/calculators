@@ -11,19 +11,19 @@ import {
   rgbToRGBStr,
   RGBValue,
 } from 'app/calc/colors';
+import { numberify } from 'app/calc/numbers';
 import { InputCombiner } from 'app/util/input-combiner';
 import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
-import * as R from 'ramda';
-
-import { numberify } from 'app/calc/numbers';
 import { allFieldsOfType, mapObject } from 'app/util/util';
+import * as R from 'ramda';
 import React from 'react';
 import styled from 'styled-components';
+
+import * as store from '../util/store';
 import ByteValueSelector from './component/byte-value-selector';
 import { ColorBar } from './component/color-bar';
 import Item from './component/item';
 import { HalfSection } from './component/section';
-import * as store from '../util/store';
 
 const ColorAvatar = styled(Avatar)`
   border: 1px solid #bbbbbb;
@@ -42,7 +42,11 @@ const colors = {
   g: R.range(0, 255).map(g => ({ r: 0, g, b: 0 })),
   b: R.range(0, 255).map(b => ({ r: 0, g: 0, b })),
   h: R.range(0, 359).map(h =>
-    hslToRGB({ h: (h * HSLMaxValue) / 359, s: HSLMaxValue, l: HSLMaxValue / 2 })
+    hslToRGB({
+      h: (h * HSLMaxValue) / 359,
+      s: HSLMaxValue,
+      l: HSLMaxValue / 2,
+    }),
   ),
   s: (h: number, l: number) =>
     R.range(0, 255).map(s => hslToRGB({ h, s: (s * HSLMaxValue) / 255, l })),
@@ -55,8 +59,8 @@ interface ColorsProps {
 }
 
 interface StoredColor {
-  name: string
-  hex: string
+  name: string;
+  hex: string;
 }
 
 interface ColorState {
@@ -74,21 +78,11 @@ interface ColorState {
   colorList: StoredColor[];
 }
 
-const rgbCombiner = new InputCombiner(
-  { r: 255, g: 255, b: 255 },
-  rgbToHex,
-  hexToRGB
-);
+const rgbCombiner = new InputCombiner({ r: 255, g: 255, b: 255 }, rgbToHex, hexToRGB);
 
-const hslCombiner = new InputCombiner(
-  { h: 255, s: 255, l: 255 },
-  numberify,
-  numberify
-);
+const hslCombiner = new InputCombiner({ h: 255, s: 255, l: 255 }, numberify, numberify);
 
-type SliderStreamType =
-  | StreamDefinition<string, RGBValue>
-  | StreamDefinition<HSLValue, RGBValue>;
+type SliderStreamType = StreamDefinition<string, RGBValue> | StreamDefinition<HSLValue, RGBValue>;
 
 const types = allFieldsOfType<SliderStreamType>()({
   rgb: {
@@ -116,7 +110,7 @@ function getColorsFromStore(): StoredColor[] {
 }
 
 function storeColors(colors: StoredColor[]) {
-  console.log("Storing colors", colors)
+  console.log('Storing colors', colors);
   store.putValue(COLORS_STORE_KEY, colors);
 }
 
@@ -145,20 +139,16 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
     this.disposers.push(hslCombiner.combined.onValue(this.streams.inputs.hsl));
     this.disposers.push(this.streams.bindOutputs(this, this.sendToParent));
     this.disposers.push(
-      this.streams.output
-        .filter(o => o.selected !== 'rgb')
-        .onValue(o => this.setRGB(o.output.rgb))
+      this.streams.output.filter(o => o.selected !== 'rgb').onValue(o => this.setRGB(o.output.rgb)),
     );
     this.disposers.push(
-      this.streams.output
-        .filter(o => o.selected !== 'hsl')
-        .onValue(o => this.setHSL(o.output.hsl))
+      this.streams.output.filter(o => o.selected !== 'hsl').onValue(o => this.setHSL(o.output.hsl)),
     );
   }
 
   public componentDidMount() {
     rgbCombiner.init(this);
-    this.setState({ colorList: getColorsFromStore() })
+    this.setState({ colorList: getColorsFromStore() });
   }
 
   public componentWillUnmount() {
@@ -171,11 +161,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
         title="Väri"
         subtitle={texts[this.state.selected]}
         image="/img/header-colors.jpg"
-        avatar={
-          <ColorAvatar style={{ backgroundColor: this.validatedColor }}>
-            &nbsp;
-          </ColorAvatar>
-        }
+        avatar={<ColorAvatar style={{ backgroundColor: this.validatedColor }}>&nbsp;</ColorAvatar>}
         action={
           <IconButton aria-label="settings" onClick={this.storeColor}>
             <AddIcon />
@@ -218,22 +204,14 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
           />
         </Item>
         <HSLSlider hsl="h" component={this} colorBar={colors.h} />
-        <HSLSlider
-          hsl="s"
-          component={this}
-          colorBar={colors.s(this.state.h, this.state.l)}
-        />
-        <HSLSlider
-          hsl="l"
-          component={this}
-          colorBar={colors.l(this.state.h, this.state.s)}
-        />
+        <HSLSlider hsl="s" component={this} colorBar={colors.s(this.state.h, this.state.l)} />
+        <HSLSlider hsl="l" component={this} colorBar={colors.l(this.state.h, this.state.s)} />
         {this.state.colorList.length > 0 ? (
           <>
             <Divider />
             {this.state.colorList.map((c, i) => this.renderColorChip(c, i))}
           </>
-        ): null}
+        ) : null}
       </HalfSection>
     );
   }
@@ -244,21 +222,19 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
 
   private renderColorChip(color: StoredColor, index: number) {
     return (
-      <PaddedChip 
+      <PaddedChip
         key={index}
         avatar={<Avatar style={{ backgroundColor: color.hex }} />}
-        label={color.name} 
+        label={color.name}
         onDelete={() => this.removeColor(index)}
         onClick={() => this.setAllFromHex(color.hex)}
       />
-    )
+    );
   }
 
   get validatedColor(): string | undefined {
     const color = this.state.hexString;
-    return color && color.length > 3 && color.startsWith('#')
-      ? color
-      : undefined;
+    return color && color.length > 3 && color.startsWith('#') ? color : undefined;
   }
 
   get selectedValue(): string {
@@ -272,25 +248,28 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
   }
 
   private storeColor = () => {
-    const name = window.prompt("Anna värin nimi")
+    const name = window.prompt('Anna värin nimi');
     if (name) {
       this.setState(
-        s => ({ ...s, colorList: [...s.colorList, { name, hex: s.hexString }] }), 
-        () => storeColors(this.state.colorList)
+        s => ({
+          ...s,
+          colorList: [...s.colorList, { name, hex: s.hexString }],
+        }),
+        () => storeColors(this.state.colorList),
       );
     }
-  }
+  };
 
   private removeColor = (index: number) => {
     this.setState(
       s => {
-        const colorList = [...s.colorList]
-        colorList.splice(index, 1)
-        return { ...s, colorList }
-      }, 
-      () => storeColors(this.state.colorList)
+        const colorList = [...s.colorList];
+        colorList.splice(index, 1);
+        return { ...s, colorList };
+      },
+      () => storeColors(this.state.colorList),
     );
-  }
+  };
 
   private setRGB = (rgbHex: string) => {
     rgbCombiner.setValue(rgbHex);
@@ -346,4 +325,4 @@ const HSLItem = styled(Item)`
 
 const PaddedChip = styled(Chip)`
   margin: 8px 4px;
-`
+`;

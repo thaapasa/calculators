@@ -46,14 +46,7 @@ interface ButtonProps {
 }
 
 export function GenerateButton({ title, onClick }: ButtonProps) {
-  return (
-    <ToolButton
-      color="primary"
-      icon="add_circle"
-      title={title}
-      onClick={onClick}
-    />
-  );
+  return <ToolButton color="primary" icon="add_circle" title={title} onClick={onClick} />;
 }
 
 export function ClipboardButton(p: ButtonProps) {

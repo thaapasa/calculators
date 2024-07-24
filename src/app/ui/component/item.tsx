@@ -12,14 +12,8 @@ export default class Item extends React.Component<ItemProps, {}> {
   public render() {
     return (
       <CalculatorItem className={this.props.className} style={this.props.style}>
-        {this.props.name ? (
-          <div className="name">{this.props.name}</div>
-        ) : (
-          undefined
-        )}
-        <div className={`value ${this.props.valueClassName || ''}`}>
-          {this.props.children}
-        </div>
+        {this.props.name ? <div className="name">{this.props.name}</div> : undefined}
+        <div className={`value ${this.props.valueClassName || ''}`}>{this.props.children}</div>
       </CalculatorItem>
     );
   }

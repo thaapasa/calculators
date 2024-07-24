@@ -2,6 +2,7 @@ import { TextField } from '@material-ui/core';
 import * as Bacon from 'baconjs';
 import React from 'react';
 import styled from 'styled-components';
+
 import * as numbers from '../calc/numbers';
 import { zeroPad } from '../util/strings';
 import * as util from '../util/util';
@@ -101,16 +102,11 @@ interface NumbersState {
 
 const emptyStream = Bacon.never<number>();
 
-export default class Numbers extends React.Component<
-  NumbersProps,
-  NumbersState
-> {
+export default class Numbers extends React.Component<NumbersProps, NumbersState> {
   public state: NumbersState = {
     selected: 'decimal',
     unicode: '',
-    values: util.pairsToObject(
-      Object.keys(types).map<[string, string]>(t => [t, ''])
-    ),
+    values: util.pairsToObject(Object.keys(types).map<[string, string]>(t => [t, ''])),
   };
 
   private currentInput = new Bacon.Bus<string>();
@@ -151,9 +147,7 @@ export default class Numbers extends React.Component<
   }
 
   private initializeStreams() {
-    const inputConverter = this.currentInput
-      .map(t => types[t].read)
-      .toProperty(types.decimal.read);
+    const inputConverter = this.currentInput.map(t => types[t].read).toProperty(types.decimal.read);
 
     const converted = this.inputStream
       .combine(inputConverter, (i, c) => c(i))
@@ -161,9 +155,7 @@ export default class Numbers extends React.Component<
 
     typeKeys.forEach(t => {
       const typeInfo = types[t];
-      const sourceIsThis = this.currentInput
-        .map(name => t === name)
-        .toProperty(false);
+      const sourceIsThis = this.currentInput.map(name => t === name).toProperty(false);
       converted
         .combine(sourceIsThis, (c, i) => [c, i])
         .flatMapLatest(v => (v[1] ? emptyStream : converted))
@@ -174,7 +166,7 @@ export default class Numbers extends React.Component<
         this.mergeValues({
           unicode: intToUnicodeStr(v || 0),
           html: intToHTMLCode(v || 0),
-        })
+        }),
       );
     });
     this.selectedSrcStr

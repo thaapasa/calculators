@@ -1,14 +1,9 @@
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from '@material-ui/core';
+import { FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import * as Bacon from 'baconjs';
 import React from 'react';
 import styled from 'styled-components';
 import svgToReactNative from 'svg-rn';
+
 import * as base64 from '../calc/base64';
 import rot13 from '../calc/rot13';
 import { jsonStringToXml, xmlToJsonString } from '../calc/xml-json';
@@ -121,23 +116,17 @@ export default class TextConversion extends React.Component<
     const initialConverter = getConverterFromStore();
     this.sourceStr.onValue(v => this.setState({ source: v }));
     this.targetStr.onValue(v => this.setState({ target: v }));
-    const selected = this.selectedStr
-      .toProperty(initialConverter)
-      .skipDuplicates();
+    const selected = this.selectedStr.toProperty(initialConverter).skipDuplicates();
     selected.onValue(v => {
       this.setState({ selected: v });
       setConverterToStore(v);
     });
-    const encStr = this.sourceStr.combine(selected, (val, c) =>
-      convertInfo[c].encode(val)
-    );
+    const encStr = this.sourceStr.combine(selected, (val, c) => convertInfo[c].encode(val));
     encStr.onValue(async v => this.setState({ target: await v }));
-    const decStr = this.targetStr.combine(selected, (val, c) =>
-      convertInfo[c].decode(val)
-    );
+    const decStr = this.targetStr.combine(selected, (val, c) => convertInfo[c].decode(val));
     decStr.onValue(async v => this.setState({ source: await v }));
     Bacon.mergeAll(encStr.changes(), decStr.changes()).onValue(
-      async v => this.props.onValue && this.props.onValue(await v)
+      async v => this.props.onValue && this.props.onValue(await v),
     );
     this.selectedStr.push(initialConverter);
   }

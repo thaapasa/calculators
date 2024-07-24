@@ -2,6 +2,7 @@ import { Slider, TextField } from '@material-ui/core';
 import * as Bacon from 'baconjs';
 import React from 'react';
 import styled from 'styled-components';
+
 import { hexStrToInt, intToHexStr, strToInt } from '../../calc/numbers';
 import { zeroPad } from '../../util/strings';
 import { isNumber } from '../../util/util';
@@ -63,10 +64,7 @@ interface SelectorProps {
   topContent?: any;
 }
 
-export default class ByteValueSelector extends React.Component<
-  SelectorProps,
-  SelectorState
-> {
+export default class ByteValueSelector extends React.Component<SelectorProps, SelectorState> {
   public state: SelectorState = {
     hex: '',
     dec: '',
@@ -85,13 +83,10 @@ export default class ByteValueSelector extends React.Component<
       this.inputStr[t] = new Bacon.Bus<string | number>();
     });
 
-    const newValStr = Bacon.mergeAll(
-      types.map(t => this.inputStr[t].map(typeInfo[t].read))
+    const newValStr = Bacon.mergeAll(types.map(t => this.inputStr[t].map(typeInfo[t].read)));
+    Bacon.combineAsArray<number | string>(newValStr, this.curSrcStr.toProperty('parent')).onValue(
+      x => this.showValue(x[0] as number, x[1] as string),
     );
-    Bacon.combineAsArray<number | string>(
-      newValStr,
-      this.curSrcStr.toProperty('parent')
-    ).onValue(x => this.showValue(x[0] as number, x[1] as string));
   }
 
   public componentDidUpdate(prevProps: SelectorProps) {
@@ -133,7 +128,10 @@ export default class ByteValueSelector extends React.Component<
             />
           </Row>
           <Row>
-            <TextField inputProps={{ readOnly: true }} value={String(Number(this.state.dec) / 255)} />
+            <TextField
+              inputProps={{ readOnly: true }}
+              value={String(Number(this.state.dec) / 255)}
+            />
           </Row>
         </Column>
         <Column className={this.props.floatingLabel ? 'high' : undefined}>

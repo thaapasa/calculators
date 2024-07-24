@@ -1,5 +1,6 @@
 import { zeroPad } from 'app/util/strings';
 import { mapObject } from 'app/util/util';
+
 import { hexStrToInt, intToHexStr } from './numbers';
 
 export interface RGBValue {
@@ -21,11 +22,13 @@ export type HSLKey = 'h' | 's' | 'l';
 export const HSLMaxValue = 719;
 
 export function rgbToRGBStr(c: RGBValue): string {
-  return c ? `rgb(${decToDisplayFloat(c.r)}, ${decToDisplayFloat(c.g)}, ${decToDisplayFloat(c.b)})` : '';
+  return c
+    ? `rgb(${decToDisplayFloat(c.r)}, ${decToDisplayFloat(c.g)}, ${decToDisplayFloat(c.b)})`
+    : '';
 }
 
 function decToDisplayFloat(x: string | number): string {
-  return (Number(x) / 255).toFixed(3)
+  return (Number(x) / 255).toFixed(3);
 }
 
 export function toHexComp(value: number | string): string {
@@ -45,9 +48,7 @@ function hexToParts(value: string): [number, number, number] {
   let g = 0;
   let b = 0;
   const l = value.length <= 4 ? 1 : 2;
-  const re = new RegExp(
-    `^#?([0-9A-Za-z]{${l}})([0-9A-Za-z]{${l}})([0-9A-Za-z]{${l}})$`
-  );
+  const re = new RegExp(`^#?([0-9A-Za-z]{${l}})([0-9A-Za-z]{${l}})([0-9A-Za-z]{${l}})$`);
 
   value.replace(re, (_, hr, hg, hb) => {
     r = (r = hexStrToInt(hr)) + (l === 1 ? r << 4 : 0);

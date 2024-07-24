@@ -3,6 +3,7 @@ import * as Bacon from 'baconjs';
 import moment from 'moment';
 import React from 'react';
 import styled from 'styled-components';
+
 import { strToInt } from '../calc/numbers';
 import { findNameDayFor, getNameDay, MonthDay } from '../util/namedays';
 import { zeroPad } from '../util/strings';
@@ -58,9 +59,7 @@ function writeDate(v: moment.Moment): Date | undefined {
 
 function readDateText(v: string): object | undefined {
   const c = moment(v, datePattern);
-  return c.isValid()
-    ? { day: c.date(), month: c.month(), year: c.year() }
-    : undefined;
+  return c.isValid() ? { day: c.date(), month: c.month(), year: c.year() } : undefined;
 }
 
 function writeDateText(v: moment.Moment): string {
@@ -113,14 +112,12 @@ const typeInfo = allFieldsOfType<DateTimeType>()({
     fullWidth: true,
   },
   nameDay: {
-    write: (val: any) =>
-      toStateValue(val, (v: any) => getNameDay(v.month() + 1, v.date())),
+    write: (val: any) => toStateValue(val, (v: any) => getNameDay(v.month() + 1, v.date())),
     reportValue: true,
     style: styles.center,
   },
   weekDay: {
-    write: (val: any) =>
-      toStateValue(val, (v: any) => texts.weekDay[v.isoWeekday()]),
+    write: (val: any) => toStateValue(val, (v: any) => texts.weekDay[v.isoWeekday()]),
     style: styles.center,
   },
   javaTime: {
@@ -198,21 +195,11 @@ const hints = {
   timeZone: '+02:00',
 };
 
-const valueTypes = [
-  'date',
-  'dateText',
-  'hour',
-  'minute',
-  'second',
-  'millisecond',
-];
+const valueTypes = ['date', 'dateText', 'hour', 'minute', 'second', 'millisecond'];
 
 const types = Object.keys(typeInfo);
 
-function toStateValue(
-  mom: moment.Moment,
-  writer: (x: moment.Moment) => any
-): string {
+function toStateValue(mom: moment.Moment, writer: (x: moment.Moment) => any): string {
   if (!moment.isMoment(mom)) {
     return '';
   }
@@ -220,11 +207,7 @@ function toStateValue(
   if (!isDefined(s) || (typeof s === 'number' && isNaN(s))) {
     return '';
   }
-  return typeof s === 'object' || s === null
-    ? s
-    : typeof s === 'number'
-    ? `${s}`
-    : s;
+  return typeof s === 'object' || s === null ? s : typeof s === 'number' ? `${s}` : s;
 }
 
 interface DateTimeProps {
@@ -248,10 +231,7 @@ interface DateTimeState {
   nameDay: string;
 }
 
-export default class DateTime extends React.Component<
-  DateTimeProps,
-  DateTimeState
-> {
+export default class DateTime extends React.Component<DateTimeProps, DateTimeState> {
   public state: DateTimeState = {
     reportTarget: '',
     foundNameDays: [],
@@ -283,12 +263,8 @@ export default class DateTime extends React.Component<
     types.forEach(t => {
       if (t !== 'focused') {
         this.streams[t] = new Bacon.Bus();
-        this.streams[t].onValue((v: any) =>
-          this.setState({ [t]: v } as DateTimeState)
-        );
-        incoming[t] = typeInfo[t].read
-          ? this.streams[t].map(typeInfo[t].read)
-          : this.streams[t];
+        this.streams[t].onValue((v: any) => this.setState({ [t]: v } as DateTimeState));
+        incoming[t] = typeInfo[t].read ? this.streams[t].map(typeInfo[t].read) : this.streams[t];
       }
     });
     incoming.datePicker.onValue((v: string) => this.streams.date.push(v));
@@ -307,7 +283,7 @@ export default class DateTime extends React.Component<
         minute: v.minute,
         second: v.second,
         millisecond: v.millisecond,
-      })
+      }),
     );
     // Create stream for new value
     const newVal = Bacon.mergeAll(
@@ -316,9 +292,9 @@ export default class DateTime extends React.Component<
       incoming.javaTime,
       incoming.iso8601,
       incoming.iso8601utc,
-      Bacon.combineAsArray(incoming.value, this.streams.selected).flatMapLatest(
-        t => (t[1] === 'value' ? t[0] : Bacon.never())
-      )
+      Bacon.combineAsArray(incoming.value, this.streams.selected).flatMapLatest(t =>
+        t[1] === 'value' ? t[0] : Bacon.never(),
+      ),
     );
     // Process new value updates
     Bacon.combineAsArray(newVal, this.streams.selected).onValue(r => {
@@ -337,12 +313,10 @@ export default class DateTime extends React.Component<
       this.setState({ datePicker: typeInfo.datePicker.write(val) });
     });
     // Which value is reported to parent
-    const reportTarget = incoming.focused.filter(
-      (t: any) => typeInfo[t].reportValue
-    );
+    const reportTarget = incoming.focused.filter((t: any) => typeInfo[t].reportValue);
     reportTarget.onValue((v: any) => this.setState({ reportTarget: v }));
     Bacon.combineAsArray(newVal, reportTarget).onValue(t =>
-      this.props.onValue(typeInfo[t[1]].write(t[0]))
+      this.props.onValue(typeInfo[t[1]].write(t[0])),
     );
     // Push default value
     this.pushValue(moment(), 'direct');
@@ -370,8 +344,8 @@ export default class DateTime extends React.Component<
           )
         </TimeItem>
         <TimeItem name="Kellonaika" style={styles.item}>
-          {this.renderType('hour')}:{this.renderType('minute')}:
-          {this.renderType('second')}.{this.renderType('millisecond')}
+          {this.renderType('hour')}:{this.renderType('minute')}:{this.renderType('second')}.
+          {this.renderType('millisecond')}
           {this.renderType('timeZone')}
         </TimeItem>
         <TimeItem name="Viikko">

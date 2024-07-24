@@ -2,6 +2,7 @@ import { TextField } from '@material-ui/core';
 import * as Bacon from 'baconjs';
 import React, { CSSProperties } from 'react';
 import styled from 'styled-components';
+
 import { allFieldsOfType, isString, pairsToObject } from '../util/util';
 import Item from './component/item';
 import { HalfSection } from './component/section';
@@ -25,12 +26,7 @@ const MEGA = KILO * KILO;
 const GIGA = MEGA * KILO;
 const TERA = GIGA * KILO;
 
-const converter = (
-  name: string,
-  unit: string,
-  ratio: number,
-  decimals: number = 3
-): TypeInfo => ({
+const converter = (name: string, unit: string, ratio: number, decimals: number = 3): TypeInfo => ({
   name,
   hint: unit,
   unit,
@@ -65,15 +61,10 @@ interface ByteSizeState {
 
 const emptyStream = Bacon.never();
 
-export default class ByteSizes extends React.Component<
-  ByteSizeProps,
-  ByteSizeState
-> {
+export default class ByteSizes extends React.Component<ByteSizeProps, ByteSizeState> {
   public state: ByteSizeState = {
     selected: 'byte',
-    values: pairsToObject(
-      Object.keys(types).map<[string, string]>(t => [t, ''])
-    ),
+    values: pairsToObject(Object.keys(types).map<[string, string]>(t => [t, ''])),
   };
 
   private currentInput = new Bacon.Bus<string>();
@@ -82,17 +73,13 @@ export default class ByteSizes extends React.Component<
 
   public componentDidMount() {
     this.currentInput = new Bacon.Bus();
-    const inputConverter = this.currentInput
-      .map(t => types[t].read)
-      .toProperty(Number);
+    const inputConverter = this.currentInput.map(t => types[t].read).toProperty(Number);
     const converted = this.inputStream
       .combine(inputConverter, (i, c) => c(i))
       .map(v => (typeof v === 'number' && !isNaN(v) ? v : undefined));
     typeKeys.forEach(t => {
       const typeInfo = types[t];
-      const sourceIsThis = this.currentInput
-        .map(name => t === name)
-        .toProperty(false);
+      const sourceIsThis = this.currentInput.map(name => t === name).toProperty(false);
       converted
         .combine(sourceIsThis, (c, i) => [c, i])
         .flatMapLatest(v => (v[1] ? emptyStream : converted))
@@ -150,8 +137,7 @@ export default class ByteSizes extends React.Component<
     );
   }
 
-  private mergeValues = (x: any) =>
-    this.setState(s => ({ values: { ...s.values, ...x } }));
+  private mergeValues = (x: any) => this.setState(s => ({ values: { ...s.values, ...x } }));
 
   private inputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = event.target.name;

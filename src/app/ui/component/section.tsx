@@ -53,9 +53,7 @@ const Section = withStyles({
 })(SectionImpl);
 export default Section;
 
-export function HalfSection(
-  p: HalfSectionProps & { children: React.ReactNode }
-) {
+export function HalfSection(p: HalfSectionProps & { children: React.ReactNode }) {
   return (
     <Section className="section-half-size" {...p}>
       {p.children}

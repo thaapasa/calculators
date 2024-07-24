@@ -2,6 +2,7 @@ import { TextField } from '@material-ui/core';
 import * as Bacon from 'baconjs';
 import React, { ChangeEvent } from 'react';
 import styled from 'styled-components';
+
 import * as util from '../../util/util';
 import Item from './item';
 import { GenerateButton } from './tool-button';
@@ -31,10 +32,7 @@ interface CheckState {
   checkValue: string;
 }
 
-export default class CheckValue extends React.Component<
-  CheckProps,
-  CheckState
-> {
+export default class CheckValue extends React.Component<CheckProps, CheckState> {
   public state: CheckState = {
     input: '',
     value: '',
@@ -80,11 +78,7 @@ export default class CheckValue extends React.Component<
           read-only="read-only"
           value={this.state.checkValue}
         />
-        <input
-          type="hidden"
-          id={`${this.props.id}-value`}
-          value={this.state.value}
-        />
+        <input type="hidden" id={`${this.props.id}-value`} value={this.state.value} />
       </CheckItem>
     );
   }
@@ -105,16 +99,13 @@ export default class CheckValue extends React.Component<
 
   private streamToCheck(
     calculateCheck?: (x: string) => string,
-    combiner: (a: string, b: string) => string = util.combineWith('')
+    combiner: (a: string, b: string) => string = util.combineWith(''),
   ) {
     if (calculateCheck) {
       const checkValue = this.inputStream.map(calculateCheck);
       checkValue.onValue(value => this.setState({ checkValue: value }));
       checkValue
-        .combine(
-          this.inputStream.toProperty(''),
-          (chk, inp) => chk && combiner(inp, chk)
-        )
+        .combine(this.inputStream.toProperty(''), (chk, inp) => chk && combiner(inp, chk))
         .filter(util.nonEmpty)
         .onValue(this.updateValue);
     } else {

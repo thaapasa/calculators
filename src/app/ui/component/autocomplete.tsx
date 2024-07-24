@@ -48,10 +48,7 @@ export default class AutoComplete<T> extends React.Component<
     );
   }
 
-  private onSelectSuggestion = (
-    _: React.FormEvent<any>,
-    data: SuggestionSelectedEventData<T>
-  ) => {
+  private onSelectSuggestion = (_: React.FormEvent<any>, data: SuggestionSelectedEventData<T>) => {
     this.props.onSelectSuggestion(data.suggestion);
   };
 
@@ -115,9 +112,7 @@ export default class AutoComplete<T> extends React.Component<
   };
 }
 
-const StandardTextField = TextField as React.ComponentType<
-  StandardTextFieldProps
->;
+const StandardTextField = TextField as React.ComponentType<StandardTextFieldProps>;
 
 const FloatingPaper = styled(Paper)`
   position: absolute;

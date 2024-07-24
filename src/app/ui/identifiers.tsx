@@ -1,6 +1,7 @@
 import { checkLuhn } from 'app/calc/checks';
 import React from 'react';
 import * as uuid from 'uuid';
+
 import * as bankReference from '../calc/bankreference';
 import * as companyId from '../calc/companyid';
 import * as hetu from '../calc/hetu';

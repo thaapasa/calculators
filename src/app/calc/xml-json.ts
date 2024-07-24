@@ -17,8 +17,8 @@ export function xmlToJson<T>(x: string): Promise<T> {
         } else {
           resolve(res);
         }
-      }
-    )
+      },
+    ),
   );
 }
 

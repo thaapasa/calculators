@@ -2,6 +2,7 @@ import { TextField } from '@material-ui/core';
 import * as Bacon from 'baconjs';
 import crypto from 'crypto-browserify';
 import React from 'react';
+
 import Item from './component/item';
 import Section from './component/section';
 import SelectableOutput from './component/selectable-output';
@@ -18,10 +19,7 @@ interface CryptoType {
 }
 
 export function hash(x: string, algorithm: string): string {
-  return crypto
-    .createHash(algorithm)
-    .update(x)
-    .digest('hex');
+  return crypto.createHash(algorithm).update(x).digest('hex');
 }
 
 const cryptoList: CryptoType[] = [
@@ -31,10 +29,7 @@ const cryptoList: CryptoType[] = [
   { name: 'SHA-512', calculate: x => hash(x, 'sha512'), code: 'sha512' },
 ];
 
-export default class Cryptography extends React.Component<
-  CryptographyProps,
-  any
-> {
+export default class Cryptography extends React.Component<CryptographyProps, any> {
   private cryptos: { [key: string]: CryptoType };
   private default: string;
   private inputStream = new Bacon.Bus<string>();
@@ -51,19 +46,15 @@ export default class Cryptography extends React.Component<
 
   public componentDidMount() {
     this.inputStream.onValue(v =>
-      cryptoList.forEach(c =>
-        (this.refs[c.code] as SelectableOutput).setValue(v)
-      )
+      cryptoList.forEach(c => (this.refs[c.code] as SelectableOutput).setValue(v)),
     );
     cryptoList.forEach(l => {
       l.valueStream = new Bacon.Bus<string>();
       const prop = l.valueStream.toProperty('');
       prop
         .combine(
-          this.cryptoSelectStream
-            .toProperty(this.default)
-            .map(c => c === l.code),
-          (val, match) => [val, match]
+          this.cryptoSelectStream.toProperty(this.default).map(c => c === l.code),
+          (val, match) => [val, match],
         )
         .onValue(x => x[1] && this.props.onValue(x[0]));
     });
@@ -77,12 +68,7 @@ export default class Cryptography extends React.Component<
         image="/img/header-cryptography.jpg"
       >
         <Item name="Syöte">
-          <TextField
-            onChange={this.inputChanged}
-            fullWidth={true}
-            multiline={true}
-            name="input"
-          />
+          <TextField onChange={this.inputChanged} fullWidth={true} multiline={true} name="input" />
         </Item>
         {cryptoList.map(this.renderCrypto)}
       </Section>

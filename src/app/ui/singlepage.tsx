@@ -1,4 +1,5 @@
 import React from 'react';
+
 import ByteSizes from './bytesize';
 import Colors from './colors';
 import Cryptography from './cryptography';
@@ -12,14 +13,12 @@ interface PageProps {
   onValue: (value: string) => void;
 }
 
-export default class CalculatorSinglePageLayout extends React.Component<
-  PageProps
-> {
+export default class CalculatorSinglePageLayout extends React.Component<PageProps> {
   public render() {
     return (
       <>
         <div className="section-row">
-        <DateTime onValue={this.props.onValue} />
+          <DateTime onValue={this.props.onValue} />
           <Identifiers onValue={this.props.onValue} />
         </div>
         <div className="section-row">

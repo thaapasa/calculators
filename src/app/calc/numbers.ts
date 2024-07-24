@@ -60,17 +60,11 @@ export function charToInt(value: string): number {
 }
 
 export function intToChar(value: number): string {
-  return typeof value === 'number' && !isNaN(value)
-    ? String.fromCharCode(value)
-    : '';
+  return typeof value === 'number' && !isNaN(value) ? String.fromCharCode(value) : '';
 }
 
 /* Helper functions */
-function strToIntChecked(
-  value: any,
-  radix: number,
-  validChars: RegExp
-): number {
+function strToIntChecked(value: any, radix: number, validChars: RegExp): number {
   if (!isDefined(value)) {
     return NaN;
   }
@@ -87,12 +81,7 @@ function strToIntChecked(
 }
 
 function toChar(value: number, radix: number): string | undefined {
-  if (
-    !isNumber(value) ||
-    value < 0 ||
-    value >= radix ||
-    value >= numChars.length
-  ) {
+  if (!isNumber(value) || value < 0 || value >= radix || value >= numChars.length) {
     return;
   }
   return numChars.charAt(value);

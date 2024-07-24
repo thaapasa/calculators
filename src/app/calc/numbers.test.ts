@@ -1,4 +1,5 @@
 import 'jest';
+
 import * as n from './numbers';
 
 describe('Numbers', () => {

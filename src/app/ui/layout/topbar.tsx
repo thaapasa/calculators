@@ -14,6 +14,7 @@ import { History, Location } from 'history';
 import React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 import styled from 'styled-components';
+
 import { Logo } from './logo';
 
 interface ToolbarProps {
@@ -24,9 +25,7 @@ const TopLogo = styled(Logo)`
   margin-right: 16px;
 `;
 
-class CalculatorToolbar extends React.Component<
-  RouteComponentProps & ToolbarProps
-> {
+class CalculatorToolbar extends React.Component<RouteComponentProps & ToolbarProps> {
   public render() {
     return (
       <AppBar>
@@ -121,24 +120,18 @@ class Link extends React.Component<{
 }> {
   render() {
     return (
-      <IconButton
-        onClick={this.onClick}
-        color={this.selected ? 'inherit' : 'default'}
-      >
+      <IconButton onClick={this.onClick} color={this.selected ? 'inherit' : 'default'}>
         <this.props.icon />
       </IconButton>
     );
   }
   get route(): string {
-    return typeof this.props.route === 'string'
-      ? this.props.route
-      : this.props.route[0] || '';
+    return typeof this.props.route === 'string' ? this.props.route : this.props.route[0] || '';
   }
   get selected(): boolean {
     return typeof this.props.route === 'string'
       ? this.props.location.pathname === this.props.route
-      : this.props.route.find(r => this.props.location.pathname === r) !==
-          undefined;
+      : this.props.route.find(r => this.props.location.pathname === r) !== undefined;
   }
   onClick = () => {
     this.props.history.push(this.route);

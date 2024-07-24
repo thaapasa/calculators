@@ -1,10 +1,7 @@
 import * as B from 'baconjs';
 import * as R from 'ramda';
-import {
-  InputChangeHandler,
-  InputChangeType,
-  isInputChangeEvent,
-} from './stream-defs';
+
+import { InputChangeHandler, InputChangeType, isInputChangeEvent } from './stream-defs';
 import { mapObject, objectKeys } from './util';
 
 export interface StreamDefinition<Source, Target> {
@@ -23,10 +20,7 @@ export class StreamCombiner<InputKeys extends string, Target> {
   private outputRecord = new B.Bus<Record<InputKeys, Target>>();
 
   constructor(inputs: Record<InputKeys, StreamDefinition<any, Target>>) {
-    const inputBuses: Record<InputKeys, B.Bus<any>> = R.map(
-      () => new B.Bus<any>(),
-      inputs
-    );
+    const inputBuses: Record<InputKeys, B.Bus<any>> = R.map(() => new B.Bus<any>(), inputs);
     const selectedInputStream = new B.Bus<[InputKeys, any]>();
 
     this.inputs = mapObject(
@@ -36,12 +30,12 @@ export class StreamCombiner<InputKeys extends string, Target> {
         // Input to bus k is directly piped to output of k
         selectedInputStream.push([k, val]);
       },
-      inputs
+      inputs,
     );
 
     const convertedInputs = mapObject(
       (_, k) => inputBuses[k].toProperty('').map(inputs[k].read),
-      inputs
+      inputs,
     );
 
     B.combineTemplate({
@@ -54,14 +48,12 @@ export class StreamCombiner<InputKeys extends string, Target> {
         const value = (f.values as any)[selected];
         const outputRecord = mapObject(
           (_, k) => (k === selected ? f.selected[1] : inputs[k].write(value)),
-          inputs
+          inputs,
         );
         this.outputRecord.push(outputRecord);
       });
 
-    const sel = selectedInputStream
-      .map(s => s[0])
-      .toProperty(objectKeys(inputs)[0]);
+    const sel = selectedInputStream.map(s => s[0]).toProperty(objectKeys(inputs)[0]);
 
     this.output = B.combineTemplate({
       selected: sel,
@@ -72,10 +64,8 @@ export class StreamCombiner<InputKeys extends string, Target> {
   // Bind a React class to see the outputs in its state
   bindOutputs = (
     r: React.Component<any, Record<InputKeys, any>>,
-    process?: (o: Record<InputKeys, any>) => void
+    process?: (o: Record<InputKeys, any>) => void,
   ) => {
-    return this.outputRecord.onValue(o =>
-      r.setState(o, process ? () => process(o) : undefined)
-    );
+    return this.outputRecord.onValue(o => r.setState(o, process ? () => process(o) : undefined));
   };
 }

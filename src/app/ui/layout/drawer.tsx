@@ -1,6 +1,7 @@
 import { Card, CardHeader, Drawer, MenuItem } from '@material-ui/core';
 import React from 'react';
 import styled from 'styled-components';
+
 import { history } from '../history';
 import { Flex, FlexColumn } from './elements';
 import { Logo } from './logo';
@@ -26,18 +27,10 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
 
   public render() {
     return (
-      <Drawer
-        open={this.props.open}
-        anchor="left"
-        onClose={this.props.onToggle}
-      >
+      <Drawer open={this.props.open} anchor="left" onClose={this.props.onToggle}>
         <DrawerCol>
           <Card>
-            <CardHeader
-              title="Laskurit"
-              subheader={`v. ${ver.version}`}
-              avatar={<Logo />}
-            />
+            <CardHeader title="Laskurit" subheader={`v. ${ver.version}`} avatar={<Logo />} />
           </Card>
           <MenuItem onClick={this.goToFullpage}>Kaikki</MenuItem>
           <MenuItem onClick={this.goToNumbers}>Numerot ja merkit</MenuItem>
@@ -46,9 +39,7 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
           <MenuItem onClick={this.goToColors}>Värit</MenuItem>
           <MenuItem onClick={this.goToByteSize}>Tavukoot</MenuItem>
           <MenuItem onClick={this.goToLinks}>Linkit</MenuItem>
-          <MenuItem onClick={this.goToTextConversion}>
-            Tekstimuunnokset
-          </MenuItem>
+          <MenuItem onClick={this.goToTextConversion}>Tekstimuunnokset</MenuItem>
           <MenuItem onClick={this.goToCryptography}>Kryptografia</MenuItem>
           <Flex />
           <LicenseInfo>

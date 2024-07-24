@@ -1,7 +1,6 @@
 import { randomBytes } from 'crypto';
 
-const allowedChars =
-  'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789-_=!*&';
+const allowedChars = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789-_=!*&';
 
 export function getRandomString(len: number): string {
   const bytes = randomBytes(len);

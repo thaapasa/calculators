@@ -3,6 +3,7 @@ import { TextFormat } from '@material-ui/icons';
 import * as Bacon from 'baconjs';
 import React from 'react';
 import styled from 'styled-components';
+
 import { toUpperCase } from '../../util/strings';
 import { identity } from '../../util/util';
 import Item from './item';
@@ -42,7 +43,7 @@ export default class SelectableOutput extends React.Component<
     this.streamCalculation(
       this.inputStream,
       this.props.calculate,
-      this.ucIfChecked(this.ucStream.toProperty(false))
+      this.ucIfChecked(this.ucStream.toProperty(false)),
     );
   }
 
@@ -55,10 +56,7 @@ export default class SelectableOutput extends React.Component<
       <StyledItem
         name={
           <>
-            <Checkbox
-              name={this.props.type + '-upper-case'}
-              onChange={this.checkUpperCase}
-            />
+            <Checkbox name={this.props.type + '-upper-case'} onChange={this.checkUpperCase} />
             <TextFormat color="secondary" />
           </>
         }
@@ -82,13 +80,11 @@ export default class SelectableOutput extends React.Component<
   private streamCalculation = (
     inputStream: Bacon.Bus<string>,
     calculation: str2str,
-    calcMapper: Bacon.Property<str2str>
+    calcMapper: Bacon.Property<str2str>,
   ) => {
     const calculated: Bacon.Observable<string> = inputStream.map(calculation);
     const mapped = calcMapper
-      ? (calculated.combine(calcMapper, (val, m) => m(val)) as Bacon.Property<
-          string
-        >)
+      ? (calculated.combine(calcMapper, (val, m) => m(val)) as Bacon.Property<string>)
       : calculated;
     mapped.onValue(value => {
       this.setState({ value });
@@ -105,9 +101,7 @@ export default class SelectableOutput extends React.Component<
     }
   };
 
-  private ucIfChecked = (
-    stream: Bacon.Property<boolean>
-  ): Bacon.Property<str2str> => {
+  private ucIfChecked = (stream: Bacon.Property<boolean>): Bacon.Property<str2str> => {
     return stream.map(checked => (checked ? toUpperCase : identity));
   };
 }

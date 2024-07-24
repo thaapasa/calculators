@@ -1,14 +1,8 @@
-import {
-  Divider,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  TextField,
-} from '@material-ui/core';
+import { Divider, List, ListItem, ListItemIcon, ListItemText, TextField } from '@material-ui/core';
 import { Delete, NoteAdd } from '@material-ui/icons';
 import * as Bacon from 'baconjs';
 import React from 'react';
+
 import * as store from '../util/store';
 import { isString } from '../util/util';
 import Item from './component/item';
@@ -18,7 +12,7 @@ function validate(link: string): string {
   if (!isString(link)) {
     return '';
   }
-  if (link.includes("://")) {
+  if (link.includes('://')) {
     return link;
   }
   return 'http://' + link;
