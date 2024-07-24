@@ -1,5 +1,5 @@
-import { Avatar, Chip, Divider, IconButton, Slider, TextField } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
+import { Add } from '@mui/icons-material';
+import { Avatar, Chip, Divider, IconButton, Slider, styled, TextField } from '@mui/material';
 import {
   hexToRGB,
   HSLKey,
@@ -17,7 +17,6 @@ import { StreamCombiner, StreamDefinition } from 'app/util/stream-combiner';
 import { allFieldsOfType, mapObject } from 'app/util/util';
 import * as R from 'ramda';
 import React from 'react';
-import styled from 'styled-components';
 
 import * as store from '../util/store';
 import ByteValueSelector from './component/byte-value-selector';
@@ -164,7 +163,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
         avatar={<ColorAvatar style={{ backgroundColor: this.validatedColor }}>&nbsp;</ColorAvatar>}
         action={
           <IconButton aria-label="settings" onClick={this.storeColor}>
-            <AddIcon />
+            <Add />
           </IconButton>
         }
       >

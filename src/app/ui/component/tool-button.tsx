@@ -1,5 +1,5 @@
-import { Icon, IconButton, PropTypes } from '@material-ui/core';
-import { FileCopyOutlined } from '@material-ui/icons';
+import { FileCopyOutlined } from '@mui/icons-material';
+import { Icon, IconButton, PropTypes } from '@mui/material';
 import log from 'app/util/log';
 import React from 'react';
 
@@ -22,20 +22,14 @@ export function copyRefToClipboard(ref: React.RefObject<HTMLInputElement>) {
   }
 }
 
-export default class ToolButton extends React.Component<ToolbarProps, {}> {
-  public render() {
-    return (
-      <IconButton
-        title={this.props.title}
-        onClick={this.props.onClick}
-        className={this.props.className}
-      >
-        <Icon className="material-icons" color="primary">
-          {this.props.icon}
-        </Icon>
-      </IconButton>
-    );
-  }
+export default function ToolButton({ title, onClick, className, icon }: ToolbarProps) {
+  return (
+    <IconButton title={title} onClick={onClick} className={className}>
+      <Icon className="material-icons" color="primary">
+        {icon}
+      </Icon>
+    </IconButton>
+  );
 }
 
 interface ButtonProps {

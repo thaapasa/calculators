@@ -1,13 +1,12 @@
-import { Paper } from '@material-ui/core';
-import TextField, { StandardTextFieldProps } from '@material-ui/core/TextField';
+import { Paper, styled, TextField } from '@mui/material';
 import React from 'react';
 import Autosuggest, {
-  InputProps,
+  ChangeEvent,
+  RenderInputComponentProps,
   RenderSuggestionsContainerParams,
   SuggestionSelectedEventData,
   SuggestionsFetchRequestedParams,
 } from 'react-autosuggest';
-import styled from 'styled-components';
 
 export interface AutoCompleteProps<T> {
   name?: string;
@@ -34,7 +33,7 @@ export default class AutoComplete<T> extends React.Component<
       <Autosuggest
         inputProps={{
           value: this.state.inputValue,
-          onChange: this.setInputValue,
+          onChange: this.setInputValueFromSelection,
         }}
         getSuggestionValue={this.renderSuggestion}
         onSuggestionsFetchRequested={this.fetchSuggestions}
@@ -48,7 +47,10 @@ export default class AutoComplete<T> extends React.Component<
     );
   }
 
-  private onSelectSuggestion = (_: React.FormEvent<any>, data: SuggestionSelectedEventData<T>) => {
+  private onSelectSuggestion = (
+    _: React.FormEvent<HTMLElement>,
+    data: SuggestionSelectedEventData<T>,
+  ) => {
     this.props.onSelectSuggestion(data.suggestion);
   };
 
@@ -59,7 +61,18 @@ export default class AutoComplete<T> extends React.Component<
   };
   private clearSuggestions = () => this.setState({ suggestions: [] });
 
-  private setInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+  private setInputValueFromSelection = (_: React.FormEvent<HTMLElement>, event: ChangeEvent) => {
+    const value = event.newValue;
+    if (typeof value !== 'string') {
+      return;
+    }
+    this.setState({
+      inputValue: value,
+      suggestions: this.props.getSuggestions(value),
+    });
+  };
+
+  private setInputValueFromInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (typeof value !== 'string') {
       return;
@@ -82,16 +95,9 @@ export default class AutoComplete<T> extends React.Component<
     );
   };
 
-  private renderInput = (props: InputProps<T>) => {
-    const {
-      inputRef = () => {
-        // Ignore
-      },
-      onChange,
-      defaultValue,
-      ref,
-      ...other
-    } = props;
+  // Destructure and discard incompatible props
+  private renderInput = ({ size, color, ...props }: RenderInputComponentProps) => {
+    const { onChange, defaultValue, ref, ...other } = props;
 
     return (
       <StandardTextField
@@ -100,19 +106,14 @@ export default class AutoComplete<T> extends React.Component<
         fullWidth={this.props.fullWidth}
         placeholder={this.props.placeholder}
         type="text"
-        InputProps={{
-          inputRef: node => {
-            ref(node);
-            inputRef(node);
-          },
-        }}
-        onChange={this.setInputValue}
+        ref={ref}
+        onChange={this.setInputValueFromInput}
       />
     );
   };
 }
 
-const StandardTextField = TextField as React.ComponentType<StandardTextFieldProps>;
+const StandardTextField = TextField;
 
 const FloatingPaper = styled(Paper)`
   position: absolute;

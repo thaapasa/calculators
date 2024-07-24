@@ -6,7 +6,7 @@ const decCharsRE = /[^0-9]/;
 const hexCharsRE = /[^0-9A-Fa-f]/;
 const numChars = '0123456789ABCDEF';
 
-export function numberify<T>(t: T) {
+export function numberify<T extends object>(t: T): Record<keyof T, number> {
   return mapObject(Number, t);
 }
 

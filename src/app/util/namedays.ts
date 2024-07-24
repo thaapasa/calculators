@@ -438,9 +438,7 @@ export interface MonthDay {
   readonly day: number;
 }
 
-interface MonthDayMap {
-  [key: string]: MonthDay;
-}
+type MonthDayMap = Record<string, MonthDay>;
 
 const byName = {
   defined: false,
@@ -485,7 +483,7 @@ export function findNameDayFor(name: string): MonthDayMap {
     calculateByName();
   }
   const cn = canonName(name);
-  const resp = {};
+  const resp: MonthDayMap = {};
   byName.names
     .filter(n => n.startsWith(cn))
     .forEach(n => (resp[shownName(n)] = byName.nameDays[n]));

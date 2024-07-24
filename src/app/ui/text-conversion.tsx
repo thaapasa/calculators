@@ -1,7 +1,6 @@
-import { FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
+import { FormControl, InputLabel, MenuItem, Select, styled, TextField } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React from 'react';
-import styled from 'styled-components';
 import svgToReactNative from 'svg-rn';
 
 import * as base64 from '../calc/base64';
@@ -143,7 +142,9 @@ export default class TextConversion extends React.Component<
           <StyledSelect
             inputProps={{ id: 'conversion' }}
             value={this.state.selected}
-            onChange={e => this.selectedStr.push(e.target.value as any)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              this.selectedStr.push(e.target.value as any)
+            }
           >
             {converters.map(c => (
               <MenuItem value={c} key={c}>
@@ -159,7 +160,9 @@ export default class TextConversion extends React.Component<
             color="secondary"
           />
           <TextEdit
-            onChange={e => this.sourceStr.push(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              this.sourceStr.push(e.target.value)
+            }
             fullWidth={true}
             multiline={true}
             inputRef={this.sourceRef}
@@ -175,7 +178,9 @@ export default class TextConversion extends React.Component<
             color="secondary"
           />
           <TextEdit
-            onChange={e => this.targetStr.push(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              this.targetStr.push(e.target.value)
+            }
             fullWidth={true}
             multiline={true}
             inputRef={this.targetRef}

@@ -1,13 +1,12 @@
-import { TextField } from '@material-ui/core';
+import { styled, TextField } from '@mui/material';
 import * as Bacon from 'baconjs';
 import moment from 'moment';
 import React from 'react';
-import styled from 'styled-components';
 
 import { strToInt } from '../calc/numbers';
 import { findNameDayFor, getNameDay, MonthDay } from '../util/namedays';
 import { zeroPad } from '../util/strings';
-import { allFieldsOfType, identity, isDefined, isString } from '../util/util';
+import { identity, isDefined, isString, objectKeys } from '../util/util';
 import AutoComplete from './component/autocomplete';
 import Item from './component/item';
 import { HalfSection } from './component/section';
@@ -89,7 +88,7 @@ interface DateTimeType {
   readonly readOnly?: boolean;
 }
 
-const typeInfo = allFieldsOfType<DateTimeType>()({
+const typeInfo = {
   week: {
     write: (val: any) => toStateValue(val, toIsoWeek),
     reportValue: true,
@@ -184,7 +183,7 @@ const typeInfo = allFieldsOfType<DateTimeType>()({
     readOnly: true,
   },
   direct: { write: identity, src: 'direct' },
-});
+} satisfies Record<string, DateTimeType>;
 
 const hints = {
   date: '31.12.2016',
@@ -197,7 +196,8 @@ const hints = {
 
 const valueTypes = ['date', 'dateText', 'hour', 'minute', 'second', 'millisecond'];
 
-const types = Object.keys(typeInfo);
+const types = objectKeys(typeInfo);
+type TypeField = (typeof types)[number];
 
 function toStateValue(mom: moment.Moment, writer: (x: moment.Moment) => any): string {
   if (!moment.isMoment(mom)) {
@@ -220,7 +220,7 @@ interface NameDayItem {
   value: MonthDay;
 }
 
-interface DateTimeState {
+interface DateTimeState extends Partial<Record<TypeField, string | Date>> {
   reportTarget: string;
   foundNameDays: NameDayItem[];
   locale: string;
@@ -264,7 +264,8 @@ export default class DateTime extends React.Component<DateTimeProps, DateTimeSta
       if (t !== 'focused') {
         this.streams[t] = new Bacon.Bus();
         this.streams[t].onValue((v: any) => this.setState({ [t]: v } as DateTimeState));
-        incoming[t] = typeInfo[t].read ? this.streams[t].map(typeInfo[t].read) : this.streams[t];
+        incoming[t] =
+          'read' in typeInfo[t] ? this.streams[t].map(typeInfo[t].read) : this.streams[t];
       }
     });
     incoming.datePicker.onValue((v: string) => this.streams.date.push(v));
@@ -300,8 +301,8 @@ export default class DateTime extends React.Component<DateTimeProps, DateTimeSta
     Bacon.combineAsArray(newVal, this.streams.selected).onValue(r => {
       const val = r[0];
       const src = r[1];
-      types.forEach((t: string) => {
-        if (typeInfo[t].src === src || !typeInfo[t].write) {
+      types.forEach((t: TypeField) => {
+        if (('src' in typeInfo[t] && typeInfo[t].src === src) || !typeInfo[t].write) {
           return;
         }
         const output = typeInfo[t].write(val);
@@ -415,7 +416,7 @@ export default class DateTime extends React.Component<DateTimeProps, DateTimeSta
     this.streams[src].push(val);
   };
 
-  private renderType(type: string) {
+  private renderType(type: TypeField) {
     const info = typeInfo[type] as DateTimeType;
     return (
       <TimeField
@@ -466,7 +467,7 @@ const findNameDays = (input: string): NameDayItem[] => {
 const renderMonthDayItem = (m: NameDayItem) => m.text;
 const monthDayToInputValue = (m: NameDayItem) => m.name;
 
-const AutoCompleteWrapper = styled.div`
+const AutoCompleteWrapper = styled('div')`
   & input {
     margin-left: 4px;
   }

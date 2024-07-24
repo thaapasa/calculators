@@ -1,7 +1,6 @@
-import { Slider, TextField } from '@material-ui/core';
+import { Slider, styled, TextField } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React from 'react';
-import styled from 'styled-components';
 
 import { hexStrToInt, intToHexStr, strToInt } from '../../calc/numbers';
 import { zeroPad } from '../../util/strings';
@@ -31,7 +30,7 @@ const ComponentField = styled(TextField)`
   margin-right: 1em !important;
 `;
 
-const types = ['parent', 'dec', 'hex', 'slider'];
+const types = ['parent', 'dec', 'hex', 'slider'] as const;
 
 interface TypeInfoType {
   readonly read: (x: string | number) => number;
@@ -155,7 +154,7 @@ export default class ByteValueSelector extends React.Component<SelectorProps, Se
   };
 
   private showValue = (val: number, src: string) => {
-    const ns = {};
+    const ns: Record<string, string | number> = {};
     types.filter(t => t !== src).forEach(t => (ns[t] = typeInfo[t].write(val)));
     this.setState(ns);
     if (this.props.onValue && src !== 'parent') {
@@ -176,14 +175,14 @@ export default class ByteValueSelector extends React.Component<SelectorProps, Se
   };
 }
 
-const Row = styled.div`
+const Row = styled('div')`
   display: flex;
   justify-content: flex-start;
   align-items: center;
   margin: 12px;
 `;
 
-const Column = styled.div`
+const Column = styled('div')`
   width: 100%;
   &.high {
     margin-top: 18px;

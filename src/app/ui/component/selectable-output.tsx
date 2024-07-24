@@ -1,8 +1,7 @@
-import { Checkbox, TextField } from '@material-ui/core';
-import { TextFormat } from '@material-ui/icons';
+import { TextFormat } from '@mui/icons-material';
+import { Checkbox, styled, TextField } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React from 'react';
-import styled from 'styled-components';
 
 import { toUpperCase } from '../../util/strings';
 import { identity } from '../../util/util';
@@ -19,7 +18,7 @@ interface SelectableOutputProps {
   readonly label: string;
   readonly calculate: (v: string) => string;
   readonly onValue: (v: any) => any;
-  readonly onSelect: React.FocusEventHandler<{}>;
+  readonly onSelect: React.FocusEventHandler;
 }
 
 interface SelectableOutputState {

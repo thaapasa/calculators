@@ -1,7 +1,7 @@
-import { TextField } from '@material-ui/core';
+import { TextField } from '@mui/material';
 import * as Bacon from 'baconjs';
 import crypto from 'crypto-browserify';
-import React from 'react';
+import React, { RefObject } from 'react';
 
 import Item from './component/item';
 import Section from './component/section';
@@ -34,6 +34,7 @@ export default class Cryptography extends React.Component<CryptographyProps, any
   private default: string;
   private inputStream = new Bacon.Bus<string>();
   private cryptoSelectStream = new Bacon.Bus<string>();
+  private refsObjects: Record<string, RefObject<SelectableOutput>>;
 
   constructor(props: CryptographyProps) {
     super(props);
@@ -42,11 +43,12 @@ export default class Cryptography extends React.Component<CryptographyProps, any
     this.default = cryptoList[0].code;
 
     this.state = { input: '', selected: this.default };
+    this.refsObjects = Object.fromEntries(cryptoList.map(c => [c.code, React.createRef()]));
   }
 
   public componentDidMount() {
     this.inputStream.onValue(v =>
-      cryptoList.forEach(c => (this.refs[c.code] as SelectableOutput).setValue(v)),
+      cryptoList.forEach(c => this.refsObjects[c.code]?.current?.setValue(v)),
     );
     cryptoList.forEach(l => {
       l.valueStream = new Bacon.Bus<string>();
@@ -89,7 +91,7 @@ export default class Cryptography extends React.Component<CryptographyProps, any
   private renderCrypto = (c: CryptoType) => {
     return (
       <SelectableOutput
-        ref={c.code}
+        ref={this.refsObjects[c.code]}
         type={c.code}
         label={c.name}
         calculate={c.calculate}

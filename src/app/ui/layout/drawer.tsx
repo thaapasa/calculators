@@ -1,13 +1,10 @@
-import { Card, CardHeader, Drawer, MenuItem } from '@material-ui/core';
+import { Card, CardHeader, Drawer, MenuItem, styled } from '@mui/material';
 import React from 'react';
-import styled from 'styled-components';
 
+import { version } from '../../../../package.json';
 import { history } from '../history';
 import { Flex, FlexColumn } from './elements';
 import { Logo } from './logo';
-
-// tslint:disable-next-line no-var-requires
-const ver = require('../../../../package.json');
 
 interface NavigationProps {
   open: boolean;
@@ -30,7 +27,7 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
       <Drawer open={this.props.open} anchor="left" onClose={this.props.onToggle}>
         <DrawerCol>
           <Card>
-            <CardHeader title="Laskurit" subheader={`v. ${ver.version}`} avatar={<Logo />} />
+            <CardHeader title="Laskurit" subheader={`v. ${version}`} avatar={<Logo />} />
           </Card>
           <MenuItem onClick={this.goToFullpage}>Kaikki</MenuItem>
           <MenuItem onClick={this.goToNumbers}>Numerot ja merkit</MenuItem>
@@ -82,7 +79,7 @@ export default class NavigationDrawer extends React.Component<NavigationProps> {
   }
 }
 
-const LicenseInfo = styled.div`
+const LicenseInfo = styled('div')`
   padding: 16px;
   font-size: 10pt;
   & a {
@@ -94,7 +91,7 @@ const DrawerCol = styled(FlexColumn)`
   width: 290px;
 `;
 
-const LicenseRow = styled.div`
+const LicenseRow = styled('div')`
   margin-top: 8px;
   padding-bottom: 8px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);

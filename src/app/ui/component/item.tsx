@@ -1,5 +1,5 @@
+import { styled } from '@mui/material';
 import React from 'react';
-import styled from 'styled-components';
 
 interface ItemProps {
   readonly className?: string;
@@ -8,18 +8,22 @@ interface ItemProps {
   readonly valueClassName?: 'top';
 }
 
-export default class Item extends React.Component<ItemProps, {}> {
-  public render() {
-    return (
-      <CalculatorItem className={this.props.className} style={this.props.style}>
-        {this.props.name ? <div className="name">{this.props.name}</div> : undefined}
-        <div className={`value ${this.props.valueClassName || ''}`}>{this.props.children}</div>
-      </CalculatorItem>
-    );
-  }
+export default function Item({
+  className,
+  style,
+  name,
+  valueClassName,
+  children,
+}: React.PropsWithChildren<ItemProps>) {
+  return (
+    <CalculatorItem className={className} style={style}>
+      {name ? <div className="name">{name}</div> : undefined}
+      <div className={`value ${valueClassName || ''}`}>{children}</div>
+    </CalculatorItem>
+  );
 }
 
-const CalculatorItem = styled.div`
+const CalculatorItem = styled('div')`
   margin: 0.2em 0.75em;
   display: flex;
   align-items: center;

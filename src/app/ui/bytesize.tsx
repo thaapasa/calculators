@@ -1,7 +1,6 @@
-import { TextField } from '@material-ui/core';
+import { styled, TextField } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React, { CSSProperties } from 'react';
-import styled from 'styled-components';
 
 import { allFieldsOfType, isString, pairsToObject } from '../util/util';
 import Item from './component/item';
@@ -46,6 +45,7 @@ const types = allFieldsOfType<TypeInfo>()({
   tera: converter('Teratavua', 'Tt', TERA),
 });
 const typeKeys = Object.keys(types);
+export type SizeTypes = keyof typeof types;
 
 const leftColumn: string[] = ['kibi', 'mebi', 'gibi', 'tebi'];
 const rightColumn: string[] = ['kilo', 'mega', 'giga', 'tera'];
@@ -155,7 +155,7 @@ export default class ByteSizes extends React.Component<ByteSizeProps, ByteSizeSt
 }
 
 const Editor = (p: {
-  type: string;
+  type: SizeTypes;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
@@ -193,7 +193,7 @@ const TextFieldStyle: CSSProperties = {
   width: 100,
 };
 
-const Unit = styled.div`
+const Unit = styled('div')`
   width: 25px;
   text-align: right;
   padding-right: 8px;

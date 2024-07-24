@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import { styled } from '@mui/material';
 
-export const FlexRow = styled.div`
+export const FlexRow = styled('div')`
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -17,17 +17,17 @@ export const FlexRow = styled.div`
   }
 `;
 
-export const FlexColumn = styled.div`
+export const FlexColumn = styled('div')`
   display: flex;
   flex-direction: column;
   height: 100%;
   box-sizing: border-box;
 `;
 
-export const Flex = styled.div`
+export const Flex = styled('div')`
   flex: 1;
 `;
 
-export const LeftPad = styled.div`
+export const LeftPad = styled('div')`
   padding-left: 16px;
 `;

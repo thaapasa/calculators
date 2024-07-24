@@ -1,7 +1,6 @@
-import { TextField } from '@material-ui/core';
+import { styled, TextField } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React from 'react';
-import styled from 'styled-components';
 
 import * as numbers from '../calc/numbers';
 import { zeroPad } from '../util/strings';

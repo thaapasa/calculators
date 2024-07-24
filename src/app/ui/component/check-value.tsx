@@ -1,7 +1,6 @@
-import { TextField } from '@material-ui/core';
+import { styled, TextField } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React, { ChangeEvent } from 'react';
-import styled from 'styled-components';
 
 import * as util from '../../util/util';
 import Item from './item';
@@ -121,7 +120,7 @@ export default class CheckValue extends React.Component<CheckProps, CheckState> 
   };
 }
 
-const GeneratePlaceholder = styled.div`
+const GeneratePlaceholder = styled('div')`
   width: 48px;
   height: 48px;
 `;

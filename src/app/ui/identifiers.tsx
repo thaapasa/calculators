@@ -21,7 +21,7 @@ function generateRandomString() {
   return getRandomString(64);
 }
 
-export default class Identifiers extends React.Component<IdentifiersProps, {}> {
+export default class Identifiers extends React.Component<IdentifiersProps, never> {
   public render() {
     return (
       <HalfSection title="Tunnisteet" image="/img/header-identifiers.jpg">
