@@ -8,7 +8,7 @@ interface ItemProps {
   readonly valueClassName?: 'top';
 }
 
-export default function Item({
+export function Item({
   className,
   style,
   name,

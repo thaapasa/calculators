@@ -7,8 +7,8 @@ import * as companyId from '../calc/companyid';
 import * as hetu from '../calc/hetu';
 import { getRandomString } from '../calc/random';
 import * as util from '../util/util';
-import CheckValue from './component/check-value';
-import { HalfSection } from './component/section';
+import { CheckValue } from './component/CheckValue';
+import { HalfSection } from './component/Section';
 import { publishSelectedValue } from './LastValue';
 
 interface IdentifiersProps {}

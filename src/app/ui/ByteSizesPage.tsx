@@ -3,8 +3,8 @@ import * as Bacon from 'baconjs';
 import React, { CSSProperties } from 'react';
 
 import { allFieldsOfType, isString, pairsToObject } from '../util/util';
-import Item from './component/item';
-import { HalfSection } from './component/section';
+import { Item } from './component/Item';
+import { HalfSection } from './component/Section';
 import { publishSelectedValue } from './LastValue';
 import { Flex, FlexRow } from './layout/elements';
 

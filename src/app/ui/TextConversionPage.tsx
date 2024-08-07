@@ -9,8 +9,8 @@ import { jsonStringToXml, xmlToJsonString } from '../calc/xml-json';
 import * as store from '../util/store';
 import * as strings from '../util/strings';
 import { identity } from '../util/util';
-import Section from './component/section';
-import { ClipboardButton, copyRefToClipboard } from './component/tool-button';
+import Section from './component/Section';
+import { ClipboardButton, copyRefToClipboard } from './component/ToolButton';
 import { publishSelectedValue } from './LastValue';
 import { FlexRow, LeftPad } from './layout/elements';
 

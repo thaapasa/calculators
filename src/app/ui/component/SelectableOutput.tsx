@@ -5,7 +5,7 @@ import React from 'react';
 
 import { toUpperCase } from '../../util/strings';
 import { identity } from '../../util/util';
-import Item from './item';
+import { Item } from './Item';
 
 const StyledItem = styled(Item)`
   & > .name {
@@ -27,7 +27,7 @@ interface SelectableOutputState {
 
 type str2str = (x: string) => string;
 
-export default class SelectableOutput extends React.Component<
+export class SelectableOutput extends React.Component<
   SelectableOutputProps,
   SelectableOutputState
 > {

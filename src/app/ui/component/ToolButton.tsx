@@ -22,7 +22,7 @@ export function copyRefToClipboard(ref: React.RefObject<HTMLInputElement>) {
   }
 }
 
-export default function ToolButton({ title, onClick, className, icon }: ToolbarProps) {
+export function ToolButton({ title, onClick, className, icon }: ToolbarProps) {
   return (
     <IconButton title={title} onClick={onClick} className={className}>
       <Icon className="material-icons" color="primary">

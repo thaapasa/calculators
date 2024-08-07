@@ -2,7 +2,7 @@ import { styled, TextField } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React from 'react';
 
-import { ClipboardButton } from './component/tool-button';
+import { ClipboardButton } from './component/ToolButton';
 
 const lastValue = new Bacon.Bus<string>();
 

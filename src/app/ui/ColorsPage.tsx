@@ -19,10 +19,10 @@ import * as R from 'ramda';
 import React from 'react';
 
 import * as store from '../util/store';
-import ByteValueSelector from './component/byte-value-selector';
-import { ColorBar } from './component/color-bar';
-import Item from './component/item';
-import { HalfSection } from './component/section';
+import { ByteValueSelector } from './component/ByteValueSelector';
+import { ColorBar } from './component/ColorBar';
+import { Item } from './component/Item';
+import { HalfSection } from './component/Section';
 import { publishSelectedValue } from './LastValue';
 
 const ColorAvatar = styled(Avatar)`
@@ -108,7 +108,6 @@ function getColorsFromStore(): StoredColor[] {
 }
 
 function storeColors(colors: StoredColor[]) {
-  console.log('Storing colors', colors);
   store.putValue(COLORS_STORE_KEY, colors);
 }
 

@@ -2,9 +2,9 @@ import { TextField } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React, { RefObject } from 'react';
 
-import Item from './component/item';
-import Section from './component/section';
-import SelectableOutput from './component/selectable-output';
+import { Item } from './component/Item';
+import Section from './component/Section';
+import { SelectableOutput } from './component/SelectableOutput';
 import { publishSelectedValue } from './LastValue';
 
 interface CryptographyProps {}

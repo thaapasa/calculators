@@ -5,7 +5,7 @@ import React from 'react';
 import { hexStrToInt, intToHexStr, strToInt } from '../../calc/numbers';
 import { zeroPad } from '../../util/strings';
 import { isNumber } from '../../util/util';
-import Item from '../component/item';
+import { Item } from './Item';
 
 function isValidComp(value: number): value is number {
   return isNumber(value) && !isNaN(value) && value >= 0 && value <= 255;
@@ -63,7 +63,7 @@ interface SelectorProps {
   topContent?: any;
 }
 
-export default class ByteValueSelector extends React.Component<SelectorProps, SelectorState> {
+export class ByteValueSelector extends React.Component<SelectorProps, SelectorState> {
   public state: SelectorState = {
     hex: '',
     dec: '',

@@ -23,10 +23,7 @@ interface AutoCompleteState<T> {
   suggestions: T[];
 }
 
-export default class AutoComplete<T> extends React.Component<
-  AutoCompleteProps<T>,
-  AutoCompleteState<T>
-> {
+export class AutoComplete<T> extends React.Component<AutoCompleteProps<T>, AutoCompleteState<T>> {
   public state: AutoCompleteState<T> = { inputValue: '', suggestions: [] };
   public render() {
     return (

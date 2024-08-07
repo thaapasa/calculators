@@ -3,8 +3,8 @@ import * as Bacon from 'baconjs';
 import React, { ChangeEvent } from 'react';
 
 import * as util from '../../util/util';
-import Item from './item';
-import { GenerateButton } from './tool-button';
+import { Item } from './Item';
+import { GenerateButton } from './ToolButton';
 
 const CheckItem = styled(Item)`
   height: 48px;
@@ -31,7 +31,7 @@ interface CheckState {
   checkValue: string;
 }
 
-export default class CheckValue extends React.Component<CheckProps, CheckState> {
+export class CheckValue extends React.Component<CheckProps, CheckState> {
   public state: CheckState = {
     input: '',
     value: '',
