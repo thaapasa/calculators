@@ -34,7 +34,7 @@ function storeLinks(links: string[]) {
   store.putValue(LINKS_STORE_KEY, links);
 }
 
-export default class Links extends React.Component<EmptyObject, LinksState> {
+export class LinksPage extends React.Component<EmptyObject, LinksState> {
   public state: LinksState = {
     link: '',
     validatedLink: '',

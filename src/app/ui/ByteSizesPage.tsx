@@ -5,6 +5,7 @@ import React, { CSSProperties } from 'react';
 import { allFieldsOfType, isString, pairsToObject } from '../util/util';
 import Item from './component/item';
 import { HalfSection } from './component/section';
+import { publishSelectedValue } from './LastValue';
 import { Flex, FlexRow } from './layout/elements';
 
 interface TypeInfo {
@@ -50,9 +51,7 @@ export type SizeTypes = keyof typeof types;
 const leftColumn: string[] = ['kibi', 'mebi', 'gibi', 'tebi'];
 const rightColumn: string[] = ['kilo', 'mega', 'giga', 'tera'];
 
-interface ByteSizeProps {
-  onValue: (x: any) => any;
-}
+interface ByteSizeProps {}
 
 interface ByteSizeState {
   selected: string;
@@ -61,7 +60,7 @@ interface ByteSizeState {
 
 const emptyStream = Bacon.never();
 
-export default class ByteSizes extends React.Component<ByteSizeProps, ByteSizeState> {
+export class ByteSizesPage extends React.Component<ByteSizeProps, ByteSizeState> {
   public state: ByteSizeState = {
     selected: 'byte',
     values: pairsToObject(Object.keys(types).map<[string, string]>(t => [t, ''])),
@@ -91,7 +90,7 @@ export default class ByteSizes extends React.Component<ByteSizeProps, ByteSizeSt
       .toProperty('byte')
       .map(t => types[t].write)
       .combine(converted, (c, v) => v && c(v))
-      .onValue(v => v && this.props.onValue && this.props.onValue(v));
+      .onValue(publishSelectedValue);
   }
 
   public render() {

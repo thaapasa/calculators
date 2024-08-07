@@ -10,8 +10,8 @@ import {
   TextFormat,
 } from '@mui/icons-material';
 import { AppBar, IconButton, styled, SvgIconProps, Toolbar, Typography } from '@mui/material';
-import { History, Location } from 'history';
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router';
 
 import { Logo } from './logo';
 
@@ -23,73 +23,51 @@ const TopLogo = styled(Logo)`
   margin-right: 16px;
 `;
 
-class CalculatorToolbar extends React.Component<RouteComponentProps & ToolbarProps> {
-  public render() {
-    return (
-      <AppBar>
-        <Toolbar>
-          <Flex>
-            <TopLogo onClick={this.props.onToggleDrawer} />
-            <Typography variant="h6" color="inherit">
-              Laskurit
-            </Typography>
-          </Flex>
-          <FullWidthOnly>
-            <Link {...this.props} icon={Home} route="/" tooltip="Kaikki" />
-            <Link
-              {...this.props}
-              icon={AccessTime}
-              route={['/p/aika', '/p/time']}
-              tooltip="Aikaleimat"
-            />
-            <Link
-              {...this.props}
-              icon={Exposure}
-              route={['/p/numerot', '/p/merkit', '/p/symbols']}
-              tooltip="Numerot ja merkit"
-            />
-            <Link
-              {...this.props}
-              icon={PermIdentity}
-              route={['/p/tunnisteet', '/p/identifiers']}
-              tooltip="Tunnisteet"
-            />
-            <Link
-              {...this.props}
-              icon={ColorLens}
-              route={['/p/värit', '/p/colors']}
-              tooltip="Värit"
-            />
-            <Link
-              {...this.props}
-              icon={Code}
-              route={['/p/tavukoot', '/p/bytesize', '/p/bytesizes']}
-              tooltip="Tavukoot"
-            />
-            <Link
-              {...this.props}
-              icon={LinkIcon}
-              route={['/p/linkit', '/p/links']}
-              tooltip="Linkit"
-            />
-            <Link
-              {...this.props}
-              icon={TextFormat}
-              route={['/p/tekstimuunnokset', '/p/textconversions']}
-              tooltip="Tekstimuunnokset"
-            />
-            <Link
-              {...this.props}
-              icon={EnhancedEncryption}
-              route={['/p/kryptografia', '/p/cryptography']}
-              tooltip="Kryptografia"
-            />
-          </FullWidthOnly>
-          <Flex className="right">{this.props.children}</Flex>
-        </Toolbar>
-      </AppBar>
-    );
-  }
+export function TopBar({ onToggleDrawer, children }: React.PropsWithChildren<ToolbarProps>) {
+  return (
+    <AppBar>
+      <Toolbar>
+        <Flex>
+          <TopLogo onClick={onToggleDrawer} />
+          <Typography variant="h6" color="inherit">
+            Laskurit
+          </Typography>
+        </Flex>
+        <FullWidthOnly>
+          <Link icon={Home} route="/" tooltip="Kaikki" />
+          <Link icon={AccessTime} route={['/p/aika', '/p/time']} tooltip="Aikaleimat" />
+          <Link
+            icon={Exposure}
+            route={['/p/numerot', '/p/merkit', '/p/symbols']}
+            tooltip="Numerot ja merkit"
+          />
+          <Link
+            icon={PermIdentity}
+            route={['/p/tunnisteet', '/p/identifiers']}
+            tooltip="Tunnisteet"
+          />
+          <Link icon={ColorLens} route={['/p/värit', '/p/colors']} tooltip="Värit" />
+          <Link
+            icon={Code}
+            route={['/p/tavukoot', '/p/bytesize', '/p/bytesizes']}
+            tooltip="Tavukoot"
+          />
+          <Link icon={LinkIcon} route={['/p/linkit', '/p/links']} tooltip="Linkit" />
+          <Link
+            icon={TextFormat}
+            route={['/p/tekstimuunnokset', '/p/textconversions']}
+            tooltip="Tekstimuunnokset"
+          />
+          <Link
+            icon={EnhancedEncryption}
+            route={['/p/kryptografia', '/p/cryptography']}
+            tooltip="Kryptografia"
+          />
+        </FullWidthOnly>
+        <Flex className="right">{children}</Flex>
+      </Toolbar>
+    </AppBar>
+  );
 }
 
 const Flex = styled('div')`
@@ -107,31 +85,25 @@ const FullWidthOnly = styled('div')`
   }
 `;
 
-export default withRouter(CalculatorToolbar);
-
-class Link extends React.Component<{
+interface LinkProps {
   route: string | string[];
   tooltip: string;
   icon: React.ComponentType<SvgIconProps>;
-  location: Location;
-  history: History;
-}> {
-  render() {
-    return (
-      <IconButton onClick={this.onClick} color={this.selected ? 'inherit' : 'default'}>
-        <this.props.icon />
-      </IconButton>
-    );
-  }
-  get route(): string {
-    return typeof this.props.route === 'string' ? this.props.route : this.props.route[0] || '';
-  }
-  get selected(): boolean {
-    return typeof this.props.route === 'string'
-      ? this.props.location.pathname === this.props.route
-      : this.props.route.find(r => this.props.location.pathname === r) !== undefined;
-  }
-  onClick = () => {
-    this.props.history.push(this.route);
+}
+
+function Link({ route, icon: Icon, tooltip }: LinkProps) {
+  const navigate = useNavigate();
+  const onClick = () => {
+    navigate(Array.isArray(route) ? route[0] : route);
   };
+  const location = useLocation();
+  const selected =
+    typeof route === 'string'
+      ? location.pathname === route
+      : route.find(r => location.pathname === r) !== undefined;
+  return (
+    <IconButton onClick={onClick} color={selected ? 'inherit' : 'default'} title={tooltip}>
+      <Icon />
+    </IconButton>
+  );
 }

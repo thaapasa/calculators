@@ -11,7 +11,7 @@ interface NavigationProps {
   onToggle: () => void;
 }
 
-export default class NavigationDrawer extends React.Component<NavigationProps> {
+export class NavigationDrawer extends React.Component<NavigationProps> {
   private goToFullpage = this.navigate('/');
   private goToNumbers = this.navigate('/p/numerot');
   private goToTime = this.navigate('/p/aika');

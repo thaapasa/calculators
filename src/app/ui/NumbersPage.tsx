@@ -7,6 +7,7 @@ import { zeroPad } from '../util/strings';
 import * as util from '../util/util';
 import Item from './component/item';
 import { HalfSection } from './component/section';
+import { publishSelectedValue } from './LastValue';
 
 const texts = {
   binary: 'Binääri',
@@ -89,9 +90,7 @@ function intToHTMLCode(value: number): string {
   return typeof str === 'string' ? `&#${str};` : '';
 }
 
-interface NumbersProps {
-  onValue: (x: any) => any;
-}
+interface NumbersProps {}
 
 interface NumbersState {
   selected: string;
@@ -101,7 +100,7 @@ interface NumbersState {
 
 const emptyStream = Bacon.never<number>();
 
-export default class Numbers extends React.Component<NumbersProps, NumbersState> {
+export class NumbersPage extends React.Component<NumbersProps, NumbersState> {
   public state: NumbersState = {
     selected: 'decimal',
     unicode: '',
@@ -171,7 +170,7 @@ export default class Numbers extends React.Component<NumbersProps, NumbersState>
     this.selectedSrcStr
       .map(t => types[t].write)
       .combine(converted, (c, v) => c(v || 0))
-      .onValue(v => this.props.onValue && this.props.onValue(v));
+      .onValue(publishSelectedValue);
   }
 
   private mergeValues = (x: Record<string, string>) =>

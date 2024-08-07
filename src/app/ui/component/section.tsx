@@ -25,7 +25,6 @@ interface SectionProps extends HalfSectionProps {
 function SectionImpl({
   image,
   title,
-  classes,
   subtitle,
   className,
   action,
@@ -34,7 +33,7 @@ function SectionImpl({
 }: React.PropsWithChildren<SectionProps & StyledComponentProps>) {
   return (
     <Card className={'section ' + (className || '')}>
-      {image ? <CardMedia image={image} title={title} className={classes!.media} /> : null}
+      {image ? <CardMedia image={image} title={title} className="media" /> : null}
       <CardHeader title={title} subheader={subtitle} avatar={avatar} action={action} />
       <Divider />
       <CardContent>{children}</CardContent>
@@ -42,17 +41,21 @@ function SectionImpl({
   );
 }
 
-const Section = styled(SectionImpl, {
-  media: {
-    height: 88,
-  },
-})``;
+const Section = styled(SectionImpl, {})`
+  & .media {
+    height: 88px;
+  }
+`;
 export default Section;
 
-export function HalfSection(p: HalfSectionProps & { children: React.ReactNode }) {
+export function HalfSection({
+  className,
+  children,
+  ...props
+}: HalfSectionProps & { children: React.ReactNode }) {
   return (
-    <Section className="section-half-size" {...p}>
-      {p.children}
+    <Section className={`section-half-size ${className || ''}`} {...props}>
+      {children}
     </Section>
   );
 }

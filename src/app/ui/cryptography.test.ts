@@ -1,6 +1,6 @@
 import 'jest';
 
-import { hash } from './cryptography';
+import { hash } from './CryptographyPage';
 
 describe('MD5', () => {
   it('should calculate empty string correctly', () => {

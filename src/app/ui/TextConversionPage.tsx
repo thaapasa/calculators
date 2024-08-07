@@ -11,6 +11,7 @@ import * as strings from '../util/strings';
 import { identity } from '../util/util';
 import Section from './component/section';
 import { ClipboardButton, copyRefToClipboard } from './component/tool-button';
+import { publishSelectedValue } from './LastValue';
 import { FlexRow, LeftPad } from './layout/elements';
 
 interface ConverterInfo {
@@ -74,9 +75,7 @@ const convertInfo: { [key: string]: ConverterInfo } = {
 };
 const converters = Object.keys(convertInfo);
 
-interface TextConversionProps {
-  readonly onValue: (x: string) => any;
-}
+interface TextConversionProps {}
 
 interface TextConversionState {
   source: string;
@@ -94,10 +93,7 @@ function setConverterToStore(converterName: string): void {
   store.putValue(CONVERTER_STORE_KEY, converterName);
 }
 
-export default class TextConversion extends React.Component<
-  TextConversionProps,
-  TextConversionState
-> {
+export class TextConversionPage extends React.Component<TextConversionProps, TextConversionState> {
   public state: TextConversionState = {
     source: '',
     target: '',
@@ -124,8 +120,8 @@ export default class TextConversion extends React.Component<
     encStr.onValue(async v => this.setState({ target: await v }));
     const decStr = this.targetStr.combine(selected, (val, c) => convertInfo[c].decode(val));
     decStr.onValue(async v => this.setState({ source: await v }));
-    Bacon.mergeAll(encStr.changes(), decStr.changes()).onValue(
-      async v => this.props.onValue && this.props.onValue(await v),
+    Bacon.mergeAll(encStr.changes(), decStr.changes()).onValue(async v =>
+      publishSelectedValue(await v),
     );
     this.selectedStr.push(initialConverter);
   }

@@ -23,6 +23,7 @@ import ByteValueSelector from './component/byte-value-selector';
 import { ColorBar } from './component/color-bar';
 import Item from './component/item';
 import { HalfSection } from './component/section';
+import { publishSelectedValue } from './LastValue';
 
 const ColorAvatar = styled(Avatar)`
   border: 1px solid #bbbbbb;
@@ -53,9 +54,7 @@ const colors = {
     R.range(0, 255).map(l => hslToRGB({ h, s, l: (l * HSLMaxValue) / 255 })),
 };
 
-interface ColorsProps {
-  onValue: (x: string) => void;
-}
+interface ColorsProps {}
 
 interface StoredColor {
   name: string;
@@ -113,7 +112,7 @@ function storeColors(colors: StoredColor[]) {
   store.putValue(COLORS_STORE_KEY, colors);
 }
 
-export default class Colors extends React.Component<ColorsProps, ColorState> {
+export class ColorsPage extends React.Component<ColorsProps, ColorState> {
   public state: ColorState = {
     r: '0',
     g: '0',
@@ -281,9 +280,7 @@ export default class Colors extends React.Component<ColorsProps, ColorState> {
   };
 
   private sendToParent = () => {
-    if (this.props.onValue) {
-      this.props.onValue(this.selectedValue);
-    }
+    publishSelectedValue(this.selectedValue);
   };
 
   private select = (src: 'hex' | 'rgb') => {

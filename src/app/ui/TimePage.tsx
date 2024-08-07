@@ -10,6 +10,7 @@ import { identity, isDefined, isString, objectKeys } from '../util/util';
 import AutoComplete from './component/autocomplete';
 import Item from './component/item';
 import { HalfSection } from './component/section';
+import { publishSelectedValue } from './LastValue';
 
 const styles: { [key: string]: React.CSSProperties } = {
   len2: { width: '1.7em' },
@@ -210,9 +211,7 @@ function toStateValue(mom: moment.Moment, writer: (x: moment.Moment) => any): st
   return typeof s === 'object' || s === null ? s : typeof s === 'number' ? `${s}` : s;
 }
 
-interface DateTimeProps {
-  onValue: (x: any) => any;
-}
+interface DateTimeProps {}
 
 interface NameDayItem {
   text: string;
@@ -231,7 +230,7 @@ interface DateTimeState extends Partial<Record<TypeField, string | Date>> {
   nameDay: string;
 }
 
-export default class DateTime extends React.Component<DateTimeProps, DateTimeState> {
+export class TimePage extends React.Component<DateTimeProps, DateTimeState> {
   public state: DateTimeState = {
     reportTarget: '',
     foundNameDays: [],
@@ -317,7 +316,7 @@ export default class DateTime extends React.Component<DateTimeProps, DateTimeSta
     const reportTarget = incoming.focused.filter((t: any) => typeInfo[t].reportValue);
     reportTarget.onValue((v: any) => this.setState({ reportTarget: v }));
     Bacon.combineAsArray(newVal, reportTarget).onValue(t =>
-      this.props.onValue(typeInfo[t[1]].write(t[0])),
+      publishSelectedValue(typeInfo[t[1]].write(t[0])),
     );
     // Push default value
     this.pushValue(moment(), 'direct');

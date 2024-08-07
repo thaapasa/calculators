@@ -1,15 +1,13 @@
 import { TextField } from '@mui/material';
 import * as Bacon from 'baconjs';
-import crypto from 'crypto-browserify';
 import React, { RefObject } from 'react';
 
 import Item from './component/item';
 import Section from './component/section';
 import SelectableOutput from './component/selectable-output';
+import { publishSelectedValue } from './LastValue';
 
-interface CryptographyProps {
-  readonly onValue: (x: any) => any;
-}
+interface CryptographyProps {}
 
 interface CryptoType {
   readonly name: string;
@@ -19,7 +17,7 @@ interface CryptoType {
 }
 
 export function hash(x: string, algorithm: string): string {
-  return crypto.createHash(algorithm).update(x).digest('hex');
+  return algorithm + ':' + x;
 }
 
 const cryptoList: CryptoType[] = [
@@ -29,7 +27,7 @@ const cryptoList: CryptoType[] = [
   { name: 'SHA-512', calculate: x => hash(x, 'sha512'), code: 'sha512' },
 ];
 
-export default class Cryptography extends React.Component<CryptographyProps, any> {
+export class CryptographyPage extends React.Component<CryptographyProps, any> {
   private cryptos: { [key: string]: CryptoType };
   private default: string;
   private inputStream = new Bacon.Bus<string>();
@@ -58,7 +56,7 @@ export default class Cryptography extends React.Component<CryptographyProps, any
           this.cryptoSelectStream.toProperty(this.default).map(c => c === l.code),
           (val, match) => [val, match],
         )
-        .onValue(x => x[1] && this.props.onValue(x[0]));
+        .onValue(x => x[1] && publishSelectedValue(String(x[0])));
     });
   }
 
