@@ -1,5 +1,5 @@
 import { Delete, NoteAdd } from '@mui/icons-material';
-import { Divider, List, ListItem, ListItemIcon, ListItemText, TextField } from '@mui/material';
+import { Divider, Input, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React from 'react';
 
@@ -55,7 +55,7 @@ export class LinksPage extends React.Component<EmptyObject, LinksState> {
     return (
       <HalfSection title="Linkit" image="/img/header-links.jpg">
         <Item name="Linkki">
-          <TextField
+          <Input
             name="link"
             value={this.state.link}
             fullWidth={true}

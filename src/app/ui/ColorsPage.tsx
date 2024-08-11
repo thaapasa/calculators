@@ -1,5 +1,5 @@
 import { Add } from '@mui/icons-material';
-import { Avatar, Chip, Divider, IconButton, Slider, styled, TextField } from '@mui/material';
+import { Avatar, Chip, Divider, IconButton, Input, Slider, styled } from '@mui/material';
 import {
   hexToRGB,
   HSLKey,
@@ -184,7 +184,7 @@ export class ColorsPage extends React.Component<ColorsProps, ColorState> {
           topContent={<ColorBar colors={colors.b} />}
         />
         <Item name="Heksa">
-          <TextField
+          <Input
             placeholder="#FFFFFF"
             value={this.state.hexString}
             inputProps={{ maxLength: 7 }}
@@ -193,7 +193,7 @@ export class ColorsPage extends React.Component<ColorsProps, ColorState> {
           />
         </Item>
         <Item name="RGB-arvo">
-          <TextField
+          <Input
             placeholder="rgb(1.0,1.0,1.0)"
             value={this.state.rgbString}
             inputProps={{ readOnly: true }}

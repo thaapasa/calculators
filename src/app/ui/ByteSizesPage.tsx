@@ -1,4 +1,4 @@
-import { styled, TextField } from '@mui/material';
+import { Input, styled } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React, { CSSProperties } from 'react';
 
@@ -162,7 +162,7 @@ const Editor = (p: {
   const info = types[p.type];
   return (
     <EditorRow>
-      <TextField
+      <Input
         style={TextFieldStyle}
         name={p.type}
         type="number"

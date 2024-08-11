@@ -1,4 +1,4 @@
-import { styled, TextField } from '@mui/material';
+import { Input, styled } from '@mui/material';
 import * as Bacon from 'baconjs';
 import moment from 'moment';
 import React from 'react';
@@ -16,7 +16,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   len2: { width: '1.7em' },
   len3: { width: '2.4em' },
   len4: { width: '3.5em' },
-  len7: { width: '4.2em' },
+  len7: { width: '4.5em' },
   len10: { width: '6em' },
   item: {},
 };
@@ -419,6 +419,7 @@ export class TimePage extends React.Component<DateTimeProps, DateTimeState> {
     const info = typeInfo[type] as DateTimeType;
     return (
       <TimeField
+        size="small"
         type="text"
         value={this.state[type]}
         style={info.style}
@@ -440,7 +441,7 @@ const TimeItem = styled(Item)`
   margin-top: 8px;
 `;
 
-const TimeField = styled(TextField)`
+const TimeField = styled(Input)`
   & input,
   & textarea {
     margin-left: 4px;

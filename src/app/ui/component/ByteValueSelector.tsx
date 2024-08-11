@@ -26,7 +26,7 @@ function toHexComp(value: number): string {
 const sliderToVal: (value: string | number) => number = Number;
 
 const ComponentField = styled(TextField)`
-  width: 4em;
+  width: 2.8em;
   margin-right: 1em !important;
 `;
 
@@ -111,6 +111,7 @@ export class ByteValueSelector extends React.Component<SelectorProps, SelectorSt
         <Column>
           <Row>
             <ComponentField
+              variant="standard"
               label={this.props.floatingLabel}
               placeholder="FF"
               inputProps={{ maxLength: 2 }}
@@ -118,6 +119,7 @@ export class ByteValueSelector extends React.Component<SelectorProps, SelectorSt
               onChange={e => this.pushStringValue(e.target.value, 'hex')}
             />
             <ComponentField
+              variant="standard"
               label={this.props.floatingLabel}
               placeholder="255"
               type="number"
@@ -127,7 +129,9 @@ export class ByteValueSelector extends React.Component<SelectorProps, SelectorSt
             />
           </Row>
           <Row>
-            <TextField
+            <ComponentField
+              style={{ width: '6em' }}
+              variant="standard"
               inputProps={{ readOnly: true }}
               value={String(Number(this.state.dec) / 255)}
             />

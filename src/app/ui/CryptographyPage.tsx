@@ -1,4 +1,4 @@
-import { TextField } from '@mui/material';
+import { Input } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React, { RefObject } from 'react';
 
@@ -68,7 +68,7 @@ export class CryptographyPage extends React.Component<CryptographyProps, any> {
         image="/img/header-cryptography.jpg"
       >
         <Item name="Syöte">
-          <TextField onChange={this.inputChanged} fullWidth={true} multiline={true} name="input" />
+          <Input onChange={this.inputChanged} fullWidth={true} multiline={true} name="input" />
         </Item>
         {cryptoList.map(this.renderCrypto)}
       </Section>

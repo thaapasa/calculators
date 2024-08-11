@@ -1,4 +1,4 @@
-import { Paper, styled, TextField } from '@mui/material';
+import { Input, Paper, styled } from '@mui/material';
 import React from 'react';
 import Autosuggest, {
   ChangeEvent,
@@ -110,7 +110,7 @@ export class AutoComplete<T> extends React.Component<AutoCompleteProps<T>, AutoC
   };
 }
 
-const StandardTextField = TextField;
+const StandardTextField = Input;
 
 const FloatingPaper = styled(Paper)`
   position: absolute;

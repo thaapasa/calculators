@@ -1,4 +1,4 @@
-import { styled, TextField } from '@mui/material';
+import { Input, styled } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React, { ChangeEvent } from 'react';
 
@@ -10,7 +10,8 @@ const CheckItem = styled(Item)`
   height: 48px;
 `;
 
-const CheckField = styled(TextField)`
+const CheckField = styled(Input)`
+  margin-left: 4px;
   width: 1em;
 `;
 
@@ -63,7 +64,7 @@ export class CheckValue extends React.Component<CheckProps, CheckState> {
         ) : (
           <GeneratePlaceholder />
         )}
-        <TextField
+        <Input
           type="text"
           id={`${this.props.id}-input`}
           onChange={this.inputChanged}
@@ -71,12 +72,14 @@ export class CheckValue extends React.Component<CheckProps, CheckState> {
           value={this.state.input}
           max-length={this.props['max-length']}
         />
-        <CheckField
-          id={`${this.props.id}-check`}
-          className="letter"
-          read-only="read-only"
-          value={this.state.checkValue}
-        />
+        {this.props.check ? (
+          <CheckField
+            id={`${this.props.id}-check`}
+            className="letter"
+            read-only="read-only"
+            value={this.state.checkValue}
+          />
+        ) : null}
         <input type="hidden" id={`${this.props.id}-value`} value={this.state.value} />
       </CheckItem>
     );

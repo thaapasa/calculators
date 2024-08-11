@@ -1,4 +1,4 @@
-import { styled, TextField } from '@mui/material';
+import { Input, styled } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React from 'react';
 
@@ -125,7 +125,7 @@ export class NumbersPage extends React.Component<NumbersProps, NumbersState> {
       >
         {typeKeys.map(t => (
           <NumberItem name={texts[t]} key={`${t}-item`}>
-            <TextField
+            <Input
               type={types[t].inputType}
               name={t}
               placeholder={texts[t]}

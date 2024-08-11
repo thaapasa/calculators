@@ -134,13 +134,13 @@ export class TextConversionPage extends React.Component<TextConversionProps, Tex
         image="/img/header-text-conversion.jpg"
       >
         <FormControl>
-          <InputLabel htmlFor="conversion">Muunnos</InputLabel>
+          <InputLabel id="text-conversion-label">Muunnos</InputLabel>
           <StyledSelect
-            inputProps={{ id: 'conversion' }}
+            labelId="text-conversion-label"
+            id="text-conversion-select"
+            label="Muunnos"
             value={this.state.selected}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              this.selectedStr.push(e.target.value as any)
-            }
+            onChange={e => this.selectedStr.push(e.target.value as any)}
           >
             {converters.map(c => (
               <MenuItem value={c} key={c}>

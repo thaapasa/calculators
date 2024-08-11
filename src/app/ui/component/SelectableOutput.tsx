@@ -1,5 +1,5 @@
 import { TextFormat } from '@mui/icons-material';
-import { Checkbox, styled, TextField } from '@mui/material';
+import { Checkbox, Input, styled } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React from 'react';
 
@@ -61,9 +61,8 @@ export class SelectableOutput extends React.Component<
         }
         valueClassName="top"
       >
-        <TextField
+        <Input
           type="text"
-          label={this.props.label}
           placeholder={this.props.label}
           className="wide"
           value={this.state.value}

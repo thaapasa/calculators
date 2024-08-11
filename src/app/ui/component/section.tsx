@@ -34,7 +34,7 @@ function SectionImpl({
   return (
     <Card className={'section ' + (className || '')}>
       {image ? <CardMedia image={image} title={title} className="media" /> : null}
-      <CardHeader title={title} subheader={subtitle} avatar={avatar} action={action} />
+      <CardHeader title={title} subheader={subtitle || ' '} avatar={avatar} action={action} />
       <Divider />
       <CardContent>{children}</CardContent>
     </Card>
