@@ -15,6 +15,7 @@ interface IdentifiersProps {}
 
 const generateUUIDv1 = () => uuid.v1().toString();
 const generateUUIDv4 = () => uuid.v4().toString();
+const generateUUIDv7 = () => uuid.v7().toString();
 
 function generateRandomString() {
   return getRandomString(64);
@@ -73,6 +74,14 @@ export class IdentifiersPage extends React.Component<IdentifiersProps, never> {
           name="UUID v4"
           id="uuid-v4"
           generate={generateUUIDv4}
+          onValue={publishSelectedValue}
+          max-length="36"
+          width="13em"
+        />
+        <CheckValue
+          name="UUID v7"
+          id="uuid-v7"
+          generate={generateUUIDv7}
           onValue={publishSelectedValue}
           max-length="36"
           width="13em"
