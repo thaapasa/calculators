@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Handy calculator tools in an easily-accessible web page",
   "homepage": "https://laskurit.pomeranssi.fi",
-  "packageManager": "yarn@4.3.1",
+  "packageManager": "yarn@4.5.0",
   "scripts": {
     "start": "vite",
     "build": "react-scripts build",
