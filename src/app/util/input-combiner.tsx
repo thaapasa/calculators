@@ -1,10 +1,7 @@
 import * as B from 'baconjs';
 import * as R from 'ramda';
-import {
-  InputChangeHandler,
-  InputChangeType,
-  isInputChangeEvent,
-} from './stream-defs';
+
+import { InputChangeHandler, InputChangeType, isInputChangeEvent } from './stream-defs';
 import { mapObject, objectKeys } from './util';
 
 export class InputCombiner<Target, Source extends Record<any, any>> {
@@ -21,7 +18,7 @@ export class InputCombiner<Target, Source extends Record<any, any>> {
   constructor(
     initialValues: Source,
     read: (inputs: Source) => Target,
-    write: (val: Target) => Source
+    write: (val: Target) => Source,
   ) {
     this.write = write;
     this.initialValues = initialValues;
@@ -33,12 +30,10 @@ export class InputCombiner<Target, Source extends Record<any, any>> {
         this.inputBuses[k].push(val);
         this.triggerOutput.push();
       },
-      initialValues
+      initialValues,
     );
 
-    const combinedOutput = B.combineTemplate(this.inputBuses).sampledBy(
-      this.triggerOutput
-    );
+    const combinedOutput = B.combineTemplate(this.inputBuses).sampledBy(this.triggerOutput);
 
     this.combined = combinedOutput.map(read) as any;
   }

@@ -128,15 +128,7 @@ nameDays[4][26] = ['Terttu', 'Teresa'];
 nameDays[4][27] = ['Merja'];
 nameDays[4][28] = ['Ilpo', 'Tuure', 'Ilppo'];
 nameDays[4][29] = ['Teijo'];
-nameDays[4][30] = [
-  'Mirja',
-  'Miia',
-  'Mira',
-  'Mirva',
-  'Mirjami',
-  'Mirka',
-  'Mirkka',
-];
+nameDays[4][30] = ['Mirja', 'Miia', 'Mira', 'Mirva', 'Mirjami', 'Mirka', 'Mirkka'];
 nameDays[5][1] = ['Vappu', 'Valpuri'];
 nameDays[5][2] = ['Vuokko', 'Viivi'];
 nameDays[5][3] = ['Outi'];
@@ -155,15 +147,7 @@ nameDays[5][15] = ['Sofia', 'Sonja', 'Sohvi'];
 nameDays[5][16] = ['Ester', 'Essi', 'Esteri'];
 nameDays[5][17] = ['Maila', 'Mailis', 'Maili', 'Rebekka'];
 nameDays[5][18] = ['Erkki', 'Eero', 'Eerik', 'Eerika', 'Eerikki'];
-nameDays[5][19] = [
-  'Emilia',
-  'Emma',
-  'Emmia',
-  'Milla',
-  'Milja',
-  'Milka',
-  'Amalia',
-];
+nameDays[5][19] = ['Emilia', 'Emma', 'Emmia', 'Milla', 'Milja', 'Milka', 'Amalia'];
 nameDays[5][20] = ['Lilja', 'Karoliina', 'Lilli'];
 nameDays[5][21] = ['Kosti', 'Konsta', 'Konstantin'];
 nameDays[5][22] = ['Hemminki', 'Hemmo'];
@@ -245,24 +229,8 @@ nameDays[7][16] = ['Reino'];
 nameDays[7][17] = ['Ossi', 'Ossian'];
 nameDays[7][18] = ['Riikka'];
 nameDays[7][19] = ['Sari', 'Saara', 'Sara', 'Salla', 'Salli'];
-nameDays[7][20] = [
-  'Marketta',
-  'Maarit',
-  'Reetta',
-  'Reeta',
-  'Maaret',
-  'Margareeta',
-];
-nameDays[7][21] = [
-  'Johanna',
-  'Hanna',
-  'Jenni',
-  'Jenna',
-  'Jonna',
-  'Hannele',
-  'Hanne',
-  'Joanna',
-];
+nameDays[7][20] = ['Marketta', 'Maarit', 'Reetta', 'Reeta', 'Maaret', 'Margareeta'];
+nameDays[7][21] = ['Johanna', 'Hanna', 'Jenni', 'Jenna', 'Jonna', 'Hannele', 'Hanne', 'Joanna'];
 nameDays[7][22] = ['Leena', 'Matleena', 'Leeni', 'Lenita'];
 nameDays[7][23] = ['Olga', 'Oili'];
 nameDays[7][24] = ['Kristiina', 'Tiina', 'Kirsti', 'Kirsi', 'Krista', 'Kiia'];
@@ -326,14 +294,7 @@ nameDays[9][7] = ['Miro', 'Arho', 'Arhippa'];
 nameDays[9][8] = ['Taimi'];
 nameDays[9][9] = ['Eevert', 'Isto'];
 nameDays[9][10] = ['Kalevi', 'Kaleva'];
-nameDays[9][11] = [
-  'Santeri',
-  'Aleksanteri',
-  'Aleksandra',
-  'Santtu',
-  'Ali',
-  'Ale',
-];
+nameDays[9][11] = ['Santeri', 'Aleksanteri', 'Aleksandra', 'Santtu', 'Ali', 'Ale'];
 nameDays[9][12] = ['Valma', 'Vilja'];
 nameDays[9][13] = ['Orvo'];
 nameDays[9][14] = ['Iida'];
@@ -351,16 +312,7 @@ nameDays[9][25] = ['Kullervo'];
 nameDays[9][26] = ['Kuisma'];
 nameDays[9][27] = ['Vesa'];
 nameDays[9][28] = ['Arja'];
-nameDays[9][29] = [
-  'Mikko',
-  'Mika',
-  'Mikael',
-  'Miika',
-  'Miikka',
-  'Miska',
-  'Miko',
-  'Mikaela',
-];
+nameDays[9][29] = ['Mikko', 'Mika', 'Mikael', 'Miika', 'Miikka', 'Miska', 'Miko', 'Mikaela'];
 nameDays[9][30] = ['Sirja', 'Sorja'];
 nameDays[10][1] = ['Rauno', 'Rainer', 'Raine', 'Raino'];
 nameDays[10][2] = ['Valio'];
@@ -442,16 +394,7 @@ nameDays[12][5] = ['Selma'];
 nameDays[12][6] = ['Niilo', 'Niko', 'Nikolai', 'Niklas'];
 nameDays[12][7] = ['Sampsa'];
 nameDays[12][8] = ['Kyllikki', 'Kylli'];
-nameDays[12][9] = [
-  'Anna',
-  'Anne',
-  'Anni',
-  'Anu',
-  'Anneli',
-  'Annikki',
-  'Annika',
-  'Annukka',
-];
+nameDays[12][9] = ['Anna', 'Anne', 'Anni', 'Anu', 'Anneli', 'Annikki', 'Annika', 'Annukka'];
 nameDays[12][10] = ['Jutta'];
 nameDays[12][11] = ['Tatu', 'Taneli', 'Daniel'];
 nameDays[12][12] = ['Tuovi'];
@@ -495,9 +438,7 @@ export interface MonthDay {
   readonly day: number;
 }
 
-interface MonthDayMap {
-  [key: string]: MonthDay;
-}
+type MonthDayMap = Record<string, MonthDay>;
 
 const byName = {
   defined: false,
@@ -510,12 +451,7 @@ function canonName(name: string): string {
 }
 
 function shownName(name: string): string {
-  return name.length > 0
-    ? name
-        .substring(0, 1)
-        .toUpperCase()
-        .concat(name.substring(1))
-    : '';
+  return name.length > 0 ? name.substring(0, 1).toUpperCase().concat(name.substring(1)) : '';
 }
 
 function calculateByName(): void {
@@ -547,7 +483,7 @@ export function findNameDayFor(name: string): MonthDayMap {
     calculateByName();
   }
   const cn = canonName(name);
-  const resp = {};
+  const resp: MonthDayMap = {};
   byName.names
     .filter(n => n.startsWith(cn))
     .forEach(n => (resp[shownName(n)] = byName.nameDays[n]));

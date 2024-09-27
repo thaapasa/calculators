@@ -1,10 +1,11 @@
-import { TextField } from '@material-ui/core';
+import { Input, styled } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React, { CSSProperties } from 'react';
-import styled from 'styled-components';
+
 import { allFieldsOfType, isString, pairsToObject } from '../util/util';
-import Item from './component/item';
-import { HalfSection } from './component/section';
+import { Item } from './component/Item';
+import { HalfSection } from './component/Section';
+import { publishSelectedValue } from './LastValue';
 import { Flex, FlexRow } from './layout/elements';
 
 interface TypeInfo {
@@ -25,12 +26,7 @@ const MEGA = KILO * KILO;
 const GIGA = MEGA * KILO;
 const TERA = GIGA * KILO;
 
-const converter = (
-  name: string,
-  unit: string,
-  ratio: number,
-  decimals: number = 3
-): TypeInfo => ({
+const converter = (name: string, unit: string, ratio: number, decimals: number = 3): TypeInfo => ({
   name,
   hint: unit,
   unit,
@@ -50,13 +46,12 @@ const types = allFieldsOfType<TypeInfo>()({
   tera: converter('Teratavua', 'Tt', TERA),
 });
 const typeKeys = Object.keys(types);
+export type SizeTypes = keyof typeof types;
 
 const leftColumn: string[] = ['kibi', 'mebi', 'gibi', 'tebi'];
 const rightColumn: string[] = ['kilo', 'mega', 'giga', 'tera'];
 
-interface ByteSizeProps {
-  onValue: (x: any) => any;
-}
+interface ByteSizeProps {}
 
 interface ByteSizeState {
   selected: string;
@@ -65,15 +60,10 @@ interface ByteSizeState {
 
 const emptyStream = Bacon.never();
 
-export default class ByteSizes extends React.Component<
-  ByteSizeProps,
-  ByteSizeState
-> {
+export class ByteSizesPage extends React.Component<ByteSizeProps, ByteSizeState> {
   public state: ByteSizeState = {
     selected: 'byte',
-    values: pairsToObject(
-      Object.keys(types).map<[string, string]>(t => [t, ''])
-    ),
+    values: pairsToObject(Object.keys(types).map<[string, string]>(t => [t, ''])),
   };
 
   private currentInput = new Bacon.Bus<string>();
@@ -82,17 +72,13 @@ export default class ByteSizes extends React.Component<
 
   public componentDidMount() {
     this.currentInput = new Bacon.Bus();
-    const inputConverter = this.currentInput
-      .map(t => types[t].read)
-      .toProperty(Number);
+    const inputConverter = this.currentInput.map(t => types[t].read).toProperty(Number);
     const converted = this.inputStream
       .combine(inputConverter, (i, c) => c(i))
       .map(v => (typeof v === 'number' && !isNaN(v) ? v : undefined));
     typeKeys.forEach(t => {
       const typeInfo = types[t];
-      const sourceIsThis = this.currentInput
-        .map(name => t === name)
-        .toProperty(false);
+      const sourceIsThis = this.currentInput.map(name => t === name).toProperty(false);
       converted
         .combine(sourceIsThis, (c, i) => [c, i])
         .flatMapLatest(v => (v[1] ? emptyStream : converted))
@@ -104,7 +90,7 @@ export default class ByteSizes extends React.Component<
       .toProperty('byte')
       .map(t => types[t].write)
       .combine(converted, (c, v) => v && c(v))
-      .onValue(v => v && this.props.onValue && this.props.onValue(v));
+      .onValue(publishSelectedValue);
   }
 
   public render() {
@@ -150,8 +136,7 @@ export default class ByteSizes extends React.Component<
     );
   }
 
-  private mergeValues = (x: any) =>
-    this.setState(s => ({ values: { ...s.values, ...x } }));
+  private mergeValues = (x: any) => this.setState(s => ({ values: { ...s.values, ...x } }));
 
   private inputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     const name = event.target.name;
@@ -169,7 +154,7 @@ export default class ByteSizes extends React.Component<
 }
 
 const Editor = (p: {
-  type: string;
+  type: SizeTypes;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
@@ -177,7 +162,7 @@ const Editor = (p: {
   const info = types[p.type];
   return (
     <EditorRow>
-      <TextField
+      <Input
         style={TextFieldStyle}
         name={p.type}
         type="number"
@@ -207,7 +192,7 @@ const TextFieldStyle: CSSProperties = {
   width: 100,
 };
 
-const Unit = styled.div`
+const Unit = styled('div')`
   width: 25px;
   text-align: right;
   padding-right: 8px;

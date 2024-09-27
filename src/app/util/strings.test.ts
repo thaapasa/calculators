@@ -1,4 +1,5 @@
 import 'jest';
+
 import { toUpperCaseFirst } from './strings';
 
 describe('toUpperCaseFirst', () => {

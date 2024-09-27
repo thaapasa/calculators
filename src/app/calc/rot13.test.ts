@@ -1,4 +1,5 @@
 import 'jest';
+
 import rot13 from './rot13';
 
 describe('ROT-13', () => {
@@ -8,8 +9,8 @@ describe('ROT-13', () => {
   it('should calculate rotate correctly', () => {
     expect(rot13('abc')).toEqual('nop');
     expect(rot13('TheTest&!String')).toEqual('GurGrfg&!Fgevat');
-    expect(
-      rot13('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
-    ).toEqual('NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm');
+    expect(rot13('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')).toEqual(
+      'NOPQRSTUVWXYZABCDEFGHIJKLMnopqrstuvwxyzabcdefghijklm',
+    );
   });
 });

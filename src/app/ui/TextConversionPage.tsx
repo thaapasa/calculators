@@ -1,27 +1,22 @@
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from '@material-ui/core';
+import { FormControl, InputLabel, MenuItem, Select, styled, TextField } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React from 'react';
-import styled from 'styled-components';
 import svgToReactNative from 'svg-rn';
+
 import * as base64 from '../calc/base64';
 import rot13 from '../calc/rot13';
 import { jsonStringToXml, xmlToJsonString } from '../calc/xml-json';
 import * as store from '../util/store';
 import * as strings from '../util/strings';
-import { identity } from '../util/util';
-import Section from './component/section';
-import { ClipboardButton, copyRefToClipboard } from './component/tool-button';
+import { identity, MaybePromise } from '../util/util';
+import Section from './component/Section';
+import { ClipboardButton, copyRefToClipboard } from './component/ToolButton';
+import { publishSelectedValue } from './LastValue';
 import { FlexRow, LeftPad } from './layout/elements';
 
 interface ConverterInfo {
-  readonly encode: (x: string) => Promise<string> | string;
-  readonly decode: (x: string) => Promise<string> | string;
+  readonly encode: (x: string) => MaybePromise<string>;
+  readonly decode: (x: string) => MaybePromise<string>;
   readonly name: string;
 }
 
@@ -80,9 +75,7 @@ const convertInfo: { [key: string]: ConverterInfo } = {
 };
 const converters = Object.keys(convertInfo);
 
-interface TextConversionProps {
-  readonly onValue: (x: string) => any;
-}
+interface TextConversionProps {}
 
 interface TextConversionState {
   source: string;
@@ -100,10 +93,7 @@ function setConverterToStore(converterName: string): void {
   store.putValue(CONVERTER_STORE_KEY, converterName);
 }
 
-export default class TextConversion extends React.Component<
-  TextConversionProps,
-  TextConversionState
-> {
+export class TextConversionPage extends React.Component<TextConversionProps, TextConversionState> {
   public state: TextConversionState = {
     source: '',
     target: '',
@@ -121,23 +111,17 @@ export default class TextConversion extends React.Component<
     const initialConverter = getConverterFromStore();
     this.sourceStr.onValue(v => this.setState({ source: v }));
     this.targetStr.onValue(v => this.setState({ target: v }));
-    const selected = this.selectedStr
-      .toProperty(initialConverter)
-      .skipDuplicates();
+    const selected = this.selectedStr.toProperty(initialConverter).skipDuplicates();
     selected.onValue(v => {
       this.setState({ selected: v });
       setConverterToStore(v);
     });
-    const encStr = this.sourceStr.combine(selected, (val, c) =>
-      convertInfo[c].encode(val)
-    );
+    const encStr = this.sourceStr.combine(selected, (val, c) => convertInfo[c].encode(val));
     encStr.onValue(async v => this.setState({ target: await v }));
-    const decStr = this.targetStr.combine(selected, (val, c) =>
-      convertInfo[c].decode(val)
-    );
+    const decStr = this.targetStr.combine(selected, (val, c) => convertInfo[c].decode(val));
     decStr.onValue(async v => this.setState({ source: await v }));
-    Bacon.mergeAll(encStr.changes(), decStr.changes()).onValue(
-      async v => this.props.onValue && this.props.onValue(await v)
+    Bacon.mergeAll(encStr.changes(), decStr.changes()).onValue(async v =>
+      publishSelectedValue(await v),
     );
     this.selectedStr.push(initialConverter);
   }
@@ -150,9 +134,11 @@ export default class TextConversion extends React.Component<
         image="/img/header-text-conversion.jpg"
       >
         <FormControl>
-          <InputLabel htmlFor="conversion">Muunnos</InputLabel>
+          <InputLabel id="text-conversion-label">Muunnos</InputLabel>
           <StyledSelect
-            inputProps={{ id: 'conversion' }}
+            labelId="text-conversion-label"
+            id="text-conversion-select"
+            label="Muunnos"
             value={this.state.selected}
             onChange={e => this.selectedStr.push(e.target.value as any)}
           >
@@ -170,7 +156,9 @@ export default class TextConversion extends React.Component<
             color="secondary"
           />
           <TextEdit
-            onChange={e => this.sourceStr.push(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              this.sourceStr.push(e.target.value)
+            }
             fullWidth={true}
             multiline={true}
             inputRef={this.sourceRef}
@@ -186,7 +174,9 @@ export default class TextConversion extends React.Component<
             color="secondary"
           />
           <TextEdit
-            onChange={e => this.targetStr.push(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              this.targetStr.push(e.target.value)
+            }
             fullWidth={true}
             multiline={true}
             inputRef={this.targetRef}

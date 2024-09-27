@@ -1,16 +1,19 @@
-import { MuiThemeProvider } from '@material-ui/core';
+import { ThemeProvider } from '@mui/material';
+import { AppRouterProvider } from 'app/ui/routes';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { theme } from 'style';
-import CalculatorPage from './app/ui/calculatorpage';
-import { fixConsole } from './app/util/util';
+
+import { assertDefined, fixConsole } from './app/util/util';
 
 // Ensure that there is a console
 fixConsole();
 
-ReactDOM.render(
-  <MuiThemeProvider theme={theme}>
-    <CalculatorPage />
-  </MuiThemeProvider>,
-  document.getElementById('root')
+const container = document.getElementById('root');
+assertDefined(container);
+
+ReactDOM.createRoot(container).render(
+  <ThemeProvider theme={theme}>
+    <AppRouterProvider />
+  </ThemeProvider>,
 );

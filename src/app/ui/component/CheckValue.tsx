@@ -1,16 +1,17 @@
-import { TextField } from '@material-ui/core';
+import { Input, styled } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React, { ChangeEvent } from 'react';
-import styled from 'styled-components';
+
 import * as util from '../../util/util';
-import Item from './item';
-import { GenerateButton } from './tool-button';
+import { Item } from './Item';
+import { GenerateButton } from './ToolButton';
 
 const CheckItem = styled(Item)`
   height: 48px;
 `;
 
-const CheckField = styled(TextField)`
+const CheckField = styled(Input)`
+  margin-left: 4px;
   width: 1em;
 `;
 
@@ -31,10 +32,7 @@ interface CheckState {
   checkValue: string;
 }
 
-export default class CheckValue extends React.Component<
-  CheckProps,
-  CheckState
-> {
+export class CheckValue extends React.Component<CheckProps, CheckState> {
   public state: CheckState = {
     input: '',
     value: '',
@@ -66,7 +64,7 @@ export default class CheckValue extends React.Component<
         ) : (
           <GeneratePlaceholder />
         )}
-        <TextField
+        <Input
           type="text"
           id={`${this.props.id}-input`}
           onChange={this.inputChanged}
@@ -74,17 +72,15 @@ export default class CheckValue extends React.Component<
           value={this.state.input}
           max-length={this.props['max-length']}
         />
-        <CheckField
-          id={`${this.props.id}-check`}
-          className="letter"
-          read-only="read-only"
-          value={this.state.checkValue}
-        />
-        <input
-          type="hidden"
-          id={`${this.props.id}-value`}
-          value={this.state.value}
-        />
+        {this.props.check ? (
+          <CheckField
+            id={`${this.props.id}-check`}
+            className="letter"
+            read-only="read-only"
+            value={this.state.checkValue}
+          />
+        ) : null}
+        <input type="hidden" id={`${this.props.id}-value`} value={this.state.value} />
       </CheckItem>
     );
   }
@@ -105,16 +101,13 @@ export default class CheckValue extends React.Component<
 
   private streamToCheck(
     calculateCheck?: (x: string) => string,
-    combiner: (a: string, b: string) => string = util.combineWith('')
+    combiner: (a: string, b: string) => string = util.combineWith(''),
   ) {
     if (calculateCheck) {
       const checkValue = this.inputStream.map(calculateCheck);
       checkValue.onValue(value => this.setState({ checkValue: value }));
       checkValue
-        .combine(
-          this.inputStream.toProperty(''),
-          (chk, inp) => chk && combiner(inp, chk)
-        )
+        .combine(this.inputStream.toProperty(''), (chk, inp) => chk && combiner(inp, chk))
         .filter(util.nonEmpty)
         .onValue(this.updateValue);
     } else {
@@ -130,7 +123,7 @@ export default class CheckValue extends React.Component<
   };
 }
 
-const GeneratePlaceholder = styled.div`
+const GeneratePlaceholder = styled('div')`
   width: 48px;
   height: 48px;
 `;

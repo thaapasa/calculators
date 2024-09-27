@@ -1,24 +1,18 @@
-import {
-  Divider,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  TextField,
-} from '@material-ui/core';
-import { Delete, NoteAdd } from '@material-ui/icons';
+import { Delete, NoteAdd } from '@mui/icons-material';
+import { Divider, Input, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React from 'react';
+
 import * as store from '../util/store';
-import { isString } from '../util/util';
-import Item from './component/item';
-import { HalfSection } from './component/section';
+import { EmptyObject, isString } from '../util/util';
+import { Item } from './component/Item';
+import { HalfSection } from './component/Section';
 
 function validate(link: string): string {
   if (!isString(link)) {
     return '';
   }
-  if (link.includes("://")) {
+  if (link.includes('://')) {
     return link;
   }
   return 'http://' + link;
@@ -40,7 +34,7 @@ function storeLinks(links: string[]) {
   store.putValue(LINKS_STORE_KEY, links);
 }
 
-export default class Links extends React.Component<{}, LinksState> {
+export class LinksPage extends React.Component<EmptyObject, LinksState> {
   public state: LinksState = {
     link: '',
     validatedLink: '',
@@ -61,7 +55,7 @@ export default class Links extends React.Component<{}, LinksState> {
     return (
       <HalfSection title="Linkit" image="/img/header-links.jpg">
         <Item name="Linkki">
-          <TextField
+          <Input
             name="link"
             value={this.state.link}
             fullWidth={true}

@@ -19,9 +19,7 @@ export function toLowerCase(value: string): string {
 }
 
 export function toUpperCaseFirst(value: string): string {
-  return value && value.length > 0
-    ? toUpperCase(value[0]) + value.slice(1)
-    : value;
+  return value && value.length > 0 ? toUpperCase(value[0]) + value.slice(1) : value;
 }
 
 export function hyphenCaseToCamelCase(value: string): string {
@@ -41,12 +39,7 @@ export function hyphenCaseToPascalCase(value: string): string {
 }
 
 export function reverse(value: string): string {
-  return typeof value === 'string'
-    ? value
-        .split('')
-        .reverse()
-        .join('')
-    : '';
+  return typeof value === 'string' ? value.split('').reverse().join('') : '';
 }
 
 export function toHexString(value: string): string {
@@ -67,21 +60,13 @@ export function fromHexString(value: string): string {
   const output = [];
   for (let i = 0; i < value.length; i += 2) {
     if (i <= value.length - 2) {
-      output.push(
-        String.fromCharCode(
-          hexStrToInt(`${value.charAt(i)}${value.charAt(i + 1)}`)
-        )
-      );
+      output.push(String.fromCharCode(hexStrToInt(`${value.charAt(i)}${value.charAt(i + 1)}`)));
     }
   }
   return output.join('');
 }
 
-export function startsWith(
-  src: string,
-  prefix: string,
-  ignoreCase: boolean = false
-): boolean {
+export function startsWith(src: string, prefix: string, ignoreCase: boolean = false): boolean {
   if (!isString(src) || !isString(prefix)) {
     return false;
   }

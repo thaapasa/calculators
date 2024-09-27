@@ -1,17 +1,17 @@
 import { checkLuhn } from 'app/calc/checks';
 import React from 'react';
 import * as uuid from 'uuid';
+
 import * as bankReference from '../calc/bankreference';
 import * as companyId from '../calc/companyid';
 import * as hetu from '../calc/hetu';
 import { getRandomString } from '../calc/random';
 import * as util from '../util/util';
-import CheckValue from './component/check-value';
-import { HalfSection } from './component/section';
+import { CheckValue } from './component/CheckValue';
+import { HalfSection } from './component/Section';
+import { publishSelectedValue } from './LastValue';
 
-interface IdentifiersProps {
-  readonly onValue: (x: string) => any;
-}
+interface IdentifiersProps {}
 
 const generateUUIDv1 = () => uuid.v1().toString();
 const generateUUIDv4 = () => uuid.v4().toString();
@@ -20,7 +20,7 @@ function generateRandomString() {
   return getRandomString(64);
 }
 
-export default class Identifiers extends React.Component<IdentifiersProps, {}> {
+export class IdentifiersPage extends React.Component<IdentifiersProps, never> {
   public render() {
     return (
       <HalfSection title="Tunnisteet" image="/img/header-identifiers.jpg">
@@ -30,7 +30,7 @@ export default class Identifiers extends React.Component<IdentifiersProps, {}> {
           check={hetu.check}
           generate={hetu.generate}
           combine={util.combine}
-          onValue={this.props.onValue}
+          onValue={publishSelectedValue}
           max-length="10"
           width="6.5em"
         />
@@ -40,7 +40,7 @@ export default class Identifiers extends React.Component<IdentifiersProps, {}> {
           check={bankReference.check}
           generate={bankReference.generate}
           combine={util.combine}
-          onValue={this.props.onValue}
+          onValue={publishSelectedValue}
           max-length="24"
           width="9em"
         />
@@ -50,7 +50,7 @@ export default class Identifiers extends React.Component<IdentifiersProps, {}> {
           check={companyId.check}
           generate={companyId.generate}
           combine={util.combineWith('-')}
-          onValue={this.props.onValue}
+          onValue={publishSelectedValue}
           max-length="7"
           width="6em"
         />
@@ -58,14 +58,14 @@ export default class Identifiers extends React.Component<IdentifiersProps, {}> {
           name="Luhn modulo 10"
           id="luhn"
           check={checkLuhn}
-          onValue={this.props.onValue}
+          onValue={publishSelectedValue}
           width="13em"
         />
         <CheckValue
           name="UUID v1"
           id="uuid-v1"
           generate={generateUUIDv1}
-          onValue={this.props.onValue}
+          onValue={publishSelectedValue}
           max-length="36"
           width="13em"
         />
@@ -73,7 +73,7 @@ export default class Identifiers extends React.Component<IdentifiersProps, {}> {
           name="UUID v4"
           id="uuid-v4"
           generate={generateUUIDv4}
-          onValue={this.props.onValue}
+          onValue={publishSelectedValue}
           max-length="36"
           width="13em"
         />
@@ -81,7 +81,7 @@ export default class Identifiers extends React.Component<IdentifiersProps, {}> {
           name="Satunnaisjono"
           id="random-string"
           generate={generateRandomString}
-          onValue={this.props.onValue}
+          onValue={publishSelectedValue}
           max-length="64"
           width="13em"
         />

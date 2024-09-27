@@ -1,5 +1,9 @@
 import * as R from 'ramda';
 
+export type EmptyObject = Record<string, never>;
+
+export type MaybePromise<X> = X | Promise<X>;
+
 // Returns a random integer between min (included) and max (excluded)
 // Using Math.round() will give you a non-uniform distribution!
 export function getRandomInt(min: number, max: number): number {
@@ -11,12 +15,7 @@ export function isDefined(value: any): boolean {
 }
 
 export function isNumber(value: any): boolean {
-  return (
-    value !== undefined &&
-    value !== null &&
-    typeof value === 'number' &&
-    !isNaN(value)
-  );
+  return value !== undefined && value !== null && typeof value === 'number' && !isNaN(value);
 }
 
 export function isString(value: any): boolean {
@@ -63,13 +62,13 @@ export function pairsToObject<T>(pairs: Array<[string, T]>): Record<string, T> {
   return res;
 }
 
-export function objectKeys<T>(object: T): ReadonlyArray<keyof T> {
+export function objectKeys<T extends object>(object: T): ReadonlyArray<keyof T> {
   return Object.keys(object) as any;
 }
 
 export function mapObject<S, T, O, X extends { [k in keyof O]: S }>(
   f: (v: S, k: keyof X, obj: X) => T,
-  obj: X
+  obj: X,
 ): Record<keyof X, T> {
   return R.mapObjIndexed(f as any, obj) as Record<keyof X, T>;
 }
@@ -105,12 +104,18 @@ const consoleMethods = [
   'warn',
 ];
 
+export function assertDefined<T>(t: T | undefined | null): asserts t is T {
+  if (t === null || typeof t === 'undefined') {
+    throw new Error(`Value is ${t}`);
+  }
+}
+
 // Avoid `console` errors in browsers that lack a console.
 export function fixConsole(): void {
   if (window.console === undefined) {
     (window as any).console = {};
   }
-  const c = window.console;
+  const c = window.console as any;
   consoleMethods.forEach(method => {
     // Only stub undefined methods.
     if (!c[method]) {

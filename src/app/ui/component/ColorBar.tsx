@@ -1,6 +1,6 @@
+import { styled } from '@mui/material';
 import { rgbToHex, RGBValue } from 'app/calc/colors';
 import React from 'react';
-import styled from 'styled-components';
 
 interface ColorBarProps {
   className?: string;
@@ -21,11 +21,7 @@ export class ColorBar extends React.Component<ColorBarProps> {
   public render() {
     return (
       <Bar className={this.props.className}>
-        <Canvas
-          ref={this.canvas}
-          width={this.props.colors.length}
-          height={10}
-        />
+        <Canvas ref={this.canvas} width={this.props.colors.length} height={10} />
       </Bar>
     );
   }
@@ -46,13 +42,13 @@ export class ColorBar extends React.Component<ColorBarProps> {
   }
 }
 
-const Bar = styled.div`
+const Bar = styled('div')`
   height: 24px;
   background-color: #f7ee7f;
   width: 100%;
 `;
 
-const Canvas = styled.canvas`
+const Canvas = styled('canvas')`
   width: 100%;
   height: 100%;
 `;

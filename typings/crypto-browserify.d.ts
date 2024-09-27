@@ -1,3 +1,3 @@
 declare module 'crypto-browserify' {
-    export function createHash(algorithm: string): any
+  export function createHash(algorithm: string): any;
 }

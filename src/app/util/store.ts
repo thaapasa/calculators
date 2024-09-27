@@ -1,4 +1,4 @@
-const dummyStore = {};
+const dummyStore: Record<string, any> = {};
 
 export function putValue<T>(key: string, value: T): void {
   if (window.localStorage) {
