@@ -1,4 +1,4 @@
-import 'jest';
+import { describe, expect, it } from 'vitest';
 
 import { toUpperCaseFirst } from './strings';
 

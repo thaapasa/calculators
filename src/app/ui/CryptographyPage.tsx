@@ -1,4 +1,5 @@
 import { Input } from '@mui/material';
+import { hash } from 'app/util/hash';
 import { MaybePromise } from 'app/util/util';
 import * as Bacon from 'baconjs';
 import md5 from 'md5';
@@ -16,14 +17,6 @@ interface CryptoType {
   readonly calculate: (x: string) => MaybePromise<string>;
   readonly code: string;
   valueStream?: Bacon.Bus<string>;
-}
-
-export async function hash(x: string, digest: string): Promise<string> {
-  const msgBuffer = new TextEncoder().encode(x); // Encode message as (utf-8) Uint8Array
-  const hashBuffer = await crypto.subtle.digest(digest, msgBuffer); // Calculate SHA-256 digest
-  const hashArray = Array.from(new Uint8Array(hashBuffer)); // Convert buffer to byte array
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // Convert bytes to hex string
-  return hashHex;
 }
 
 const cryptoList: CryptoType[] = [

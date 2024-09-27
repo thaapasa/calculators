@@ -8,9 +8,8 @@
   "packageManager": "yarn@4.5.0",
   "scripts": {
     "start": "vite",
-    "build": "react-scripts build",
-    "test": "react-scripts test --runInBand --watchAll=false",
-    "test-ci": "cross-env CI=TRUE react-scripts test --runInBand --watchAll=false",
+    "build": "vite build",
+    "test": "vitest",
     "deploy": "sh script/deploy.sh",
     "clean": "rm -rf build/",
     "eject": "react-scripts eject",
@@ -48,6 +47,7 @@
     "react-sizeme": "3.0.2",
     "svg-rn": "0.1.2",
     "uuid": "10.0.0",
+    "vitest": "^2.1.1",
     "xml-js": "1.6.11",
     "xml2js": "0.6.2"
   },
