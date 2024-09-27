@@ -1,8 +1,9 @@
 const allowedChars = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ123456789-_=!*&';
 
 export function getRandomString(len: number): string {
-  const bytes = [65, 66, 1, 2, 3];
+  const randomValues = new Uint8Array(len);
+  crypto.getRandomValues(randomValues);
   let result = '';
-  bytes.forEach(b => (result += allowedChars[b & 0x3f]));
+  randomValues.forEach(b => (result += allowedChars[b & 0x3f]));
   return result;
 }
