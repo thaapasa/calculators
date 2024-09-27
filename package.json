@@ -11,7 +11,7 @@
     "build": "vite build",
     "test": "vitest",
     "deploy": "sh script/deploy.sh",
-    "clean": "rm -rf build/",
+    "clean": "rm -rf dist/",
     "eject": "react-scripts eject",
     "lint": "bun lint-eslint && bun lint-tsc",
     "lint-eslint": "eslint src",

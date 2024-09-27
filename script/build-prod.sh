@@ -14,7 +14,7 @@ echo "Building production package, revision $REV..."
 yarn clean || exit -1
 yarn build || exit -1
 
-cd build
+cd dist
 tar czvf ../deploy/calculators-$REV.tar.gz . || exit -1
 cd ..
 
