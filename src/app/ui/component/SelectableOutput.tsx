@@ -1,10 +1,10 @@
 import { TextFormat } from '@mui/icons-material';
-import { Checkbox, Input, styled } from '@mui/material';
+import { Checkbox, styled, TextField } from '@mui/material';
 import * as Bacon from 'baconjs';
 import React from 'react';
 
 import { toUpperCase } from '../../util/strings';
-import { identity } from '../../util/util';
+import { identity, MaybePromise } from '../../util/util';
 import { Item } from './Item';
 
 const StyledItem = styled(Item)`
@@ -16,7 +16,7 @@ const StyledItem = styled(Item)`
 interface SelectableOutputProps {
   readonly type: string;
   readonly label: string;
-  readonly calculate: (v: string) => string;
+  readonly calculate: (v: string) => MaybePromise<string>;
   readonly onValue: (v: any) => any;
   readonly onSelect: React.FocusEventHandler;
 }
@@ -25,7 +25,7 @@ interface SelectableOutputState {
   value: string;
 }
 
-type str2str = (x: string) => string;
+type str2str = (x: string) => MaybePromise<string>;
 
 export class SelectableOutput extends React.Component<
   SelectableOutputProps,
@@ -61,7 +61,9 @@ export class SelectableOutput extends React.Component<
         }
         valueClassName="top"
       >
-        <Input
+        <TextField
+          variant="standard"
+          label={this.props.label}
           type="text"
           placeholder={this.props.label}
           className="wide"
@@ -80,11 +82,12 @@ export class SelectableOutput extends React.Component<
     calculation: str2str,
     calcMapper: Bacon.Property<str2str>,
   ) => {
-    const calculated: Bacon.Observable<string> = inputStream.map(calculation);
+    const calculated: Bacon.Observable<MaybePromise<string>> = inputStream.map(calculation);
     const mapped = calcMapper
-      ? (calculated.combine(calcMapper, (val, m) => m(val)) as Bacon.Property<string>)
+      ? calculated.combine(calcMapper, async (val, m) => m(await val))
       : calculated;
-    mapped.onValue(value => {
+    mapped.onValue(async v => {
+      const value = await v;
       this.setState({ value });
       if (this.props.onValue) {
         this.props.onValue(value);

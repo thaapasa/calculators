@@ -1,5 +1,7 @@
 import { Input } from '@mui/material';
+import { MaybePromise } from 'app/util/util';
 import * as Bacon from 'baconjs';
+import md5 from 'md5';
 import React, { RefObject } from 'react';
 
 import { Item } from './component/Item';
@@ -11,20 +13,24 @@ interface CryptographyProps {}
 
 interface CryptoType {
   readonly name: string;
-  readonly calculate: (x: string) => string;
+  readonly calculate: (x: string) => MaybePromise<string>;
   readonly code: string;
   valueStream?: Bacon.Bus<string>;
 }
 
-export function hash(x: string, algorithm: string): string {
-  return algorithm + ':' + x;
+export async function hash(x: string, digest: string): Promise<string> {
+  const msgBuffer = new TextEncoder().encode(x); // Encode message as (utf-8) Uint8Array
+  const hashBuffer = await crypto.subtle.digest(digest, msgBuffer); // Calculate SHA-256 digest
+  const hashArray = Array.from(new Uint8Array(hashBuffer)); // Convert buffer to byte array
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // Convert bytes to hex string
+  return hashHex;
 }
 
 const cryptoList: CryptoType[] = [
-  { name: 'MD5', calculate: x => hash(x, 'md5'), code: 'md5' },
-  { name: 'SHA-1', calculate: x => hash(x, 'sha1'), code: 'sha1' },
-  { name: 'SHA-256', calculate: x => hash(x, 'sha256'), code: 'sha256' },
-  { name: 'SHA-512', calculate: x => hash(x, 'sha512'), code: 'sha512' },
+  { name: 'MD5', calculate: x => md5(x), code: 'md5' },
+  { name: 'SHA-1', calculate: x => hash(x, 'SHA-1'), code: 'sha1' },
+  { name: 'SHA-256', calculate: x => hash(x, 'SHA-256'), code: 'sha256' },
+  { name: 'SHA-512', calculate: x => hash(x, 'SHA-512'), code: 'sha512' },
 ];
 
 export class CryptographyPage extends React.Component<CryptographyProps, any> {

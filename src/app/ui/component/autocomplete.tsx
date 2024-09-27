@@ -84,10 +84,10 @@ export class AutoComplete<T> extends React.Component<AutoCompleteProps<T>, AutoC
     return this.props.renderSuggestion(item);
   };
 
-  private renderContainer = (params: RenderSuggestionsContainerParams) => {
+  private renderContainer = ({ containerProps, children }: RenderSuggestionsContainerParams) => {
     return (
-      <FloatingPaper {...params.containerProps} square={true}>
-        {params.children}
+      <FloatingPaper {...containerProps} square={true}>
+        {children}
       </FloatingPaper>
     );
   };

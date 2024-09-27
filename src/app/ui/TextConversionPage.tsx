@@ -8,15 +8,15 @@ import rot13 from '../calc/rot13';
 import { jsonStringToXml, xmlToJsonString } from '../calc/xml-json';
 import * as store from '../util/store';
 import * as strings from '../util/strings';
-import { identity } from '../util/util';
+import { identity, MaybePromise } from '../util/util';
 import Section from './component/Section';
 import { ClipboardButton, copyRefToClipboard } from './component/ToolButton';
 import { publishSelectedValue } from './LastValue';
 import { FlexRow, LeftPad } from './layout/elements';
 
 interface ConverterInfo {
-  readonly encode: (x: string) => Promise<string> | string;
-  readonly decode: (x: string) => Promise<string> | string;
+  readonly encode: (x: string) => MaybePromise<string>;
+  readonly decode: (x: string) => MaybePromise<string>;
   readonly name: string;
 }
 
