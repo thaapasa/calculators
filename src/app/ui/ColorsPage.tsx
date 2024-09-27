@@ -221,7 +221,11 @@ export class ColorsPage extends React.Component<ColorsProps, ColorState> {
     return (
       <PaddedChip
         key={index}
-        avatar={<Avatar style={{ backgroundColor: color.hex }} />}
+        avatar={
+          <Avatar style={{ backgroundColor: color.hex }}>
+            <div />
+          </Avatar>
+        }
         label={color.name}
         onDelete={() => this.removeColor(index)}
         onClick={() => this.setAllFromHex(color.hex)}
