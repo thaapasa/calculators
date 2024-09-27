@@ -19,7 +19,11 @@ export function LastValue() {
   React.useEffect(() => listenToSelectedValues(setValue), [setValue]);
   return (
     <Container>
-      <ClipboardButton title="Kopioi leikepöydälle" onClick={() => {}} color="secondary" />
+      <ClipboardButton
+        title="Kopioi leikepöydälle"
+        onClick={() => navigator.clipboard.writeText(value)}
+        color="secondary"
+      />
       <TextField
         value={value}
         name="lastValue"
