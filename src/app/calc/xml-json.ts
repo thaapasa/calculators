@@ -25,7 +25,7 @@ export function xmlToJson<T>(x: string): Promise<T> {
 export async function xmlToJsonString(x: string): Promise<string> {
   try {
     return JSON.stringify(await xmlToJson(x), null, 2);
-  } catch (e) {
+  } catch (_e) {
     return 'Invalid XML';
   }
 }
@@ -39,7 +39,7 @@ export function jsonToXml(x: any): string {
 export function jsonStringToXml(x: string): string {
   try {
     return jsonToXml(JSON.parse(x));
-  } catch (e) {
+  } catch (_e) {
     return 'Invalid JSON';
   }
 }

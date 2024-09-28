@@ -10,23 +10,23 @@ export function getRandomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-export function isDefined(value: any): boolean {
+export function isDefined(value: unknown): boolean {
   return value !== undefined && value !== null;
 }
 
-export function isNumber(value: any): boolean {
+export function isNumber(value: unknown): boolean {
   return value !== undefined && value !== null && typeof value === 'number' && !isNaN(value);
 }
 
-export function isString(value: any): boolean {
+export function isString(value: unknown): boolean {
   return value !== undefined && value !== null && typeof value === 'string';
 }
 
-export function isObject(value: any): boolean {
+export function isObject(value: unknown): boolean {
   return value !== undefined && value !== null && typeof value === 'object';
 }
 
-export function isArray(value: any): boolean {
+export function isArray(value: unknown): boolean {
   return Array.isArray(value);
 }
 
@@ -48,12 +48,12 @@ export function nonEmpty(value: any): boolean {
   return value && value.length && value.length > 0;
 }
 
-export function combine(a: any, b: any): string {
+export function combine(a: unknown, b: unknown): string {
   return `${a}${b}`;
 }
 
-export function combineWith(separator: string): (a: any, b: any) => string {
-  return (a: any, b: any) => `${a}${separator}${b}`;
+export function combineWith(separator: string): (a: unknown, b: unknown) => string {
+  return (a: unknown, b: unknown) => `${a}${separator}${b}`;
 }
 
 export function pairsToObject<T>(pairs: Array<[string, T]>): Record<string, T> {
@@ -63,7 +63,7 @@ export function pairsToObject<T>(pairs: Array<[string, T]>): Record<string, T> {
 }
 
 export function objectKeys<T extends object>(object: T): ReadonlyArray<keyof T> {
-  return Object.keys(object) as any;
+  return Object.keys(object) as unknown as ReadonlyArray<keyof T>;
 }
 
 export function mapObject<S, T, O, X extends { [k in keyof O]: S }>(

@@ -13,7 +13,7 @@ export function getValue<T>(key: string): T | null {
     try {
       const v = window.localStorage.getItem(key);
       return v !== null ? (JSON.parse(v) as T) : null;
-    } catch (e) {
+    } catch (_e) {
       return null;
     }
   } else {

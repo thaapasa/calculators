@@ -24,6 +24,18 @@ export default tseslint.config({
     'unused-imports/no-unused-imports': 'error',
     'simple-import-sort/imports': ['warn'],
     'simple-import-sort/exports': ['warn'],
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-empty-object-type": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ]
   }
 })
 

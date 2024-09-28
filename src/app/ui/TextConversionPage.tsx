@@ -23,7 +23,7 @@ interface ConverterInfo {
 function toPrettyJSON(s: string): string {
   try {
     return JSON.stringify(JSON.parse(s), null, 2);
-  } catch (e) {
+  } catch (_e) {
     return s;
   }
 }
@@ -31,7 +31,7 @@ function toPrettyJSON(s: string): string {
 function toCompactJSON(s: string): string {
   try {
     return JSON.stringify(JSON.parse(s));
-  } catch (e) {
+  } catch (_e) {
     return s;
   }
 }
@@ -39,7 +39,7 @@ function toCompactJSON(s: string): string {
 function svgToRn(s: string): string {
   try {
     return svgToReactNative(s);
-  } catch (e) {
+  } catch (_e) {
     return 'Virheellinen SVG';
   }
 }
