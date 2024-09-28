@@ -9,13 +9,14 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
-    "test": "vitest",
+    "test": "vitest run",
     "deploy": "sh script/deploy.sh",
     "clean": "rm -rf dist/",
     "eject": "react-scripts eject",
-    "lint": "bun lint-eslint && bun lint-tsc",
+    "lint": "yarn lint-eslint && yarn lint-tsc",
     "lint-eslint": "eslint src",
-    "lint-tsc": "tsc --noEmit"
+    "lint-tsc": "tsc --noEmit",
+    "fix": "eslint --fix src"
   },
   "repository": {
     "type": "git",
@@ -63,8 +64,6 @@
     "@types/react-dom": "18.3.0",
     "@types/uuid": "10.0.0",
     "@types/xml2js": "0.4.14",
-    "@typescript-eslint/eslint-plugin": "^8.7.0",
-    "@typescript-eslint/parser": "^8.7.0",
     "@vitejs/plugin-react-swc": "^3.7.0",
     "eslint": "^9.11.1",
     "eslint-config-prettier": "^9.1.0",
@@ -77,6 +76,7 @@
     "prettier": "3.3.3",
     "tslib": "2.7.0",
     "typescript": "5.6.2",
+    "typescript-eslint": "^8.7.0",
     "vite": "^5.4.8",
     "vite-tsconfig-paths": "^5.0.1"
   },

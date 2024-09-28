@@ -1,7 +1,43 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable no-undef */
+import eslint from "@eslint/js";
+import tseslint from 'typescript-eslint';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import reactHooks from "eslint-plugin-react-hooks";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
+import unusedImports from "eslint-plugin-unused-imports";
 
-module.exports = {
+export default tseslint.config({
+  files: ["src/**/*.ts", "src/**/*.tsx"],
+  extends: [
+    eslint.configs.recommended,
+    ...tseslint.configs.recommended,
+    eslintPluginPrettierRecommended,
+  ],
+  plugins: {
+    "react-hooks": reactHooks,
+    "simple-import-sort": simpleImportSort,
+    "unused-imports": unusedImports,
+  },
+  rules: {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    'no-console': 'warn',
+    'unused-imports/no-unused-imports': 'error',
+    'simple-import-sort/imports': ['warn'],
+    'simple-import-sort/exports': ['warn'],
+  }
+})
+
+/*
+  {
+    rules: {
+      "no-unused-vars": "warn",
+      "no-undef": "warn"
+    }
+  }
+]
+  */
+
+/*
   parser: '@typescript-eslint/parser',
   extends: [
     'eslint:recommended',
@@ -50,3 +86,4 @@ module.exports = {
     },
   },
 };
+*/

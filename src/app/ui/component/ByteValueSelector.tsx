@@ -77,7 +77,6 @@ export class ByteValueSelector extends React.Component<SelectorProps, SelectorSt
     super(props);
 
     types.forEach(t => {
-      // eslint-disable-next-line
       this.state[t] = typeInfo[t].write(this.props.setValue);
       this.inputStr[t] = new Bacon.Bus<string | number>();
     });

@@ -1,0 +1,21 @@
+name: Test Calculators
+
+on: [workflow_dispatch, push]
+
+jobs:
+  build:
+    name: Build and test calculators
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install deps
+        run: yarn install
+
+      - name: Lint
+        run: echo "Lint skipped - yarn lint"
+
+      - name: Run tests
+        run: yarn test

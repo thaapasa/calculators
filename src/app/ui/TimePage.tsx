@@ -248,7 +248,7 @@ export class TimePage extends React.Component<DateTimeProps, DateTimeState> {
 
   constructor(props: DateTimeProps) {
     super(props);
-    // eslint-disable-next-line
+
     types.forEach(t => (this.state[t] = ''));
     this.state.datePicker = undefined;
   }
