@@ -59,7 +59,7 @@ function Uuid7Info({ input }: { input: string }) {
         fullWidth
         variant="filled"
         label="Aika"
-        value={time.format('YYYY-MM-DD HH:mm:ss.SSSSSS Z')}
+        value={time.format('YYYY-MM-DD HH:mm:ss.SSS Z')}
         slotProps={{
           input: {
             readOnly: true,
