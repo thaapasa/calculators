@@ -3,7 +3,7 @@ import * as Bacon from 'baconjs';
 import React, { ChangeEvent } from 'react';
 
 import * as util from '../../util/util';
-import { Item } from './Item';
+import { Item } from './item';
 import { GenerateButton } from './ToolButton';
 
 const CheckItem = styled(Item)`

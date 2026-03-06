@@ -1,5 +1,5 @@
 import { FileCopyOutlined } from '@mui/icons-material';
-import { Icon, IconButton, PropTypes } from '@mui/material';
+import { Icon, IconButton } from '@mui/material';
 import log from 'app/util/log';
 import React from 'react';
 
@@ -11,7 +11,7 @@ interface ToolbarProps {
   readonly className?: string;
 }
 
-export function copyRefToClipboard(ref: React.RefObject<HTMLInputElement>) {
+export function copyRefToClipboard(ref: React.RefObject<HTMLInputElement | null>) {
   try {
     if (ref.current) {
       ref.current.select();
@@ -36,7 +36,7 @@ interface ButtonProps {
   title: string;
   onClick: () => any;
   className?: string;
-  color?: PropTypes.Color;
+  color?: 'inherit' | 'primary' | 'secondary' | 'default';
 }
 
 export function GenerateButton({ title, onClick }: ButtonProps) {

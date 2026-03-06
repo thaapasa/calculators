@@ -3,8 +3,8 @@ import * as Bacon from 'baconjs';
 import React, { CSSProperties } from 'react';
 
 import { allFieldsOfType, isString, pairsToObject } from '../util/util';
-import { Item } from './component/Item';
-import { HalfSection } from './component/Section';
+import { Item } from './component/item';
+import { HalfSection } from './component/section';
 import { publishSelectedValue } from './LastValue';
 import { Flex, FlexRow } from './layout/elements';
 
@@ -45,17 +45,17 @@ const types = allFieldsOfType<TypeInfo>()({
   giga: converter('Gigatavua', 'Gt', GIGA),
   tera: converter('Teratavua', 'Tt', TERA),
 });
-const typeKeys = Object.keys(types);
 export type SizeTypes = keyof typeof types;
+const typeKeys = Object.keys(types) as SizeTypes[];
 
-const leftColumn: string[] = ['kibi', 'mebi', 'gibi', 'tebi'];
-const rightColumn: string[] = ['kilo', 'mega', 'giga', 'tera'];
+const leftColumn: SizeTypes[] = ['kibi', 'mebi', 'gibi', 'tebi'];
+const rightColumn: SizeTypes[] = ['kilo', 'mega', 'giga', 'tera'];
 
 interface ByteSizeProps {}
 
 interface ByteSizeState {
-  selected: string;
-  values: Record<string, string>;
+  selected: SizeTypes;
+  values: Record<SizeTypes, string>;
 }
 
 const emptyStream = Bacon.never();
@@ -63,15 +63,18 @@ const emptyStream = Bacon.never();
 export class ByteSizesPage extends React.Component<ByteSizeProps, ByteSizeState> {
   public state: ByteSizeState = {
     selected: 'byte',
-    values: pairsToObject(Object.keys(types).map<[string, string]>(t => [t, ''])),
+    values: pairsToObject(typeKeys.map<[string, string]>(t => [t, ''])) as Record<
+      SizeTypes,
+      string
+    >,
   };
 
-  private currentInput = new Bacon.Bus<string>();
+  private currentInput = new Bacon.Bus<SizeTypes>();
   private inputStream = new Bacon.Bus<string>();
-  private selectedSrcStr = new Bacon.Bus<string>();
+  private selectedSrcStr = new Bacon.Bus<SizeTypes>();
 
   public componentDidMount() {
-    this.currentInput = new Bacon.Bus();
+    this.currentInput = new Bacon.Bus<SizeTypes>();
     const inputConverter = this.currentInput.map(t => types[t].read).toProperty(Number);
     const converted = this.inputStream
       .combine(inputConverter, (i, c) => c(i))
@@ -89,7 +92,7 @@ export class ByteSizesPage extends React.Component<ByteSizeProps, ByteSizeState>
     this.selectedSrcStr
       .toProperty('byte')
       .map(t => types[t].write)
-      .combine(converted, (c, v) => v && c(v))
+      .combine(converted, (c, v) => (v ? c(v) : ''))
       .onValue(publishSelectedValue);
   }
 
@@ -139,7 +142,7 @@ export class ByteSizesPage extends React.Component<ByteSizeProps, ByteSizeState>
   private mergeValues = (x: any) => this.setState(s => ({ values: { ...s.values, ...x } }));
 
   private inputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const name = event.target.name;
+    const name = event.target.name as SizeTypes;
     const value = event.target.value;
     this.mergeValues({ [name]: value });
     this.currentInput.push(name);
@@ -147,9 +150,9 @@ export class ByteSizesPage extends React.Component<ByteSizeProps, ByteSizeState>
   };
 
   private selectSrc = (event: React.FocusEvent<HTMLInputElement>) => {
-    const src = event.target.name;
+    const src = event.target.name as SizeTypes;
     this.setState({ selected: src });
-    this.selectedSrcStr.push(event.target.name);
+    this.selectedSrcStr.push(event.target.name as SizeTypes);
   };
 }
 

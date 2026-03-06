@@ -5,8 +5,8 @@ import * as Bacon from 'baconjs';
 import md5 from 'md5';
 import React, { RefObject } from 'react';
 
-import { Item } from './component/Item';
-import Section from './component/Section';
+import { Item } from './component/item';
+import Section from './component/section';
 import { SelectableOutput } from './component/SelectableOutput';
 import { publishSelectedValue } from './LastValue';
 
@@ -31,7 +31,7 @@ export class CryptographyPage extends React.Component<CryptographyProps, any> {
   private default: string;
   private inputStream = new Bacon.Bus<string>();
   private cryptoSelectStream = new Bacon.Bus<string>();
-  private refsObjects: Record<string, RefObject<SelectableOutput>>;
+  private refsObjects: Record<string, RefObject<SelectableOutput | null>>;
 
   constructor(props: CryptographyProps) {
     super(props);

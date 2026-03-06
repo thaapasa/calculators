@@ -21,8 +21,8 @@ import React from 'react';
 import * as store from '../util/store';
 import { ByteValueSelector } from './component/ByteValueSelector';
 import { ColorBar } from './component/ColorBar';
-import { Item } from './component/Item';
-import { HalfSection } from './component/Section';
+import { Item } from './component/item';
+import { HalfSection } from './component/section';
 import { publishSelectedValue } from './LastValue';
 
 const ColorAvatar = styled(Avatar)`

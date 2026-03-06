@@ -7,9 +7,9 @@ import { strToInt } from '../calc/numbers';
 import { findNameDayFor, getNameDay, MonthDay } from '../util/namedays';
 import { zeroPad } from '../util/strings';
 import { identity, isDefined, isString, objectKeys } from '../util/util';
-import { AutoComplete } from './component/AutoComplete';
-import { Item } from './component/Item';
-import { HalfSection } from './component/Section';
+import { AutoComplete } from './component/autocomplete';
+import { Item } from './component/item';
+import { HalfSection } from './component/section';
 import { publishSelectedValue } from './LastValue';
 
 const styles: { [key: string]: React.CSSProperties } = {
@@ -249,7 +249,7 @@ export class TimePage extends React.Component<DateTimeProps, DateTimeState> {
   constructor(props: DateTimeProps) {
     super(props);
 
-    types.forEach(t => (this.state[t] = ''));
+    types.forEach(t => ((this.state as any)[t] = ''));
     this.state.datePicker = undefined;
   }
 
@@ -313,10 +313,10 @@ export class TimePage extends React.Component<DateTimeProps, DateTimeState> {
       this.setState({ datePicker: typeInfo.datePicker.write(val) });
     });
     // Which value is reported to parent
-    const reportTarget = incoming.focused.filter((t: any) => typeInfo[t].reportValue);
+    const reportTarget = incoming.focused.filter((t: any) => (typeInfo as any)[t].reportValue);
     reportTarget.onValue((v: any) => this.setState({ reportTarget: v }));
     Bacon.combineAsArray(newVal, reportTarget).onValue(t =>
-      publishSelectedValue(typeInfo[t[1]].write(t[0])),
+      publishSelectedValue((typeInfo as any)[t[1]].write(t[0])),
     );
     // Push default value
     this.pushValue(moment(), 'direct');
@@ -326,7 +326,7 @@ export class TimePage extends React.Component<DateTimeProps, DateTimeState> {
     return (
       <HalfSection
         title="Aikaleimat"
-        subtitle={texts.types[this.state.reportTarget]}
+        subtitle={(texts.types as Record<string, string>)[this.state.reportTarget]}
         image="/img/header-datetime.jpg"
       >
         <TimeItem name="Päivä" style={styles.item}>
@@ -411,7 +411,7 @@ export class TimePage extends React.Component<DateTimeProps, DateTimeState> {
   };
 
   private pushValue = (val: string | moment.Moment, src: any) => {
-    this.streams.selected.push(typeInfo[src].src);
+    this.streams.selected.push((typeInfo as any)[src].src);
     this.streams[src].push(val);
   };
 
@@ -428,7 +428,7 @@ export class TimePage extends React.Component<DateTimeProps, DateTimeState> {
           readOnly: info.readOnly || false,
         }}
         name={type}
-        placeholder={hints[type]}
+        placeholder={(hints as Record<string, string>)[type]}
         fullWidth={info.fullWidth}
         onChange={this.inputChanged}
         onFocus={this.focusChanged}

@@ -2,7 +2,6 @@ import { Input, Paper, styled } from '@mui/material';
 import React from 'react';
 import Autosuggest, {
   ChangeEvent,
-  RenderInputComponentProps,
   RenderSuggestionsContainerParams,
   SuggestionSelectedEventData,
   SuggestionsFetchRequestedParams,
@@ -92,8 +91,9 @@ export class AutoComplete<T> extends React.Component<AutoCompleteProps<T>, AutoC
     );
   };
 
-  // Destructure and discard incompatible props
-  private renderInput = ({ size, color, ...props }: RenderInputComponentProps) => {
+  // Destructure and discard incompatible props (react-autosuggest types lag behind React 19)
+
+  private renderInput = ({ size, color, ...props }: any) => {
     const { onChange, defaultValue, ref, ...other } = props;
 
     return (

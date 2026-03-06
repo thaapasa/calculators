@@ -4,7 +4,7 @@ import { Outlet } from 'react-router';
 
 import { LastValue } from './LastValue';
 import { NavigationDrawer } from './layout/drawer';
-import { TopBar } from './layout/TopBar';
+import { TopBar } from './layout/topbar';
 
 export function CalculatorLayout() {
   const [drawerOpen, setDrawerOpen] = React.useState(false);

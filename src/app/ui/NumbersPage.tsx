@@ -5,8 +5,8 @@ import React from 'react';
 import * as numbers from '../calc/numbers';
 import { zeroPad } from '../util/strings';
 import * as util from '../util/util';
-import { Item } from './component/Item';
-import { HalfSection } from './component/Section';
+import { Item } from './component/item';
+import { HalfSection } from './component/section';
 import { publishSelectedValue } from './LastValue';
 
 const texts = {
@@ -78,7 +78,8 @@ const types = util.allFieldsOfType<TypeInfo>()({
   },
 });
 
-const typeKeys = Object.keys(types);
+type NumberType = keyof typeof types;
+const typeKeys = Object.keys(types) as NumberType[];
 
 function intToUnicodeStr(value: number): string {
   const str = numbers.intToHexStr(value);
@@ -93,7 +94,7 @@ function intToHTMLCode(value: number): string {
 interface NumbersProps {}
 
 interface NumbersState {
-  selected: string;
+  selected: NumberType;
   unicode: string;
   values: Record<string, string>;
 }
@@ -107,9 +108,9 @@ export class NumbersPage extends React.Component<NumbersProps, NumbersState> {
     values: util.pairsToObject(Object.keys(types).map<[string, string]>(t => [t, ''])),
   };
 
-  private currentInput = new Bacon.Bus<string>();
+  private currentInput = new Bacon.Bus<NumberType>();
   private inputStream = new Bacon.Bus<string>();
-  private selectedSrcStr = new Bacon.Bus<string>();
+  private selectedSrcStr = new Bacon.Bus<NumberType>();
 
   constructor(props: NumbersProps) {
     super(props);

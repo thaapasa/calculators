@@ -5,7 +5,7 @@ import React from 'react';
 
 import { toUpperCase } from '../../util/strings';
 import { identity, MaybePromise } from '../../util/util';
-import { Item } from './Item';
+import { Item } from './item';
 
 const StyledItem = styled(Item)`
   & > .name {

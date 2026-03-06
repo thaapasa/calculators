@@ -5,7 +5,7 @@ import React from 'react';
 import { hexStrToInt, intToHexStr, strToInt } from '../../calc/numbers';
 import { zeroPad } from '../../util/strings';
 import { isNumber } from '../../util/util';
-import { Item } from './Item';
+import { Item } from './item';
 
 function isValidComp(value: number): value is number {
   return isNumber(value) && !isNaN(value) && value >= 0 && value <= 255;
@@ -77,7 +77,7 @@ export class ByteValueSelector extends React.Component<SelectorProps, SelectorSt
     super(props);
 
     types.forEach(t => {
-      this.state[t] = typeInfo[t].write(this.props.setValue);
+      (this.state as any)[t] = typeInfo[t].write(this.props.setValue);
       this.inputStr[t] = new Bacon.Bus<string | number>();
     });
 
@@ -157,9 +157,9 @@ export class ByteValueSelector extends React.Component<SelectorProps, SelectorSt
   };
 
   private showValue = (val: number, src: string) => {
-    const ns: Record<string, string | number> = {};
-    types.filter(t => t !== src).forEach(t => (ns[t] = typeInfo[t].write(val)));
-    this.setState(ns);
+    const ns: Partial<SelectorState> = {};
+    types.filter(t => t !== src).forEach(t => ((ns as any)[t] = typeInfo[t].write(val)));
+    this.setState(ns as SelectorState);
     if (this.props.onValue && src !== 'parent') {
       this.props.onValue(val);
     }
