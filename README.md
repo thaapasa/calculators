@@ -1,34 +1,51 @@
-[![Build Status](https://travis-ci.org/thaapasa/calculators.svg?branch=master)](https://travis-ci.org/thaapasa/calculators)
+[![Test Calculators](https://github.com/thaapasa/calculators/actions/workflows/test.yml/badge.svg)](https://github.com/thaapasa/calculators/actions/workflows/test.yml)
 
-# README
+# Calculators
 
-## Calculators
+A collection of handy browser-based calculator tools, live at
+[laskurit.pomeranssi.fi](https://laskurit.pomeranssi.fi).
 
-Need to calculate some SHA1-hashes? Want to generate a few Finnish
-national identification numbers (hetu)?
+All calculations run locally in the browser — no data is sent to any server,
+so you can safely calculate password hashes and other sensitive values.
 
-This repo contains the source code for a static web page that has all
-those nifty calculators working in the browser. No data is sent anywhere,
-so you can calculate password hashes safely.
+## Features
 
-## Installation instructions
+- **Time & dates** — date arithmetic, timestamps, name days
+- **Numbers** — binary, hexadecimal, octal conversions
+- **Identifiers** — Finnish national ID (hetu) generation/validation, company IDs, bank references
+- **Colors** — color conversions and analysis
+- **Byte sizes** — byte/KB/MB/GB conversions
+- **Links** — URL encoding/decoding and manipulation
+- **Text conversions** — Base64, ROT13, XML/JSON conversion
+- **Cryptography** — MD5, SHA-1, SHA-256, SHA-512 hashing
+- **UUID** — validation and UUID v7 timestamp parsing
 
-Install dependencies:
+## Getting Started
 
-    yarn
+Requires [Node.js](https://nodejs.org/) and [Yarn](https://yarnpkg.com/).
 
-Build project:
+```bash
+yarn                # Install dependencies
+yarn start          # Dev server at http://localhost:3000
+```
 
-    yarn build
+## Scripts
 
-Develop (watch for changes):
+```bash
+yarn build          # Production build (output in dist/)
+yarn test           # Run tests
+yarn lint           # ESLint + TypeScript type checking
+yarn fix            # Auto-fix ESLint issues
+yarn deploy         # Build and deploy to production
+```
 
-    yarn start
+## Tech Stack
 
-Run tests:
+- [React](https://react.dev/) 18 + [TypeScript](https://www.typescriptlang.org/) 5
+- [Material-UI](https://mui.com/) 6
+- [Vite](https://vite.dev/) 5 (build & dev server)
+- [Vitest](https://vitest.dev/) (testing)
 
-    yarn test
+## License
 
-### See the results
-
-After building, open the file `build/index.html` in your browser.
+[MIT](LICENSE.md)
