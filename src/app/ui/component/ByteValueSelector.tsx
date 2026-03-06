@@ -1,6 +1,5 @@
 import { Slider, styled, TextField } from '@mui/material';
-import * as Bacon from 'baconjs';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { hexStrToInt, intToHexStr, strToInt } from '../../calc/numbers';
 import { zeroPad } from '../../util/strings';
@@ -23,159 +22,125 @@ function toHexComp(value: number): string {
   return isValidComp(value) ? zeroPad(intToHexStr(value), 2) : '';
 }
 
-const sliderToVal: (value: string | number) => number = Number;
-
 const ComponentField = styled(TextField)`
   width: 2.8em;
   margin-right: 1em !important;
 `;
-
-const types = ['parent', 'dec', 'hex', 'slider'] as const;
-
-interface TypeInfoType {
-  readonly read: (x: string | number) => number;
-  readonly write: (x: string | number) => string | number;
-}
-
-const typeInfo: { readonly [key: string]: TypeInfoType } = {
-  parent: { read: Number, write: String },
-  dec: { read: strToInt, write: x => toDecValue(Number(x)) },
-  hex: { read: hexStrToInt, write: x => toHexComp(Number(x)) },
-  slider: { read: sliderToVal, write: x => toSliderValue(Number(x)) },
-};
-
-type NumericSelectorType = 'parent' | 'slider';
-type StringSelectorType = 'dec' | 'hex';
-type SelectorType = NumericSelectorType | StringSelectorType;
-
-interface SelectorState {
-  hex: string;
-  dec: string;
-  parent: number;
-  slider: number;
-}
 
 interface SelectorProps {
   setValue: string | number;
   onValue?: (x: number) => void;
   name?: string;
   floatingLabel?: string;
-  topContent?: any;
+  topContent?: React.ReactNode;
 }
 
-export class ByteValueSelector extends React.Component<SelectorProps, SelectorState> {
-  public state: SelectorState = {
-    hex: '',
-    dec: '',
-    parent: 0,
-    slider: 0,
-  };
-  private curSrcStr = new Bacon.Bus<SelectorType>();
-  private inputStr: { [key: string]: Bacon.Bus<string | number> } = {};
+export function ByteValueSelector({
+  setValue: setValueProp,
+  onValue,
+  name,
+  floatingLabel,
+  topContent,
+}: SelectorProps) {
+  const [hex, setHex] = useState(() => toHexComp(Number(setValueProp)));
+  const [dec, setDec] = useState(() => toDecValue(Number(setValueProp)));
+  const [slider, setSlider] = useState(() => toSliderValue(Number(setValueProp)));
 
-  constructor(props: SelectorProps) {
-    super(props);
-
-    types.forEach(t => {
-      (this.state as any)[t] = typeInfo[t].write(this.props.setValue);
-      this.inputStr[t] = new Bacon.Bus<string | number>();
-    });
-
-    const newValStr = Bacon.mergeAll(types.map(t => this.inputStr[t].map(typeInfo[t].read)));
-    Bacon.combineAsArray<number | string>(newValStr, this.curSrcStr.toProperty('parent')).onValue(
-      x => this.showValue(x[0] as number, x[1] as string),
-    );
+  // Sync state from prop changes (React pattern: adjust state during render)
+  const [prevSetValueProp, setPrevSetValueProp] = useState(setValueProp);
+  if (setValueProp !== prevSetValueProp) {
+    setPrevSetValueProp(setValueProp);
+    const val = Number(setValueProp);
+    setHex(toHexComp(val));
+    setDec(toDecValue(val));
+    setSlider(toSliderValue(val));
   }
 
-  public componentDidUpdate(prevProps: SelectorProps) {
-    if (prevProps.setValue !== this.props.setValue) {
-      this.setValue(Number(this.props.setValue));
-    }
-  }
+  const showValue = useCallback(
+    (val: number, src: string) => {
+      if (src !== 'hex') setHex(toHexComp(val));
+      if (src !== 'dec') setDec(toDecValue(val));
+      if (src !== 'slider') setSlider(toSliderValue(val));
+      if (onValue && src !== 'parent') {
+        onValue(val);
+      }
+    },
+    [onValue],
+  );
 
-  public render() {
-    const slider = (
-      <Slider
-        value={this.state.slider}
-        max={255}
-        min={0}
-        step={1}
-        onChange={(e, v: number | number[]) =>
-          this.pushNumberValue(Array.isArray(v) ? v[0] : v, 'slider')
-        }
-      />
-    );
-    const content = (
-      <Row>
-        <Column>
-          <Row>
-            <ComponentField
-              variant="standard"
-              label={this.props.floatingLabel}
-              placeholder="FF"
-              inputProps={{ maxLength: 2 }}
-              value={this.state.hex}
-              onChange={e => this.pushStringValue(e.target.value, 'hex')}
-            />
-            <ComponentField
-              variant="standard"
-              label={this.props.floatingLabel}
-              placeholder="255"
-              type="number"
-              inputProps={{ maxLength: 3 }}
-              value={this.state.dec}
-              onChange={e => this.pushStringValue(e.target.value, 'dec')}
-            />
-          </Row>
-          <Row>
-            <ComponentField
-              style={{ width: '6em' }}
-              variant="standard"
-              inputProps={{ readOnly: true }}
-              value={String(Number(this.state.dec) / 255)}
-            />
-          </Row>
-        </Column>
-        <Column className={this.props.floatingLabel ? 'high' : undefined}>
-          {this.props.topContent}
-          {slider}
-        </Column>
-      </Row>
-    );
+  const onHexChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const val = e.target.value;
+      setHex(val);
+      const num = hexStrToInt(val);
+      if (isValidComp(num)) showValue(num, 'hex');
+    },
+    [showValue],
+  );
 
-    return this.props.name ? (
-      <Item name={this.props.name} valueClassName="top">
-        {content}
-      </Item>
-    ) : (
-      content
-    );
-  }
+  const onDecChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const val = e.target.value;
+      setDec(val);
+      const num = strToInt(val);
+      if (isValidComp(num)) showValue(num, 'dec');
+    },
+    [showValue],
+  );
 
-  private setValue = (value: number) => {
-    this.showValue(value, 'parent');
-  };
+  const onSliderChange = useCallback(
+    (_: unknown, v: number | number[]) => {
+      const num = Array.isArray(v) ? v[0] : v;
+      showValue(num, 'slider');
+    },
+    [showValue],
+  );
 
-  private showValue = (val: number, src: string) => {
-    const ns: Partial<SelectorState> = {};
-    types.filter(t => t !== src).forEach(t => ((ns as any)[t] = typeInfo[t].write(val)));
-    this.setState(ns as SelectorState);
-    if (this.props.onValue && src !== 'parent') {
-      this.props.onValue(val);
-    }
-  };
+  const content = (
+    <Row>
+      <Column>
+        <Row>
+          <ComponentField
+            variant="standard"
+            label={floatingLabel}
+            placeholder="FF"
+            inputProps={{ maxLength: 2 }}
+            value={hex}
+            onChange={onHexChange}
+          />
+          <ComponentField
+            variant="standard"
+            label={floatingLabel}
+            placeholder="255"
+            type="number"
+            inputProps={{ maxLength: 3 }}
+            value={dec}
+            onChange={onDecChange}
+          />
+        </Row>
+        <Row>
+          <ComponentField
+            style={{ width: '6em' }}
+            variant="standard"
+            inputProps={{ readOnly: true }}
+            value={String(Number(dec) / 255)}
+          />
+        </Row>
+      </Column>
+      <Column className={floatingLabel ? 'high' : undefined}>
+        {topContent}
+        <Slider value={slider} max={255} min={0} step={1} onChange={onSliderChange} />
+      </Column>
+    </Row>
+  );
 
-  private pushStringValue = (value: string, src: StringSelectorType) => {
-    this.setState({ [src]: value } as Pick<SelectorState, StringSelectorType>);
-    this.curSrcStr.push(src);
-    this.inputStr[src].push(value);
-  };
-
-  private pushNumberValue = (value: number, src: NumericSelectorType) => {
-    this.setState({ [src]: value } as Pick<SelectorState, NumericSelectorType>);
-    this.curSrcStr.push(src);
-    this.inputStr[src].push(value);
-  };
+  return name ? (
+    <Item name={name} valueClassName="top">
+      {content}
+    </Item>
+  ) : (
+    content
+  );
 }
 
 const Row = styled('div')`

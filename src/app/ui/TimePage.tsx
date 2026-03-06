@@ -1,12 +1,11 @@
 import { Input, styled } from '@mui/material';
-import * as Bacon from 'baconjs';
 import moment from 'moment';
-import React from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 import { strToInt } from '../calc/numbers';
 import { findNameDayFor, getNameDay, MonthDay } from '../util/namedays';
 import { zeroPad } from '../util/strings';
-import { identity, isDefined, isString, objectKeys } from '../util/util';
+import { isDefined, isString } from '../util/util';
 import { AutoComplete } from './component/autocomplete';
 import { Item } from './component/item';
 import { HalfSection } from './component/section';
@@ -48,15 +47,6 @@ function pad(val: string | number, len: number): string {
 
 const datePattern = 'D.M.YYYY';
 
-function readDate(v: string): string {
-  const c = moment(v);
-  return c.isValid() ? c.format(datePattern) : '';
-}
-
-function writeDate(v: moment.Moment): Date | undefined {
-  return v.isValid() ? v.toDate() : undefined;
-}
-
 function readDateText(v: string): object | undefined {
   const c = moment(v, datePattern);
   return c.isValid() ? { day: c.date(), month: c.month(), year: c.year() } : undefined;
@@ -75,118 +65,10 @@ const texts = {
     unixTime: 'Unixtime',
     nameDay: 'Nimipäivä',
     week: 'Viikko',
-  },
+  } as Record<string, string>,
 };
 
-interface DateTimeType {
-  readonly write: (x: any) => any;
-  readonly read?: (x: string) => any;
-  readonly src?: string;
-  readonly reportValue?: boolean;
-  readonly fullWidth?: boolean;
-  readonly style?: React.CSSProperties;
-  readonly maxLength?: number;
-  readonly readOnly?: boolean;
-}
-
-const typeInfo = {
-  week: {
-    write: (val: any) => toStateValue(val, toIsoWeek),
-    reportValue: true,
-    style: styles.center,
-  },
-  focused: { write: identity },
-  selected: { write: identity },
-  iso8601: {
-    read: v => moment(v, moment.ISO_8601),
-    write: (m: any) => (m.isValid() ? m.format() : ''),
-    src: 'iso8601',
-    reportValue: true,
-    fullWidth: true,
-  },
-  iso8601utc: {
-    read: v => moment(v, moment.ISO_8601),
-    write: (m: any) => (m.isValid() ? m.toISOString() : ''),
-    src: 'iso8601utc',
-    reportValue: true,
-    fullWidth: true,
-  },
-  nameDay: {
-    write: (val: any) => toStateValue(val, (v: any) => getNameDay(v.month() + 1, v.date())),
-    reportValue: true,
-    style: styles.center,
-  },
-  weekDay: {
-    write: (val: any) => toStateValue(val, (v: any) => texts.weekDay[v.isoWeekday()]),
-    style: styles.center,
-  },
-  javaTime: {
-    read: readJavaTime,
-    src: 'javaTime',
-    reportValue: true,
-    write: (m: any) => (m.isValid() ? m.valueOf() : ''),
-    fullWidth: true,
-  },
-  unixTime: {
-    read: readUnixTime,
-    src: 'unixTime',
-    reportValue: true,
-    write: (m: any) => (m.isValid() ? m.unix() : ''),
-    fullWidth: true,
-  },
-  datePicker: {
-    read: readDate,
-    src: 'value',
-    write: writeDate,
-    style: styles.len7,
-    maxLength: 10,
-  },
-  date: {
-    read: readDateText,
-    src: 'value',
-    write: writeDateText,
-    style: styles.len10,
-    reportValue: true,
-    maxLength: 10,
-  },
-  hour: {
-    read: strToInt,
-    src: 'value',
-    write: (m: any) => (m.isValid() ? pad(m.hour(), 2) : ''),
-    style: styles.len2,
-    maxLength: 2,
-  },
-  minute: {
-    read: strToInt,
-    src: 'value',
-    write: (m: any) => (m.isValid() ? pad(m.minute(), 2) : ''),
-    style: styles.len2,
-    maxLength: 2,
-  },
-  second: {
-    read: strToInt,
-    src: 'value',
-    write: (m: any) => (m.isValid() ? pad(m.second(), 2) : ''),
-    style: styles.len2,
-    maxLength: 2,
-  },
-  millisecond: {
-    read: strToInt,
-    src: 'value',
-    write: (m: any) => (m.isValid() ? pad(m.millisecond(), 3) : ''),
-    style: styles.len3,
-    maxLength: 3,
-  },
-  timeZone: {
-    write: (m: any) => (m.isValid() ? m.format('Z') : ''),
-    style: styles.len7,
-    maxLength: 6,
-    readOnly: true,
-  },
-  direct: { write: identity, src: 'direct' },
-} satisfies Record<string, DateTimeType>;
-
-const hints = {
+const hints: Record<string, string> = {
   date: '31.12.2016',
   hour: '10',
   minute: '00',
@@ -195,246 +77,326 @@ const hints = {
   timeZone: '+02:00',
 };
 
-const valueTypes = ['date', 'dateText', 'hour', 'minute', 'second', 'millisecond'];
-
-const types = objectKeys(typeInfo);
-type TypeField = (typeof types)[number];
-
-function toStateValue(mom: moment.Moment, writer: (x: moment.Moment) => any): string {
-  if (!moment.isMoment(mom)) {
-    return '';
-  }
-  const s = writer(mom);
-  if (!isDefined(s) || (typeof s === 'number' && isNaN(s))) {
-    return '';
-  }
-  return typeof s === 'object' || s === null ? s : typeof s === 'number' ? `${s}` : s;
-}
-
-interface DateTimeProps {}
-
 interface NameDayItem {
   text: string;
   name: string;
   value: MonthDay;
 }
 
-interface DateTimeState extends Partial<Record<TypeField, string | Date>> {
-  reportTarget: string;
-  foundNameDays: NameDayItem[];
-  locale: string;
-  datePicker: Date | undefined;
-  date: string;
-  weekDay: string;
-  week: string;
-  nameDay: string;
+function toStateValue(mom: moment.Moment, writer: (x: moment.Moment) => unknown): string {
+  if (!moment.isMoment(mom)) return '';
+  const s = writer(mom);
+  if (!isDefined(s) || (typeof s === 'number' && isNaN(s))) return '';
+  return typeof s === 'object' || s === null
+    ? (s as unknown as string)
+    : typeof s === 'number'
+      ? `${s}`
+      : (s as string);
 }
 
-export class TimePage extends React.Component<DateTimeProps, DateTimeState> {
-  public state: DateTimeState = {
-    reportTarget: '',
-    foundNameDays: [],
-    locale: 'fi',
-    datePicker: undefined,
-    date: '',
-    weekDay: '',
-    week: '',
-    nameDay: '',
+// Build moment from date+time parts
+function buildMoment(
+  dateStr: string,
+  hour: string,
+  minute: string,
+  second: string,
+  millisecond: string,
+): moment.Moment {
+  const d = readDateText(dateStr);
+  return moment({
+    day: d && (d as { day: number }).day,
+    month: d && (d as { month: number }).month,
+    year: d && (d as { year: number }).year,
+    hour: strToInt(hour),
+    minute: strToInt(minute),
+    second: strToInt(second),
+    millisecond: strToInt(millisecond),
+  });
+}
+
+// Compute all display values from a moment
+function computeOutputs(m: moment.Moment) {
+  return {
+    date: writeDateText(m),
+    hour: m.isValid() ? pad(m.hour(), 2) : '',
+    minute: m.isValid() ? pad(m.minute(), 2) : '',
+    second: m.isValid() ? pad(m.second(), 2) : '',
+    millisecond: m.isValid() ? pad(m.millisecond(), 3) : '',
+    timeZone: m.isValid() ? m.format('Z') : '',
+    weekDay: toStateValue(m, v => texts.weekDay[v.isoWeekday()]),
+    week: toStateValue(m, toIsoWeek),
+    nameDay: toStateValue(m, v => getNameDay(v.month() + 1, v.date())),
+    iso8601: m.isValid() ? m.format() : '',
+    iso8601utc: m.isValid() ? m.toISOString() : '',
+    javaTime: m.isValid() ? String(m.valueOf()) : '',
+    unixTime: m.isValid() ? String(m.unix()) : '',
+    datePicker: m.isValid() ? m.toDate() : undefined,
   };
+}
 
-  private streams: { [key: string]: Bacon.Bus<any> } = {
-    focused: new Bacon.Bus(),
-  };
+type TimeValues = ReturnType<typeof computeOutputs>;
+type TimeField = keyof TimeValues;
 
-  constructor(props: DateTimeProps) {
-    super(props);
+// Which fields are "direct" inputs (user edits these)
+type EditableField =
+  | 'date'
+  | 'hour'
+  | 'minute'
+  | 'second'
+  | 'millisecond'
+  | 'iso8601'
+  | 'iso8601utc'
+  | 'javaTime'
+  | 'unixTime';
 
-    types.forEach(t => ((this.state as any)[t] = ''));
-    this.state.datePicker = undefined;
-  }
+// Which fields report values to parent
+const reportableFields: Record<string, boolean> = {
+  iso8601: true,
+  iso8601utc: true,
+  javaTime: true,
+  unixTime: true,
+  nameDay: true,
+  week: true,
+  date: true,
+};
 
-  public componentDidMount() {
-    // Create streams and incoming (converted) streams
-    const incoming: any = {
-      direct: new Bacon.Bus(),
-      focused: this.streams.focused,
-    };
-    types.forEach(t => {
-      if (t !== 'focused') {
-        this.streams[t] = new Bacon.Bus();
-        this.streams[t].onValue((v: any) => this.setState({ [t]: v } as DateTimeState));
-        incoming[t] =
-          'read' in typeInfo[t] ? this.streams[t].map(typeInfo[t].read) : this.streams[t];
+// Readers that convert input string to a moment
+const fieldReaders: Record<string, (s: string) => moment.Moment> = {
+  iso8601: s => moment(s, moment.ISO_8601),
+  iso8601utc: s => moment(s, moment.ISO_8601),
+  javaTime: readJavaTime,
+  unixTime: readUnixTime,
+};
+
+// Field writers for publishSelectedValue
+const fieldWriters: Record<string, (m: moment.Moment) => string> = {
+  iso8601: m => (m.isValid() ? m.format() : ''),
+  iso8601utc: m => (m.isValid() ? m.toISOString() : ''),
+  javaTime: m => (m.isValid() ? String(m.valueOf()) : ''),
+  unixTime: m => (m.isValid() ? String(m.unix()) : ''),
+  week: m => toStateValue(m, toIsoWeek),
+  nameDay: m => toStateValue(m, v => getNameDay(v.month() + 1, v.date())),
+  date: m => writeDateText(m),
+};
+
+export function TimePage() {
+  const initialMoment = moment();
+  const initialOutputs = computeOutputs(initialMoment);
+
+  const [vals, setVals] = useState<TimeValues>(initialOutputs);
+  const [reportTarget, setReportTarget] = useState('');
+
+  // Keep a ref to the latest moment for publishing
+  const currentMomentRef = useRef(initialMoment);
+
+  const updateFromMoment = useCallback(
+    (m: moment.Moment, src: EditableField | 'direct' | 'datePicker') => {
+      currentMomentRef.current = m;
+      const outputs = computeOutputs(m);
+      // For "value-part" edits (date, time fields), skip updating the edited field
+      if (['date', 'hour', 'minute', 'second', 'millisecond'].includes(src)) {
+        setVals(prev => ({ ...outputs, [src]: prev[src as TimeField] }));
+      } else if (
+        src === 'iso8601' ||
+        src === 'iso8601utc' ||
+        src === 'javaTime' ||
+        src === 'unixTime'
+      ) {
+        setVals(prev => ({ ...outputs, [src]: prev[src] }));
+      } else {
+        setVals(outputs);
       }
-    });
-    incoming.datePicker.onValue((v: string) => this.streams.date.push(v));
-    incoming.value = Bacon.combineTemplate({
-      date: incoming.date,
-      hour: incoming.hour,
-      minute: incoming.minute,
-      second: incoming.second,
-      millisecond: incoming.millisecond,
-    }).map((v: any) =>
-      moment({
-        day: v.date && v.date.day,
-        month: v.date && v.date.month,
-        year: v.date && v.date.year,
-        hour: v.hour,
-        minute: v.minute,
-        second: v.second,
-        millisecond: v.millisecond,
-      }),
-    );
-    // Create stream for new value
-    const newVal = Bacon.mergeAll(
-      incoming.direct,
-      incoming.unixTime,
-      incoming.javaTime,
-      incoming.iso8601,
-      incoming.iso8601utc,
-      Bacon.combineAsArray(incoming.value, this.streams.selected).flatMapLatest(t =>
-        t[1] === 'value' ? t[0] : Bacon.never(),
-      ),
-    );
-    // Process new value updates
-    Bacon.combineAsArray(newVal, this.streams.selected).onValue(r => {
-      const val = r[0];
-      const src = r[1];
-      types.forEach((t: TypeField) => {
-        if (('src' in typeInfo[t] && typeInfo[t].src === src) || !typeInfo[t].write) {
-          return;
-        }
-        const output = typeInfo[t].write(val);
-        this.setState({ [t]: output } as DateTimeState);
-        if (src !== 'value' && (valueTypes as any).includes(t)) {
-          this.streams[t].push(output);
-        }
-      });
-      this.setState({ datePicker: typeInfo.datePicker.write(val) });
-    });
-    // Which value is reported to parent
-    const reportTarget = incoming.focused.filter((t: any) => (typeInfo as any)[t].reportValue);
-    reportTarget.onValue((v: any) => this.setState({ reportTarget: v }));
-    Bacon.combineAsArray(newVal, reportTarget).onValue(t =>
-      publishSelectedValue((typeInfo as any)[t[1]].write(t[0])),
-    );
-    // Push default value
-    this.pushValue(moment(), 'direct');
-  }
+    },
+    [],
+  );
 
-  public render() {
-    return (
-      <HalfSection
-        title="Aikaleimat"
-        subtitle={(texts.types as Record<string, string>)[this.state.reportTarget]}
-        image="/img/header-datetime.jpg"
-      >
-        <TimeItem name="Päivä" style={styles.item}>
-          {this.renderType('date')}
-          (
-          <TimeField
-            type="text"
-            value={this.state.weekDay}
-            style={styles.len2}
-            name="weekDay"
-            placeholder="la"
-            inputProps={{ readOnly: true }}
-            onFocus={this.focusChanged}
-          />
-          )
-        </TimeItem>
-        <TimeItem name="Kellonaika" style={styles.item}>
-          {this.renderType('hour')}:{this.renderType('minute')}:{this.renderType('second')}.
-          {this.renderType('millisecond')}
-          {this.renderType('timeZone')}
-        </TimeItem>
-        <TimeItem name="Viikko">
-          <TimeField
-            type="text"
-            name="week"
-            value={this.state.week}
-            style={styles.len7}
-            inputProps={{ readOnly: true }}
-            placeholder="2016/52"
-            onFocus={this.focusChanged}
-          />
-        </TimeItem>
-        <TimeItem name="Nimipäivä">
-          <TimeField
-            type="text"
-            name="nameDay"
-            value={this.state.nameDay}
-            fullWidth={true}
-            multiline={true}
-            onFocus={this.focusChanged}
-          />
-        </TimeItem>
-        <TimeItem name="Etsi nimipäivä">
-          <AutoCompleteWrapper>
-            <AutoComplete
-              name="findNameDay"
-              placeholder="Etsi nimipäivä"
-              getSuggestions={findNameDays}
-              renderSuggestion={renderMonthDayItem}
-              getSuggestionValue={monthDayToInputValue}
-              onSelectSuggestion={this.selectNameDay}
-              fullWidth={true}
-            />
-          </AutoCompleteWrapper>
-        </TimeItem>
-        <TimeItem name="Java/JS time">{this.renderType('javaTime')}</TimeItem>
-        <TimeItem name="Unixtime">{this.renderType('unixTime')}</TimeItem>
-        <TimeItem name="ISO-8601">{this.renderType('iso8601')}</TimeItem>
-        <TimeItem name="ISO-8601 UTC">{this.renderType('iso8601utc')}</TimeItem>
-      </HalfSection>
-    );
-  }
+  const inputChanged = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const src = event.target.name as EditableField;
+      const val = event.target.value;
+      // Update the raw input value immediately
+      setVals(prev => ({ ...prev, [src]: val }));
 
-  private selectNameDay = (day: NameDayItem) => {
-    const m = moment()
-      .startOf('day')
-      .month(day.value.month - 1)
-      .date(day.value.day);
-    const date = m.format(datePattern);
-    this.pushValue(date, 'date');
-  };
+      let m: moment.Moment;
+      if (src in fieldReaders) {
+        // Direct conversion fields (ISO, unix, java)
+        m = fieldReaders[src](val);
+      } else if (src === 'date') {
+        // Date text field - rebuild from parts
+        m = buildMoment(
+          val,
+          String(vals.hour),
+          String(vals.minute),
+          String(vals.second),
+          String(vals.millisecond),
+        );
+      } else {
+        // Time part fields (hour, minute, second, millisecond) - rebuild from parts
+        const parts = { ...vals, [src]: val };
+        m = buildMoment(
+          String(parts.date),
+          String(parts.hour),
+          String(parts.minute),
+          String(parts.second),
+          String(parts.millisecond),
+        );
+      }
 
-  private inputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
+      updateFromMoment(m, src);
+
+      // Publish value if the focused field is reportable
+      if (reportTarget && fieldWriters[reportTarget]) {
+        publishSelectedValue(fieldWriters[reportTarget](m));
+      }
+    },
+    [vals, updateFromMoment, reportTarget],
+  );
+
+  const focusChanged = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     const src = event.target.name;
-    const val = event.target.value;
-    this.pushValue(val, src);
-  };
+    if (reportableFields[src]) {
+      setReportTarget(src);
+      if (fieldWriters[src]) {
+        publishSelectedValue(fieldWriters[src](currentMomentRef.current));
+      }
+    }
+  }, []);
 
-  private focusChanged = (event: React.FocusEvent<HTMLInputElement>) => {
-    const src = event.target.name;
-    this.streams.focused.push(src);
-  };
+  const selectNameDay = useCallback(
+    (day: NameDayItem) => {
+      const m = moment()
+        .startOf('day')
+        .month(day.value.month - 1)
+        .date(day.value.day);
+      const date = m.format(datePattern);
+      // Treat as date input
+      const fullMoment = buildMoment(
+        date,
+        String(vals.hour),
+        String(vals.minute),
+        String(vals.second),
+        String(vals.millisecond),
+      );
+      updateFromMoment(fullMoment, 'date');
+      setVals(prev => ({ ...prev, date }));
+    },
+    [vals, updateFromMoment],
+  );
 
-  private pushValue = (val: string | moment.Moment, src: any) => {
-    this.streams.selected.push((typeInfo as any)[src].src);
-    this.streams[src].push(val);
-  };
+  const renderType = (type: string) => {
+    const fieldStyle = (
+      {
+        date: styles.len10,
+        hour: styles.len2,
+        minute: styles.len2,
+        second: styles.len2,
+        millisecond: styles.len3,
+        timeZone: styles.len7,
+        iso8601: undefined,
+        iso8601utc: undefined,
+        javaTime: undefined,
+        unixTime: undefined,
+      } as Record<string, React.CSSProperties | undefined>
+    )[type];
 
-  private renderType(type: TypeField) {
-    const info = typeInfo[type] as DateTimeType;
+    const maxLength = (
+      {
+        date: 10,
+        hour: 2,
+        minute: 2,
+        second: 2,
+        millisecond: 3,
+        timeZone: 6,
+      } as Record<string, number>
+    )[type];
+
+    const isReadOnly = type === 'timeZone';
+    const isFullWidth = ['iso8601', 'iso8601utc', 'javaTime', 'unixTime'].includes(type);
+
     return (
       <TimeField
         size="small"
         type="text"
-        value={this.state[type]}
-        style={info.style}
+        value={vals[type as TimeField] ?? ''}
+        style={fieldStyle}
         inputProps={{
-          maxLength: info.maxLength,
-          readOnly: info.readOnly || false,
+          maxLength,
+          readOnly: isReadOnly,
         }}
         name={type}
-        placeholder={(hints as Record<string, string>)[type]}
-        fullWidth={info.fullWidth}
-        onChange={this.inputChanged}
-        onFocus={this.focusChanged}
+        placeholder={hints[type]}
+        fullWidth={isFullWidth}
+        onChange={inputChanged}
+        onFocus={focusChanged}
       />
     );
-  }
+  };
+
+  return (
+    <HalfSection
+      title="Aikaleimat"
+      subtitle={texts.types[reportTarget]}
+      image="/img/header-datetime.jpg"
+    >
+      <TimeItem name="Päivä" style={styles.item}>
+        {renderType('date')}
+        (
+        <TimeField
+          type="text"
+          value={vals.weekDay}
+          style={styles.len2}
+          name="weekDay"
+          placeholder="la"
+          inputProps={{ readOnly: true }}
+          onFocus={focusChanged}
+        />
+        )
+      </TimeItem>
+      <TimeItem name="Kellonaika" style={styles.item}>
+        {renderType('hour')}:{renderType('minute')}:{renderType('second')}.
+        {renderType('millisecond')}
+        {renderType('timeZone')}
+      </TimeItem>
+      <TimeItem name="Viikko">
+        <TimeField
+          type="text"
+          name="week"
+          value={vals.week}
+          style={styles.len7}
+          inputProps={{ readOnly: true }}
+          placeholder="2016/52"
+          onFocus={focusChanged}
+        />
+      </TimeItem>
+      <TimeItem name="Nimipäivä">
+        <TimeField
+          type="text"
+          name="nameDay"
+          value={vals.nameDay}
+          fullWidth={true}
+          multiline={true}
+          onFocus={focusChanged}
+        />
+      </TimeItem>
+      <TimeItem name="Etsi nimipäivä">
+        <AutoCompleteWrapper>
+          <AutoComplete
+            name="findNameDay"
+            placeholder="Etsi nimipäivä"
+            getSuggestions={findNameDays}
+            renderSuggestion={renderMonthDayItem}
+            getSuggestionValue={monthDayToInputValue}
+            onSelectSuggestion={selectNameDay}
+            fullWidth={true}
+          />
+        </AutoCompleteWrapper>
+      </TimeItem>
+      <TimeItem name="Java/JS time">{renderType('javaTime')}</TimeItem>
+      <TimeItem name="Unixtime">{renderType('unixTime')}</TimeItem>
+      <TimeItem name="ISO-8601">{renderType('iso8601')}</TimeItem>
+      <TimeItem name="ISO-8601 UTC">{renderType('iso8601utc')}</TimeItem>
+    </HalfSection>
+  );
 }
 
 const TimeItem = styled(Item)`

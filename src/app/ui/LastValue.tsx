@@ -1,17 +1,24 @@
 import { styled, TextField } from '@mui/material';
-import * as Bacon from 'baconjs';
 import React from 'react';
 
 import { ClipboardButton } from './component/ToolButton';
 
-const lastValue = new Bacon.Bus<string>();
+type Listener = (value: string) => void;
+const listeners = new Set<Listener>();
 
-export function publishSelectedValue(value: string) {
-  lastValue.push(value);
+export function publishSelectedValue(value: string | Promise<string>) {
+  if (value instanceof Promise) {
+    value.then(v => listeners.forEach(l => l(v)));
+  } else {
+    listeners.forEach(l => l(value));
+  }
 }
 
-export function listenToSelectedValues(listener: (value: string) => void): Bacon.Unsub {
-  return lastValue.onValue(listener);
+export function listenToSelectedValues(listener: Listener): () => void {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
 }
 
 export function LastValue() {

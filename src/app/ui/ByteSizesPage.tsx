@@ -1,8 +1,8 @@
 import { Input, styled } from '@mui/material';
-import * as Bacon from 'baconjs';
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
 
-import { allFieldsOfType, isString, pairsToObject } from '../util/util';
+import { useLinkedInputs } from '../util/useLinkedInputs';
+import { allFieldsOfType } from '../util/util';
 import { Item } from './component/item';
 import { HalfSection } from './component/section';
 import { publishSelectedValue } from './LastValue';
@@ -51,109 +51,65 @@ const typeKeys = Object.keys(types) as SizeTypes[];
 const leftColumn: SizeTypes[] = ['kibi', 'mebi', 'gibi', 'tebi'];
 const rightColumn: SizeTypes[] = ['kilo', 'mega', 'giga', 'tera'];
 
-interface ByteSizeProps {}
+const isValidNumber = (v: number) => typeof v === 'number' && !isNaN(v);
 
-interface ByteSizeState {
-  selected: SizeTypes;
-  values: Record<SizeTypes, string>;
-}
+export function ByteSizesPage() {
+  const [selected, setSelected] = useState<SizeTypes>('byte');
 
-const emptyStream = Bacon.never();
+  const fields = useMemo(
+    () => Object.fromEntries(typeKeys.map(k => [k, types[k]])) as Record<SizeTypes, TypeInfo>,
+    [],
+  );
 
-export class ByteSizesPage extends React.Component<ByteSizeProps, ByteSizeState> {
-  public state: ByteSizeState = {
-    selected: 'byte',
-    values: pairsToObject(typeKeys.map<[string, string]>(t => [t, ''])) as Record<
-      SizeTypes,
-      string
-    >,
-  };
+  const { values, handleChange } = useLinkedInputs(fields, isValidNumber);
 
-  private currentInput = new Bacon.Bus<SizeTypes>();
-  private inputStream = new Bacon.Bus<string>();
-  private selectedSrcStr = new Bacon.Bus<SizeTypes>();
+  const inputChanged = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const name = event.target.name as SizeTypes;
+      handleChange(name, event.target.value);
+      const canonical = types[name].read(event.target.value);
+      if (isValidNumber(canonical)) {
+        publishSelectedValue(types[selected].write(canonical));
+      }
+    },
+    [handleChange, selected],
+  );
 
-  public componentDidMount() {
-    this.currentInput = new Bacon.Bus<SizeTypes>();
-    const inputConverter = this.currentInput.map(t => types[t].read).toProperty(Number);
-    const converted = this.inputStream
-      .combine(inputConverter, (i, c) => c(i))
-      .map(v => (typeof v === 'number' && !isNaN(v) ? v : undefined));
-    typeKeys.forEach(t => {
-      const typeInfo = types[t];
-      const sourceIsThis = this.currentInput.map(name => t === name).toProperty(false);
-      converted
-        .combine(sourceIsThis, (c, i) => [c, i])
-        .flatMapLatest(v => (v[1] ? emptyStream : converted))
-        .map(typeInfo.write)
-        .map(v => (isString(v) ? v : ''))
-        .onValue(v => this.mergeValues({ [t]: v }));
-    });
-    this.selectedSrcStr
-      .toProperty('byte')
-      .map(t => types[t].write)
-      .combine(converted, (c, v) => (v ? c(v) : ''))
-      .onValue(publishSelectedValue);
-  }
+  const selectSrc = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
+    setSelected(event.target.name as SizeTypes);
+  }, []);
 
-  public render() {
-    return (
-      <HalfSection
-        title="Tavukoot"
-        subtitle={types[this.state.selected].name}
-        image="/img/header-bytesize.jpg"
-      >
-        <Item name="Tavua">
-          <Editor
-            type="byte"
-            value={this.state.values.byte}
-            onChange={this.inputChanged}
-            onFocus={this.selectSrc}
-          />
-        </Item>
-        <Item>
-          <Column>
-            {leftColumn.map(t => (
-              <Editor
-                key={t}
-                type={t}
-                value={this.state.values[t]}
-                onChange={this.inputChanged}
-                onFocus={this.selectSrc}
-              />
-            ))}
-          </Column>
-          <Column>
-            {rightColumn.map(t => (
-              <Editor
-                key={t}
-                type={t}
-                value={this.state.values[t]}
-                onChange={this.inputChanged}
-                onFocus={this.selectSrc}
-              />
-            ))}
-          </Column>
-        </Item>
-      </HalfSection>
-    );
-  }
-
-  private mergeValues = (x: any) => this.setState(s => ({ values: { ...s.values, ...x } }));
-
-  private inputChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const name = event.target.name as SizeTypes;
-    const value = event.target.value;
-    this.mergeValues({ [name]: value });
-    this.currentInput.push(name);
-    this.inputStream.push(value);
-  };
-
-  private selectSrc = (event: React.FocusEvent<HTMLInputElement>) => {
-    const src = event.target.name as SizeTypes;
-    this.setState({ selected: src });
-    this.selectedSrcStr.push(event.target.name as SizeTypes);
-  };
+  return (
+    <HalfSection title="Tavukoot" subtitle={types[selected].name} image="/img/header-bytesize.jpg">
+      <Item name="Tavua">
+        <Editor type="byte" value={values.byte} onChange={inputChanged} onFocus={selectSrc} />
+      </Item>
+      <Item>
+        <Column>
+          {leftColumn.map(t => (
+            <Editor
+              key={t}
+              type={t}
+              value={values[t]}
+              onChange={inputChanged}
+              onFocus={selectSrc}
+            />
+          ))}
+        </Column>
+        <Column>
+          {rightColumn.map(t => (
+            <Editor
+              key={t}
+              type={t}
+              value={values[t]}
+              onChange={inputChanged}
+              onFocus={selectSrc}
+            />
+          ))}
+        </Column>
+      </Item>
+    </HalfSection>
+  );
 }
 
 const Editor = (p: {

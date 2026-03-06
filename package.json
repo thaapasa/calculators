@@ -29,7 +29,6 @@
     "@fontsource/roboto": "^5.2.10",
     "@mui/icons-material": "^7.3.9",
     "@mui/material": "^7.3.9",
-    "baconjs": "3.0.23",
     "buffer": "^6.0.3",
     "cross-env": "10.1.0",
     "crypto-browserify": "^3.12.1",

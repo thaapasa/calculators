@@ -1,9 +1,9 @@
 import { Input, styled } from '@mui/material';
-import * as Bacon from 'baconjs';
-import React from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import * as numbers from '../calc/numbers';
 import { zeroPad } from '../util/strings';
+import { useLinkedInputs } from '../util/useLinkedInputs';
 import * as util from '../util/util';
 import { Item } from './component/item';
 import { HalfSection } from './component/section';
@@ -91,105 +91,56 @@ function intToHTMLCode(value: number): string {
   return typeof str === 'string' ? `&#${str};` : '';
 }
 
-interface NumbersProps {}
+const isValidNumber = (v: number) => typeof v === 'number' && !isNaN(v);
 
-interface NumbersState {
-  selected: NumberType;
-  unicode: string;
-  values: Record<string, string>;
-}
+export function NumbersPage() {
+  const [selected, setSelected] = useState<NumberType>('decimal');
 
-const emptyStream = Bacon.never<number>();
+  const fields = useMemo(
+    () => Object.fromEntries(typeKeys.map(k => [k, types[k]])) as Record<NumberType, TypeInfo>,
+    [],
+  );
 
-export class NumbersPage extends React.Component<NumbersProps, NumbersState> {
-  public state: NumbersState = {
-    selected: 'decimal',
-    unicode: '',
-    values: util.pairsToObject(Object.keys(types).map<[string, string]>(t => [t, ''])),
-  };
+  const { values, handleChange } = useLinkedInputs(fields, isValidNumber);
 
-  private currentInput = new Bacon.Bus<NumberType>();
-  private inputStream = new Bacon.Bus<string>();
-  private selectedSrcStr = new Bacon.Bus<NumberType>();
+  const inputChanged = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const name = event.target.name as NumberType;
+      handleChange(name, event.target.value);
+      // Publish the selected field's converted value
+      const canonical = types[name].read(event.target.value);
+      if (isValidNumber(canonical)) {
+        publishSelectedValue(types[selected].write(canonical));
+      }
+    },
+    [handleChange, selected],
+  );
 
-  constructor(props: NumbersProps) {
-    super(props);
-    this.initializeStreams();
-  }
+  const selectSrc = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
+    setSelected(event.target.name as NumberType);
+  }, []);
 
-  public render() {
-    return (
-      <HalfSection
-        title="Numerot"
-        subtitle={texts[this.state.selected]}
-        image="/img/header-numbers.jpg"
-      >
-        {typeKeys.map(t => (
-          <NumberItem name={texts[t]} key={`${t}-item`}>
-            <Input
-              type={types[t].inputType}
-              name={t}
-              placeholder={texts[t]}
-              value={this.state.values[t]}
-              onChange={this.inputChanged}
-              onFocus={this.selectSrc}
-              inputProps={{
-                maxLength: types[t].maxLength,
-                readOnly: types[t].readOnly || false,
-              }}
-              key={t}
-            />
-          </NumberItem>
-        ))}
-      </HalfSection>
-    );
-  }
-
-  private initializeStreams() {
-    const inputConverter = this.currentInput.map(t => types[t].read).toProperty(types.decimal.read);
-
-    const converted = this.inputStream
-      .combine(inputConverter, (i, c) => c(i))
-      .map(v => (typeof v === 'number' && !isNaN(v) ? v : undefined));
-
-    typeKeys.forEach(t => {
-      const typeInfo = types[t];
-      const sourceIsThis = this.currentInput.map(name => t === name).toProperty(false);
-      converted
-        .combine(sourceIsThis, (c, i) => [c, i])
-        .flatMapLatest(v => (v[1] ? emptyStream : converted))
-        .map(v => typeInfo.write(v || 0))
-        .map(v => (util.isString(v) ? v : ''))
-        .onValue(v => this.mergeValues({ [t]: v }));
-      converted.onValue(v =>
-        this.mergeValues({
-          unicode: intToUnicodeStr(v || 0),
-          html: intToHTMLCode(v || 0),
-        }),
-      );
-    });
-    this.selectedSrcStr
-      .map(t => types[t].write)
-      .combine(converted, (c, v) => c(v || 0))
-      .onValue(publishSelectedValue);
-  }
-
-  private mergeValues = (x: Record<string, string>) =>
-    this.setState(s => ({ values: { ...s.values, ...x } }));
-
-  private inputChanged = (event: any) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    this.mergeValues({ [name]: value });
-    this.currentInput.push(name);
-    this.inputStream.push(value);
-  };
-
-  private selectSrc = (event: any) => {
-    const src = event.target.name;
-    this.setState({ selected: src });
-    this.selectedSrcStr.push(event.target.name);
-  };
+  return (
+    <HalfSection title="Numerot" subtitle={texts[selected]} image="/img/header-numbers.jpg">
+      {typeKeys.map(t => (
+        <NumberItem name={texts[t]} key={`${t}-item`}>
+          <Input
+            type={types[t].inputType}
+            name={t}
+            placeholder={texts[t]}
+            value={values[t]}
+            onChange={inputChanged}
+            onFocus={selectSrc}
+            inputProps={{
+              maxLength: types[t].maxLength,
+              readOnly: types[t].readOnly || false,
+            }}
+            key={t}
+          />
+        </NumberItem>
+      ))}
+    </HalfSection>
+  );
 }
 
 const NumberItem = styled(Item)`

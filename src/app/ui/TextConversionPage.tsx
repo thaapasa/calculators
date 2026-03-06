@@ -1,6 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select, styled, TextField } from '@mui/material';
-import * as Bacon from 'baconjs';
-import React from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import svgToReactNative from 'svg-rn';
 
 import * as base64 from '../calc/base64';
@@ -75,14 +74,6 @@ const convertInfo: { [key: string]: ConverterInfo } = {
 };
 const converters = Object.keys(convertInfo);
 
-interface TextConversionProps {}
-
-interface TextConversionState {
-  source: string;
-  target: string;
-  selected: any;
-}
-
 const CONVERTER_STORE_KEY = 'calculators:selectedTextConverter';
 
 function getConverterFromStore(): string {
@@ -93,104 +84,114 @@ function setConverterToStore(converterName: string): void {
   store.putValue(CONVERTER_STORE_KEY, converterName);
 }
 
-export class TextConversionPage extends React.Component<TextConversionProps, TextConversionState> {
-  public state: TextConversionState = {
-    source: '',
-    target: '',
-    selected: converters[0],
-  };
+export function TextConversionPage() {
+  const [source, setSource] = useState('');
+  const [target, setTarget] = useState('');
+  const [selected, setSelected] = useState(getConverterFromStore);
 
-  private sourceRef = React.createRef<HTMLInputElement>();
-  private targetRef = React.createRef<HTMLInputElement>();
+  const sourceRef = useRef<HTMLInputElement>(null);
+  const targetRef = useRef<HTMLInputElement>(null);
 
-  private sourceStr = new Bacon.Bus<string>();
-  private targetStr = new Bacon.Bus<string>();
-  private selectedStr = new Bacon.Bus<string>();
+  // Track which field is being edited to prevent circular updates
+  const editingRef = useRef<'source' | 'target' | null>(null);
 
-  public componentDidMount() {
-    const initialConverter = getConverterFromStore();
-    this.sourceStr.onValue(v => this.setState({ source: v }));
-    this.targetStr.onValue(v => this.setState({ target: v }));
-    const selected = this.selectedStr.toProperty(initialConverter).skipDuplicates();
-    selected.onValue(v => {
-      this.setState({ selected: v });
-      setConverterToStore(v);
-    });
-    const encStr = this.sourceStr.combine(selected, (val, c) => convertInfo[c].encode(val));
-    encStr.onValue(async v => this.setState({ target: await v }));
-    const decStr = this.targetStr.combine(selected, (val, c) => convertInfo[c].decode(val));
-    decStr.onValue(async v => this.setState({ source: await v }));
-    Bacon.mergeAll(encStr.changes(), decStr.changes()).onValue(async v =>
-      publishSelectedValue(await v),
-    );
-    this.selectedStr.push(initialConverter);
-  }
+  const onSourceChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (editingRef.current === 'target') return;
+      editingRef.current = 'source';
+      const val = e.target.value;
+      setSource(val);
+      const encoded = await convertInfo[selected].encode(val);
+      setTarget(encoded);
+      publishSelectedValue(encoded);
+      editingRef.current = null;
+    },
+    [selected],
+  );
 
-  public render() {
-    return (
-      <Section
-        title="Tekstimuunnokset"
-        subtitle={convertInfo[this.state.selected].name}
-        image="/img/header-text-conversion.jpg"
-      >
-        <FormControl>
-          <InputLabel id="text-conversion-label">Muunnos</InputLabel>
-          <StyledSelect
-            labelId="text-conversion-label"
-            id="text-conversion-select"
-            label="Muunnos"
-            value={this.state.selected}
-            onChange={e => this.selectedStr.push(e.target.value as any)}
-          >
-            {converters.map(c => (
-              <MenuItem value={c} key={c}>
-                {convertInfo[c].name}
-              </MenuItem>
-            ))}
-          </StyledSelect>
-        </FormControl>
-        <TextRow className="center-horizontal top">
-          <ClipboardButton
-            title="Kopioi lähde leikepöydälle"
-            onClick={this.copySourceToClipboard}
-            color="secondary"
-          />
-          <TextEdit
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              this.sourceStr.push(e.target.value)
-            }
-            fullWidth={true}
-            multiline={true}
-            inputRef={this.sourceRef}
-            name="source"
-            value={this.state.source}
-          />
-          <LenghtArea>{this.state.source.length}</LenghtArea>
-        </TextRow>
-        <TextRow className="center-horizontal top">
-          <ClipboardButton
-            title="Kopioi kohde leikepöydälle"
-            onClick={this.copyTargetToClipboard}
-            color="secondary"
-          />
-          <TextEdit
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              this.targetStr.push(e.target.value)
-            }
-            fullWidth={true}
-            multiline={true}
-            inputRef={this.targetRef}
-            name="target"
-            value={this.state.target}
-          />
-          <LenghtArea>{this.state.target.length}</LenghtArea>
-        </TextRow>
-      </Section>
-    );
-  }
+  const onTargetChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (editingRef.current === 'source') return;
+      editingRef.current = 'target';
+      const val = e.target.value;
+      setTarget(val);
+      const decoded = await convertInfo[selected].decode(val);
+      setSource(decoded);
+      publishSelectedValue(val);
+      editingRef.current = null;
+    },
+    [selected],
+  );
 
-  private copySourceToClipboard = () => copyRefToClipboard(this.sourceRef);
-  private copyTargetToClipboard = () => copyRefToClipboard(this.targetRef);
+  const onConverterChange = useCallback(
+    async (converterName: string) => {
+      setSelected(converterName);
+      setConverterToStore(converterName);
+      if (source) {
+        const encoded = await convertInfo[converterName].encode(source);
+        setTarget(encoded);
+        publishSelectedValue(encoded);
+      }
+    },
+    [source],
+  );
+
+  return (
+    <Section
+      title="Tekstimuunnokset"
+      subtitle={convertInfo[selected].name}
+      image="/img/header-text-conversion.jpg"
+    >
+      <FormControl>
+        <InputLabel id="text-conversion-label">Muunnos</InputLabel>
+        <StyledSelect
+          labelId="text-conversion-label"
+          id="text-conversion-select"
+          label="Muunnos"
+          value={selected}
+          onChange={e => onConverterChange(e.target.value as string)}
+        >
+          {converters.map(c => (
+            <MenuItem value={c} key={c}>
+              {convertInfo[c].name}
+            </MenuItem>
+          ))}
+        </StyledSelect>
+      </FormControl>
+      <TextRow className="center-horizontal top">
+        <ClipboardButton
+          title="Kopioi lähde leikepöydälle"
+          onClick={() => copyRefToClipboard(sourceRef)}
+          color="secondary"
+        />
+        <TextEdit
+          onChange={onSourceChange}
+          fullWidth={true}
+          multiline={true}
+          inputRef={sourceRef}
+          name="source"
+          value={source}
+        />
+        <LenghtArea>{source.length}</LenghtArea>
+      </TextRow>
+      <TextRow className="center-horizontal top">
+        <ClipboardButton
+          title="Kopioi kohde leikepöydälle"
+          onClick={() => copyRefToClipboard(targetRef)}
+          color="secondary"
+        />
+        <TextEdit
+          onChange={onTargetChange}
+          fullWidth={true}
+          multiline={true}
+          inputRef={targetRef}
+          name="target"
+          value={target}
+        />
+        <LenghtArea>{target.length}</LenghtArea>
+      </TextRow>
+    </Section>
+  );
 }
 
 const StyledSelect = styled(Select)`

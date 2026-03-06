@@ -2053,13 +2053,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"baconjs@npm:3.0.23":
-  version: 3.0.23
-  resolution: "baconjs@npm:3.0.23"
-  checksum: 10c0/633b7b2f201f9ac00c9513ccde7793fc40a69d968b851379c72eda82f443b3dcb1045028ed9d923d853ae654e18c5ad091f0113b863fb16c789af3e808dc60a5
-  languageName: node
-  linkType: hard
-
 "balanced-match@npm:^1.0.0":
   version: 1.0.2
   resolution: "balanced-match@npm:1.0.2"
@@ -2291,7 +2284,6 @@ __metadata:
     "@types/uuid": "npm:11.0.0"
     "@types/xml2js": "npm:0.4.14"
     "@vitejs/plugin-react-swc": "npm:^4.2.3"
-    baconjs: "npm:3.0.23"
     buffer: "npm:^6.0.3"
     cross-env: "npm:10.1.0"
     crypto-browserify: "npm:^3.12.1"

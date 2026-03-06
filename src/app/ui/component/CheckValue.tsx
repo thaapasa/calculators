@@ -1,6 +1,5 @@
 import { Input, styled } from '@mui/material';
-import * as Bacon from 'baconjs';
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useCallback, useState } from 'react';
 
 import * as util from '../../util/util';
 import { Item } from './item';
@@ -23,104 +22,86 @@ interface CheckProps {
   readonly id: string | number;
   readonly 'max-length'?: string;
   readonly generate?: () => string;
-  readonly onValue: (x: any) => any;
+  readonly onValue: (x: string) => void;
 }
 
-interface CheckState {
-  input: string;
-  value: string;
-  checkValue: string;
-}
+export function CheckValue({
+  width,
+  check,
+  combine,
+  name,
+  id,
+  'max-length': maxLength,
+  generate: generateFn,
+  onValue,
+}: CheckProps) {
+  const [input, setInput] = useState('');
+  const [checkValue, setCheckValue] = useState('');
+  const [value, setValue] = useState('');
 
-export class CheckValue extends React.Component<CheckProps, CheckState> {
-  public state: CheckState = {
-    input: '',
-    value: '',
-    checkValue: '',
-  };
+  const combiner = combine ?? util.combineWith('');
 
-  private inputStyle = {
-    width: '',
-  };
+  const processInput = useCallback(
+    (val: string) => {
+      if (check) {
+        const chk = check(val);
+        setCheckValue(chk);
+        const combined = chk && combiner(val, chk);
+        if (combined && util.nonEmpty(combined)) {
+          setValue(combined);
+          onValue(combined);
+        }
+      } else {
+        setValue(val);
+        onValue(val);
+      }
+    },
+    [check, onValue, combiner],
+  );
 
-  private inputStream: Bacon.Bus<string> = new Bacon.Bus<string>();
+  const inputChanged = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setInput(e.target.value);
+      processInput(e.target.value);
+    },
+    [processInput],
+  );
 
-  public constructor(props: CheckProps) {
-    super(props);
-    if (this.props.width) {
-      this.inputStyle.width = this.props.width;
-    }
-  }
+  const generate = useCallback(() => {
+    if (!generateFn) return;
+    const generated = generateFn().toString();
+    setInput(generated);
+    processInput(generated);
+  }, [generateFn, processInput]);
 
-  public componentDidMount() {
-    this.streamToCheck(this.props.check, this.props.combine);
-  }
+  const inputStyle = width ? { width } : undefined;
 
-  public render() {
-    return (
-      <CheckItem name={this.props.name} valueClassName="top">
-        {this.props.generate ? (
-          <GenerateButton onClick={this.generate} title="Luo uusi" />
-        ) : (
-          <GeneratePlaceholder />
-        )}
-        <Input
-          type="text"
-          id={`${this.props.id}-input`}
-          onChange={this.inputChanged}
-          style={this.inputStyle}
-          value={this.state.input}
-          max-length={this.props['max-length']}
+  return (
+    <CheckItem name={name} valueClassName="top">
+      {generateFn ? (
+        <GenerateButton onClick={generate} title="Luo uusi" />
+      ) : (
+        <GeneratePlaceholder />
+      )}
+      <Input
+        type="text"
+        id={`${id}-input`}
+        onChange={inputChanged}
+        style={inputStyle}
+        value={input}
+        max-length={maxLength}
+      />
+      {check ? (
+        <CheckField
+          id={`${id}-check`}
+          className="letter"
+          read-only="read-only"
+          value={checkValue}
         />
-        {this.props.check ? (
-          <CheckField
-            id={`${this.props.id}-check`}
-            className="letter"
-            read-only="read-only"
-            value={this.state.checkValue}
-          />
-        ) : null}
-        <input type="hidden" id={`${this.props.id}-value`} value={this.state.value} />
-      </CheckItem>
-    );
-  }
-
-  private generate = () => {
-    if (!this.props.generate) {
-      return;
-    }
-    const generated: string = this.props.generate().toString();
-    this.setState({ input: generated });
-    this.inputStream.push(generated);
-  };
-
-  private inputChanged = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ input: e.target.value });
-    this.inputStream.push(e.target.value);
-  };
-
-  private streamToCheck(
-    calculateCheck?: (x: string) => string,
-    combiner: (a: string, b: string) => string = util.combineWith(''),
-  ) {
-    if (calculateCheck) {
-      const checkValue = this.inputStream.map(calculateCheck);
-      checkValue.onValue(value => this.setState({ checkValue: value }));
-      checkValue
-        .combine(this.inputStream.toProperty(''), (chk, inp) => chk && combiner(inp, chk))
-        .filter(util.nonEmpty)
-        .onValue(this.updateValue);
-    } else {
-      this.inputStream.onValue(this.updateValue);
-    }
-  }
-
-  private updateValue = (value: string) => {
-    this.setState({ value });
-    if (this.props.onValue) {
-      this.props.onValue(value);
-    }
-  };
+      ) : null}
+      <input type="hidden" id={`${id}-value`} value={value} />
+    </CheckItem>
+  );
 }
 
 const GeneratePlaceholder = styled('div')`

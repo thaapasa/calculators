@@ -1,10 +1,9 @@
 import { TextFormat } from '@mui/icons-material';
 import { Checkbox, styled, TextField } from '@mui/material';
-import * as Bacon from 'baconjs';
-import React from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { toUpperCase } from '../../util/strings';
-import { identity, MaybePromise } from '../../util/util';
+import { MaybePromise } from '../../util/util';
 import { Item } from './item';
 
 const StyledItem = styled(Item)`
@@ -17,45 +16,63 @@ interface SelectableOutputProps {
   readonly type: string;
   readonly label: string;
   readonly calculate: (v: string) => MaybePromise<string>;
-  readonly onValue: (v: any) => any;
+  readonly onValue: (v: string) => void;
   readonly onSelect: React.FocusEventHandler;
 }
 
-interface SelectableOutputState {
-  value: string;
+export interface SelectableOutputHandle {
+  setValue: (val: string) => void;
 }
 
-type str2str = (x: string) => MaybePromise<string>;
+export const SelectableOutput = React.forwardRef<SelectableOutputHandle, SelectableOutputProps>(
+  function SelectableOutput({ type, label, calculate, onValue, onSelect }, ref) {
+    const [value, setValue] = useState('');
+    const [upperCase, setUpperCase] = useState(false);
 
-export class SelectableOutput extends React.Component<
-  SelectableOutputProps,
-  SelectableOutputState
-> {
-  public state: SelectableOutputState = {
-    value: '',
-  };
-
-  private inputStream = new Bacon.Bus<string>();
-  private ucStream = new Bacon.Bus<boolean>();
-
-  public componentDidMount() {
-    this.streamCalculation(
-      this.inputStream,
-      this.props.calculate,
-      this.ucIfChecked(this.ucStream.toProperty(false)),
+    const applyTransform = useCallback(
+      async (input: string, uc: boolean) => {
+        const calculated = await calculate(input);
+        const transformed = uc ? toUpperCase(calculated) : calculated;
+        setValue(transformed);
+        onValue(transformed);
+      },
+      [calculate, onValue],
     );
-  }
 
-  public setValue = (val: any) => {
-    this.inputStream.push(val);
-  };
+    const upperCaseRef = useRef(upperCase);
+    const lastInputRef = useRef('');
 
-  public render() {
+    useEffect(() => {
+      upperCaseRef.current = upperCase;
+    }, [upperCase]);
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        setValue: (val: string) => {
+          lastInputRef.current = val;
+          applyTransform(val, upperCaseRef.current);
+        },
+      }),
+      [applyTransform],
+    );
+
+    const checkUpperCase = useCallback(
+      (_event: React.ChangeEvent, checked: boolean) => {
+        setUpperCase(checked);
+        applyTransform(lastInputRef.current, checked);
+        if (onSelect) {
+          onSelect(_event as unknown as React.FocusEvent);
+        }
+      },
+      [applyTransform, onSelect],
+    );
+
     return (
       <StyledItem
         name={
           <>
-            <Checkbox name={this.props.type + '-upper-case'} onChange={this.checkUpperCase} />
+            <Checkbox name={type + '-upper-case'} onChange={checkUpperCase} />
             <TextFormat color="secondary" />
           </>
         }
@@ -63,46 +80,17 @@ export class SelectableOutput extends React.Component<
       >
         <TextField
           variant="standard"
-          label={this.props.label}
+          label={label}
           type="text"
-          placeholder={this.props.label}
+          placeholder={label}
           className="wide"
-          value={this.state.value}
+          value={value}
           fullWidth={true}
-          read-only="read-only"
+          slotProps={{ input: { readOnly: true } }}
           name="output"
-          onFocus={this.props.onSelect}
+          onFocus={onSelect}
         />
       </StyledItem>
     );
-  }
-
-  private streamCalculation = (
-    inputStream: Bacon.Bus<string>,
-    calculation: str2str,
-    calcMapper: Bacon.Property<str2str>,
-  ) => {
-    const calculated: Bacon.Observable<MaybePromise<string>> = inputStream.map(calculation);
-    const mapped = calcMapper
-      ? calculated.combine(calcMapper, async (val, m) => m(await val))
-      : calculated;
-    mapped.onValue(async v => {
-      const value = await v;
-      this.setState({ value });
-      if (this.props.onValue) {
-        this.props.onValue(value);
-      }
-    });
-  };
-
-  private checkUpperCase = (event: React.ChangeEvent, checked: boolean) => {
-    this.ucStream.push(checked);
-    if (this.props.onSelect) {
-      this.props.onSelect(event as any);
-    }
-  };
-
-  private ucIfChecked = (stream: Bacon.Property<boolean>): Bacon.Property<str2str> => {
-    return stream.map(checked => (checked ? toUpperCase : identity));
-  };
-}
+  },
+);
