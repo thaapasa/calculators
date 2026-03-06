@@ -41,9 +41,9 @@ yarn deploy         # Build and deploy to production
 
 ## Tech Stack
 
-- [React](https://react.dev/) 18 + [TypeScript](https://www.typescriptlang.org/) 5
-- [Material-UI](https://mui.com/) 6
-- [Vite](https://vite.dev/) 5 (build & dev server)
+- [React](https://react.dev/) 19 + [TypeScript](https://www.typescriptlang.org/) 5
+- [Material-UI](https://mui.com/) 7
+- [Vite](https://vite.dev/) 7 (build & dev server)
 - [Vitest](https://vitest.dev/) (testing)
 
 ## License

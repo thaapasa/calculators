@@ -16,8 +16,8 @@ yarn fix            # Auto-fix ESLint issues
 
 ## Tech Stack
 
-- React 18 + TypeScript 5.6, Material-UI 6, React Router 6
-- Vite 5 + SWC for build/dev, Vitest for testing
+- React 19 + TypeScript 5.9, Material-UI 7, React Router 7
+- Vite 7 + SWC for build/dev, Vitest 4 for testing
 - Yarn 4 (PnP disabled, node-modules linker)
 - BaconJS for reactive streams in some components
 
