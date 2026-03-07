@@ -1,25 +1,26 @@
-import * as xml2js from 'xml2js';
-import { parseBooleans, parseNumbers } from 'xml2js/lib/processors';
+import { XMLBuilder, XMLParser } from 'fast-xml-parser';
+
+const parser = new XMLParser({
+  ignoreAttributes: false,
+  trimValues: true,
+  parseAttributeValue: true,
+  parseTagValue: true,
+});
+
+const builder = new XMLBuilder({
+  ignoreAttributes: false,
+  format: true,
+  indentBy: '  ',
+});
 
 export function xmlToJson<T>(x: string): Promise<T> {
-  return new Promise<T>((resolve, reject) =>
-    xml2js.parseString(
-      x,
-      {
-        ignoreAttrs: false,
-        trim: true,
-        valueProcessors: [parseNumbers, parseBooleans],
-        explicitArray: false,
-      },
-      (err, res) => {
-        if (err) {
-          reject('Invalid XML');
-        } else {
-          resolve(res);
-        }
-      },
-    ),
-  );
+  return new Promise<T>((resolve, reject) => {
+    try {
+      resolve(parser.parse(x));
+    } catch (_e) {
+      reject('Invalid XML');
+    }
+  });
 }
 
 export async function xmlToJsonString(x: string): Promise<string> {
@@ -30,10 +31,8 @@ export async function xmlToJsonString(x: string): Promise<string> {
   }
 }
 
-const xmlBuilder = new xml2js.Builder();
-
-export function jsonToXml(x: any): string {
-  return xmlBuilder.buildObject(x).toString();
+export function jsonToXml(x: unknown): string {
+  return builder.build(x);
 }
 
 export function jsonStringToXml(x: string): string {

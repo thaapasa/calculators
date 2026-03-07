@@ -1,13 +1,12 @@
 import { FormControl, InputLabel, MenuItem, Select, styled, TextField } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
-import svgToReactNative from 'svg-rn';
 
 import * as base64 from '../calc/base64';
 import rot13 from '../calc/rot13';
 import { jsonStringToXml, xmlToJsonString } from '../calc/xml-json';
 import * as store from '../util/store';
 import * as strings from '../util/strings';
-import { identity, MaybePromise } from '../util/util';
+import { MaybePromise } from '../util/util';
 import Section from './component/Section';
 import { ClipboardButton, copyRefToClipboard } from './component/ToolButton';
 import { publishSelectedValue } from './LastValue';
@@ -35,24 +34,11 @@ function toCompactJSON(s: string): string {
   }
 }
 
-function svgToRn(s: string): string {
-  try {
-    return svgToReactNative(s);
-  } catch (_e) {
-    return 'Virheellinen SVG';
-  }
-}
-
 const convertInfo: { [key: string]: ConverterInfo } = {
   js2xml: {
     encode: jsonStringToXml,
     decode: xmlToJsonString,
     name: 'JSON ⇆ XML',
-  },
-  svg2RN: {
-    encode: svgToRn,
-    decode: identity,
-    name: 'SVG → React Native',
   },
   jsonCompactPretty: {
     encode: toPrettyJSON,

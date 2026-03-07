@@ -84,8 +84,9 @@ export class AutoComplete<T> extends React.Component<AutoCompleteProps<T>, AutoC
   };
 
   private renderContainer = ({ containerProps, children }: RenderSuggestionsContainerParams) => {
+    const { key, ...rest } = containerProps as any;
     return (
-      <FloatingPaper {...containerProps} square={true}>
+      <FloatingPaper key={key} {...rest} square={true}>
         {children}
       </FloatingPaper>
     );
@@ -94,10 +95,11 @@ export class AutoComplete<T> extends React.Component<AutoCompleteProps<T>, AutoC
   // Destructure and discard incompatible props (react-autosuggest types lag behind React 19)
 
   private renderInput = ({ size, color, ...props }: any) => {
-    const { onChange, defaultValue, ref, ...other } = props;
+    const { onChange, defaultValue, ref, key, ...other } = props;
 
     return (
       <StandardTextField
+        key={key}
         {...other}
         name={this.props.name}
         fullWidth={this.props.fullWidth}
