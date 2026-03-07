@@ -13,7 +13,7 @@ export function CalculatorLayout() {
       <TopBar onToggleDrawer={() => setDrawerOpen(!drawerOpen)}>
         <LastValue />
       </TopBar>
-      <NavigationDrawer open={drawerOpen} onToggle={() => setDrawerOpen(!drawerOpen)} />
+      {drawerOpen ? <NavigationDrawer onClose={() => setDrawerOpen(false)} /> : null}
       <MainContent>
         <Outlet />
       </MainContent>

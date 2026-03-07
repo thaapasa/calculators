@@ -1,84 +1,73 @@
 import { Card, CardHeader, Drawer, MenuItem, styled } from '@mui/material';
-import React from 'react';
+import React, { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { version } from '../../../../package.json';
-import { history } from '../history';
 import { Flex, FlexColumn } from './elements';
 import { Logo } from './Logo';
 
 interface NavigationProps {
-  open: boolean;
-  onToggle: () => void;
+  onClose: () => void;
 }
 
-export class NavigationDrawer extends React.Component<NavigationProps> {
-  private goToFullpage = this.navigate('/');
-  private goToNumbers = this.navigate('/p/numerot');
-  private goToTime = this.navigate('/p/aika');
-  private goToIdentifiers = this.navigate('/p/tunnisteet');
-  private goToColors = this.navigate('/p/värit');
-  private goToByteSize = this.navigate('/p/tavukoot');
-  private goToLinks = this.navigate('/p/linkit');
-  private goToTextConversion = this.navigate('/p/tekstimuunnokset');
-  private goToCryptography = this.navigate('/p/kryptografia');
-  private goToPixelDensity = this.navigate('/p/pikselitiheys');
+export function NavigationDrawer({ onClose }: NavigationProps) {
+  const navigate = useNavigate();
 
-  public render() {
-    return (
-      <Drawer open={this.props.open} anchor="left" onClose={this.props.onToggle}>
-        <DrawerCol>
-          <Card>
-            <CardHeader title="Laskurit" subheader={`v. ${version}`} avatar={<Logo />} />
-          </Card>
-          <MenuItem onClick={this.goToFullpage}>Kaikki</MenuItem>
-          <MenuItem onClick={this.goToNumbers}>Numerot ja merkit</MenuItem>
-          <MenuItem onClick={this.goToTime}>Aikaleimat</MenuItem>
-          <MenuItem onClick={this.goToIdentifiers}>Tunnisteet</MenuItem>
-          <MenuItem onClick={this.goToColors}>Värit</MenuItem>
-          <MenuItem onClick={this.goToByteSize}>Tavukoot</MenuItem>
-          <MenuItem onClick={this.goToLinks}>Linkit</MenuItem>
-          <MenuItem onClick={this.goToTextConversion}>Tekstimuunnokset</MenuItem>
-          <MenuItem onClick={this.goToCryptography}>Kryptografia</MenuItem>
-          <MenuItem onClick={this.goToPixelDensity}>Pikselitiheys</MenuItem>
-          <Flex />
-          <LicenseInfo>
-            <LicenseRow>
-              Calculator icon made by{' '}
-              <a href="https://www.freepik.com/" title="Freepik">
-                Freepik
-              </a>{' '}
-              from{' '}
-              <a href="https://www.flaticon.com/" title="Flaticon">
-                www.flaticon.com
-              </a>{' '}
-              is licensed by{' '}
-              <a
-                href="http://creativecommons.org/licenses/by/3.0/"
-                title="Creative Commons BY 3.0"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                CC 3.0 BY
-              </a>
-            </LicenseRow>
-            <LicenseRow>
-              Section header images have been taken from{' '}
-              <a href="https://unsplash.com/" title="Freepik">
-                Unsplash
-              </a>
-            </LicenseRow>
-          </LicenseInfo>
-        </DrawerCol>
-      </Drawer>
-    );
-  }
+  const goTo = useCallback(
+    (path: string) => () => {
+      onClose();
+      navigate(path);
+    },
+    [navigate, onClose],
+  );
 
-  private navigate(path: string) {
-    return () => {
-      history.push(path);
-      this.props.onToggle();
-    };
-  }
+  return (
+    <Drawer open anchor="left" onClose={onClose}>
+      <DrawerCol>
+        <Card>
+          <CardHeader title="Laskurit" subheader={`v. ${version}`} avatar={<Logo />} />
+        </Card>
+        <MenuItem onClick={goTo('/')}>Kaikki</MenuItem>
+        <MenuItem onClick={goTo('/p/numerot')}>Numerot ja merkit</MenuItem>
+        <MenuItem onClick={goTo('/p/aika')}>Aikaleimat</MenuItem>
+        <MenuItem onClick={goTo('/p/tunnisteet')}>Tunnisteet</MenuItem>
+        <MenuItem onClick={goTo('/p/värit')}>Värit</MenuItem>
+        <MenuItem onClick={goTo('/p/tavukoot')}>Tavukoot</MenuItem>
+        <MenuItem onClick={goTo('/p/linkit')}>Linkit</MenuItem>
+        <MenuItem onClick={goTo('/p/tekstimuunnokset')}>Tekstimuunnokset</MenuItem>
+        <MenuItem onClick={goTo('/p/kryptografia')}>Kryptografia</MenuItem>
+        <MenuItem onClick={goTo('/p/pikselitiheys')}>Pikselitiheys</MenuItem>
+        <Flex />
+        <LicenseInfo>
+          <LicenseRow>
+            Calculator icon made by{' '}
+            <a href="https://www.freepik.com/" title="Freepik">
+              Freepik
+            </a>{' '}
+            from{' '}
+            <a href="https://www.flaticon.com/" title="Flaticon">
+              www.flaticon.com
+            </a>{' '}
+            is licensed by{' '}
+            <a
+              href="http://creativecommons.org/licenses/by/3.0/"
+              title="Creative Commons BY 3.0"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              CC 3.0 BY
+            </a>
+          </LicenseRow>
+          <LicenseRow>
+            Section header images have been taken from{' '}
+            <a href="https://unsplash.com/" title="Freepik">
+              Unsplash
+            </a>
+          </LicenseRow>
+        </LicenseInfo>
+      </DrawerCol>
+    </Drawer>
+  );
 }
 
 const LicenseInfo = styled('div')`
