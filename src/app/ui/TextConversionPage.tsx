@@ -126,7 +126,7 @@ export function TextConversionPage() {
       subtitle={convertInfo[selected].name}
       image="/img/header-text-conversion.jpg"
     >
-      <div>
+      <div className="mx-3">
         <label className="text-sm text-muted" htmlFor="text-conversion-select">
           Muunnos
         </label>
@@ -146,8 +146,7 @@ export function TextConversionPage() {
       <FlexRow className="mt-2 justify-center items-start">
         <ClipboardButton
           title="Kopioi lähde leikepöydälle"
-          onClick={() => copyRefToClipboard(sourceRef as any)}
-          color="secondary"
+          onClick={() => copyRefToClipboard(sourceRef)}
         />
         <textarea
           className="mt-2 w-full min-h-[60px] border border-border rounded bg-transparent px-3 py-2"
@@ -161,8 +160,7 @@ export function TextConversionPage() {
       <FlexRow className="mt-2 justify-center items-start">
         <ClipboardButton
           title="Kopioi kohde leikepöydälle"
-          onClick={() => copyRefToClipboard(targetRef as any)}
-          color="secondary"
+          onClick={() => copyRefToClipboard(targetRef)}
         />
         <textarea
           className="mt-2 w-full min-h-[60px] border border-border rounded bg-transparent px-3 py-2"

@@ -28,7 +28,6 @@ export function LastValue() {
       <ClipboardButton
         title="Kopioi leikepöydälle"
         onClick={() => navigator.clipboard.writeText(value)}
-        color="secondary"
       />
       <input
         className="w-full bg-transparent border-b border-white/30 text-white outline-none px-2 py-1 placeholder:text-white/50"

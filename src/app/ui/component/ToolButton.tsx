@@ -5,13 +5,14 @@ import React from 'react';
 
 interface ToolbarProps {
   readonly title: string;
-  readonly color: string;
   readonly icon: string;
-  readonly onClick: () => any;
+  readonly onClick: () => void;
   readonly className?: string;
 }
 
-export function copyRefToClipboard(ref: React.RefObject<HTMLInputElement | null>) {
+export function copyRefToClipboard(
+  ref: React.RefObject<HTMLInputElement | HTMLTextAreaElement | null>,
+) {
   try {
     if (ref.current) {
       ref.current.select();
@@ -37,13 +38,12 @@ export function ToolButton({ title, onClick, className, icon }: ToolbarProps) {
 
 interface ButtonProps {
   title: string;
-  onClick: () => any;
+  onClick: () => void;
   className?: string;
-  color?: 'inherit' | 'primary' | 'secondary' | 'default';
 }
 
 export function GenerateButton({ title, onClick }: ButtonProps) {
-  return <ToolButton color="primary" icon="add_circle" title={title} onClick={onClick} />;
+  return <ToolButton icon="add_circle" title={title} onClick={onClick} />;
 }
 
 export function ClipboardButton({ title, onClick, className }: ButtonProps) {

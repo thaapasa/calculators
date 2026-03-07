@@ -1,7 +1,7 @@
+import { lightnessColors, saturationColors, staticColors } from 'app/calc/colorData';
 import {
   hexToRGB,
   HSLKey,
-  HSLMaxValue,
   hslToRGB,
   HSLValue,
   rgbToHex,
@@ -9,18 +9,17 @@ import {
   rgbToRGBStr,
   RGBValue,
 } from 'app/calc/colors';
+import { getColorsFromStore, storeColors, StoredColor } from 'app/util/colorStorage';
 import { Avatar } from 'components/ui/avatar';
 import { Badge } from 'components/ui/badge';
 import { Button } from 'components/ui/button';
 import { Separator } from 'components/ui/separator';
-import { Slider } from 'components/ui/slider';
 import { Plus } from 'lucide-react';
-import * as R from 'ramda';
 import React, { useCallback, useState } from 'react';
 
-import * as store from '../util/store';
 import { ByteValueSelector } from './component/ByteValueSelector';
 import { ColorBar } from './component/ColorBar';
+import { HSLSlider } from './component/HSLSlider';
 import { Item } from './component/Item';
 import { HalfSection } from './component/Section';
 import { publishSelectedValue } from './LastValue';
@@ -28,46 +27,7 @@ import { publishSelectedValue } from './LastValue';
 const texts = {
   hex: 'Heksakoodi',
   rgb: 'RGB-arvo',
-  h: 'H: Sävy',
-  s: 'S: Väri',
-  l: 'L: Valo',
 };
-
-const staticColors = {
-  r: R.range(0, 255).map(r => ({ r, g: 0, b: 0 })),
-  g: R.range(0, 255).map(g => ({ r: 0, g, b: 0 })),
-  b: R.range(0, 255).map(b => ({ r: 0, g: 0, b })),
-  h: R.range(0, 359).map(h =>
-    hslToRGB({
-      h: (h * HSLMaxValue) / 359,
-      s: HSLMaxValue,
-      l: HSLMaxValue / 2,
-    }),
-  ),
-};
-
-function saturationColors(h: number, l: number) {
-  return R.range(0, 255).map(s => hslToRGB({ h, s: (s * HSLMaxValue) / 255, l }));
-}
-
-function lightnessColors(h: number, s: number) {
-  return R.range(0, 255).map(l => hslToRGB({ h, s, l: (l * HSLMaxValue) / 255 }));
-}
-
-interface StoredColor {
-  name: string;
-  hex: string;
-}
-
-const COLORS_STORE_KEY = 'calculators:colors';
-
-function getColorsFromStore(): StoredColor[] {
-  return store.getValue(COLORS_STORE_KEY) || [];
-}
-
-function storeColors(colors: StoredColor[]) {
-  store.putValue(COLORS_STORE_KEY, colors);
-}
 
 export function ColorsPage() {
   const [rgb, setRgb] = useState<RGBValue>({ r: 255, g: 255, b: 255 });
@@ -164,10 +124,12 @@ export function ColorsPage() {
     [rgbString, hexString],
   );
 
+  const subtitle = selected === 'hex' ? texts.hex : texts.rgb;
+
   return (
     <HalfSection
       title="Väri"
-      subtitle={texts[selected]}
+      subtitle={subtitle}
       image="/img/header-colors.jpg"
       avatar={
         <Avatar className="border border-[#bbbbbb]">
@@ -261,20 +223,3 @@ export function ColorsPage() {
     </HalfSection>
   );
 }
-
-const HSLSlider = ({
-  colorBar,
-  hsl,
-  value,
-  onChange,
-}: {
-  hsl: HSLKey;
-  colorBar: RGBValue[];
-  value: number;
-  onChange: (v: number) => void;
-}) => (
-  <Item className="mt-4 [&>.grow]:flex-col [&>.grow]:gap-2" name={texts[hsl]}>
-    <ColorBar colors={colorBar} />
-    <Slider value={value} min={0} max={HSLMaxValue} step={1} onValueChange={onChange} />
-  </Item>
-);

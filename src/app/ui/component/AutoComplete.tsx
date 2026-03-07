@@ -2,6 +2,7 @@ import { cn } from 'lib/utils';
 import React from 'react';
 import Autosuggest, {
   ChangeEvent,
+  RenderInputComponentProps,
   RenderSuggestionsContainerParams,
   SuggestionSelectedEventData,
   SuggestionsFetchRequestedParams,
@@ -68,17 +69,6 @@ export class AutoComplete<T> extends React.Component<AutoCompleteProps<T>, AutoC
     });
   };
 
-  private setInputValueFromInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (typeof value !== 'string') {
-      return;
-    }
-    this.setState({
-      inputValue: value,
-      suggestions: this.props.getSuggestions(value),
-    });
-  };
-
   private renderSuggestion = (item: T) => {
     return this.props.renderSuggestion(item);
   };
@@ -96,8 +86,16 @@ export class AutoComplete<T> extends React.Component<AutoCompleteProps<T>, AutoC
     );
   };
 
-  private renderInput = ({ size, color, ...props }: any) => {
-    const { onChange, defaultValue, ref, key, style: _style, className: _cls, ...other } = props;
+  private renderInput = ({ size: _size, color: _color, ...props }: RenderInputComponentProps) => {
+    const {
+      onChange,
+      defaultValue,
+      ref,
+      key,
+      style: _style,
+      className: _cls,
+      ...other
+    } = props as RenderInputComponentProps & { key?: React.Key };
 
     return (
       <input
@@ -108,7 +106,7 @@ export class AutoComplete<T> extends React.Component<AutoCompleteProps<T>, AutoC
         placeholder={this.props.placeholder}
         type="text"
         ref={ref}
-        onChange={this.setInputValueFromInput}
+        onChange={onChange}
       />
     );
   };

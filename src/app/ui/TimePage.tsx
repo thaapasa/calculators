@@ -1,168 +1,24 @@
+import {
+  buildMoment,
+  computeOutputs,
+  datePattern,
+  EditableField,
+  fieldReaders,
+  fieldWriters,
+  hints,
+  reportableFields,
+  texts,
+  TimeField,
+  TimeValues,
+} from 'app/calc/time';
 import { cn } from 'lib/utils';
 import moment from 'moment';
 import React, { useCallback, useRef, useState } from 'react';
 
-import { strToInt } from '../calc/numbers';
-import { findNameDayFor, getNameDay, MonthDay } from '../util/namedays';
-import { zeroPad } from '../util/strings';
-import { isDefined, isString } from '../util/util';
-import { AutoComplete } from './component/AutoComplete';
 import { Item } from './component/Item';
+import { NameDayItem, NameDaySearch } from './component/NameDaySearch';
 import { HalfSection } from './component/Section';
 import { publishSelectedValue } from './LastValue';
-
-function readJavaTime(s: string | number): moment.Moment {
-  if (typeof s === 'string') {
-    s = parseInt(s, 10);
-  }
-  return moment(s);
-}
-
-function readUnixTime(s: string | number): moment.Moment {
-  if (typeof s === 'string') {
-    s = parseInt(s, 10);
-  }
-  return moment.unix(s);
-}
-
-function toIsoWeek(v: moment.Moment): string {
-  return v.isValid() ? `${v.isoWeekYear()}/${v.isoWeek()}` : '';
-}
-
-function pad(val: string | number, len: number): string {
-  if (typeof val === 'number' && isNaN(val)) {
-    return val.toString();
-  }
-  return zeroPad(val.toString(), len);
-}
-
-const datePattern = 'D.M.YYYY';
-
-function readDateText(v: string): object | undefined {
-  const c = moment(v, datePattern);
-  return c.isValid() ? { day: c.date(), month: c.month(), year: c.year() } : undefined;
-}
-
-function writeDateText(v: moment.Moment): string {
-  return v.isValid() ? v.format(datePattern) : '';
-}
-
-const texts = {
-  weekDay: ['', 'ma', 'ti', 'ke', 'to', 'pe', 'la', 'su'],
-  types: {
-    iso8601: 'ISO 8601',
-    iso8601utc: 'ISO 8601 UTC',
-    javaTime: 'Java/JS time',
-    unixTime: 'Unixtime',
-    nameDay: 'Nimipäivä',
-    week: 'Viikko',
-  } as Record<string, string>,
-};
-
-const hints: Record<string, string> = {
-  date: '31.12.2016',
-  hour: '10',
-  minute: '00',
-  second: '00',
-  millisecond: '000',
-  timeZone: '+02:00',
-};
-
-interface NameDayItem {
-  text: string;
-  name: string;
-  value: MonthDay;
-}
-
-function toStateValue(mom: moment.Moment, writer: (x: moment.Moment) => unknown): string {
-  if (!moment.isMoment(mom)) return '';
-  const s = writer(mom);
-  if (!isDefined(s) || (typeof s === 'number' && isNaN(s))) return '';
-  return typeof s === 'object' || s === null
-    ? (s as unknown as string)
-    : typeof s === 'number'
-      ? `${s}`
-      : (s as string);
-}
-
-function buildMoment(
-  dateStr: string,
-  hour: string,
-  minute: string,
-  second: string,
-  millisecond: string,
-): moment.Moment {
-  const d = readDateText(dateStr);
-  return moment({
-    day: d && (d as { day: number }).day,
-    month: d && (d as { month: number }).month,
-    year: d && (d as { year: number }).year,
-    hour: strToInt(hour),
-    minute: strToInt(minute),
-    second: strToInt(second),
-    millisecond: strToInt(millisecond),
-  });
-}
-
-function computeOutputs(m: moment.Moment) {
-  return {
-    date: writeDateText(m),
-    hour: m.isValid() ? pad(m.hour(), 2) : '',
-    minute: m.isValid() ? pad(m.minute(), 2) : '',
-    second: m.isValid() ? pad(m.second(), 2) : '',
-    millisecond: m.isValid() ? pad(m.millisecond(), 3) : '',
-    timeZone: m.isValid() ? m.format('Z') : '',
-    weekDay: toStateValue(m, v => texts.weekDay[v.isoWeekday()]),
-    week: toStateValue(m, toIsoWeek),
-    nameDay: toStateValue(m, v => getNameDay(v.month() + 1, v.date())),
-    iso8601: m.isValid() ? m.format() : '',
-    iso8601utc: m.isValid() ? m.toISOString() : '',
-    javaTime: m.isValid() ? String(m.valueOf()) : '',
-    unixTime: m.isValid() ? String(m.unix()) : '',
-    datePicker: m.isValid() ? m.toDate() : undefined,
-  };
-}
-
-type TimeValues = ReturnType<typeof computeOutputs>;
-type TimeField = keyof TimeValues;
-
-type EditableField =
-  | 'date'
-  | 'hour'
-  | 'minute'
-  | 'second'
-  | 'millisecond'
-  | 'iso8601'
-  | 'iso8601utc'
-  | 'javaTime'
-  | 'unixTime';
-
-const reportableFields: Record<string, boolean> = {
-  iso8601: true,
-  iso8601utc: true,
-  javaTime: true,
-  unixTime: true,
-  nameDay: true,
-  week: true,
-  date: true,
-};
-
-const fieldReaders: Record<string, (s: string) => moment.Moment> = {
-  iso8601: s => moment(s, moment.ISO_8601),
-  iso8601utc: s => moment(s, moment.ISO_8601),
-  javaTime: readJavaTime,
-  unixTime: readUnixTime,
-};
-
-const fieldWriters: Record<string, (m: moment.Moment) => string> = {
-  iso8601: m => (m.isValid() ? m.format() : ''),
-  iso8601utc: m => (m.isValid() ? m.toISOString() : ''),
-  javaTime: m => (m.isValid() ? String(m.valueOf()) : ''),
-  unixTime: m => (m.isValid() ? String(m.unix()) : ''),
-  week: m => toStateValue(m, toIsoWeek),
-  nameDay: m => toStateValue(m, v => getNameDay(v.month() + 1, v.date())),
-  date: m => writeDateText(m),
-};
 
 export function TimePage() {
   const initialMoment = moment();
@@ -349,15 +205,7 @@ export function TimePage() {
       </Item>
       <Item className="mt-2" name="Etsi nimipäivä">
         <div className="ml-1 relative w-full">
-          <AutoComplete
-            name="findNameDay"
-            placeholder="Etsi nimipäivä"
-            getSuggestions={findNameDays}
-            renderSuggestion={renderMonthDayItem}
-            getSuggestionValue={monthDayToInputValue}
-            onSelectSuggestion={selectNameDay}
-            fullWidth={true}
-          />
+          <NameDaySearch onSelectNameDay={selectNameDay} />
         </div>
       </Item>
       <Item className="mt-2" name="Java/JS time">
@@ -375,22 +223,3 @@ export function TimePage() {
     </HalfSection>
   );
 }
-
-const findNameDays = (input: string): NameDayItem[] => {
-  const res: NameDayItem[] = [];
-  if (isString(input) && input.length >= 2) {
-    const matches = findNameDayFor(input);
-    Object.keys(matches).forEach(name => {
-      const date = matches[name];
-      res.push({
-        text: `${name}: ${date.day}.${date.month}.`,
-        name,
-        value: date,
-      });
-    });
-  }
-  return res;
-};
-
-const renderMonthDayItem = (m: NameDayItem) => m.text;
-const monthDayToInputValue = (m: NameDayItem) => m.name;
