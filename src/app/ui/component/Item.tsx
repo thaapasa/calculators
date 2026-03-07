@@ -3,20 +3,18 @@ import React from 'react';
 
 interface ItemProps {
   readonly className?: string;
-  readonly style?: React.CSSProperties;
   readonly name?: string | React.ReactNode;
   readonly valueClassName?: 'top';
 }
 
 export function Item({
   className,
-  style,
   name,
   valueClassName,
   children,
 }: React.PropsWithChildren<ItemProps>) {
   return (
-    <div className={cn('my-0.5 mx-3 flex items-center justify-start', className)} style={style}>
+    <div className={cn('my-0.5 mx-3 flex items-center justify-start', className)}>
       {name ? <div className="w-32">{name}</div> : undefined}
       <div
         className={cn(

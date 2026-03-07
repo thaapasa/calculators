@@ -1,4 +1,4 @@
-import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { LinkedField, useLinkedInputs } from '../util/useLinkedInputs';
 import { Item } from './component/Item';
@@ -144,7 +144,7 @@ function DensityRow({
         <div className="w-[5em] font-medium">{info.name}</div>
         <div className="w-[3em] text-muted text-[0.85em]">{info.scale}×</div>
         <input
-          style={InputStyle}
+          className="input-inline flex-1"
           name={densityKey}
           placeholder="width"
           value={widthValue}
@@ -153,7 +153,7 @@ function DensityRow({
         />
         <span className="mx-2 text-black/40">×</span>
         <input
-          style={InputStyle}
+          className="input-inline flex-1"
           name={densityKey}
           placeholder="height"
           value={heightValue}
@@ -165,7 +165,3 @@ function DensityRow({
     </Item>
   );
 }
-
-const InputStyle: CSSProperties = {
-  flex: 1,
-};

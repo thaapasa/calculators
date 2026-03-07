@@ -1,4 +1,4 @@
-import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { useLinkedInputs } from '../util/useLinkedInputs';
 import { allFieldsOfType } from '../util/util';
@@ -121,7 +121,7 @@ const Editor = (p: {
   return (
     <FlexRow className="my-3 items-center">
       <input
-        style={TextFieldStyle}
+        className="input-inline flex-1"
         name={p.type}
         type="number"
         placeholder={info.name}
@@ -132,9 +132,4 @@ const Editor = (p: {
       <div className="w-[25px] text-right pr-2 ml-2">{info.unit}</div>
     </FlexRow>
   );
-};
-
-const TextFieldStyle: CSSProperties = {
-  flex: 1,
-  width: 100,
 };

@@ -202,6 +202,7 @@ export function ColorsPage() {
       />
       <Item name="Heksa">
         <input
+          className="input-inline flex-1"
           placeholder="#FFFFFF"
           value={hexString}
           maxLength={7}
@@ -211,6 +212,7 @@ export function ColorsPage() {
       </Item>
       <Item name="RGB-arvo">
         <input
+          className="input-inline flex-1"
           placeholder="rgb(1.0,1.0,1.0)"
           value={rgbString}
           readOnly

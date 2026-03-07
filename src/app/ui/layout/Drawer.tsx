@@ -1,3 +1,4 @@
+import { Button } from 'components/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import { Sheet } from 'components/ui/sheet';
 import React, { useCallback } from 'react';
@@ -36,63 +37,72 @@ export function NavigationDrawer({ onClose }: NavigationProps) {
             </div>
           </CardHeader>
         </Card>
-        <button className="w-full text-left px-4 py-2 hover:bg-background" onClick={goTo('/')}>
+        <Button variant="ghost" className="w-full justify-start rounded-none" onClick={goTo('/')}>
           Kaikki
-        </button>
-        <button
-          className="w-full text-left px-4 py-2 hover:bg-background"
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start rounded-none"
           onClick={goTo('/p/numerot')}
         >
           Numerot ja merkit
-        </button>
-        <button
-          className="w-full text-left px-4 py-2 hover:bg-background"
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start rounded-none"
           onClick={goTo('/p/aika')}
         >
           Aikaleimat
-        </button>
-        <button
-          className="w-full text-left px-4 py-2 hover:bg-background"
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start rounded-none"
           onClick={goTo('/p/tunnisteet')}
         >
           Tunnisteet
-        </button>
-        <button
-          className="w-full text-left px-4 py-2 hover:bg-background"
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start rounded-none"
           onClick={goTo('/p/värit')}
         >
           Värit
-        </button>
-        <button
-          className="w-full text-left px-4 py-2 hover:bg-background"
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start rounded-none"
           onClick={goTo('/p/tavukoot')}
         >
           Tavukoot
-        </button>
-        <button
-          className="w-full text-left px-4 py-2 hover:bg-background"
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start rounded-none"
           onClick={goTo('/p/linkit')}
         >
           Linkit
-        </button>
-        <button
-          className="w-full text-left px-4 py-2 hover:bg-background"
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start rounded-none"
           onClick={goTo('/p/tekstimuunnokset')}
         >
           Tekstimuunnokset
-        </button>
-        <button
-          className="w-full text-left px-4 py-2 hover:bg-background"
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start rounded-none"
           onClick={goTo('/p/kryptografia')}
         >
           Kryptografia
-        </button>
-        <button
-          className="w-full text-left px-4 py-2 hover:bg-background"
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start rounded-none"
           onClick={goTo('/p/pikselitiheys')}
         >
           Pikselitiheys
-        </button>
+        </Button>
         <Flex />
         <div className="p-4 text-[10pt] [&_a]:text-foreground/60">
           <div className="mt-2 pb-2 border-b border-black/10">

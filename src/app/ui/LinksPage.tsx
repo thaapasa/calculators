@@ -56,7 +56,7 @@ export function LinksPage() {
     <Section title="Linkit" image="/img/header-links.jpg">
       <Item name="Linkki">
         <input
-          className="w-full"
+          className="input-inline flex-1"
           name="link"
           value={link}
           onChange={e => setLink(e.target.value)}

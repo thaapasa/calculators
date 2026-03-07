@@ -1,3 +1,4 @@
+import { cn } from 'lib/utils';
 import moment from 'moment';
 import React, { useCallback, useRef, useState } from 'react';
 
@@ -9,15 +10,6 @@ import { AutoComplete } from './component/AutoComplete';
 import { Item } from './component/Item';
 import { HalfSection } from './component/Section';
 import { publishSelectedValue } from './LastValue';
-
-const styles: { [key: string]: React.CSSProperties } = {
-  len2: { width: '1.7em' },
-  len3: { width: '2.4em' },
-  len4: { width: '3.5em' },
-  len7: { width: '4.5em' },
-  len10: { width: '6em' },
-  item: {},
-};
 
 function readJavaTime(s: string | number): moment.Moment {
   if (typeof s === 'string') {
@@ -269,20 +261,17 @@ export function TimePage() {
   );
 
   const renderType = (type: string) => {
-    const fieldStyle = (
-      {
-        date: styles.len10,
-        hour: styles.len2,
-        minute: styles.len2,
-        second: styles.len2,
-        millisecond: styles.len3,
-        timeZone: styles.len7,
-        iso8601: undefined,
-        iso8601utc: undefined,
-        javaTime: undefined,
-        unixTime: undefined,
-      } as Record<string, React.CSSProperties | undefined>
-    )[type];
+    const widthClass =
+      (
+        {
+          date: 'w-[6em]',
+          hour: 'w-[1.7em]',
+          minute: 'w-[1.7em]',
+          second: 'w-[1.7em]',
+          millisecond: 'w-[2.4em]',
+          timeZone: 'w-[4.5em]',
+        } as Record<string, string>
+      )[type] ?? '';
 
     const maxLength = (
       {
@@ -301,9 +290,8 @@ export function TimePage() {
     return (
       <input
         type="text"
-        className={`ml-1 ${isFullWidth ? 'w-full' : ''}`}
+        className={cn('input-inline ml-1', widthClass, isFullWidth && 'flex-1')}
         value={(vals[type as TimeField] as string) ?? ''}
-        style={fieldStyle}
         maxLength={maxLength}
         readOnly={isReadOnly}
         name={type}
@@ -320,14 +308,13 @@ export function TimePage() {
       subtitle={texts.types[reportTarget]}
       image="/img/header-datetime.jpg"
     >
-      <Item className="mt-2" name="Päivä" style={styles.item}>
+      <Item className="mt-2" name="Päivä">
         {renderType('date')}
         (
         <input
           type="text"
-          className="ml-1"
+          className="input-inline ml-1 w-[1.7em]"
           value={vals.weekDay}
-          style={styles.len2}
           name="weekDay"
           placeholder="la"
           readOnly
@@ -335,7 +322,7 @@ export function TimePage() {
         />
         )
       </Item>
-      <Item className="mt-2" name="Kellonaika" style={styles.item}>
+      <Item className="mt-2" name="Kellonaika">
         {renderType('hour')}:{renderType('minute')}:{renderType('second')}.
         {renderType('millisecond')}
         {renderType('timeZone')}
@@ -343,10 +330,9 @@ export function TimePage() {
       <Item className="mt-2" name="Viikko">
         <input
           type="text"
-          className="ml-1"
+          className="input-inline ml-1 w-[4.5em]"
           name="week"
           value={vals.week}
-          style={styles.len7}
           readOnly
           placeholder="2016/52"
           onFocus={focusChanged}
@@ -354,7 +340,7 @@ export function TimePage() {
       </Item>
       <Item className="mt-2" name="Nimipäivä">
         <textarea
-          className="ml-1 w-full"
+          className="input-inline ml-1 flex-1 resize-none"
           name="nameDay"
           value={vals.nameDay}
           onFocus={focusChanged as any}

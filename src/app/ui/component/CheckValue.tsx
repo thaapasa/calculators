@@ -1,3 +1,4 @@
+import { cn } from 'lib/utils';
 import React, { ChangeEvent, useCallback, useState } from 'react';
 
 import * as util from '../../util/util';
@@ -64,7 +65,7 @@ export function CheckValue({
     processInput(generated);
   }, [generateFn, processInput]);
 
-  const inputStyle = width ? { width } : undefined;
+  const widthClass = width ? `w-[${width}]` : 'flex-1';
 
   return (
     <Item className="h-12" name={name} valueClassName="top">
@@ -76,11 +77,13 @@ export function CheckValue({
       <input
         type="text"
         id={`${id}-input`}
+        className={cn('input-inline', widthClass)}
         onChange={inputChanged}
-        style={inputStyle}
         value={input}
       />
-      {check ? <input id={`${id}-check`} className="ml-1 w-4" readOnly value={checkValue} /> : null}
+      {check ? (
+        <input id={`${id}-check`} className="input-inline ml-1 w-4" readOnly value={checkValue} />
+      ) : null}
       <input type="hidden" id={`${id}-value`} value={value} />
     </Item>
   );

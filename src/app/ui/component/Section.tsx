@@ -26,7 +26,7 @@ function Section({
   children,
 }: React.PropsWithChildren<SectionProps>) {
   return (
-    <Card className={cn('section', className)}>
+    <Card className={cn('pb-1 my-6 text-left', className)}>
       {image ? <img src={image} alt={title} className="h-22 w-full object-cover" /> : null}
       <CardHeader>
         <div className="flex items-center gap-3">
@@ -52,7 +52,13 @@ export function HalfSection({
   ...props
 }: HalfSectionProps & { children: React.ReactNode }) {
   return (
-    <Section className={cn('section-half-size', className)} {...props}>
+    <Section
+      className={cn(
+        'min-[63em]:w-[29em] min-[63em]:inline-block min-[63em]:align-top min-[63em]:mx-4 min-[63em]:first:ml-0 min-[63em]:last:mr-0',
+        className,
+      )}
+      {...props}
+    >
       {children}
     </Section>
   );

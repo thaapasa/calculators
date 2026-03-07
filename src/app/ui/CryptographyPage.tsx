@@ -54,7 +54,7 @@ export function CryptographyPage() {
     >
       <Item name="Syöte">
         <textarea
-          className="w-full min-h-[40px] bg-transparent outline-none"
+          className="input-inline flex-1 min-h-[40px] resize-none"
           onChange={inputChanged}
           name="input"
         />

@@ -27,14 +27,10 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 export function ToolButton({ title, onClick, className, icon }: ToolbarProps) {
-  const IconComponent = iconMap[icon];
+  const IconComponent = iconMap[icon] ?? PlusCircle;
   return (
     <Button variant="ghost" size="icon" title={title} onClick={onClick} className={className}>
-      {IconComponent ? (
-        <IconComponent className="text-primary" />
-      ) : (
-        <span className="material-icons text-primary">{icon}</span>
-      )}
+      <IconComponent className="text-primary" />
     </Button>
   );
 }

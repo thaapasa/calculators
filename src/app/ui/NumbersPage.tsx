@@ -123,6 +123,7 @@ export function NumbersPage() {
       {typeKeys.map(t => (
         <Item className="mt-2" name={texts[t]} key={`${t}-item`}>
           <input
+            className="input-inline flex-1"
             type={types[t].inputType}
             name={t}
             placeholder={texts[t]}
