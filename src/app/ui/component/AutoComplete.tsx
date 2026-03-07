@@ -1,4 +1,4 @@
-import { Input, Paper, styled } from '@mui/material';
+import { cn } from 'lib/utils';
 import React from 'react';
 import Autosuggest, {
   ChangeEvent,
@@ -86,23 +86,31 @@ export class AutoComplete<T> extends React.Component<AutoCompleteProps<T>, AutoC
   private renderContainer = ({ containerProps, children }: RenderSuggestionsContainerParams) => {
     const { key, ...rest } = containerProps as any;
     return (
-      <FloatingPaper key={key} {...rest} square={true}>
+      <div
+        key={key}
+        {...rest}
+        className={cn(
+          'absolute z-10 pr-8 rounded-md border border-border bg-surface shadow-md',
+          (rest as any).className,
+        )}
+      >
         {children}
-      </FloatingPaper>
+      </div>
     );
   };
-
-  // Destructure and discard incompatible props (react-autosuggest types lag behind React 19)
 
   private renderInput = ({ size, color, ...props }: any) => {
     const { onChange, defaultValue, ref, key, ...other } = props;
 
     return (
-      <StandardTextField
+      <input
         key={key}
         {...other}
         name={this.props.name}
-        fullWidth={this.props.fullWidth}
+        className={cn(
+          'border-b border-border bg-transparent outline-none py-1',
+          this.props.fullWidth && 'w-full',
+        )}
         placeholder={this.props.placeholder}
         type="text"
         ref={ref}
@@ -111,11 +119,3 @@ export class AutoComplete<T> extends React.Component<AutoCompleteProps<T>, AutoC
     );
   };
 }
-
-const StandardTextField = Input;
-
-const FloatingPaper = styled(Paper)`
-  position: absolute;
-  padding-right: 32px;
-  z-index: 1;
-`;

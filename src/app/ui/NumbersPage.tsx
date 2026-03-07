@@ -1,4 +1,3 @@
-import { Input, styled } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import * as numbers from '../calc/numbers';
@@ -107,7 +106,6 @@ export function NumbersPage() {
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const name = event.target.name as NumberType;
       handleChange(name, event.target.value);
-      // Publish the selected field's converted value
       const canonical = types[name].read(event.target.value);
       if (isValidNumber(canonical)) {
         publishSelectedValue(types[selected].write(canonical));
@@ -123,26 +121,20 @@ export function NumbersPage() {
   return (
     <HalfSection title="Numerot" subtitle={texts[selected]} image="/img/header-numbers.jpg">
       {typeKeys.map(t => (
-        <NumberItem name={texts[t]} key={`${t}-item`}>
-          <Input
+        <Item className="mt-2" name={texts[t]} key={`${t}-item`}>
+          <input
             type={types[t].inputType}
             name={t}
             placeholder={texts[t]}
             value={values[t]}
             onChange={inputChanged}
             onFocus={selectSrc}
-            inputProps={{
-              maxLength: types[t].maxLength,
-              readOnly: types[t].readOnly || false,
-            }}
+            maxLength={types[t].maxLength}
+            readOnly={types[t].readOnly || false}
             key={t}
           />
-        </NumberItem>
+        </Item>
       ))}
     </HalfSection>
   );
 }
-
-const NumberItem = styled(Item)`
-  margin-top: 8px;
-`;

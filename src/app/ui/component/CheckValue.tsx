@@ -1,18 +1,8 @@
-import { Input, styled } from '@mui/material';
 import React, { ChangeEvent, useCallback, useState } from 'react';
 
 import * as util from '../../util/util';
 import { Item } from './Item';
 import { GenerateButton } from './ToolButton';
-
-const CheckItem = styled(Item)`
-  height: 48px;
-`;
-
-const CheckField = styled(Input)`
-  margin-left: 4px;
-  width: 1em;
-`;
 
 interface CheckProps {
   readonly width: string;
@@ -31,7 +21,7 @@ export function CheckValue({
   combine,
   name,
   id,
-  'max-length': maxLength,
+  'max-length': _maxLength,
   generate: generateFn,
   onValue,
 }: CheckProps) {
@@ -77,34 +67,21 @@ export function CheckValue({
   const inputStyle = width ? { width } : undefined;
 
   return (
-    <CheckItem name={name} valueClassName="top">
+    <Item className="h-12" name={name} valueClassName="top">
       {generateFn ? (
         <GenerateButton onClick={generate} title="Luo uusi" />
       ) : (
-        <GeneratePlaceholder />
+        <div className="w-12 h-12" />
       )}
-      <Input
+      <input
         type="text"
         id={`${id}-input`}
         onChange={inputChanged}
         style={inputStyle}
         value={input}
-        max-length={maxLength}
       />
-      {check ? (
-        <CheckField
-          id={`${id}-check`}
-          className="letter"
-          read-only="read-only"
-          value={checkValue}
-        />
-      ) : null}
+      {check ? <input id={`${id}-check`} className="ml-1 w-4" readOnly value={checkValue} /> : null}
       <input type="hidden" id={`${id}-value`} value={value} />
-    </CheckItem>
+    </Item>
   );
 }
-
-const GeneratePlaceholder = styled('div')`
-  width: 48px;
-  height: 48px;
-`;

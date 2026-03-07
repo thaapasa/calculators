@@ -1,4 +1,3 @@
-import { Input } from '@mui/material';
 import { hash } from 'app/util/hash';
 import { MaybePromise } from 'app/util/util';
 import md5 from 'md5';
@@ -26,10 +25,13 @@ export function CryptographyPage() {
   const [selected, setSelected] = useState(cryptoList[0].code);
   const refsMap = useRef<Record<string, SelectableOutputHandle | null>>({});
 
-  const inputChanged = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const inp = event.target.value;
-    cryptoList.forEach(c => refsMap.current[c.code]?.setValue(inp));
-  }, []);
+  const inputChanged = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const inp = event.target.value;
+      cryptoList.forEach(c => refsMap.current[c.code]?.setValue(inp));
+    },
+    [],
+  );
 
   const selectCrypto = useCallback((code: string) => {
     setSelected(code);
@@ -51,7 +53,11 @@ export function CryptographyPage() {
       image="/img/header-cryptography.jpg"
     >
       <Item name="Syöte">
-        <Input onChange={inputChanged} fullWidth={true} multiline={true} name="input" />
+        <textarea
+          className="w-full min-h-[40px] bg-transparent outline-none"
+          onChange={inputChanged}
+          name="input"
+        />
       </Item>
       {cryptoList.map(c => (
         <SelectableOutput

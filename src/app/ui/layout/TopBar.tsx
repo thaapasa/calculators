@@ -1,16 +1,17 @@
+import { Button } from 'components/ui/button';
+import { cn } from 'lib/utils';
 import {
-  AccessTime,
+  Clock,
   Code,
-  ColorLens,
-  Devices,
-  EnhancedEncryption,
-  Exposure,
+  Hash,
   Home,
   Link as LinkIcon,
-  PermIdentity,
-  TextFormat,
-} from '@mui/icons-material';
-import { AppBar, IconButton, styled, SvgIconProps, Toolbar, Typography } from '@mui/material';
+  Lock,
+  Monitor,
+  Palette,
+  Type,
+  User,
+} from 'lucide-react';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
@@ -20,84 +21,59 @@ interface ToolbarProps {
   onToggleDrawer: () => void;
 }
 
-const TopLogo = styled(Logo)`
-  margin-right: 16px;
-`;
-
 export function TopBar({ onToggleDrawer, children }: React.PropsWithChildren<ToolbarProps>) {
   return (
-    <AppBar>
-      <Toolbar>
-        <Flex>
-          <TopLogo onClick={onToggleDrawer} />
-          <Typography variant="h6" color="inherit">
-            Laskurit
-          </Typography>
-        </Flex>
-        <FullWidthOnly>
-          <Link icon={Home} route="/" tooltip="Kaikki" />
-          <Link icon={AccessTime} route={['/p/aika', '/p/time']} tooltip="Aikaleimat" />
-          <Link
-            icon={Exposure}
+    <header className="fixed top-0 left-0 right-0 z-50 bg-primary text-white shadow-md">
+      <div className="flex items-center h-14 px-4">
+        <div className="inline-flex flex-1 justify-start items-center">
+          <Logo className="mr-4" onClick={onToggleDrawer} />
+          <h1 className="text-lg font-medium">Laskurit</h1>
+        </div>
+        <div className="hidden min-[63em]:flex">
+          <NavLink icon={Home} route="/" tooltip="Kaikki" />
+          <NavLink icon={Clock} route={['/p/aika', '/p/time']} tooltip="Aikaleimat" />
+          <NavLink
+            icon={Hash}
             route={['/p/numerot', '/p/merkit', '/p/symbols']}
             tooltip="Numerot ja merkit"
           />
-          <Link
-            icon={PermIdentity}
-            route={['/p/tunnisteet', '/p/identifiers']}
-            tooltip="Tunnisteet"
-          />
-          <Link icon={ColorLens} route={['/p/värit', '/p/colors']} tooltip="Värit" />
-          <Link
+          <NavLink icon={User} route={['/p/tunnisteet', '/p/identifiers']} tooltip="Tunnisteet" />
+          <NavLink icon={Palette} route={['/p/värit', '/p/colors']} tooltip="Värit" />
+          <NavLink
             icon={Code}
             route={['/p/tavukoot', '/p/bytesize', '/p/bytesizes']}
             tooltip="Tavukoot"
           />
-          <Link icon={LinkIcon} route={['/p/linkit', '/p/links']} tooltip="Linkit" />
-          <Link
-            icon={TextFormat}
+          <NavLink icon={LinkIcon} route={['/p/linkit', '/p/links']} tooltip="Linkit" />
+          <NavLink
+            icon={Type}
             route={['/p/tekstimuunnokset', '/p/textconversions']}
             tooltip="Tekstimuunnokset"
           />
-          <Link
-            icon={EnhancedEncryption}
+          <NavLink
+            icon={Lock}
             route={['/p/kryptografia', '/p/cryptography']}
             tooltip="Kryptografia"
           />
-          <Link
-            icon={Devices}
+          <NavLink
+            icon={Monitor}
             route={['/p/pikselitiheys', '/p/pixeldensity']}
             tooltip="Pikselitiheys"
           />
-        </FullWidthOnly>
-        <Flex className="right">{children}</Flex>
-      </Toolbar>
-    </AppBar>
+        </div>
+        <div className="inline-flex flex-1 justify-end">{children}</div>
+      </div>
+    </header>
   );
 }
 
-const Flex = styled('div')`
-  display: inline-flex;
-  flex: 1;
-  justify-content: flex-start;
-  &.right {
-    justify-content: flex-end;
-  }
-`;
-
-const FullWidthOnly = styled('div')`
-  @media (max-width: 63em) {
-    display: none;
-  }
-`;
-
-interface LinkProps {
+interface NavLinkProps {
   route: string | string[];
   tooltip: string;
-  icon: React.ComponentType<SvgIconProps>;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
-function Link({ route, icon: Icon, tooltip }: LinkProps) {
+function NavLink({ route, icon: Icon, tooltip }: NavLinkProps) {
   const navigate = useNavigate();
   const onClick = () => {
     navigate(Array.isArray(route) ? route[0] : route);
@@ -108,8 +84,14 @@ function Link({ route, icon: Icon, tooltip }: LinkProps) {
       ? location.pathname === route
       : route.find(r => location.pathname === r) !== undefined;
   return (
-    <IconButton onClick={onClick} color={selected ? 'inherit' : 'default'} title={tooltip}>
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={onClick}
+      title={tooltip}
+      className={cn('text-white/70 hover:text-white hover:bg-white/10', selected && 'text-white')}
+    >
       <Icon />
-    </IconButton>
+    </Button>
   );
 }

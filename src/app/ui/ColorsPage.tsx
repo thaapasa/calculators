@@ -1,5 +1,3 @@
-import { Add } from '@mui/icons-material';
-import { Avatar, Chip, Divider, IconButton, Input, Slider, styled } from '@mui/material';
 import {
   hexToRGB,
   HSLKey,
@@ -11,6 +9,12 @@ import {
   rgbToRGBStr,
   RGBValue,
 } from 'app/calc/colors';
+import { Avatar } from 'components/ui/avatar';
+import { Badge } from 'components/ui/badge';
+import { Button } from 'components/ui/button';
+import { Separator } from 'components/ui/separator';
+import { Slider } from 'components/ui/slider';
+import { Plus } from 'lucide-react';
 import * as R from 'ramda';
 import React, { useCallback, useState } from 'react';
 
@@ -20,10 +24,6 @@ import { ColorBar } from './component/ColorBar';
 import { Item } from './component/Item';
 import { HalfSection } from './component/Section';
 import { publishSelectedValue } from './LastValue';
-
-const ColorAvatar = styled(Avatar)`
-  border: 1px solid #bbbbbb;
-`;
 
 const texts = {
   hex: 'Heksakoodi',
@@ -80,7 +80,6 @@ export function ColorsPage() {
   const validatedColor =
     hexString && hexString.length > 3 && hexString.startsWith('#') ? hexString : undefined;
 
-  // Update everything from a new RGB value
   const setAllFromRgb = useCallback(
     (newRgb: RGBValue, src: 'rgb' | 'hsl' | 'hex') => {
       setRgb(newRgb);
@@ -170,11 +169,17 @@ export function ColorsPage() {
       title="Väri"
       subtitle={texts[selected]}
       image="/img/header-colors.jpg"
-      avatar={<ColorAvatar style={{ backgroundColor: validatedColor }}>&nbsp;</ColorAvatar>}
+      avatar={
+        <Avatar className="border border-[#bbbbbb]">
+          <div style={{ backgroundColor: validatedColor, width: '100%', height: '100%' }}>
+            &nbsp;
+          </div>
+        </Avatar>
+      }
       action={
-        <IconButton aria-label="settings" onClick={storeColor}>
-          <Add />
-        </IconButton>
+        <Button variant="ghost" size="icon" aria-label="settings" onClick={storeColor}>
+          <Plus />
+        </Button>
       }
     >
       <ByteValueSelector
@@ -196,19 +201,19 @@ export function ColorsPage() {
         topContent={<ColorBar colors={staticColors.b} />}
       />
       <Item name="Heksa">
-        <Input
+        <input
           placeholder="#FFFFFF"
           value={hexString}
-          inputProps={{ maxLength: 7 }}
+          maxLength={7}
           onChange={onHexChange}
           onFocus={() => selectMode('hex')}
         />
       </Item>
       <Item name="RGB-arvo">
-        <Input
+        <input
           placeholder="rgb(1.0,1.0,1.0)"
           value={rgbString}
-          inputProps={{ readOnly: true }}
+          readOnly
           onFocus={() => selectMode('rgb')}
         />
       </Item>
@@ -232,19 +237,20 @@ export function ColorsPage() {
       />
       {colorList.length > 0 ? (
         <>
-          <Divider />
+          <Separator />
           {colorList.map((c, i) => (
-            <PaddedChip
+            <Badge
               key={i}
-              avatar={
-                <Avatar style={{ backgroundColor: c.hex }}>
-                  <div />
-                </Avatar>
-              }
-              label={c.name}
+              className="m-2 cursor-pointer"
               onDelete={() => removeColor(i)}
               onClick={() => setAllFromHex(c.hex)}
-            />
+            >
+              <span
+                className="inline-block w-4 h-4 rounded-full mr-1"
+                style={{ backgroundColor: c.hex }}
+              />
+              {c.name}
+            </Badge>
           ))}
         </>
       ) : null}
@@ -263,25 +269,8 @@ const HSLSlider = ({
   value: number;
   onChange: (v: number) => void;
 }) => (
-  <HSLItem name={texts[hsl]}>
+  <Item className="mt-4 [&>.grow]:flex-col" name={texts[hsl]}>
     <ColorBar colors={colorBar} />
-    <Slider
-      value={value}
-      min={0}
-      max={HSLMaxValue}
-      step={1}
-      onChange={(_, v) => onChange(typeof v === 'number' ? v : v[0])}
-    />
-  </HSLItem>
+    <Slider value={value} min={0} max={HSLMaxValue} step={1} onValueChange={onChange} />
+  </Item>
 );
-
-const HSLItem = styled(Item)`
-  margin-top: 16px;
-  & .value {
-    flex-direction: column;
-  }
-`;
-
-const PaddedChip = styled(Chip)`
-  margin: 8px 4px;
-`;

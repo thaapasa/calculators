@@ -1,4 +1,11 @@
-import { Avatar, AvatarProps } from '@mui/material';
+import { Avatar } from 'components/ui/avatar';
 import React from 'react';
 
-export const Logo = (p: AvatarProps) => <Avatar {...p} src="img/calculators.png" />;
+interface LogoProps {
+  className?: string;
+  onClick?: React.MouseEventHandler;
+}
+
+export function Logo({ className, onClick }: LogoProps) {
+  return <Avatar className={className} src="img/calculators.png" onClick={onClick} />;
+}

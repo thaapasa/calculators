@@ -1,18 +1,12 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardMedia,
-  Divider,
-  styled,
-  StyledComponentProps,
-} from '@mui/material';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
+import { Separator } from 'components/ui/separator';
+import { cn } from 'lib/utils';
 import React from 'react';
 
 interface HalfSectionProps {
   title: string;
   subtitle?: string;
-  avatar?: JSX.Element;
+  avatar?: React.ReactNode;
   className?: string;
   image?: string;
   action?: React.ReactNode;
@@ -22,7 +16,7 @@ interface SectionProps extends HalfSectionProps {
   className?: string;
 }
 
-function SectionImpl({
+function Section({
   image,
   title,
   subtitle,
@@ -30,22 +24,26 @@ function SectionImpl({
   action,
   avatar,
   children,
-}: React.PropsWithChildren<SectionProps & StyledComponentProps>) {
+}: React.PropsWithChildren<SectionProps>) {
   return (
-    <Card className={'section ' + (className || '')}>
-      {image ? <CardMedia image={image} title={title} className="media" /> : null}
-      <CardHeader title={title} subheader={subtitle || ' '} avatar={avatar} action={action} />
-      <Divider />
+    <Card className={cn('section', className)}>
+      {image ? <img src={image} alt={title} className="h-22 w-full object-cover" /> : null}
+      <CardHeader>
+        <div className="flex items-center gap-3">
+          {avatar}
+          <div className="flex-1">
+            <CardTitle>{title}</CardTitle>
+            <CardDescription>{subtitle || ' '}</CardDescription>
+          </div>
+          {action}
+        </div>
+      </CardHeader>
+      <Separator />
       <CardContent>{children}</CardContent>
     </Card>
   );
 }
 
-const Section = styled(SectionImpl, {})`
-  & .media {
-    height: 88px;
-  }
-`;
 export default Section;
 
 export function HalfSection({
@@ -54,7 +52,7 @@ export function HalfSection({
   ...props
 }: HalfSectionProps & { children: React.ReactNode }) {
   return (
-    <Section className={`section-half-size ${className || ''}`} {...props}>
+    <Section className={cn('section-half-size', className)} {...props}>
       {children}
     </Section>
   );

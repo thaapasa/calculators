@@ -1,8 +1,8 @@
-import { ThemeProvider } from '@mui/material';
+import './index.css';
+
 import { AppRouterProvider } from 'app/ui/Routes';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { theme } from 'style';
 
 import { assertDefined, fixConsole } from './app/util/util';
 
@@ -12,8 +12,4 @@ fixConsole();
 const container = document.getElementById('root');
 assertDefined(container);
 
-ReactDOM.createRoot(container).render(
-  <ThemeProvider theme={theme}>
-    <AppRouterProvider />
-  </ThemeProvider>,
-);
+ReactDOM.createRoot(container).render(<AppRouterProvider />);

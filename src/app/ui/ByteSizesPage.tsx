@@ -1,4 +1,3 @@
-import { Input, styled } from '@mui/material';
 import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
 
 import { useLinkedInputs } from '../util/useLinkedInputs';
@@ -85,7 +84,7 @@ export function ByteSizesPage() {
         <Editor type="byte" value={values.byte} onChange={inputChanged} onFocus={selectSrc} />
       </Item>
       <Item>
-        <Column>
+        <Flex className="first:mr-4">
           {leftColumn.map(t => (
             <Editor
               key={t}
@@ -95,8 +94,8 @@ export function ByteSizesPage() {
               onFocus={selectSrc}
             />
           ))}
-        </Column>
-        <Column>
+        </Flex>
+        <Flex>
           {rightColumn.map(t => (
             <Editor
               key={t}
@@ -106,7 +105,7 @@ export function ByteSizesPage() {
               onFocus={selectSrc}
             />
           ))}
-        </Column>
+        </Flex>
       </Item>
     </HalfSection>
   );
@@ -120,8 +119,8 @@ const Editor = (p: {
 }) => {
   const info = types[p.type];
   return (
-    <EditorRow>
-      <Input
+    <FlexRow className="my-3 items-center">
+      <input
         style={TextFieldStyle}
         name={p.type}
         type="number"
@@ -130,30 +129,12 @@ const Editor = (p: {
         onChange={p.onChange}
         onFocus={p.onFocus}
       />
-      <Unit>{info.unit}</Unit>
-    </EditorRow>
+      <div className="w-[25px] text-right pr-2 ml-2">{info.unit}</div>
+    </FlexRow>
   );
 };
-
-const EditorRow = styled(FlexRow)`
-  margin: 12px 0px;
-  align-items: center;
-`;
-
-const Column = styled(Flex)`
-  &:first-of-type {
-    margin-right: 16px;
-  }
-`;
 
 const TextFieldStyle: CSSProperties = {
   flex: 1,
   width: 100,
 };
-
-const Unit = styled('div')`
-  width: 25px;
-  text-align: right;
-  padding-right: 8px;
-  margin-left: 8px;
-`;

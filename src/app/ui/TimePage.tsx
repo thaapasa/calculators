@@ -1,4 +1,3 @@
-import { Input, styled } from '@mui/material';
 import moment from 'moment';
 import React, { useCallback, useRef, useState } from 'react';
 
@@ -94,7 +93,6 @@ function toStateValue(mom: moment.Moment, writer: (x: moment.Moment) => unknown)
       : (s as string);
 }
 
-// Build moment from date+time parts
 function buildMoment(
   dateStr: string,
   hour: string,
@@ -114,7 +112,6 @@ function buildMoment(
   });
 }
 
-// Compute all display values from a moment
 function computeOutputs(m: moment.Moment) {
   return {
     date: writeDateText(m),
@@ -137,7 +134,6 @@ function computeOutputs(m: moment.Moment) {
 type TimeValues = ReturnType<typeof computeOutputs>;
 type TimeField = keyof TimeValues;
 
-// Which fields are "direct" inputs (user edits these)
 type EditableField =
   | 'date'
   | 'hour'
@@ -149,7 +145,6 @@ type EditableField =
   | 'javaTime'
   | 'unixTime';
 
-// Which fields report values to parent
 const reportableFields: Record<string, boolean> = {
   iso8601: true,
   iso8601utc: true,
@@ -160,7 +155,6 @@ const reportableFields: Record<string, boolean> = {
   date: true,
 };
 
-// Readers that convert input string to a moment
 const fieldReaders: Record<string, (s: string) => moment.Moment> = {
   iso8601: s => moment(s, moment.ISO_8601),
   iso8601utc: s => moment(s, moment.ISO_8601),
@@ -168,7 +162,6 @@ const fieldReaders: Record<string, (s: string) => moment.Moment> = {
   unixTime: readUnixTime,
 };
 
-// Field writers for publishSelectedValue
 const fieldWriters: Record<string, (m: moment.Moment) => string> = {
   iso8601: m => (m.isValid() ? m.format() : ''),
   iso8601utc: m => (m.isValid() ? m.toISOString() : ''),
@@ -186,14 +179,12 @@ export function TimePage() {
   const [vals, setVals] = useState<TimeValues>(initialOutputs);
   const [reportTarget, setReportTarget] = useState('');
 
-  // Keep a ref to the latest moment for publishing
   const currentMomentRef = useRef(initialMoment);
 
   const updateFromMoment = useCallback(
     (m: moment.Moment, src: EditableField | 'direct' | 'datePicker') => {
       currentMomentRef.current = m;
       const outputs = computeOutputs(m);
-      // For "value-part" edits (date, time fields), skip updating the edited field
       if (['date', 'hour', 'minute', 'second', 'millisecond'].includes(src)) {
         setVals(prev => ({ ...outputs, [src]: prev[src as TimeField] }));
       } else if (
@@ -211,18 +202,15 @@ export function TimePage() {
   );
 
   const inputChanged = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const src = event.target.name as EditableField;
       const val = event.target.value;
-      // Update the raw input value immediately
       setVals(prev => ({ ...prev, [src]: val }));
 
       let m: moment.Moment;
       if (src in fieldReaders) {
-        // Direct conversion fields (ISO, unix, java)
         m = fieldReaders[src](val);
       } else if (src === 'date') {
-        // Date text field - rebuild from parts
         m = buildMoment(
           val,
           String(vals.hour),
@@ -231,7 +219,6 @@ export function TimePage() {
           String(vals.millisecond),
         );
       } else {
-        // Time part fields (hour, minute, second, millisecond) - rebuild from parts
         const parts = { ...vals, [src]: val };
         m = buildMoment(
           String(parts.date),
@@ -244,7 +231,6 @@ export function TimePage() {
 
       updateFromMoment(m, src);
 
-      // Publish value if the focused field is reportable
       if (reportTarget && fieldWriters[reportTarget]) {
         publishSelectedValue(fieldWriters[reportTarget](m));
       }
@@ -269,7 +255,6 @@ export function TimePage() {
         .month(day.value.month - 1)
         .date(day.value.day);
       const date = m.format(datePattern);
-      // Treat as date input
       const fullMoment = buildMoment(
         date,
         String(vals.hour),
@@ -314,18 +299,15 @@ export function TimePage() {
     const isFullWidth = ['iso8601', 'iso8601utc', 'javaTime', 'unixTime'].includes(type);
 
     return (
-      <TimeField
-        size="small"
+      <input
         type="text"
-        value={vals[type as TimeField] ?? ''}
+        className={`ml-1 ${isFullWidth ? 'w-full' : ''}`}
+        value={(vals[type as TimeField] as string) ?? ''}
         style={fieldStyle}
-        inputProps={{
-          maxLength,
-          readOnly: isReadOnly,
-        }}
+        maxLength={maxLength}
+        readOnly={isReadOnly}
         name={type}
         placeholder={hints[type]}
-        fullWidth={isFullWidth}
         onChange={inputChanged}
         onFocus={focusChanged}
       />
@@ -338,48 +320,49 @@ export function TimePage() {
       subtitle={texts.types[reportTarget]}
       image="/img/header-datetime.jpg"
     >
-      <TimeItem name="Päivä" style={styles.item}>
+      <Item className="mt-2" name="Päivä" style={styles.item}>
         {renderType('date')}
         (
-        <TimeField
+        <input
           type="text"
+          className="ml-1"
           value={vals.weekDay}
           style={styles.len2}
           name="weekDay"
           placeholder="la"
-          inputProps={{ readOnly: true }}
+          readOnly
           onFocus={focusChanged}
         />
         )
-      </TimeItem>
-      <TimeItem name="Kellonaika" style={styles.item}>
+      </Item>
+      <Item className="mt-2" name="Kellonaika" style={styles.item}>
         {renderType('hour')}:{renderType('minute')}:{renderType('second')}.
         {renderType('millisecond')}
         {renderType('timeZone')}
-      </TimeItem>
-      <TimeItem name="Viikko">
-        <TimeField
+      </Item>
+      <Item className="mt-2" name="Viikko">
+        <input
           type="text"
+          className="ml-1"
           name="week"
           value={vals.week}
           style={styles.len7}
-          inputProps={{ readOnly: true }}
+          readOnly
           placeholder="2016/52"
           onFocus={focusChanged}
         />
-      </TimeItem>
-      <TimeItem name="Nimipäivä">
-        <TimeField
-          type="text"
+      </Item>
+      <Item className="mt-2" name="Nimipäivä">
+        <textarea
+          className="ml-1 w-full"
           name="nameDay"
           value={vals.nameDay}
-          fullWidth={true}
-          multiline={true}
-          onFocus={focusChanged}
+          onFocus={focusChanged as any}
+          readOnly
         />
-      </TimeItem>
-      <TimeItem name="Etsi nimipäivä">
-        <AutoCompleteWrapper>
+      </Item>
+      <Item className="mt-2" name="Etsi nimipäivä">
+        <div className="ml-1 relative w-full">
           <AutoComplete
             name="findNameDay"
             placeholder="Etsi nimipäivä"
@@ -389,26 +372,23 @@ export function TimePage() {
             onSelectSuggestion={selectNameDay}
             fullWidth={true}
           />
-        </AutoCompleteWrapper>
-      </TimeItem>
-      <TimeItem name="Java/JS time">{renderType('javaTime')}</TimeItem>
-      <TimeItem name="Unixtime">{renderType('unixTime')}</TimeItem>
-      <TimeItem name="ISO-8601">{renderType('iso8601')}</TimeItem>
-      <TimeItem name="ISO-8601 UTC">{renderType('iso8601utc')}</TimeItem>
+        </div>
+      </Item>
+      <Item className="mt-2" name="Java/JS time">
+        {renderType('javaTime')}
+      </Item>
+      <Item className="mt-2" name="Unixtime">
+        {renderType('unixTime')}
+      </Item>
+      <Item className="mt-2" name="ISO-8601">
+        {renderType('iso8601')}
+      </Item>
+      <Item className="mt-2" name="ISO-8601 UTC">
+        {renderType('iso8601utc')}
+      </Item>
     </HalfSection>
   );
 }
-
-const TimeItem = styled(Item)`
-  margin-top: 8px;
-`;
-
-const TimeField = styled(Input)`
-  & input,
-  & textarea {
-    margin-left: 4px;
-  }
-`;
 
 const findNameDays = (input: string): NameDayItem[] => {
   const res: NameDayItem[] = [];
@@ -428,9 +408,3 @@ const findNameDays = (input: string): NameDayItem[] => {
 
 const renderMonthDayItem = (m: NameDayItem) => m.text;
 const monthDayToInputValue = (m: NameDayItem) => m.name;
-
-const AutoCompleteWrapper = styled('div')`
-  & input {
-    margin-left: 4px;
-  }
-`;

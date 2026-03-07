@@ -1,16 +1,9 @@
-import { TextFormat } from '@mui/icons-material';
-import { Checkbox, styled, TextField } from '@mui/material';
+import { Type } from 'lucide-react';
 import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { toUpperCase } from '../../util/strings';
 import { MaybePromise } from '../../util/util';
 import { Item } from './Item';
-
-const StyledItem = styled(Item)`
-  & > .name {
-    margin-top: 1.2em;
-  }
-`;
 
 interface SelectableOutputProps {
   readonly type: string;
@@ -58,39 +51,43 @@ export const SelectableOutput = React.forwardRef<SelectableOutputHandle, Selecta
     );
 
     const checkUpperCase = useCallback(
-      (_event: React.ChangeEvent, checked: boolean) => {
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        const checked = event.target.checked;
         setUpperCase(checked);
         void applyTransform(lastInputRef.current, checked);
         if (onSelect) {
-          onSelect(_event as unknown as React.FocusEvent);
+          onSelect(event as unknown as React.FocusEvent);
         }
       },
       [applyTransform, onSelect],
     );
 
     return (
-      <StyledItem
+      <Item
+        className="[&>.w-32]:mt-[1.2em]"
         name={
           <>
-            <Checkbox name={type + '-upper-case'} onChange={checkUpperCase} />
-            <TextFormat color="secondary" />
+            <input
+              type="checkbox"
+              name={type + '-upper-case'}
+              onChange={checkUpperCase}
+              className="h-4 w-4 mr-1"
+            />
+            <Type className="h-5 w-5 text-secondary" />
           </>
         }
         valueClassName="top"
       >
-        <TextField
-          variant="standard"
-          label={label}
+        <input
           type="text"
           placeholder={label}
-          className="wide"
+          className="w-full border-b border-border bg-transparent outline-none py-1"
           value={value}
-          fullWidth={true}
-          slotProps={{ input: { readOnly: true } }}
+          readOnly
           name="output"
           onFocus={onSelect}
         />
-      </StyledItem>
+      </Item>
     );
   },
 );

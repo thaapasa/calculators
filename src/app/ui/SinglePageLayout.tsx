@@ -1,4 +1,3 @@
-import { styled } from '@mui/material';
 import React from 'react';
 
 import { ByteSizesPage } from './ByteSizesPage';
@@ -14,23 +13,21 @@ import { TimePage } from './TimePage';
 export function SinglePageLayout() {
   return (
     <>
-      <Row>
+      <div>
         <TimePage />
         <IdentifiersPage />
-      </Row>
-      <Row>
+      </div>
+      <div>
         <ColorsPage />
         <PixelDensityPage />
-      </Row>
-      <Row>
+      </div>
+      <div>
         <NumbersPage />
         <ByteSizesPage />
-      </Row>
+      </div>
       <TextConversionPage />
       <CryptographyPage />
       <LinksPage />
     </>
   );
 }
-
-const Row = styled('div')``;

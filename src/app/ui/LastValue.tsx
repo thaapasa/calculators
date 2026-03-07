@@ -1,4 +1,3 @@
-import { styled, TextField } from '@mui/material';
 import React from 'react';
 
 import { ClipboardButton } from './component/ToolButton';
@@ -25,24 +24,19 @@ export function LastValue() {
   const [value, setValue] = React.useState('');
   React.useEffect(() => listenToSelectedValues(setValue), [setValue]);
   return (
-    <Container>
+    <div className="inline-flex items-center">
       <ClipboardButton
         title="Kopioi leikepöydälle"
         onClick={() => navigator.clipboard.writeText(value)}
         color="secondary"
       />
-      <TextField
+      <input
+        className="w-full bg-transparent border-b border-white/30 text-white outline-none px-2 py-1 placeholder:text-white/50"
         value={value}
         name="lastValue"
-        fullWidth={true}
         placeholder="Viimeisin arvo"
         onChange={e => setValue(e.target.value)}
       />
-    </Container>
+    </div>
   );
 }
-
-const Container = styled('div')`
-  display: inline-flex;
-  align-items: center;
-`;

@@ -1,4 +1,3 @@
-import { FormControl, InputLabel, MenuItem, Select, styled, TextField } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 
 import * as base64 from '../calc/base64';
@@ -75,14 +74,13 @@ export function TextConversionPage() {
   const [target, setTarget] = useState('');
   const [selected, setSelected] = useState(getConverterFromStore);
 
-  const sourceRef = useRef<HTMLInputElement>(null);
-  const targetRef = useRef<HTMLInputElement>(null);
+  const sourceRef = useRef<HTMLTextAreaElement>(null);
+  const targetRef = useRef<HTMLTextAreaElement>(null);
 
-  // Track which field is being edited to prevent circular updates
   const editingRef = useRef<'source' | 'target' | null>(null);
 
   const onSourceChange = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
+    async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       if (editingRef.current === 'target') return;
       editingRef.current = 'source';
       const val = e.target.value;
@@ -96,7 +94,7 @@ export function TextConversionPage() {
   );
 
   const onTargetChange = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
+    async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       if (editingRef.current === 'source') return;
       editingRef.current = 'target';
       const val = e.target.value;
@@ -128,70 +126,53 @@ export function TextConversionPage() {
       subtitle={convertInfo[selected].name}
       image="/img/header-text-conversion.jpg"
     >
-      <FormControl>
-        <InputLabel id="text-conversion-label">Muunnos</InputLabel>
-        <StyledSelect
-          labelId="text-conversion-label"
+      <div>
+        <label className="text-sm text-muted" htmlFor="text-conversion-select">
+          Muunnos
+        </label>
+        <select
           id="text-conversion-select"
-          label="Muunnos"
+          className="w-[260px] ml-2 rounded border border-border bg-transparent px-3 py-2 text-sm"
           value={selected}
-          onChange={e => onConverterChange(e.target.value as string)}
+          onChange={e => onConverterChange(e.target.value)}
         >
           {converters.map(c => (
-            <MenuItem value={c} key={c}>
+            <option value={c} key={c}>
               {convertInfo[c].name}
-            </MenuItem>
+            </option>
           ))}
-        </StyledSelect>
-      </FormControl>
-      <TextRow className="center-horizontal top">
+        </select>
+      </div>
+      <FlexRow className="mt-2 justify-center items-start">
         <ClipboardButton
           title="Kopioi lähde leikepöydälle"
-          onClick={() => copyRefToClipboard(sourceRef)}
+          onClick={() => copyRefToClipboard(sourceRef as any)}
           color="secondary"
         />
-        <TextEdit
+        <textarea
+          className="mt-2 w-full min-h-[60px] border border-border rounded bg-transparent px-3 py-2"
           onChange={onSourceChange}
-          fullWidth={true}
-          multiline={true}
-          inputRef={sourceRef}
+          ref={sourceRef}
           name="source"
           value={source}
         />
-        <LenghtArea>{source.length}</LenghtArea>
-      </TextRow>
-      <TextRow className="center-horizontal top">
+        <LeftPad className="mt-4">{source.length}</LeftPad>
+      </FlexRow>
+      <FlexRow className="mt-2 justify-center items-start">
         <ClipboardButton
           title="Kopioi kohde leikepöydälle"
-          onClick={() => copyRefToClipboard(targetRef)}
+          onClick={() => copyRefToClipboard(targetRef as any)}
           color="secondary"
         />
-        <TextEdit
+        <textarea
+          className="mt-2 w-full min-h-[60px] border border-border rounded bg-transparent px-3 py-2"
           onChange={onTargetChange}
-          fullWidth={true}
-          multiline={true}
-          inputRef={targetRef}
+          ref={targetRef}
           name="target"
           value={target}
         />
-        <LenghtArea>{target.length}</LenghtArea>
-      </TextRow>
+        <LeftPad className="mt-4">{target.length}</LeftPad>
+      </FlexRow>
     </Section>
   );
 }
-
-const StyledSelect = styled(Select)`
-  width: 260px;
-`;
-
-const LenghtArea = styled(LeftPad)`
-  margin-top: 16px;
-`;
-
-const TextRow = styled(FlexRow)`
-  margin-top: 8px;
-`;
-
-const TextEdit = styled(TextField)`
-  margin-top: 8px !important;
-`;

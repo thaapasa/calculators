@@ -1,5 +1,5 @@
-import { Delete, NoteAdd } from '@mui/icons-material';
-import { Divider, Input, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Separator } from 'components/ui/separator';
+import { FilePlus, Trash2 } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 
 import * as store from '../util/store';
@@ -55,29 +55,33 @@ export function LinksPage() {
   return (
     <Section title="Linkit" image="/img/header-links.jpg">
       <Item name="Linkki">
-        <Input name="link" value={link} fullWidth={true} onChange={e => setLink(e.target.value)} />
+        <input
+          className="w-full"
+          name="link"
+          value={link}
+          onChange={e => setLink(e.target.value)}
+        />
       </Item>
-      <List>
-        <ListItem>
-          <ListItemIcon onClick={addLink}>
-            <NoteAdd />
-          </ListItemIcon>
-          <ListItemText>
-            <Link href={validatedLink} />
-          </ListItemText>
-        </ListItem>
-        <Divider />
+      <ul className="list-none p-0">
+        <li className="flex items-center px-4 py-2">
+          <button onClick={addLink} className="mr-3 text-foreground/60 hover:text-foreground">
+            <FilePlus className="h-5 w-5" />
+          </button>
+          <Link href={validatedLink} />
+        </li>
+        <Separator />
         {storedLinks.map(l => (
-          <ListItem key={l}>
-            <ListItemIcon onClick={() => deleteLink(l)}>
-              <Delete />
-            </ListItemIcon>
-            <ListItemText>
-              <Link href={l} />
-            </ListItemText>
-          </ListItem>
+          <li key={l} className="flex items-center px-4 py-2">
+            <button
+              onClick={() => deleteLink(l)}
+              className="mr-3 text-foreground/60 hover:text-foreground"
+            >
+              <Trash2 className="h-5 w-5" />
+            </button>
+            <Link href={l} />
+          </li>
         ))}
-      </List>
+      </ul>
     </Section>
   );
 }

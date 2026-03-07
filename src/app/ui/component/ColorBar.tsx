@@ -1,54 +1,29 @@
-import { styled } from '@mui/material';
 import { rgbToHex, RGBValue } from 'app/calc/colors';
-import React from 'react';
+import { cn } from 'lib/utils';
+import React, { useEffect, useRef } from 'react';
 
 interface ColorBarProps {
   className?: string;
   colors: RGBValue[];
 }
 
-export class ColorBar extends React.Component<ColorBarProps> {
-  private canvas = React.createRef<HTMLCanvasElement>();
+export function ColorBar({ className, colors }: ColorBarProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  public componentDidUpdate() {
-    this.updateCanvas();
-  }
-
-  public componentDidMount() {
-    this.updateCanvas();
-  }
-
-  public render() {
-    return (
-      <Bar className={this.props.className}>
-        <Canvas ref={this.canvas} width={this.props.colors.length} height={10} />
-      </Bar>
-    );
-  }
-
-  private updateCanvas() {
-    const canvas = this.canvas.current;
-    if (!canvas) {
-      return;
-    }
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      return;
-    }
-    this.props.colors.forEach((color, idx) => {
+    if (!ctx) return;
+    colors.forEach((color, idx) => {
       ctx.fillStyle = rgbToHex(color);
       ctx.fillRect(idx, 0, idx + 1, 10);
     });
-  }
+  }, [colors]);
+
+  return (
+    <div className={cn('h-6 bg-[#f7ee7f] w-full', className)}>
+      <canvas ref={canvasRef} className="w-full h-full" width={colors.length} height={10} />
+    </div>
+  );
 }
-
-const Bar = styled('div')`
-  height: 24px;
-  background-color: #f7ee7f;
-  width: 100%;
-`;
-
-const Canvas = styled('canvas')`
-  width: 100%;
-  height: 100%;
-`;

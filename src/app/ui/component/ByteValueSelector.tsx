@@ -1,4 +1,5 @@
-import { Slider, styled, TextField } from '@mui/material';
+import { Slider } from 'components/ui/slider';
+import { cn } from 'lib/utils';
 import React, { useCallback, useState } from 'react';
 
 import { hexStrToInt, intToHexStr, strToInt } from '../../calc/numbers';
@@ -22,11 +23,6 @@ function toHexComp(value: number): string {
   return isValidComp(value) ? zeroPad(intToHexStr(value), 2) : '';
 }
 
-const ComponentField = styled(TextField)`
-  width: 2.8em;
-  margin-right: 1em !important;
-`;
-
 interface SelectorProps {
   setValue: string | number;
   onValue?: (x: number) => void;
@@ -45,10 +41,8 @@ export function ByteValueSelector({
   const [hex, setHex] = useState(() => toHexComp(Number(setValueProp)));
   const [dec, setDec] = useState(() => toDecValue(Number(setValueProp)));
   const [slider, setSlider] = useState(() => toSliderValue(Number(setValueProp)));
-  // Track which field initiated the current change to avoid overwriting it during prop sync
   const [activeSource, setActiveSource] = useState<string | null>(null);
 
-  // Sync state from prop changes, skipping the field that initiated the change
   const [prevSetValueProp, setPrevSetValueProp] = useState(setValueProp);
   if (setValueProp !== prevSetValueProp) {
     setPrevSetValueProp(setValueProp);
@@ -93,49 +87,53 @@ export function ByteValueSelector({
   );
 
   const onSliderChange = useCallback(
-    (_: unknown, v: number | number[]) => {
-      const num = Array.isArray(v) ? v[0] : v;
+    (num: number) => {
       showValue(num, 'slider');
     },
     [showValue],
   );
 
   const content = (
-    <Row>
-      <Column>
-        <Row>
-          <ComponentField
-            variant="standard"
-            label={floatingLabel}
-            placeholder="FF"
-            slotProps={{ htmlInput: { maxLength: 2 } }}
-            value={hex}
-            onChange={onHexChange}
-          />
-          <ComponentField
-            variant="standard"
-            label={floatingLabel}
-            placeholder="255"
-            type="number"
-            slotProps={{ htmlInput: { maxLength: 3 } }}
-            value={dec}
-            onChange={onDecChange}
-          />
-        </Row>
-        <Row>
-          <ComponentField
-            style={{ width: '6em' }}
-            variant="standard"
-            slotProps={{ htmlInput: { readOnly: true } }}
-            value={String(Number(dec) / 255)}
-          />
-        </Row>
-      </Column>
-      <Column className={floatingLabel ? 'high' : undefined}>
+    <div className="flex justify-start items-center m-3">
+      <div className="w-full">
+        <div className="flex justify-start items-center m-3">
+          <div className="w-[2.8em] mr-4">
+            {floatingLabel && <label className="text-xs text-muted">{floatingLabel}</label>}
+            <input
+              className="w-full border-b border-border bg-transparent outline-none"
+              placeholder="FF"
+              maxLength={2}
+              value={hex}
+              onChange={onHexChange}
+            />
+          </div>
+          <div className="w-[2.8em] mr-4">
+            {floatingLabel && <label className="text-xs text-muted">{floatingLabel}</label>}
+            <input
+              className="w-full border-b border-border bg-transparent outline-none"
+              placeholder="255"
+              type="number"
+              maxLength={3}
+              value={dec}
+              onChange={onDecChange}
+            />
+          </div>
+        </div>
+        <div className="flex justify-start items-center m-3">
+          <div className="w-[6em] mr-4">
+            <input
+              className="w-full border-b border-border bg-transparent outline-none"
+              readOnly
+              value={String(Number(dec) / 255)}
+            />
+          </div>
+        </div>
+      </div>
+      <div className={cn('w-full', floatingLabel && 'mt-[18px]')}>
         {topContent}
-        <Slider value={slider} max={255} min={0} step={1} onChange={onSliderChange} />
-      </Column>
-    </Row>
+        <Slider value={slider} max={255} min={0} step={1} onValueChange={onSliderChange} />
+      </div>
+    </div>
   );
 
   return name ? (
@@ -146,17 +144,3 @@ export function ByteValueSelector({
     content
   );
 }
-
-const Row = styled('div')`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin: 12px;
-`;
-
-const Column = styled('div')`
-  width: 100%;
-  &.high {
-    margin-top: 18px;
-  }
-`;

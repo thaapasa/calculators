@@ -1,10 +1,10 @@
-import { styled } from '@mui/material';
+import { cn } from 'lib/utils';
 import React from 'react';
 
 interface ItemProps {
   readonly className?: string;
   readonly style?: React.CSSProperties;
-  readonly name?: string | JSX.Element;
+  readonly name?: string | React.ReactNode;
   readonly valueClassName?: 'top';
 }
 
@@ -16,44 +16,16 @@ export function Item({
   children,
 }: React.PropsWithChildren<ItemProps>) {
   return (
-    <CalculatorItem className={className} style={style}>
-      {name ? <div className="name">{name}</div> : undefined}
-      <div className={`value ${valueClassName || ''}`}>{children}</div>
-    </CalculatorItem>
+    <div className={cn('my-0.5 mx-3 flex items-center justify-start', className)} style={style}>
+      {name ? <div className="w-32">{name}</div> : undefined}
+      <div
+        className={cn(
+          'grow whitespace-nowrap inline-flex w-auto flex-nowrap items-center',
+          valueClassName === 'top' && 'items-start',
+        )}
+      >
+        {children}
+      </div>
+    </div>
   );
 }
-
-const CalculatorItem = styled('div')`
-  margin: 0.2em 0.75em;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-
-  &.inline {
-    display: inline-flex;
-  }
-
-  & > .name {
-    width: 8em;
-  }
-
-  & > .value {
-    flex-grow: 1;
-    white-space: nowrap;
-    display: inline-flex;
-    width: auto;
-    flex-wrap: nowrap;
-    align-items: center;
-
-    &.top {
-      align-items: flex-start;
-    }
-  }
-
-  &.multiline > .value {
-    white-space: normal;
-    display: inherit;
-    width: auto;
-    flex-wrap: inherit;
-  }
-`;

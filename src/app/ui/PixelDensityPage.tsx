@@ -1,4 +1,3 @@
-import { Input, styled, Typography } from '@mui/material';
 import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
 
 import { LinkedField, useLinkedInputs } from '../util/useLinkedInputs';
@@ -81,14 +80,16 @@ export function PixelDensityPage() {
       image="/img/header-bytesize.jpg"
     >
       <Item>
-        <HeaderRow>
-          <DensityLabel />
-          <ScaleLabel />
-          <ColumnHeader>Leveys</ColumnHeader>
-          <ColumnHeader>Korkeus</ColumnHeader>
-        </HeaderRow>
+        <FlexRow className="items-center pb-1">
+          <div className="w-[5em] font-medium" />
+          <div className="w-[3em] text-muted text-[0.85em]" />
+          <div className="flex-1 text-[0.85em] text-muted">Leveys</div>
+          <div className="flex-1 text-[0.85em] text-muted">Korkeus</div>
+        </FlexRow>
       </Item>
-      <GroupLabel>Android</GroupLabel>
+      <div className="px-4 pt-3 pb-1 text-[0.8em] font-semibold uppercase text-muted-foreground">
+        Android
+      </div>
       {androidKeys.map(k => (
         <DensityRow
           key={k}
@@ -101,7 +102,9 @@ export function PixelDensityPage() {
           onFocus={selectSrc}
         />
       ))}
-      <GroupLabel>iOS</GroupLabel>
+      <div className="px-4 pt-3 pb-1 text-[0.8em] font-semibold uppercase text-muted-foreground">
+        iOS
+      </div>
       {iosKeys.map(k => (
         <DensityRow
           key={k}
@@ -137,10 +140,10 @@ function DensityRow({
 }) {
   return (
     <Item>
-      <EditorRow>
-        <DensityLabel>{info.name}</DensityLabel>
-        <ScaleLabel>{info.scale}×</ScaleLabel>
-        <Input
+      <FlexRow className="items-center my-1">
+        <div className="w-[5em] font-medium">{info.name}</div>
+        <div className="w-[3em] text-muted text-[0.85em]">{info.scale}×</div>
+        <input
           style={InputStyle}
           name={densityKey}
           placeholder="width"
@@ -148,8 +151,8 @@ function DensityRow({
           onChange={onWidthChange}
           onFocus={onFocus}
         />
-        <Separator>×</Separator>
-        <Input
+        <span className="mx-2 text-black/40">×</span>
+        <input
           style={InputStyle}
           name={densityKey}
           placeholder="height"
@@ -157,59 +160,12 @@ function DensityRow({
           onChange={onHeightChange}
           onFocus={onFocus}
         />
-        <Unit>px</Unit>
-      </EditorRow>
+        <div className="w-[25px] text-right pr-2 ml-2">px</div>
+      </FlexRow>
     </Item>
   );
 }
 
-const HeaderRow = styled(FlexRow)`
-  align-items: center;
-  padding: 0 0 4px 0;
-`;
-
-const EditorRow = styled(FlexRow)`
-  align-items: center;
-  margin: 4px 0;
-`;
-
-const DensityLabel = styled('div')`
-  width: 5em;
-  font-weight: 500;
-`;
-
-const ScaleLabel = styled('div')`
-  width: 3em;
-  color: rgba(0, 0, 0, 0.5);
-  font-size: 0.85em;
-`;
-
-const ColumnHeader = styled('div')`
-  flex: 1;
-  font-size: 0.85em;
-  color: rgba(0, 0, 0, 0.5);
-`;
-
-const GroupLabel = styled(Typography)`
-  padding: 12px 16px 4px;
-  font-size: 0.8em;
-  font-weight: 600;
-  text-transform: uppercase;
-  color: rgba(0, 0, 0, 0.45);
-`;
-
 const InputStyle: CSSProperties = {
   flex: 1,
 };
-
-const Separator = styled('span')`
-  margin: 0 8px;
-  color: rgba(0, 0, 0, 0.4);
-`;
-
-const Unit = styled('div')`
-  width: 25px;
-  text-align: right;
-  padding-right: 8px;
-  margin-left: 8px;
-`;
