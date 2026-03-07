@@ -21,6 +21,7 @@ export class NavigationDrawer extends React.Component<NavigationProps> {
   private goToLinks = this.navigate('/p/linkit');
   private goToTextConversion = this.navigate('/p/tekstimuunnokset');
   private goToCryptography = this.navigate('/p/kryptografia');
+  private goToPixelDensity = this.navigate('/p/pikselitiheys');
 
   public render() {
     return (
@@ -38,6 +39,7 @@ export class NavigationDrawer extends React.Component<NavigationProps> {
           <MenuItem onClick={this.goToLinks}>Linkit</MenuItem>
           <MenuItem onClick={this.goToTextConversion}>Tekstimuunnokset</MenuItem>
           <MenuItem onClick={this.goToCryptography}>Kryptografia</MenuItem>
+          <MenuItem onClick={this.goToPixelDensity}>Pikselitiheys</MenuItem>
           <Flex />
           <LicenseInfo>
             <LicenseRow>

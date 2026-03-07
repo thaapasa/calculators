@@ -2,6 +2,7 @@ import {
   AccessTime,
   Code,
   ColorLens,
+  Devices,
   EnhancedEncryption,
   Exposure,
   Home,
@@ -62,6 +63,11 @@ export function TopBar({ onToggleDrawer, children }: React.PropsWithChildren<Too
             icon={EnhancedEncryption}
             route={['/p/kryptografia', '/p/cryptography']}
             tooltip="Kryptografia"
+          />
+          <Link
+            icon={Devices}
+            route={['/p/pikselitiheys', '/p/pixeldensity']}
+            tooltip="Pikselitiheys"
           />
         </FullWidthOnly>
         <Flex className="right">{children}</Flex>

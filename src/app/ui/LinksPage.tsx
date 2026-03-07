@@ -5,7 +5,7 @@ import React, { useCallback, useState } from 'react';
 import * as store from '../util/store';
 import { isString } from '../util/util';
 import { Item } from './component/Item';
-import { HalfSection } from './component/Section';
+import Section from './component/Section';
 
 function validate(link: string): string {
   if (!isString(link)) {
@@ -53,7 +53,7 @@ export function LinksPage() {
   }, []);
 
   return (
-    <HalfSection title="Linkit" image="/img/header-links.jpg">
+    <Section title="Linkit" image="/img/header-links.jpg">
       <Item name="Linkki">
         <Input name="link" value={link} fullWidth={true} onChange={e => setLink(e.target.value)} />
       </Item>
@@ -78,7 +78,7 @@ export function LinksPage() {
           </ListItem>
         ))}
       </List>
-    </HalfSection>
+    </Section>
   );
 }
 
