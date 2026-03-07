@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } 
 
 import { toUpperCase } from '../../util/strings';
 import { MaybePromise } from '../../util/util';
-import { Item } from './item';
+import { Item } from './Item';
 
 const StyledItem = styled(Item)`
   & > .name {

@@ -8,7 +8,7 @@ import * as hetu from '../calc/hetu';
 import { getRandomString } from '../calc/random';
 import * as util from '../util/util';
 import { CheckValue } from './component/CheckValue';
-import { HalfSection } from './component/section';
+import { HalfSection } from './component/Section';
 import { UuidCheck } from './component/UuidCheck';
 import { publishSelectedValue } from './LastValue';
 

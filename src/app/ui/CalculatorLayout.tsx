@@ -3,8 +3,8 @@ import React from 'react';
 import { Outlet } from 'react-router';
 
 import { LastValue } from './LastValue';
-import { NavigationDrawer } from './layout/drawer';
-import { TopBar } from './layout/topbar';
+import { NavigationDrawer } from './layout/Drawer';
+import { TopBar } from './layout/TopBar';
 
 export function CalculatorLayout() {
   const [drawerOpen, setDrawerOpen] = React.useState(false);

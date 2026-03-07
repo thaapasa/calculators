@@ -4,7 +4,7 @@ import React, { useCallback, useState } from 'react';
 import { hexStrToInt, intToHexStr, strToInt } from '../../calc/numbers';
 import { zeroPad } from '../../util/strings';
 import { isNumber } from '../../util/util';
-import { Item } from './item';
+import { Item } from './Item';
 
 function isValidComp(value: number): value is number {
   return isNumber(value) && !isNaN(value) && value >= 0 && value <= 255;

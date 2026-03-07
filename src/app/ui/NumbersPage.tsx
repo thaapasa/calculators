@@ -5,8 +5,8 @@ import * as numbers from '../calc/numbers';
 import { zeroPad } from '../util/strings';
 import { useLinkedInputs } from '../util/useLinkedInputs';
 import * as util from '../util/util';
-import { Item } from './component/item';
-import { HalfSection } from './component/section';
+import { Item } from './component/Item';
+import { HalfSection } from './component/Section';
 import { publishSelectedValue } from './LastValue';
 
 const texts = {

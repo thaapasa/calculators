@@ -6,9 +6,9 @@ import { strToInt } from '../calc/numbers';
 import { findNameDayFor, getNameDay, MonthDay } from '../util/namedays';
 import { zeroPad } from '../util/strings';
 import { isDefined, isString } from '../util/util';
-import { AutoComplete } from './component/autocomplete';
-import { Item } from './component/item';
-import { HalfSection } from './component/section';
+import { AutoComplete } from './component/AutoComplete';
+import { Item } from './component/Item';
+import { HalfSection } from './component/Section';
 import { publishSelectedValue } from './LastValue';
 
 const styles: { [key: string]: React.CSSProperties } = {

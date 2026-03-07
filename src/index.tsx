@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@mui/material';
-import { AppRouterProvider } from 'app/ui/routes';
+import { AppRouterProvider } from 'app/ui/Routes';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { theme } from 'style';

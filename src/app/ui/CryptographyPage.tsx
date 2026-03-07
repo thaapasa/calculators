@@ -4,8 +4,8 @@ import { MaybePromise } from 'app/util/util';
 import md5 from 'md5';
 import React, { useCallback, useRef, useState } from 'react';
 
-import { Item } from './component/item';
-import Section from './component/section';
+import { Item } from './component/Item';
+import Section from './component/Section';
 import { SelectableOutput, SelectableOutputHandle } from './component/SelectableOutput';
 import { publishSelectedValue } from './LastValue';
 

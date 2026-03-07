@@ -4,7 +4,7 @@ import React from 'react';
 import { version } from '../../../../package.json';
 import { history } from '../history';
 import { Flex, FlexColumn } from './elements';
-import { Logo } from './logo';
+import { Logo } from './Logo';
 
 interface NavigationProps {
   open: boolean;

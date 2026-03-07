@@ -2,7 +2,7 @@ import { Input, styled } from '@mui/material';
 import React, { ChangeEvent, useCallback, useState } from 'react';
 
 import * as util from '../../util/util';
-import { Item } from './item';
+import { Item } from './Item';
 import { GenerateButton } from './ToolButton';
 
 const CheckItem = styled(Item)`

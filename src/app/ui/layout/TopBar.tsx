@@ -13,7 +13,7 @@ import { AppBar, IconButton, styled, SvgIconProps, Toolbar, Typography } from '@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
-import { Logo } from './logo';
+import { Logo } from './Logo';
 
 interface ToolbarProps {
   onToggleDrawer: () => void;

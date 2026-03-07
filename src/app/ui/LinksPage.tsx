@@ -4,8 +4,8 @@ import React, { useCallback, useState } from 'react';
 
 import * as store from '../util/store';
 import { isString } from '../util/util';
-import { Item } from './component/item';
-import { HalfSection } from './component/section';
+import { Item } from './component/Item';
+import { HalfSection } from './component/Section';
 
 function validate(link: string): string {
   if (!isString(link)) {
