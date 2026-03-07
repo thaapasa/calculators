@@ -45,19 +45,23 @@ export function ByteValueSelector({
   const [hex, setHex] = useState(() => toHexComp(Number(setValueProp)));
   const [dec, setDec] = useState(() => toDecValue(Number(setValueProp)));
   const [slider, setSlider] = useState(() => toSliderValue(Number(setValueProp)));
+  // Track which field initiated the current change to avoid overwriting it during prop sync
+  const [activeSource, setActiveSource] = useState<string | null>(null);
 
-  // Sync state from prop changes (React pattern: adjust state during render)
+  // Sync state from prop changes, skipping the field that initiated the change
   const [prevSetValueProp, setPrevSetValueProp] = useState(setValueProp);
   if (setValueProp !== prevSetValueProp) {
     setPrevSetValueProp(setValueProp);
     const val = Number(setValueProp);
-    setHex(toHexComp(val));
-    setDec(toDecValue(val));
-    setSlider(toSliderValue(val));
+    if (activeSource !== 'hex') setHex(toHexComp(val));
+    if (activeSource !== 'dec') setDec(toDecValue(val));
+    if (activeSource !== 'slider') setSlider(toSliderValue(val));
+    if (activeSource !== null) setActiveSource(null);
   }
 
   const showValue = useCallback(
     (val: number, src: string) => {
+      setActiveSource(src);
       if (src !== 'hex') setHex(toHexComp(val));
       if (src !== 'dec') setDec(toDecValue(val));
       if (src !== 'slider') setSlider(toSliderValue(val));
