@@ -104,7 +104,7 @@ export function ByteValueSelector({
             variant="standard"
             label={floatingLabel}
             placeholder="FF"
-            inputProps={{ maxLength: 2 }}
+            slotProps={{ htmlInput: { maxLength: 2 } }}
             value={hex}
             onChange={onHexChange}
           />
@@ -113,7 +113,7 @@ export function ByteValueSelector({
             label={floatingLabel}
             placeholder="255"
             type="number"
-            inputProps={{ maxLength: 3 }}
+            slotProps={{ htmlInput: { maxLength: 3 } }}
             value={dec}
             onChange={onDecChange}
           />
@@ -122,7 +122,7 @@ export function ByteValueSelector({
           <ComponentField
             style={{ width: '6em' }}
             variant="standard"
-            inputProps={{ readOnly: true }}
+            slotProps={{ htmlInput: { readOnly: true } }}
             value={String(Number(dec) / 255)}
           />
         </Row>

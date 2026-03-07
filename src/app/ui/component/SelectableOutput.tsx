@@ -51,7 +51,7 @@ export const SelectableOutput = React.forwardRef<SelectableOutputHandle, Selecta
       () => ({
         setValue: (val: string) => {
           lastInputRef.current = val;
-          applyTransform(val, upperCaseRef.current);
+          void applyTransform(val, upperCaseRef.current);
         },
       }),
       [applyTransform],
@@ -60,7 +60,7 @@ export const SelectableOutput = React.forwardRef<SelectableOutputHandle, Selecta
     const checkUpperCase = useCallback(
       (_event: React.ChangeEvent, checked: boolean) => {
         setUpperCase(checked);
-        applyTransform(lastInputRef.current, checked);
+        void applyTransform(lastInputRef.current, checked);
         if (onSelect) {
           onSelect(_event as unknown as React.FocusEvent);
         }
