@@ -6,8 +6,8 @@ import { CryptographyPage } from './CryptographyPage';
 import { IdentifiersPage } from './IdentifiersPage';
 import { LinksPage } from './LinksPage';
 import { NumbersPage } from './NumbersPage';
+import { PipelinePage } from './PipelinePage';
 import { PixelDensityPage } from './PixelDensityPage';
-import { TextConversionPage } from './TextConversionPage';
 import { TimePage } from './TimePage';
 
 export function SinglePageLayout() {
@@ -25,7 +25,7 @@ export function SinglePageLayout() {
         <NumbersPage />
         <ByteSizesPage />
       </div>
-      <TextConversionPage />
+      <PipelinePage />
       <CryptographyPage />
       <LinksPage />
     </>

@@ -8,9 +8,9 @@ import { CryptographyPage } from './CryptographyPage';
 import { IdentifiersPage } from './IdentifiersPage';
 import { LinksPage } from './LinksPage';
 import { NumbersPage } from './NumbersPage';
+import { PipelinePage } from './PipelinePage';
 import { PixelDensityPage } from './PixelDensityPage';
 import { SinglePageLayout } from './SinglePageLayout';
-import { TextConversionPage } from './TextConversionPage';
 import { TimePage } from './TimePage';
 
 const router = createBrowserRouter([
@@ -31,8 +31,8 @@ const router = createBrowserRouter([
       { path: '/p/bytesizes', element: <ByteSizesPage /> },
       { path: '/p/linkit', element: <LinksPage /> },
       { path: '/p/links', element: <LinksPage /> },
-      { path: '/p/tekstimuunnokset', element: <TextConversionPage /> },
-      { path: '/p/textconversions', element: <TextConversionPage /> },
+      { path: '/p/tekstimuunnokset', element: <PipelinePage /> },
+      { path: '/p/textconversions', element: <PipelinePage /> },
       { path: '/p/kryptografia', element: <CryptographyPage /> },
       { path: '/p/cryptography', element: <CryptographyPage /> },
       { path: '/p/pikselitiheys', element: <PixelDensityPage /> },
