@@ -1,13 +1,17 @@
-import rot13 from 'app/calc/rot13';
+import { rotN } from 'app/calc/rot13';
 import { reverse, toLowerCase, toUpperCase } from 'app/util/strings';
 
 import { OperationDef, textData, toText } from '../types';
 
 export const rot13Op: OperationDef = {
   id: 'rot13',
-  name: 'ROT-13',
+  name: 'ROT-N',
   category: 'text',
-  process: async input => textData(rot13(toText(input))),
+  defaultParams: { shift: 13 },
+  process: async (input, params) => {
+    const shift = typeof params?.shift === 'number' ? params.shift : 13;
+    return textData(rotN(toText(input), shift));
+  },
 };
 
 export const uppercaseOp: OperationDef = {

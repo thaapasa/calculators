@@ -3,20 +3,24 @@ import { CSS } from '@dnd-kit/utilities';
 import { getOperation } from 'app/calc/pipeline/registry';
 import { StepResult } from 'app/util/usePipeline';
 import { GripVertical, Trash2 } from 'lucide-react';
-import React from 'react';
+import React, { useCallback } from 'react';
 
 interface PipelineStepCardProps {
   instanceId: string;
   operationId: string;
+  params?: Record<string, unknown>;
   result: StepResult | null;
   onRemove: (instanceId: string) => void;
+  onParamsChange: (instanceId: string, params: Record<string, unknown>) => void;
 }
 
 export function PipelineStepCard({
   instanceId,
   operationId,
+  params,
   result,
   onRemove,
+  onParamsChange,
 }: PipelineStepCardProps) {
   const op = getOperation(operationId);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -30,6 +34,13 @@ export function PipelineStepCard({
   };
 
   const Renderer = op?.render;
+  const ConfigComponent = op?.configComponent;
+  const effectiveParams = params ?? op?.defaultParams ?? {};
+
+  const handleParamsChange = useCallback(
+    (newParams: Record<string, unknown>) => onParamsChange(instanceId, newParams),
+    [instanceId, onParamsChange],
+  );
 
   return (
     <div
@@ -46,6 +57,9 @@ export function PipelineStepCard({
           <GripVertical size={16} />
         </button>
         <span className="text-sm font-medium flex-1">{op?.name ?? operationId}</span>
+        {ConfigComponent && (
+          <ConfigComponent params={effectiveParams} onChange={handleParamsChange} />
+        )}
         {result?.error && (
           <span className="text-xs text-red-500" title={result.error}>
             ⚠
@@ -59,7 +73,9 @@ export function PipelineStepCard({
           <Trash2 size={14} />
         </button>
       </div>
-      {result && Renderer && <Renderer input={result.input} output={result.output} />}
+      {result && Renderer && (
+        <Renderer input={result.input} output={result.output} params={effectiveParams} />
+      )}
     </div>
   );
 }

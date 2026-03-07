@@ -2,9 +2,9 @@ import { jsonStringToXml, xmlToJsonString } from 'app/calc/xml-json';
 
 import { OperationDef, textData, toText } from '../types';
 
-function toPrettyJSON(s: string): string {
+function toPrettyJSON(s: string, indent: number | string = 2): string {
   try {
-    return JSON.stringify(JSON.parse(s), null, 2);
+    return JSON.stringify(JSON.parse(s), null, indent);
   } catch (_e) {
     return s;
   }
@@ -22,7 +22,11 @@ export const jsonPrettyOp: OperationDef = {
   id: 'json-pretty',
   name: 'JSON muotoiltu',
   category: 'format',
-  process: async input => textData(toPrettyJSON(toText(input))),
+  defaultParams: { indent: 2 },
+  process: async (input, params) => {
+    const indent = params?.indent === 'tab' ? '\t' : Number(params?.indent ?? 2);
+    return textData(toPrettyJSON(toText(input), indent));
+  },
 };
 
 export const jsonCompactOp: OperationDef = {

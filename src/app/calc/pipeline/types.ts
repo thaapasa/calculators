@@ -9,6 +9,13 @@ export type PipelineData = { type: 'text'; text: string } | { type: 'binary'; by
 export interface StepRenderProps {
   input: PipelineData;
   output: PipelineData;
+  params?: Record<string, unknown>;
+}
+
+/** Props passed to an operation's config component */
+export interface StepConfigProps {
+  params: Record<string, unknown>;
+  onChange: (params: Record<string, unknown>) => void;
 }
 
 /**
@@ -25,6 +32,8 @@ export interface OperationDef {
   process: (input: PipelineData, params?: Record<string, unknown>) => Promise<PipelineData>;
   /** Optional React component to render inline in the step card */
   render?: ComponentType<StepRenderProps>;
+  /** Optional React component to render configuration UI */
+  configComponent?: ComponentType<StepConfigProps>;
   /** Default configuration for this operation */
   defaultParams?: Record<string, unknown>;
 }

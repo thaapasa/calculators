@@ -29,9 +29,10 @@ export function ShowTextRenderer({ input }: StepRenderProps) {
 }
 
 /** Renders hexdump -C view, copies raw hex string */
-export function HexDumpRenderer({ input }: StepRenderProps) {
+export function HexDumpRenderer({ input, params }: StepRenderProps) {
   const bytes = toBinary(input);
-  const formatted = formatHexDump(bytes);
+  const bytesPerLine = typeof params?.bytesPerLine === 'number' ? params.bytesPerLine : 16;
+  const formatted = formatHexDump(bytes, bytesPerLine);
   const rawHex = toRawHex(bytes);
 
   return (

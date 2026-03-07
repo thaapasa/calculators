@@ -24,6 +24,7 @@ export interface PipelineState {
   addStep: (operationId: string, params?: Record<string, unknown>) => void;
   removeStep: (instanceId: string) => void;
   moveStep: (fromIndex: number, toIndex: number) => void;
+  updateStepParams: (instanceId: string, params: Record<string, unknown>) => void;
   toConfig: () => PipelineConfig;
   fromConfig: (config: PipelineConfig) => void;
   processing: boolean;
@@ -116,6 +117,10 @@ export function usePipeline(): PipelineState {
     });
   }, []);
 
+  const updateStepParams = useCallback((instanceId: string, params: Record<string, unknown>) => {
+    setSteps(prev => prev.map(s => (s.instanceId === instanceId ? { ...s, params } : s)));
+  }, []);
+
   const toConfig = useCallback((): PipelineConfig => {
     return {
       version: 1,
@@ -146,6 +151,7 @@ export function usePipeline(): PipelineState {
     addStep,
     removeStep,
     moveStep,
+    updateStepParams,
     toConfig,
     fromConfig,
     processing,

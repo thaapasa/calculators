@@ -1,6 +1,6 @@
 import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { setOperationRenderer } from 'app/calc/pipeline/registry';
+import { setOperationConfig, setOperationRenderer } from 'app/calc/pipeline/registry';
 import { usePipeline } from 'app/util/usePipeline';
 import React, { useCallback } from 'react';
 
@@ -9,6 +9,7 @@ import { PipelineInput } from './component/PipelineInput';
 import { PipelineOutput } from './component/PipelineOutput';
 import { PipelineStepCard } from './component/PipelineStepCard';
 import Section from './component/Section';
+import { HexDumpBytesConfig, JsonIndentConfig, RotNConfig } from './component/StepConfigs';
 import { DownloadRenderer, HexDumpRenderer, ShowTextRenderer } from './component/StepRenderers';
 
 // Wire render components to display operations
@@ -16,9 +17,14 @@ setOperationRenderer('show-text', ShowTextRenderer);
 setOperationRenderer('hex-dump', HexDumpRenderer);
 setOperationRenderer('download', DownloadRenderer);
 
+// Wire config components to configurable operations
+setOperationConfig('rot13', RotNConfig);
+setOperationConfig('json-pretty', JsonIndentConfig);
+setOperationConfig('hex-dump', HexDumpBytesConfig);
+
 export function PipelinePage() {
   const pipeline = usePipeline();
-  const { steps, results, addStep, removeStep, moveStep } = pipeline;
+  const { steps, results, addStep, removeStep, moveStep, updateStepParams } = pipeline;
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
@@ -55,8 +61,10 @@ export function PipelinePage() {
                   key={step.instanceId}
                   instanceId={step.instanceId}
                   operationId={step.operationId}
+                  params={step.params}
                   result={results[i] ?? null}
                   onRemove={removeStep}
+                  onParamsChange={updateStepParams}
                 />
               ))}
             </div>

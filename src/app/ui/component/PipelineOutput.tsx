@@ -48,7 +48,7 @@ export function PipelineOutput({ data }: PipelineOutputProps) {
           {data.type === 'binary' ? `${data.bytes.length} tavua` : `${text.length} merkkiä`}
         </span>
       </div>
-      <pre className="max-h-50 overflow-auto rounded border border-border bg-black/5 px-3 py-2 text-xs font-mono whitespace-pre-wrap break-all">
+      <pre className="min-h-9 max-h-50 overflow-auto rounded border border-border bg-black/5 px-3 py-2 text-xs font-mono whitespace-pre-wrap break-all">
         {text}
       </pre>
     </div>

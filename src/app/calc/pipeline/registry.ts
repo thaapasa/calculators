@@ -6,7 +6,7 @@ import { encodingOperations } from './operations/encoding';
 import { formatOperations } from './operations/format';
 import { hashOperations } from './operations/hash';
 import { textOperations } from './operations/text';
-import { OperationDef, StepRenderProps } from './types';
+import { OperationDef, StepConfigProps, StepRenderProps } from './types';
 
 /** All available operations */
 export const allOperations: OperationDef[] = [
@@ -29,6 +29,12 @@ export function getOperation(id: string): OperationDef | undefined {
 export function setOperationRenderer(id: string, render: ComponentType<StepRenderProps>) {
   const op = operationMap.get(id);
   if (op) op.render = render;
+}
+
+/** Attach a config component to an operation (called from UI layer) */
+export function setOperationConfig(id: string, configComponent: ComponentType<StepConfigProps>) {
+  const op = operationMap.get(id);
+  if (op) op.configComponent = configComponent;
 }
 
 /** Category metadata for UI grouping */

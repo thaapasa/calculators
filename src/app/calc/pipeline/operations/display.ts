@@ -1,14 +1,14 @@
 import { OperationDef } from '../types';
 
 /** Format binary data like `hexdump -C`: offset | hex bytes | ASCII */
-export function formatHexDump(bytes: Uint8Array): string {
+export function formatHexDump(bytes: Uint8Array, bytesPerLine = 16): string {
   const lines: string[] = [];
-  for (let offset = 0; offset < bytes.length; offset += 16) {
-    const chunk = bytes.slice(offset, offset + 16);
+  for (let offset = 0; offset < bytes.length; offset += bytesPerLine) {
+    const chunk = bytes.slice(offset, offset + bytesPerLine);
     const hex = Array.from(chunk)
       .map(b => b.toString(16).padStart(2, '0'))
       .join(' ');
-    const hexPadded = hex.padEnd(48);
+    const hexPadded = hex.padEnd(bytesPerLine * 3);
     const ascii = Array.from(chunk)
       .map(b => (b >= 0x20 && b <= 0x7e ? String.fromCharCode(b) : '.'))
       .join('');
@@ -40,6 +40,7 @@ export const hexDumpOp: OperationDef = {
   name: 'Hex dump',
   category: 'display',
   description: 'Näytä data hexdump -C -muodossa',
+  defaultParams: { bytesPerLine: 16 },
   process: async input => input,
 };
 

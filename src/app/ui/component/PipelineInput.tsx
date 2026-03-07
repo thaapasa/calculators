@@ -75,18 +75,18 @@ export function PipelineInput({ value, onChange, onDataChange }: PipelineInputPr
             onClick={handleClear}
             className="text-xs text-muted-foreground hover:text-foreground"
           >
-            Clear
+            Tyhjennä
           </button>
         )}
       </div>
       <div
-        className={`relative rounded border ${dragOver ? 'border-primary bg-primary/5' : 'border-border'} transition-colors`}
+        className={`relative rounded ${dragOver ? 'border border-primary bg-primary/5' : ''} transition-colors`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
       >
         <textarea
-          className="textarea-box w-full min-h-[80px] rounded border-0 px-3 py-2 text-sm resize-y"
+          className="textarea-box w-full min-h-[80px] rounded px-3 py-2 text-sm resize-y"
           value={value}
           onChange={handleTextChange}
           placeholder="Kirjoita tai liitä tekstiä, tai pudota tiedosto..."
