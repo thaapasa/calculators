@@ -54,8 +54,13 @@ export function CryptographyPage() {
     >
       <Item name="Syöte">
         <textarea
-          className="input-inline flex-1 min-h-[40px] resize-none"
-          onChange={inputChanged}
+          className="input-inline flex-1 resize-none overflow-hidden"
+          rows={1}
+          onChange={e => {
+            e.target.style.height = 'auto';
+            e.target.style.height = e.target.scrollHeight + 'px';
+            inputChanged(e);
+          }}
           name="input"
         />
       </Item>

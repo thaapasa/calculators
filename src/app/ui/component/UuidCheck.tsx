@@ -16,7 +16,7 @@ export function UuidCheck({ input: inputFromProps }: { input?: string }) {
 
   return (
     <>
-      <div className="w-full">
+      <div className="mx-3">
         <label className="text-xs text-muted">Tarkista UUID</label>
         <div className="flex items-center rounded border border-border bg-background px-3 py-2">
           <input
@@ -43,7 +43,7 @@ function Uuid7Info({ input }: { input: string }) {
   const time = moment(epochMillis);
   return (
     <>
-      <div className="w-full mt-2">
+      <div className="mx-3 mt-2">
         <label className="text-xs text-muted">Aikaleima (ms)</label>
         <input
           className="w-full rounded border border-border bg-background px-3 py-2"
@@ -51,7 +51,7 @@ function Uuid7Info({ input }: { input: string }) {
           readOnly
         />
       </div>
-      <div className="w-full mt-2">
+      <div className="mx-3 mt-2">
         <label className="text-xs text-muted">Aika</label>
         <input
           className="w-full rounded border border-border bg-background px-3 py-2"

@@ -24,7 +24,7 @@
     @apply text-foreground antialiased;
   }
   body {
-    @apply bg-background font-sans text-base leading-relaxed m-0;
+    @apply bg-background font-sans text-sm leading-relaxed m-0;
   }
   a {
     @apply text-primary hover:text-primary-dark;
@@ -38,7 +38,7 @@
 @layer components {
   /* Underline input for inline calculator fields */
   .input-inline {
-    @apply border-b border-border bg-transparent outline-none py-1 text-sm
+    @apply border-0 border-b border-border bg-transparent outline-none py-1 text-sm
       focus:border-primary transition-colors placeholder:text-muted-foreground;
   }
   /* Bordered input for standalone fields */

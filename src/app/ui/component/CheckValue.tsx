@@ -68,11 +68,11 @@ export function CheckValue({
   const widthClass = width ? `w-[${width}]` : 'flex-1';
 
   return (
-    <Item className="h-12" name={name} valueClassName="top">
+    <Item name={name} valueClassName="top">
       {generateFn ? (
         <GenerateButton onClick={generate} title="Luo uusi" />
       ) : (
-        <div className="w-12 h-12" />
+        <div className="w-9 shrink-0" />
       )}
       <input
         type="text"

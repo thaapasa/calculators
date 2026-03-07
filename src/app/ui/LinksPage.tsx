@@ -62,14 +62,14 @@ export function LinksPage() {
           onChange={e => setLink(e.target.value)}
         />
       </Item>
-      <ul className="list-none p-0">
+      <ul className="list-none p-0 -mb-4">
         <li className="flex items-center px-4 py-2">
           <button onClick={addLink} className="mr-3 text-foreground/60 hover:text-foreground">
             <FilePlus className="h-5 w-5" />
           </button>
           <Link href={validatedLink} />
         </li>
-        <Separator />
+        <Separator className="my-2" />
         {storedLinks.map(l => (
           <li key={l} className="flex items-center px-4 py-2">
             <button

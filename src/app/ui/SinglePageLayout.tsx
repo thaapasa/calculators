@@ -13,15 +13,15 @@ import { TimePage } from './TimePage';
 export function SinglePageLayout() {
   return (
     <>
-      <div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 items-start">
         <TimePage />
         <IdentifiersPage />
       </div>
-      <div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 items-start">
         <ColorsPage />
         <PixelDensityPage />
       </div>
-      <div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 items-start">
         <NumbersPage />
         <ByteSizesPage />
       </div>

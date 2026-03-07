@@ -239,21 +239,23 @@ export function ColorsPage() {
       />
       {colorList.length > 0 ? (
         <>
-          <Separator />
-          {colorList.map((c, i) => (
-            <Badge
-              key={i}
-              className="m-2 cursor-pointer"
-              onDelete={() => removeColor(i)}
-              onClick={() => setAllFromHex(c.hex)}
-            >
-              <span
-                className="inline-block w-4 h-4 rounded-full mr-1"
-                style={{ backgroundColor: c.hex }}
-              />
-              {c.name}
-            </Badge>
-          ))}
+          <Separator className="my-4" />
+          <div className="mx-3 -mb-3">
+            {colorList.map((c, i) => (
+              <Badge
+                key={i}
+                className="m-1 px-3 py-1 cursor-pointer"
+                onDelete={() => removeColor(i)}
+                onClick={() => setAllFromHex(c.hex)}
+              >
+                <span
+                  className="inline-block w-4 h-4 rounded-full mr-1"
+                  style={{ backgroundColor: c.hex }}
+                />
+                {c.name}
+              </Badge>
+            ))}
+          </div>
         </>
       ) : null}
     </HalfSection>
@@ -271,7 +273,7 @@ const HSLSlider = ({
   value: number;
   onChange: (v: number) => void;
 }) => (
-  <Item className="mt-4 [&>.grow]:flex-col" name={texts[hsl]}>
+  <Item className="mt-4 [&>.grow]:flex-col [&>.grow]:gap-2" name={texts[hsl]}>
     <ColorBar colors={colorBar} />
     <Slider value={value} min={0} max={HSLMaxValue} step={1} onValueChange={onChange} />
   </Item>

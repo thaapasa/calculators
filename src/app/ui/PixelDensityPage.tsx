@@ -79,17 +79,7 @@ export function PixelDensityPage() {
       subtitle={densities[selected].name}
       image="/img/header-bytesize.jpg"
     >
-      <Item>
-        <FlexRow className="items-center pb-1">
-          <div className="w-[5em] font-medium" />
-          <div className="w-[3em] text-muted text-[0.85em]" />
-          <div className="flex-1 text-[0.85em] text-muted">Leveys</div>
-          <div className="flex-1 text-[0.85em] text-muted">Korkeus</div>
-        </FlexRow>
-      </Item>
-      <div className="px-4 pt-3 pb-1 text-[0.8em] font-semibold uppercase text-muted-foreground">
-        Android
-      </div>
+      <PlatformHeader title="Android" />
       {androidKeys.map(k => (
         <DensityRow
           key={k}
@@ -102,9 +92,7 @@ export function PixelDensityPage() {
           onFocus={selectSrc}
         />
       ))}
-      <div className="px-4 pt-3 pb-1 text-[0.8em] font-semibold uppercase text-muted-foreground">
-        iOS
-      </div>
+      <PlatformHeader title="iOS" />
       {iosKeys.map(k => (
         <DensityRow
           key={k}
@@ -118,6 +106,22 @@ export function PixelDensityPage() {
         />
       ))}
     </HalfSection>
+  );
+}
+
+function PlatformHeader({ title }: { title: string }) {
+  return (
+    <Item>
+      <FlexRow className="items-center pt-2 pb-1">
+        <div className="w-[5em] shrink-0 text-[0.8em] font-semibold uppercase text-muted-foreground">
+          {title}
+        </div>
+        <div className="w-[3em] shrink-0" />
+        <div className="flex-1 min-w-0 text-[0.85em] text-muted">Leveys</div>
+        <div className="flex-1 min-w-0 text-[0.85em] text-muted">Korkeus</div>
+        <div className="w-[25px] shrink-0" />
+      </FlexRow>
+    </Item>
   );
 }
 
@@ -141,26 +145,26 @@ function DensityRow({
   return (
     <Item>
       <FlexRow className="items-center my-1">
-        <div className="w-[5em] font-medium">{info.name}</div>
-        <div className="w-[3em] text-muted text-[0.85em]">{info.scale}×</div>
+        <div className="w-[5em] shrink-0 font-medium">{info.name}</div>
+        <div className="w-[3em] shrink-0 text-muted text-[0.85em]">{info.scale}×</div>
         <input
-          className="input-inline flex-1"
+          className="input-inline flex-1 min-w-0 w-[5em]"
           name={densityKey}
           placeholder="width"
           value={widthValue}
           onChange={onWidthChange}
           onFocus={onFocus}
         />
-        <span className="mx-2 text-black/40">×</span>
+        <span className="mx-1 text-black/40">×</span>
         <input
-          className="input-inline flex-1"
+          className="input-inline flex-1 min-w-0 w-[5em]"
           name={densityKey}
           placeholder="height"
           value={heightValue}
           onChange={onHeightChange}
           onFocus={onFocus}
         />
-        <div className="w-[25px] text-right pr-2 ml-2">px</div>
+        <div className="w-[25px] shrink-0 text-right pr-2 ml-1">px</div>
       </FlexRow>
     </Item>
   );

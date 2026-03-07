@@ -52,13 +52,7 @@ export function HalfSection({
   ...props
 }: HalfSectionProps & { children: React.ReactNode }) {
   return (
-    <Section
-      className={cn(
-        'min-[63em]:w-[29em] min-[63em]:inline-block min-[63em]:align-top min-[63em]:mx-4 min-[63em]:first:ml-0 min-[63em]:last:mr-0',
-        className,
-      )}
-      {...props}
-    >
+    <Section className={className} {...props}>
       {children}
     </Section>
   );

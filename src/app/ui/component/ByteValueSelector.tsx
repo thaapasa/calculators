@@ -58,7 +58,7 @@ export function ByteValueSelector({
       setActiveSource(src);
       if (src !== 'hex') setHex(toHexComp(val));
       if (src !== 'dec') setDec(toDecValue(val));
-      if (src !== 'slider') setSlider(toSliderValue(val));
+      setSlider(toSliderValue(val));
       if (onValue && src !== 'parent') {
         onValue(val);
       }
@@ -94,10 +94,10 @@ export function ByteValueSelector({
   );
 
   const content = (
-    <div className="flex justify-start items-center m-3">
-      <div className="w-full">
-        <div className="flex justify-start items-center m-3">
-          <div className="w-[2.8em] mr-4">
+    <div className="flex justify-start items-center mx-3 mb-6">
+      <div>
+        <div className="flex justify-start items-center gap-4">
+          <div className="w-[2.8em]">
             {floatingLabel && <label className="text-xs text-muted">{floatingLabel}</label>}
             <input
               className="w-full border-b border-border bg-transparent outline-none"
@@ -107,7 +107,7 @@ export function ByteValueSelector({
               onChange={onHexChange}
             />
           </div>
-          <div className="w-[2.8em] mr-4">
+          <div className="w-[2.8em]">
             {floatingLabel && <label className="text-xs text-muted">{floatingLabel}</label>}
             <input
               className="w-full border-b border-border bg-transparent outline-none"
@@ -119,8 +119,8 @@ export function ByteValueSelector({
             />
           </div>
         </div>
-        <div className="flex justify-start items-center m-3">
-          <div className="w-[6em] mr-4">
+        <div className="flex justify-start items-center mt-1">
+          <div className="w-[6em]">
             <input
               className="w-full border-b border-border bg-transparent outline-none"
               readOnly
@@ -129,7 +129,7 @@ export function ByteValueSelector({
           </div>
         </div>
       </div>
-      <div className={cn('w-full', floatingLabel && 'mt-[18px]')}>
+      <div className={cn('flex-1 ml-4', floatingLabel && 'mt-4.5')}>
         {topContent}
         <Slider value={slider} max={255} min={0} step={1} onValueChange={onSliderChange} />
       </div>

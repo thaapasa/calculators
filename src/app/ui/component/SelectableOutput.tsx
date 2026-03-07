@@ -66,7 +66,7 @@ export const SelectableOutput = React.forwardRef<SelectableOutputHandle, Selecta
       <Item
         className="[&>.w-32]:mt-[1.2em]"
         name={
-          <>
+          <span className="inline-flex items-center">
             <input
               type="checkbox"
               name={type + '-upper-case'}
@@ -74,7 +74,7 @@ export const SelectableOutput = React.forwardRef<SelectableOutputHandle, Selecta
               className="h-4 w-4 mr-1"
             />
             <Type className="h-5 w-5 text-secondary" />
-          </>
+          </span>
         }
         valueClassName="top"
       >

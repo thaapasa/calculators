@@ -13,7 +13,7 @@ export function CalculatorLayout() {
         <LastValue />
       </TopBar>
       {drawerOpen ? <NavigationDrawer onClose={() => setDrawerOpen(false)} /> : null}
-      <div className="relative z-0 max-w-[60em] mx-auto mt-14 pt-px text-center">
+      <div className="relative z-0 max-w-[960px] mx-auto mt-14 pt-px text-center">
         <Outlet />
       </div>
     </div>

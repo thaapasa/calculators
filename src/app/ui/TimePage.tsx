@@ -339,11 +339,11 @@ export function TimePage() {
         />
       </Item>
       <Item className="mt-2" name="Nimipäivä">
-        <textarea
-          className="input-inline ml-1 flex-1 resize-none"
+        <input
+          className="input-inline ml-1 flex-1"
           name="nameDay"
           value={vals.nameDay}
-          onFocus={focusChanged as any}
+          onFocus={focusChanged}
           readOnly
         />
       </Item>

@@ -1,5 +1,4 @@
 import { Button } from 'components/ui/button';
-import { Card, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import { Sheet } from 'components/ui/sheet';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -25,18 +24,14 @@ export function NavigationDrawer({ onClose }: NavigationProps) {
 
   return (
     <Sheet open onClose={onClose} side="left">
-      <FlexColumn className="w-[290px]">
-        <Card className="rounded-none border-0 shadow-none">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <Logo />
-              <div>
-                <CardTitle>Laskurit</CardTitle>
-                <CardDescription>v. {version}</CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
+      <FlexColumn>
+        <div className="flex items-center gap-3 p-6">
+          <Logo />
+          <div>
+            <div className="font-semibold leading-none tracking-tight">Laskurit</div>
+            <div className="text-sm text-muted">v. {version}</div>
+          </div>
+        </div>
         <Button variant="ghost" className="w-full justify-start rounded-none" onClick={goTo('/')}>
           Kaikki
         </Button>

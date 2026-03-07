@@ -84,15 +84,12 @@ export class AutoComplete<T> extends React.Component<AutoCompleteProps<T>, AutoC
   };
 
   private renderContainer = ({ containerProps, children }: RenderSuggestionsContainerParams) => {
-    const { key, ...rest } = containerProps as any;
+    const { key, style: _style, className: _cls, ...rest } = containerProps as any;
     return (
       <div
         key={key}
         {...rest}
-        className={cn(
-          'absolute z-10 pr-8 rounded-md border border-border bg-surface shadow-md',
-          (rest as any).className,
-        )}
+        className="absolute left-0 right-0 z-10 rounded-md border border-border bg-surface shadow-md empty:hidden [&_ul]:list-none [&_ul]:m-0 [&_ul]:p-0 [&_li]:px-3 [&_li]:py-2 [&_li]:cursor-pointer [&_li:hover]:bg-background"
       >
         {children}
       </div>
@@ -100,17 +97,14 @@ export class AutoComplete<T> extends React.Component<AutoCompleteProps<T>, AutoC
   };
 
   private renderInput = ({ size, color, ...props }: any) => {
-    const { onChange, defaultValue, ref, key, ...other } = props;
+    const { onChange, defaultValue, ref, key, style: _style, className: _cls, ...other } = props;
 
     return (
       <input
         key={key}
         {...other}
         name={this.props.name}
-        className={cn(
-          'border-b border-border bg-transparent outline-none py-1',
-          this.props.fullWidth && 'w-full',
-        )}
+        className={cn('input-inline', this.props.fullWidth && 'w-full')}
         placeholder={this.props.placeholder}
         type="text"
         ref={ref}
