@@ -20,7 +20,7 @@ function toCompactJSON(s: string): string {
 
 export const jsonPrettyOp: OperationDef = {
   id: 'json-pretty',
-  name: 'JSON muotoiltu',
+  name: 'JSON pretty',
   category: 'format',
   defaultParams: { indent: 2 },
   process: async (input, params) => {
@@ -31,7 +31,7 @@ export const jsonPrettyOp: OperationDef = {
 
 export const jsonCompactOp: OperationDef = {
   id: 'json-compact',
-  name: 'JSON tiivis',
+  name: 'JSON compact',
   category: 'format',
   process: async input => textData(toCompactJSON(toText(input))),
 };

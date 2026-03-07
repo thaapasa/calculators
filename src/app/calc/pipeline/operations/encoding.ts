@@ -1,7 +1,7 @@
 import * as base64 from 'app/calc/base64';
 import { fromHexString, toHexString } from 'app/util/strings';
 
-import { OperationDef, textData, toText } from '../types';
+import { binaryData, OperationDef, textData, toBinary, toText } from '../types';
 
 export const base64EncodeOp: OperationDef = {
   id: 'base64-encode',
@@ -15,6 +15,36 @@ export const base64DecodeOp: OperationDef = {
   name: 'Base64 decode',
   category: 'encoding',
   process: async input => textData(base64.decode(toText(input))),
+};
+
+/** Binary-aware Base64 encode: Uint8Array → base64 string */
+export const base64BinaryEncodeOp: OperationDef = {
+  id: 'base64-binary-encode',
+  name: 'Base64 encode (binary)',
+  category: 'encoding',
+  process: async input => {
+    const bytes = toBinary(input);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return textData(btoa(binary));
+  },
+};
+
+/** Binary-aware Base64 decode: base64 string → Uint8Array */
+export const base64BinaryDecodeOp: OperationDef = {
+  id: 'base64-binary-decode',
+  name: 'Base64 decode (binary)',
+  category: 'encoding',
+  process: async input => {
+    const binary = atob(toText(input).trim());
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return binaryData(bytes);
+  },
 };
 
 export const urlEncodeOp: OperationDef = {
@@ -33,23 +63,47 @@ export const urlDecodeOp: OperationDef = {
 
 export const hexEncodeOp: OperationDef = {
   id: 'hex-encode',
-  name: 'Hex-merkkijono',
+  name: 'Hex encode',
   category: 'encoding',
   process: async input => textData(toHexString(toText(input))),
 };
 
 export const hexDecodeOp: OperationDef = {
   id: 'hex-decode',
-  name: 'Hex-merkkijonosta',
+  name: 'Hex decode',
   category: 'encoding',
   process: async input => textData(fromHexString(toText(input))),
+};
+
+/** Decode JWT token payload to JSON */
+export const jwtDecodeOp: OperationDef = {
+  id: 'jwt-decode',
+  name: 'JWT decode',
+  category: 'encoding',
+  process: async input => {
+    const token = toText(input).trim();
+    const parts = token.split('.');
+    if (parts.length !== 3) throw new Error('Invalid JWT (expected 3 parts)');
+    const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = payload + '='.repeat((4 - (payload.length % 4)) % 4);
+    const decoded = atob(padded);
+    // Decode as UTF-8 for non-ASCII content
+    const bytes = new Uint8Array(decoded.length);
+    for (let i = 0; i < decoded.length; i++) {
+      bytes[i] = decoded.charCodeAt(i);
+    }
+    return textData(new TextDecoder().decode(bytes));
+  },
 };
 
 export const encodingOperations: OperationDef[] = [
   base64EncodeOp,
   base64DecodeOp,
+  base64BinaryEncodeOp,
+  base64BinaryDecodeOp,
   urlEncodeOp,
   urlDecodeOp,
   hexEncodeOp,
   hexDecodeOp,
+  jwtDecodeOp,
 ];

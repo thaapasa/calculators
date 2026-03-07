@@ -39,12 +39,12 @@ export function setOperationConfig(id: string, configComponent: ComponentType<St
 
 /** Category metadata for UI grouping */
 export const categories = [
-  { id: 'display', label: 'Näytä' },
-  { id: 'encoding', label: 'Koodaus' },
-  { id: 'text', label: 'Teksti' },
-  { id: 'format', label: 'Muotoilu' },
+  { id: 'display', label: 'Display' },
+  { id: 'encoding', label: 'Encoding' },
+  { id: 'text', label: 'Text' },
+  { id: 'format', label: 'Format' },
   { id: 'hash', label: 'Hash' },
-  { id: 'compress', label: 'Pakkaus' },
+  { id: 'compress', label: 'Compression' },
 ] as const;
 
 /** Get operations grouped by category */

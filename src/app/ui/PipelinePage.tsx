@@ -9,18 +9,34 @@ import { PipelineInput } from './component/PipelineInput';
 import { PipelineOutput } from './component/PipelineOutput';
 import { PipelineStepCard } from './component/PipelineStepCard';
 import Section from './component/Section';
-import { HexDumpBytesConfig, JsonIndentConfig, RotNConfig } from './component/StepConfigs';
-import { DownloadRenderer, HexDumpRenderer, ShowTextRenderer } from './component/StepRenderers';
+import {
+  HexDumpBytesConfig,
+  JsonIndentConfig,
+  LineSortConfig,
+  RotNConfig,
+} from './component/StepConfigs';
+import {
+  DownloadRenderer,
+  HexDumpRenderer,
+  ImageRenderer,
+  ShowTextRenderer,
+  StatsRenderer,
+  SvgRenderer,
+} from './component/StepRenderers';
 
 // Wire render components to display operations
 setOperationRenderer('show-text', ShowTextRenderer);
 setOperationRenderer('hex-dump', HexDumpRenderer);
 setOperationRenderer('download', DownloadRenderer);
+setOperationRenderer('stats', StatsRenderer);
+setOperationRenderer('show-image', ImageRenderer);
+setOperationRenderer('show-svg', SvgRenderer);
 
 // Wire config components to configurable operations
 setOperationConfig('rot13', RotNConfig);
 setOperationConfig('json-pretty', JsonIndentConfig);
 setOperationConfig('hex-dump', HexDumpBytesConfig);
+setOperationConfig('line-sort', LineSortConfig);
 
 export function PipelinePage() {
   const pipeline = usePipeline();

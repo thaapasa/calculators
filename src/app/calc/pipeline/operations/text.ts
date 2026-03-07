@@ -16,23 +16,67 @@ export const rot13Op: OperationDef = {
 
 export const uppercaseOp: OperationDef = {
   id: 'uppercase',
-  name: 'Isot kirjaimet',
+  name: 'Uppercase',
   category: 'text',
   process: async input => textData(toUpperCase(toText(input))),
 };
 
 export const lowercaseOp: OperationDef = {
   id: 'lowercase',
-  name: 'Pienet kirjaimet',
+  name: 'Lowercase',
   category: 'text',
   process: async input => textData(toLowerCase(toText(input))),
 };
 
 export const reverseOp: OperationDef = {
   id: 'reverse',
-  name: 'Käänteinen',
+  name: 'Reverse',
   category: 'text',
   process: async input => textData(reverse(toText(input))),
 };
 
-export const textOperations: OperationDef[] = [rot13Op, uppercaseOp, lowercaseOp, reverseOp];
+export const lineSortOp: OperationDef = {
+  id: 'line-sort',
+  name: 'Sort lines',
+  category: 'text',
+  defaultParams: { direction: 'asc' },
+  process: async (input, params) => {
+    const lines = toText(input).split('\n');
+    lines.sort((a, b) => a.localeCompare(b));
+    if (params?.direction === 'desc') lines.reverse();
+    return textData(lines.join('\n'));
+  },
+};
+
+export const uniqueLinesOp: OperationDef = {
+  id: 'unique-lines',
+  name: 'Unique lines',
+  category: 'text',
+  process: async input => {
+    const lines = toText(input).split('\n');
+    return textData(Array.from(new Set(lines)).join('\n'));
+  },
+};
+
+export const trimOp: OperationDef = {
+  id: 'trim',
+  name: 'Trim',
+  category: 'text',
+  process: async input =>
+    textData(
+      toText(input)
+        .split('\n')
+        .map(line => line.trim())
+        .join('\n'),
+    ),
+};
+
+export const textOperations: OperationDef[] = [
+  rot13Op,
+  uppercaseOp,
+  lowercaseOp,
+  reverseOp,
+  lineSortOp,
+  uniqueLinesOp,
+  trimOp,
+];

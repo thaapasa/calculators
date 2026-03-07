@@ -26,7 +26,7 @@ export function JsonIndentConfig({ params, onChange }: StepConfigProps) {
   const indent = params.indent ?? 2;
   return (
     <label className="flex items-center gap-1 text-xs text-muted-foreground">
-      Sisennys
+      Indent
       <select
         value={String(indent)}
         onChange={e =>
@@ -47,7 +47,7 @@ export function HexDumpBytesConfig({ params, onChange }: StepConfigProps) {
   const bytesPerLine = typeof params.bytesPerLine === 'number' ? params.bytesPerLine : 16;
   return (
     <label className="flex items-center gap-1 text-xs text-muted-foreground">
-      Tavua/rivi
+      Bytes/line
       <select
         value={String(bytesPerLine)}
         onChange={e => onChange({ ...params, bytesPerLine: Number(e.target.value) })}
@@ -56,6 +56,23 @@ export function HexDumpBytesConfig({ params, onChange }: StepConfigProps) {
         <option value="8">8</option>
         <option value="16">16</option>
         <option value="32">32</option>
+      </select>
+    </label>
+  );
+}
+
+/** Line sort direction config */
+export function LineSortConfig({ params, onChange }: StepConfigProps) {
+  const direction = params.direction === 'desc' ? 'desc' : 'asc';
+  return (
+    <label className="flex items-center gap-1 text-xs text-muted-foreground">
+      <select
+        value={direction}
+        onChange={e => onChange({ ...params, direction: e.target.value })}
+        className="rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground"
+      >
+        <option value="asc">A → Z</option>
+        <option value="desc">Z → A</option>
       </select>
     </label>
   );

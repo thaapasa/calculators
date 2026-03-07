@@ -10,11 +10,15 @@ interface PipelineInputProps {
 export function PipelineInput({ value, onChange, onDataChange }: PipelineInputProps) {
   const [dragOver, setDragOver] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [url, setUrl] = useState('');
+  const [urlLoading, setUrlLoading] = useState(false);
+  const [urlError, setUrlError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleTextChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setFileName(null);
+      setUrlError(null);
       onChange(e.target.value);
     },
     [onChange],
@@ -23,6 +27,7 @@ export function PipelineInput({ value, onChange, onDataChange }: PipelineInputPr
   const handleFile = useCallback(
     (file: File) => {
       setFileName(file.name);
+      setUrlError(null);
       const reader = new FileReader();
       reader.onload = () => {
         const bytes = new Uint8Array(reader.result as ArrayBuffer);
@@ -58,8 +63,46 @@ export function PipelineInput({ value, onChange, onDataChange }: PipelineInputPr
     [handleFile],
   );
 
+  const handleFetchUrl = useCallback(async () => {
+    const trimmed = url.trim();
+    if (!trimmed) return;
+    setUrlLoading(true);
+    setUrlError(null);
+    setFileName(null);
+    try {
+      const response = await fetch(trimmed);
+      if (!response.ok) throw new Error(`HTTP ${response.status} ${response.statusText}`);
+      const buffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      // Try to decode as text; if it looks like valid UTF-8 text, use text mode
+      try {
+        const text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+        onChange(text);
+      } catch {
+        onDataChange(binaryData(bytes));
+      }
+      setFileName(trimmed);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setUrlError(msg.includes('Failed to fetch') ? 'Haku epäonnistui (CORS?)' : msg);
+    } finally {
+      setUrlLoading(false);
+    }
+  }, [url, onChange, onDataChange]);
+
+  const handleUrlKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        void handleFetchUrl();
+      }
+    },
+    [handleFetchUrl],
+  );
+
   const handleClear = useCallback(() => {
     setFileName(null);
+    setUrlError(null);
     onChange('');
     onDataChange(textData(''));
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -97,12 +140,31 @@ export function PipelineInput({ value, onChange, onDataChange }: PipelineInputPr
           </div>
         )}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <label className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
           <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileInput} />
           📁 Valitse tiedosto
         </label>
-        <span className="text-xs text-muted-foreground">
+        <span className="text-xs text-muted-foreground">|</span>
+        <div className="flex items-center gap-1">
+          <input
+            type="text"
+            value={url}
+            onChange={e => setUrl(e.target.value)}
+            onKeyDown={handleUrlKeyDown}
+            placeholder="URL"
+            className="w-48 rounded border border-border bg-surface px-2 py-0.5 text-xs text-foreground placeholder:text-muted-foreground"
+          />
+          <button
+            onClick={() => void handleFetchUrl()}
+            disabled={urlLoading || !url.trim()}
+            className="rounded border border-border px-2 py-0.5 text-xs text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors"
+          >
+            {urlLoading ? '...' : 'Hae'}
+          </button>
+        </div>
+        {urlError && <span className="text-xs text-red-500">{urlError}</span>}
+        <span className="text-xs text-muted-foreground ml-auto">
           {value.length > 0 && `${value.length} merkkiä`}
         </span>
       </div>

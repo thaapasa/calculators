@@ -30,7 +30,7 @@ async function transformStream(
 
 export const gzipCompressOp: OperationDef = {
   id: 'gzip-compress',
-  name: 'Gzip-pakkaus',
+  name: 'Gzip compress',
   category: 'compress',
   process: async input =>
     binaryData(await transformStream(toBinary(input), new CompressionStream('gzip'))),
@@ -38,10 +38,31 @@ export const gzipCompressOp: OperationDef = {
 
 export const gzipDecompressOp: OperationDef = {
   id: 'gzip-decompress',
-  name: 'Gzip-purku',
+  name: 'Gzip decompress',
   category: 'compress',
   process: async input =>
     binaryData(await transformStream(toBinary(input), new DecompressionStream('gzip'))),
 };
 
-export const compressOperations: OperationDef[] = [gzipCompressOp, gzipDecompressOp];
+export const deflateCompressOp: OperationDef = {
+  id: 'deflate-compress',
+  name: 'Deflate compress',
+  category: 'compress',
+  process: async input =>
+    binaryData(await transformStream(toBinary(input), new CompressionStream('deflate'))),
+};
+
+export const deflateDecompressOp: OperationDef = {
+  id: 'deflate-decompress',
+  name: 'Deflate decompress',
+  category: 'compress',
+  process: async input =>
+    binaryData(await transformStream(toBinary(input), new DecompressionStream('deflate'))),
+};
+
+export const compressOperations: OperationDef[] = [
+  gzipCompressOp,
+  gzipDecompressOp,
+  deflateCompressOp,
+  deflateDecompressOp,
+];

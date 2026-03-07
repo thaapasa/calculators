@@ -29,7 +29,7 @@ export function toRawHex(bytes: Uint8Array): string {
 
 export const showTextOp: OperationDef = {
   id: 'show-text',
-  name: 'Näytä teksti',
+  name: 'Show text',
   category: 'display',
   description: 'Näytä data tekstinä',
   process: async input => input,
@@ -46,10 +46,39 @@ export const hexDumpOp: OperationDef = {
 
 export const downloadOp: OperationDef = {
   id: 'download',
-  name: 'Lataa tiedosto',
+  name: 'Download',
   category: 'display',
   description: 'Lataa data tiedostona',
   process: async input => input,
 };
 
-export const displayOperations: OperationDef[] = [showTextOp, hexDumpOp, downloadOp];
+export const statsOp: OperationDef = {
+  id: 'stats',
+  name: 'Statistics',
+  category: 'display',
+  description: 'Näytä rivien, sanojen ja merkkien määrä',
+  process: async input => input,
+};
+
+export const showImageOp: OperationDef = {
+  id: 'show-image',
+  name: 'Show image',
+  category: 'display',
+  process: async input => input,
+};
+
+export const showSvgOp: OperationDef = {
+  id: 'show-svg',
+  name: 'Show SVG',
+  category: 'display',
+  process: async input => input,
+};
+
+export const displayOperations: OperationDef[] = [
+  showTextOp,
+  hexDumpOp,
+  showImageOp,
+  showSvgOp,
+  downloadOp,
+  statsOp,
+];
