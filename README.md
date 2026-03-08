@@ -16,9 +16,15 @@ so you can safely calculate password hashes and other sensitive values.
 - **Colors** — color conversions and analysis
 - **Byte sizes** — byte/KB/MB/GB conversions
 - **Links** — URL encoding/decoding and manipulation
-- **Text conversions** — Base64, ROT13, XML/JSON conversion
+- **Data pipeline** — chainable text/binary operations: encoding (Base64, hex, URL, JWT decode),
+  text transforms (ROT-N, case, sort, trim, unique), formatting (JSON, XML), hashing (MD5, SHA-\*),
+  compression (gzip, deflate), and display (hex dump, image/SVG preview, statistics).
+  Supports text input, file drag-and-drop, and URL fetch. Operations are drag-and-drop reorderable
+  with per-operation configuration.
 - **Cryptography** — MD5, SHA-1, SHA-256, SHA-512 hashing
+- **Pixel density** — DPI/PPI calculations
 - **UUID** — validation and UUID v7 timestamp parsing
+- **Dark mode** — system, light, and dark theme support
 
 ## Getting Started
 
@@ -42,9 +48,10 @@ yarn deploy         # Build and deploy to production
 ## Tech Stack
 
 - [React](https://react.dev/) 19 + [TypeScript](https://www.typescriptlang.org/) 5
-- [Material-UI](https://mui.com/) 7
+- [Tailwind CSS](https://tailwindcss.com/) 4 + [shadcn/ui](https://ui.shadcn.com/) components
 - [Vite](https://vite.dev/) 7 (build & dev server)
 - [Vitest](https://vitest.dev/) (testing)
+- [@dnd-kit](https://dndkit.com/) (drag-and-drop)
 
 ## License
 
