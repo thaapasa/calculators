@@ -155,7 +155,7 @@ function DensityRow({
           onChange={onWidthChange}
           onFocus={onFocus}
         />
-        <span className="mx-1 text-black/40">×</span>
+        <span className="mx-1 text-foreground/40">×</span>
         <input
           className="input-inline flex-1 min-w-0 w-[5em]"
           name={densityKey}

@@ -132,7 +132,7 @@ export function ColorsPage() {
       subtitle={subtitle}
       image="/img/header-colors.jpg"
       avatar={
-        <Avatar className="border border-[#bbbbbb]">
+        <Avatar className="border border-border">
           <div style={{ backgroundColor: validatedColor, width: '100%', height: '100%' }}>
             &nbsp;
           </div>

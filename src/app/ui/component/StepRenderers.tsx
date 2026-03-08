@@ -20,7 +20,7 @@ export function ShowTextRenderer({ input }: StepRenderProps) {
         >
           <Clipboard size={14} />
         </button>
-        <pre className="flex-1 min-w-0 max-h-50 overflow-auto rounded bg-black/5 px-2 py-1 text-xs font-mono whitespace-pre-wrap break-all">
+        <pre className="flex-1 min-w-0 max-h-50 overflow-auto rounded bg-foreground/5 px-2 py-1 text-xs font-mono whitespace-pre-wrap break-all">
           {text}
         </pre>
       </div>
@@ -45,7 +45,7 @@ export function HexDumpRenderer({ input, params }: StepRenderProps) {
         >
           <Clipboard size={14} />
         </button>
-        <pre className="flex-1 min-w-0 max-h-50 overflow-auto rounded bg-black/5 px-2 py-1 text-xs font-mono whitespace-pre">
+        <pre className="flex-1 min-w-0 max-h-50 overflow-auto rounded bg-foreground/5 px-2 py-1 text-xs font-mono whitespace-pre">
           {formatted}
         </pre>
       </div>
@@ -145,7 +145,7 @@ export function SvgRenderer({ input }: StepRenderProps) {
 
   return (
     <div
-      className="mt-2 max-w-full max-h-80 overflow-auto rounded bg-white p-2"
+      className="mt-2 max-w-full max-h-80 overflow-auto rounded bg-surface p-2"
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   );

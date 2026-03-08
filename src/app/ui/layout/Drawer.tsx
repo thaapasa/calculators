@@ -100,7 +100,7 @@ export function NavigationDrawer({ onClose }: NavigationProps) {
         </Button>
         <Flex />
         <div className="p-4 text-[10pt] [&_a]:text-foreground/60">
-          <div className="mt-2 pb-2 border-b border-black/10">
+          <div className="mt-2 pb-2 border-b border-foreground/10">
             Calculator icon made by{' '}
             <a href="https://www.freepik.com/" title="Freepik">
               Freepik
