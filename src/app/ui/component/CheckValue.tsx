@@ -68,7 +68,7 @@ export function CheckValue({
   const widthClass = width ? `w-[${width}]` : 'flex-1';
 
   return (
-    <Item name={name} valueClassName="top">
+    <Item name={name} valueClassName="top" labelWidth="w-28">
       {generateFn ? (
         <GenerateButton onClick={generate} title="Luo uusi" />
       ) : (

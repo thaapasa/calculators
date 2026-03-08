@@ -50,7 +50,7 @@ export function PipelineStepCard({
     >
       <div className="flex items-center gap-2">
         <button
-          className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground p-0.5"
+          className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground p-0.5 touch-none"
           {...attributes}
           {...listeners}
         >

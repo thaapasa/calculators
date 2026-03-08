@@ -64,7 +64,8 @@ export const SelectableOutput = React.forwardRef<SelectableOutputHandle, Selecta
 
     return (
       <Item
-        className="[&>.w-32]:mt-[1.2em]"
+        className="[&>.shrink-0]:mt-[1.2em]"
+        labelWidth="w-16"
         name={
           <span className="inline-flex items-center">
             <input

@@ -157,6 +157,7 @@ export function TimePage() {
       />
     );
   };
+  const labelWidth = 'w-28';
 
   return (
     <HalfSection
@@ -164,7 +165,7 @@ export function TimePage() {
       subtitle={texts.types[reportTarget]}
       image="/img/header-datetime.jpg"
     >
-      <Item className="mt-2" name="Päivä">
+      <Item className="mt-2" name="Päivä" labelWidth={labelWidth}>
         {renderType('date')}
         (
         <input
@@ -178,12 +179,12 @@ export function TimePage() {
         />
         )
       </Item>
-      <Item className="mt-2" name="Kellonaika">
+      <Item className="mt-2" name="Kellonaika" labelWidth={labelWidth}>
         {renderType('hour')}:{renderType('minute')}:{renderType('second')}.
         {renderType('millisecond')}
         {renderType('timeZone')}
       </Item>
-      <Item className="mt-2" name="Viikko">
+      <Item className="mt-2" name="Viikko" labelWidth={labelWidth}>
         <input
           type="text"
           className="input-inline ml-1 w-[4.5em]"
@@ -194,7 +195,7 @@ export function TimePage() {
           onFocus={focusChanged}
         />
       </Item>
-      <Item className="mt-2" name="Nimipäivä">
+      <Item className="mt-2" name="Nimipäivä" labelWidth={labelWidth}>
         <input
           className="input-inline ml-1 flex-1"
           name="nameDay"
@@ -203,21 +204,21 @@ export function TimePage() {
           readOnly
         />
       </Item>
-      <Item className="mt-2" name="Etsi nimipäivä">
+      <Item className="mt-2" name="Etsi nimipäivä" labelWidth={labelWidth}>
         <div className="ml-1 relative w-full">
           <NameDaySearch onSelectNameDay={selectNameDay} />
         </div>
       </Item>
-      <Item className="mt-2" name="Java/JS time">
+      <Item className="mt-2" name="Java/JS time" labelWidth={labelWidth}>
         {renderType('javaTime')}
       </Item>
-      <Item className="mt-2" name="Unixtime">
+      <Item className="mt-2" name="Unixtime" labelWidth={labelWidth}>
         {renderType('unixTime')}
       </Item>
-      <Item className="mt-2" name="ISO-8601">
+      <Item className="mt-2" name="ISO-8601" labelWidth={labelWidth}>
         {renderType('iso8601')}
       </Item>
-      <Item className="mt-2" name="ISO-8601 UTC">
+      <Item className="mt-2" name="ISO-8601 UTC" labelWidth={labelWidth}>
         {renderType('iso8601utc')}
       </Item>
     </HalfSection>

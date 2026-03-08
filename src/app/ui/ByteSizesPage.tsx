@@ -83,8 +83,8 @@ export function ByteSizesPage() {
       <Item name="Tavua">
         <Editor type="byte" value={values.byte} onChange={inputChanged} onFocus={selectSrc} />
       </Item>
-      <Item>
-        <Flex className="first:mr-4">
+      <div className="my-0.5 mx-3 flex">
+        <Flex className="mr-4 min-w-0">
           {leftColumn.map(t => (
             <Editor
               key={t}
@@ -95,7 +95,7 @@ export function ByteSizesPage() {
             />
           ))}
         </Flex>
-        <Flex>
+        <Flex className="min-w-0">
           {rightColumn.map(t => (
             <Editor
               key={t}
@@ -106,7 +106,7 @@ export function ByteSizesPage() {
             />
           ))}
         </Flex>
-      </Item>
+      </div>
     </HalfSection>
   );
 }
@@ -121,7 +121,7 @@ const Editor = (p: {
   return (
     <FlexRow className="my-3 items-center">
       <input
-        className="input-inline flex-1"
+        className="input-inline flex-1 min-w-0"
         name={p.type}
         type="number"
         placeholder={info.name}

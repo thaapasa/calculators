@@ -1,4 +1,12 @@
-import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { setOperationConfig, setOperationRenderer } from 'app/calc/pipeline/registry';
 import { usePipeline } from 'app/util/usePipeline';
@@ -42,6 +50,11 @@ export function PipelinePage() {
   const pipeline = usePipeline();
   const { steps, results, addStep, removeStep, moveStep, updateStepParams } = pipeline;
 
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
+  );
+
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
@@ -66,7 +79,7 @@ export function PipelinePage() {
           onDataChange={pipeline.setInputData}
         />
 
-        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext
             items={steps.map(s => s.instanceId)}
             strategy={verticalListSortingStrategy}

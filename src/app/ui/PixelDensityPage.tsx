@@ -119,7 +119,7 @@ function PlatformHeader({ title }: { title: string }) {
         <div className="w-[3em] shrink-0" />
         <div className="flex-1 min-w-0 text-[0.85em] text-muted">Leveys</div>
         <div className="flex-1 min-w-0 text-[0.85em] text-muted">Korkeus</div>
-        <div className="w-[25px] shrink-0" />
+        <div className="w-6.25 shrink-0" />
       </FlexRow>
     </Item>
   );
@@ -150,7 +150,7 @@ function DensityRow({
         <input
           className="input-inline flex-1 min-w-0 w-[5em]"
           name={densityKey}
-          placeholder="width"
+          placeholder="leveys"
           value={widthValue}
           onChange={onWidthChange}
           onFocus={onFocus}
@@ -159,12 +159,12 @@ function DensityRow({
         <input
           className="input-inline flex-1 min-w-0 w-[5em]"
           name={densityKey}
-          placeholder="height"
+          placeholder="korkeus"
           value={heightValue}
           onChange={onHeightChange}
           onFocus={onFocus}
         />
-        <div className="w-[25px] shrink-0 text-right pr-2 ml-1">px</div>
+        <div className="w-6.25 shrink-0 text-right pr-2 ml-1">px</div>
       </FlexRow>
     </Item>
   );

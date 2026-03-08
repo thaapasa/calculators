@@ -52,7 +52,7 @@ export function CryptographyPage() {
       subtitle={cryptoList.find(c => c.code === selected)?.name ?? ''}
       image="/img/header-cryptography.jpg"
     >
-      <Item name="Syöte">
+      <Item name="Syöte" labelWidth="w-16">
         <textarea
           className="input-inline flex-1 resize-none overflow-hidden"
           rows={1}
