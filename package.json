@@ -31,7 +31,7 @@
     "clsx": "^2.1.1",
     "cross-env": "10.1.0",
     "crypto-browserify": "^3.12.1",
-    "fast-xml-parser": "^5.4.2",
+    "fast-xml-parser": "^5.5.6",
     "intl": "1.2.5",
     "intl-locales-supported": "1.8.12",
     "lucide-react": "^0.577.0",
