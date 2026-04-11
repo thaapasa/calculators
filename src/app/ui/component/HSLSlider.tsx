@@ -1,6 +1,5 @@
 import { HSLKey, HSLMaxValue, RGBValue } from 'app/calc/colors';
 import { Slider } from 'components/ui/slider';
-import React from 'react';
 
 import { ColorBar } from './ColorBar';
 import { Item } from './Item';

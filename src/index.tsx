@@ -1,7 +1,6 @@
 import './index.css';
 
 import { AppRouterProvider } from 'app/ui/Routes';
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { assertDefined, fixConsole } from './app/util/util';

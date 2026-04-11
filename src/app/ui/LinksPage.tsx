@@ -1,6 +1,6 @@
 import { Separator } from 'components/ui/separator';
 import { FilePlus, Trash2 } from 'lucide-react';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import * as store from '../util/store';
 import { isString } from '../util/util';

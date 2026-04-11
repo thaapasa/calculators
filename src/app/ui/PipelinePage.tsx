@@ -10,7 +10,7 @@ import {
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { setOperationConfig, setOperationRenderer } from 'app/calc/pipeline/registry';
 import { usePipeline } from 'app/util/usePipeline';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
 import { OperationPicker } from './component/OperationPicker';
 import { PipelineInput } from './component/PipelineInput';

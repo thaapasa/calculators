@@ -1,7 +1,7 @@
 import { formatHexDump, toRawHex } from 'app/calc/pipeline/operations/display';
 import { StepRenderProps, toBinary, toText } from 'app/calc/pipeline/types';
 import { Clipboard } from 'lucide-react';
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 function copyToClipboard(text: string) {
   void navigator.clipboard.writeText(text);

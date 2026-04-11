@@ -1,5 +1,5 @@
 import { cn } from 'lib/utils';
-import React, { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useState } from 'react';
 
 import * as util from '../../util/util';
 import { Item } from './Item';

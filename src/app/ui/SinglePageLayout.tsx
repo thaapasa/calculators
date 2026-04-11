@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { ByteSizesPage } from './ByteSizesPage';
 import { ColorsPage } from './ColorsPage';
 import { CryptographyPage } from './CryptographyPage';

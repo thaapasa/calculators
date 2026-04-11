@@ -1,6 +1,6 @@
 import { PipelineData, toBinary, toText } from 'app/calc/pipeline/types';
 import { Clipboard } from 'lucide-react';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
 interface PipelineOutputProps {
   data: PipelineData | null;

@@ -1,5 +1,4 @@
 import { StepConfigProps } from 'app/calc/pipeline/types';
-import React from 'react';
 
 /** ROT-N shift amount config (1–25) */
 export function RotNConfig({ params, onChange }: StepConfigProps) {

@@ -1,6 +1,6 @@
 import { rgbToHex, RGBValue } from 'app/calc/colors';
 import { cn } from 'lib/utils';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface ColorBarProps {
   className?: string;

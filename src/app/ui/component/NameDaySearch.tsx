@@ -1,6 +1,5 @@
 import { findNameDayFor, MonthDay } from 'app/util/namedays';
 import { isString } from 'app/util/util';
-import React from 'react';
 
 import { AutoComplete } from './AutoComplete';
 

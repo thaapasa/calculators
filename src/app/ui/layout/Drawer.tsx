@@ -1,6 +1,6 @@
 import { Button } from 'components/ui/button';
 import { Sheet } from 'components/ui/sheet';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { version } from '../../../../package.json';

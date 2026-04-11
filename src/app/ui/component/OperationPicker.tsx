@@ -1,6 +1,6 @@
 import { getOperationsByCategory } from 'app/calc/pipeline/registry';
 import { Plus } from 'lucide-react';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 interface OperationPickerProps {
   onAdd: (operationId: string) => void;
