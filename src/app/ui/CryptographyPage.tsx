@@ -1,3 +1,4 @@
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { hash } from 'app/util/hash';
 import { MaybePromise } from 'app/util/util';
 import md5 from 'md5';
@@ -22,6 +23,7 @@ const cryptoList: CryptoType[] = [
 ];
 
 export function CryptographyPage() {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState(cryptoList[0].code);
   const refsMap = useRef<Record<string, SelectableOutputHandle | null>>({});
 
@@ -48,11 +50,11 @@ export function CryptographyPage() {
 
   return (
     <Section
-      title="Kryptografia"
+      title={t('page.cryptography.title')}
       subtitle={cryptoList.find(c => c.code === selected)?.name ?? ''}
       image="/img/header-cryptography.jpg"
     >
-      <Item name="Syöte" labelWidth="w-16">
+      <Item name={t('page.cryptography.input')} labelWidth="w-16">
         <textarea
           className="input-inline flex-1 resize-none overflow-hidden"
           rows={1}

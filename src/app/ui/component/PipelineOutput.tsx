@@ -1,4 +1,5 @@
 import { PipelineData, toBinary, toText } from 'app/calc/pipeline/types';
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { Clipboard } from 'lucide-react';
 import { useCallback } from 'react';
 
@@ -7,6 +8,7 @@ interface PipelineOutputProps {
 }
 
 export function PipelineOutput({ data }: PipelineOutputProps) {
+  const { t } = useTranslation();
   const text = data ? toText(data) : '';
 
   const handleCopy = useCallback(() => {
@@ -30,11 +32,11 @@ export function PipelineOutput({ data }: PipelineOutputProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium">Tulos</span>
+        <span className="text-sm font-medium">{t('pipeline.output.result')}</span>
         <button
           onClick={handleCopy}
           className="p-1 text-muted-foreground hover:text-foreground"
-          title="Kopioi leikepöydälle"
+          title={t('component.copyToClipboard')}
         >
           <Clipboard size={14} />
         </button>
@@ -42,10 +44,12 @@ export function PipelineOutput({ data }: PipelineOutputProps) {
           onClick={handleDownload}
           className="rounded border border-border px-2 py-0.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
-          ⬇ Lataa
+          ⬇ {t('pipeline.output.download')}
         </button>
         <span className="text-xs text-muted-foreground">
-          {data.type === 'binary' ? `${data.bytes.length} tavua` : `${text.length} merkkiä`}
+          {data.type === 'binary'
+            ? `${data.bytes.length} ${t('pipeline.output.bytes')}`
+            : `${text.length} ${t('pipeline.output.chars')}`}
         </span>
       </div>
       <pre className="min-h-9 max-h-50 overflow-auto rounded border border-border bg-foreground/5 px-3 py-2 text-xs font-mono whitespace-pre-wrap break-all">

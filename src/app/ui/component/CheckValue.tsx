@@ -1,3 +1,4 @@
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { cn } from 'lib/utils';
 import { ChangeEvent, useCallback, useState } from 'react';
 
@@ -26,6 +27,7 @@ export function CheckValue({
   generate: generateFn,
   onValue,
 }: CheckProps) {
+  const { t } = useTranslation();
   const [input, setInput] = useState('');
   const [checkValue, setCheckValue] = useState('');
   const [value, setValue] = useState('');
@@ -70,7 +72,7 @@ export function CheckValue({
   return (
     <Item name={name} valueClassName="top" labelWidth="w-28">
       {generateFn ? (
-        <GenerateButton onClick={generate} title="Luo uusi" />
+        <GenerateButton onClick={generate} title={t('component.generateNew')} />
       ) : (
         <div className="w-9 shrink-0" />
       )}

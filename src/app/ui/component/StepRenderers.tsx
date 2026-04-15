@@ -1,5 +1,6 @@
 import { formatHexDump, toRawHex } from 'app/calc/pipeline/operations/display';
 import { StepRenderProps, toBinary, toText } from 'app/calc/pipeline/types';
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { Clipboard } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 
@@ -9,6 +10,7 @@ function copyToClipboard(text: string) {
 
 /** Renders data as readonly text with copy button */
 export function ShowTextRenderer({ input }: StepRenderProps) {
+  const { t } = useTranslation();
   const text = toText(input);
   return (
     <div className="mt-2 space-y-1">
@@ -16,7 +18,7 @@ export function ShowTextRenderer({ input }: StepRenderProps) {
         <button
           onClick={() => copyToClipboard(text)}
           className="mt-1 p-1 text-muted-foreground hover:text-foreground shrink-0"
-          title="Kopioi leikepöydälle"
+          title={t('component.copyToClipboard')}
         >
           <Clipboard size={14} />
         </button>
@@ -30,6 +32,7 @@ export function ShowTextRenderer({ input }: StepRenderProps) {
 
 /** Renders hexdump -C view, copies raw hex string */
 export function HexDumpRenderer({ input, params }: StepRenderProps) {
+  const { t } = useTranslation();
   const bytes = toBinary(input);
   const bytesPerLine = typeof params?.bytesPerLine === 'number' ? params.bytesPerLine : 16;
   const formatted = formatHexDump(bytes, bytesPerLine);
@@ -41,7 +44,7 @@ export function HexDumpRenderer({ input, params }: StepRenderProps) {
         <button
           onClick={() => copyToClipboard(rawHex)}
           className="mt-1 p-1 text-muted-foreground hover:text-foreground shrink-0"
-          title="Kopioi hex-merkkijono leikepöydälle"
+          title={t('component.copyHexToClipboard')}
         >
           <Clipboard size={14} />
         </button>
@@ -55,6 +58,7 @@ export function HexDumpRenderer({ input, params }: StepRenderProps) {
 
 /** Renders a download button */
 export function DownloadRenderer({ input }: StepRenderProps) {
+  const { t } = useTranslation();
   const handleDownload = useCallback(() => {
     const bytes = input.type === 'binary' ? input.bytes : new TextEncoder().encode(input.text);
     const blob = new Blob([bytes.slice().buffer]);
@@ -72,7 +76,7 @@ export function DownloadRenderer({ input }: StepRenderProps) {
         onClick={handleDownload}
         className="rounded border border-border px-3 py-1 text-xs hover:bg-muted transition-colors"
       >
-        ⬇ Lataa
+        ⬇ {t('pipeline.render.download')}
       </button>
     </div>
   );
@@ -116,6 +120,7 @@ function detectImageType(bytes: Uint8Array): string | null {
 
 /** Renders binary image data (PNG, JPEG, GIF, WebP, BMP) */
 export function ImageRenderer({ input }: StepRenderProps) {
+  const { t } = useTranslation();
   const bytes = toBinary(input);
   const mimeType = detectImageType(bytes);
   const src = useMemo(() => {
@@ -124,7 +129,7 @@ export function ImageRenderer({ input }: StepRenderProps) {
   }, [bytes, mimeType]);
 
   if (!mimeType) {
-    return <div className="mt-2 text-xs text-red-500">Tuntematon kuvaformaatti</div>;
+    return <div className="mt-2 text-xs text-red-500">{t('pipeline.render.unknownImage')}</div>;
   }
 
   return (
@@ -136,11 +141,12 @@ export function ImageRenderer({ input }: StepRenderProps) {
 
 /** Renders SVG markup inline */
 export function SvgRenderer({ input }: StepRenderProps) {
+  const { t } = useTranslation();
   const svg = toText(input);
   const isSvg = svg.trimStart().startsWith('<svg') || svg.trimStart().startsWith('<?xml');
 
   if (!isSvg) {
-    return <div className="mt-2 text-xs text-red-500">Data ei ole SVG-muodossa</div>;
+    return <div className="mt-2 text-xs text-red-500">{t('pipeline.render.notSvg')}</div>;
   }
 
   return (

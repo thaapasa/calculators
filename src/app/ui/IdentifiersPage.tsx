@@ -1,4 +1,5 @@
 import { checkLuhn } from 'app/calc/checks';
+import { useTranslation } from 'app/i18n/LanguageContext';
 import React from 'react';
 import * as uuid from 'uuid';
 
@@ -21,6 +22,7 @@ function generateRandomString() {
 }
 
 export function IdentifiersPage() {
+  const { t } = useTranslation();
   const [uuidInput, setUuidInput] = React.useState('');
   const publishUuid = React.useCallback(
     (v: string) => {
@@ -30,9 +32,9 @@ export function IdentifiersPage() {
     [setUuidInput],
   );
   return (
-    <HalfSection title="Tunnisteet" image="/img/header-identifiers.jpg">
+    <HalfSection title={t('page.identifiers.title')} image="/img/header-identifiers.jpg">
       <CheckValue
-        name="Henkilötunnus"
+        name={t('page.identifiers.hetu')}
         id="hetu"
         check={hetu.check}
         generate={hetu.generate}
@@ -42,7 +44,7 @@ export function IdentifiersPage() {
         width="6.5em"
       />
       <CheckValue
-        name="Viitenumero"
+        name={t('page.identifiers.bankReference')}
         id="bank-reference"
         check={bankReference.check}
         generate={bankReference.generate}
@@ -52,7 +54,7 @@ export function IdentifiersPage() {
         width="9em"
       />
       <CheckValue
-        name="Y-tunnus"
+        name={t('page.identifiers.companyId')}
         id="company-id"
         check={companyId.check}
         generate={companyId.generate}
@@ -62,14 +64,14 @@ export function IdentifiersPage() {
         width="6em"
       />
       <CheckValue
-        name="Luhn modulo 10"
+        name={t('page.identifiers.luhn')}
         id="luhn"
         check={checkLuhn}
         onValue={publishSelectedValue}
         width="13em"
       />
       <CheckValue
-        name="Satunnaisjono"
+        name={t('page.identifiers.randomString')}
         id="random-string"
         generate={generateRandomString}
         onValue={publishSelectedValue}

@@ -1,9 +1,11 @@
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { isDefined } from 'app/util/util';
 import moment from 'moment';
 import React from 'react';
 import * as uuid from 'uuid';
 
 export function UuidCheck({ input: inputFromProps }: { input?: string }) {
+  const { t } = useTranslation();
   const [input, setInput] = React.useState('');
   React.useEffect(() => {
     if (inputFromProps) {
@@ -17,7 +19,7 @@ export function UuidCheck({ input: inputFromProps }: { input?: string }) {
   return (
     <>
       <div className="mx-3">
-        <label className="text-xs text-muted">Tarkista UUID</label>
+        <label className="text-xs text-muted">{t('component.checkUuid')}</label>
         <div className="flex items-center rounded border border-border bg-background px-3 py-2">
           <input
             className="flex-1 bg-transparent outline-none"
@@ -38,13 +40,14 @@ export function UuidCheck({ input: inputFromProps }: { input?: string }) {
 }
 
 function Uuid7Info({ input }: { input: string }) {
+  const { t } = useTranslation();
   const stampStr = input.slice(0, 8) + input.slice(9, 13);
   const epochMillis = parseInt(stampStr, 16);
   const time = moment(epochMillis);
   return (
     <>
       <div className="mx-3 mt-2">
-        <label className="text-xs text-muted">Aikaleima (ms)</label>
+        <label className="text-xs text-muted">{t('component.uuidTimestampMs')}</label>
         <input
           className="w-full rounded border border-border bg-background px-3 py-2"
           value={epochMillis}
@@ -52,7 +55,7 @@ function Uuid7Info({ input }: { input: string }) {
         />
       </div>
       <div className="mx-3 mt-2">
-        <label className="text-xs text-muted">Aika</label>
+        <label className="text-xs text-muted">{t('component.uuidTime')}</label>
         <input
           className="w-full rounded border border-border bg-background px-3 py-2"
           value={time.format('YYYY-MM-DD HH:mm:ss.SSS Z')}

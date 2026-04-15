@@ -9,6 +9,7 @@ import {
   rgbToRGBStr,
   RGBValue,
 } from 'app/calc/colors';
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { getColorsFromStore, storeColors, StoredColor } from 'app/util/colorStorage';
 import { Avatar } from 'components/ui/avatar';
 import { Badge } from 'components/ui/badge';
@@ -24,12 +25,8 @@ import { Item } from './component/Item';
 import { HalfSection } from './component/Section';
 import { publishSelectedValue } from './LastValue';
 
-const texts = {
-  hex: 'Heksakoodi',
-  rgb: 'RGB-arvo',
-};
-
 export function ColorsPage() {
+  const { t } = useTranslation();
   const [rgb, setRgb] = useState<RGBValue>({ r: 255, g: 255, b: 255 });
   const [hsl, setHsl] = useState<HSLValue>(() => rgbToHSL({ r: 255, g: 255, b: 255 }));
   const [hexString, setHexString] = useState('#ffffff');
@@ -97,7 +94,7 @@ export function ColorsPage() {
   );
 
   const storeColor = useCallback(() => {
-    const name = window.prompt('Anna värin nimi');
+    const name = window.prompt(t('page.colors.addColorPrompt'));
     if (name) {
       setColorList(prev => {
         const next = [...prev, { name, hex: hexString }];
@@ -105,7 +102,7 @@ export function ColorsPage() {
         return next;
       });
     }
-  }, [hexString]);
+  }, [hexString, t]);
 
   const removeColor = useCallback((index: number) => {
     setColorList(prev => {
@@ -124,11 +121,12 @@ export function ColorsPage() {
     [rgbString, hexString],
   );
 
-  const subtitle = selected === 'hex' ? texts.hex : texts.rgb;
+  const subtitle =
+    selected === 'hex' ? t('page.colors.hex.subtitle') : t('page.colors.rgb.subtitle');
 
   return (
     <HalfSection
-      title="Väri"
+      title={t('page.colors.title')}
       subtitle={subtitle}
       image="/img/header-colors.jpg"
       avatar={
@@ -139,7 +137,12 @@ export function ColorsPage() {
         </Avatar>
       }
       action={
-        <Button variant="ghost" size="icon" aria-label="settings" onClick={storeColor}>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={t('page.colors.addColor')}
+          onClick={storeColor}
+        >
           <Plus />
         </Button>
       }
@@ -162,7 +165,7 @@ export function ColorsPage() {
         onValue={v => onRgbComponentChange('b', v)}
         topContent={<ColorBar colors={staticColors.b} />}
       />
-      <Item name="Heksa">
+      <Item name={t('page.colors.hex.label')}>
         <input
           className="input-inline flex-1"
           placeholder="#FFFFFF"
@@ -172,7 +175,7 @@ export function ColorsPage() {
           onFocus={() => selectMode('hex')}
         />
       </Item>
-      <Item name="RGB-arvo">
+      <Item name={t('page.colors.rgb.label')}>
         <input
           className="input-inline flex-1"
           placeholder="rgb(1.0,1.0,1.0)"
