@@ -1,4 +1,5 @@
 import { useTranslation } from 'app/i18n/LanguageContext';
+import { routePaths } from 'app/i18n/routeMap';
 import { Button } from 'components/ui/button';
 import { cn } from 'lib/utils';
 import {
@@ -22,6 +23,13 @@ interface ToolbarProps {
   onToggleDrawer: () => void;
 }
 
+type PageId = keyof typeof routePaths;
+
+const navPageExtraAliases: Partial<Record<PageId, string[]>> = {
+  numbers: ['/p/merkit'],
+  bytesizes: ['/p/bytesize'],
+};
+
 export function TopBar({ onToggleDrawer, children }: React.PropsWithChildren<ToolbarProps>) {
   const { t } = useTranslation();
   return (
@@ -33,39 +41,15 @@ export function TopBar({ onToggleDrawer, children }: React.PropsWithChildren<Too
         </div>
         <div className="hidden min-[63em]:flex">
           <NavLink icon={Home} route="/" tooltip={t('nav.all')} />
-          <NavLink icon={Clock} route={['/p/aika', '/p/time']} tooltip={t('nav.time')} />
-          <NavLink
-            icon={Hash}
-            route={['/p/numerot', '/p/merkit', '/p/symbols']}
-            tooltip={t('nav.numbers')}
-          />
-          <NavLink
-            icon={User}
-            route={['/p/tunnisteet', '/p/identifiers']}
-            tooltip={t('nav.identifiers')}
-          />
-          <NavLink icon={Palette} route={['/p/värit', '/p/colors']} tooltip={t('nav.colors')} />
-          <NavLink
-            icon={Code}
-            route={['/p/tavukoot', '/p/bytesize', '/p/bytesizes']}
-            tooltip={t('nav.bytesizes')}
-          />
-          <NavLink icon={LinkIcon} route={['/p/linkit', '/p/links']} tooltip={t('nav.links')} />
-          <NavLink
-            icon={Type}
-            route={['/p/tekstimuunnokset', '/p/textconversions']}
-            tooltip={t('nav.textConversions')}
-          />
-          <NavLink
-            icon={Lock}
-            route={['/p/kryptografia', '/p/cryptography']}
-            tooltip={t('nav.cryptography')}
-          />
-          <NavLink
-            icon={Monitor}
-            route={['/p/pikselitiheys', '/p/pixeldensity']}
-            tooltip={t('nav.pixeldensity')}
-          />
+          <NavLink icon={Clock} page="time" tooltip={t('nav.time')} />
+          <NavLink icon={Hash} page="numbers" tooltip={t('nav.numbers')} />
+          <NavLink icon={User} page="identifiers" tooltip={t('nav.identifiers')} />
+          <NavLink icon={Palette} page="colors" tooltip={t('nav.colors')} />
+          <NavLink icon={Code} page="bytesizes" tooltip={t('nav.bytesizes')} />
+          <NavLink icon={LinkIcon} page="links" tooltip={t('nav.links')} />
+          <NavLink icon={Type} page="pipeline" tooltip={t('nav.textConversions')} />
+          <NavLink icon={Lock} page="cryptography" tooltip={t('nav.cryptography')} />
+          <NavLink icon={Monitor} page="pixeldensity" tooltip={t('nav.pixeldensity')} />
         </div>
         <div className="inline-flex flex-1 justify-end">{children}</div>
       </div>
@@ -73,27 +57,27 @@ export function TopBar({ onToggleDrawer, children }: React.PropsWithChildren<Too
   );
 }
 
-interface NavLinkProps {
-  route: string | string[];
+type NavLinkProps = {
   tooltip: string;
   icon: React.ComponentType<{ className?: string }>;
-}
+} & ({ route: string; page?: never } | { page: PageId; route?: never });
 
-function NavLink({ route, icon: Icon, tooltip }: NavLinkProps) {
+function NavLink({ route, page, icon: Icon, tooltip }: NavLinkProps) {
+  const { lang } = useTranslation();
   const navigate = useNavigate();
-  const onClick = () => {
-    navigate(Array.isArray(route) ? route[0] : route);
-  };
   const location = useLocation();
-  const selected =
-    typeof route === 'string'
-      ? location.pathname === route
-      : route.find(r => location.pathname === r) !== undefined;
+
+  const target = route ?? routePaths[page!][lang];
+  const matchPaths = route
+    ? [route]
+    : [routePaths[page!].fi, routePaths[page!].en, ...(navPageExtraAliases[page!] ?? [])];
+  const selected = matchPaths.includes(location.pathname);
+
   return (
     <Button
       variant="ghost"
       size="icon"
-      onClick={onClick}
+      onClick={() => navigate(target)}
       title={tooltip}
       className={cn('text-white/70 hover:text-white hover:bg-white/10', selected && 'text-white')}
     >
