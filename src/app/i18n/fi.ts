@@ -28,6 +28,24 @@ export const fi = {
   'page.numbers.char': 'Merkki',
   'page.numbers.unicode': 'Unicode',
   'page.numbers.html': 'HTML-koodi',
+
+  'page.time.title': 'Aikaleimat',
+  'page.time.label.date': 'Päivä',
+  'page.time.label.time': 'Kellonaika',
+  'page.time.label.week': 'Viikko',
+  'page.time.label.nameDay': 'Nimipäivä',
+  'page.time.label.nameDaySearch': 'Etsi nimipäivä',
+  'page.time.label.javaTime': 'Java/JS time',
+  'page.time.label.unixTime': 'Unixtime',
+  'page.time.label.iso8601': 'ISO 8601',
+  'page.time.label.iso8601utc': 'ISO 8601 UTC',
+  'page.time.weekDay.mon': 'ma',
+  'page.time.weekDay.tue': 'ti',
+  'page.time.weekDay.wed': 'ke',
+  'page.time.weekDay.thu': 'to',
+  'page.time.weekDay.fri': 'pe',
+  'page.time.weekDay.sat': 'la',
+  'page.time.weekDay.sun': 'su',
 } as const;
 
 export type TranslationKey = keyof typeof fi;
