@@ -1,3 +1,4 @@
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { Button } from 'components/ui/button';
 import { cn } from 'lib/utils';
 import {
@@ -22,43 +23,48 @@ interface ToolbarProps {
 }
 
 export function TopBar({ onToggleDrawer, children }: React.PropsWithChildren<ToolbarProps>) {
+  const { t } = useTranslation();
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-primary text-white shadow-md">
       <div className="flex items-center h-14 px-4">
         <div className="inline-flex flex-1 justify-start items-center">
           <Logo className="mr-4" onClick={onToggleDrawer} />
-          <h1 className="text-lg font-medium">Laskurit</h1>
+          <h1 className="text-lg font-medium">{t('app.title')}</h1>
         </div>
         <div className="hidden min-[63em]:flex">
-          <NavLink icon={Home} route="/" tooltip="Kaikki" />
-          <NavLink icon={Clock} route={['/p/aika', '/p/time']} tooltip="Aikaleimat" />
+          <NavLink icon={Home} route="/" tooltip={t('nav.all')} />
+          <NavLink icon={Clock} route={['/p/aika', '/p/time']} tooltip={t('nav.time')} />
           <NavLink
             icon={Hash}
             route={['/p/numerot', '/p/merkit', '/p/symbols']}
-            tooltip="Numerot ja merkit"
+            tooltip={t('nav.numbers')}
           />
-          <NavLink icon={User} route={['/p/tunnisteet', '/p/identifiers']} tooltip="Tunnisteet" />
-          <NavLink icon={Palette} route={['/p/värit', '/p/colors']} tooltip="Värit" />
+          <NavLink
+            icon={User}
+            route={['/p/tunnisteet', '/p/identifiers']}
+            tooltip={t('nav.identifiers')}
+          />
+          <NavLink icon={Palette} route={['/p/värit', '/p/colors']} tooltip={t('nav.colors')} />
           <NavLink
             icon={Code}
             route={['/p/tavukoot', '/p/bytesize', '/p/bytesizes']}
-            tooltip="Tavukoot"
+            tooltip={t('nav.bytesizes')}
           />
-          <NavLink icon={LinkIcon} route={['/p/linkit', '/p/links']} tooltip="Linkit" />
+          <NavLink icon={LinkIcon} route={['/p/linkit', '/p/links']} tooltip={t('nav.links')} />
           <NavLink
             icon={Type}
             route={['/p/tekstimuunnokset', '/p/textconversions']}
-            tooltip="Tekstimuunnokset"
+            tooltip={t('nav.textConversions')}
           />
           <NavLink
             icon={Lock}
             route={['/p/kryptografia', '/p/cryptography']}
-            tooltip="Kryptografia"
+            tooltip={t('nav.cryptography')}
           />
           <NavLink
             icon={Monitor}
             route={['/p/pikselitiheys', '/p/pixeldensity']}
-            tooltip="Pikselitiheys"
+            tooltip={t('nav.pixeldensity')}
           />
         </div>
         <div className="inline-flex flex-1 justify-end">{children}</div>

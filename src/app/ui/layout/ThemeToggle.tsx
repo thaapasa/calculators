@@ -1,3 +1,5 @@
+import { type TranslationKey } from 'app/i18n/fi';
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { Button } from 'components/ui/button';
 import { MonitorSmartphone, Moon, Sun } from 'lucide-react';
 import React from 'react';
@@ -10,10 +12,10 @@ const nextPreference: Record<ThemePreference, ThemePreference> = {
   dark: 'system',
 };
 
-const labels: Record<ThemePreference, string> = {
-  system: 'Järjestelmän teema',
-  light: 'Vaalea teema',
-  dark: 'Tumma teema',
+const labelKeys: Record<ThemePreference, TranslationKey> = {
+  system: 'theme.system',
+  light: 'theme.light',
+  dark: 'theme.dark',
 };
 
 const icons: Record<ThemePreference, React.ComponentType<{ className?: string }>> = {
@@ -24,13 +26,14 @@ const icons: Record<ThemePreference, React.ComponentType<{ className?: string }>
 
 export function ThemeToggle() {
   const { preference, setPreference } = useTheme();
+  const { t } = useTranslation();
   const Icon = icons[preference];
   return (
     <Button
       variant="ghost"
       size="icon"
       onClick={() => setPreference(nextPreference[preference])}
-      title={labels[preference]}
+      title={t(labelKeys[preference])}
       className="text-white/70 hover:text-white hover:bg-white/10"
     >
       <Icon />
