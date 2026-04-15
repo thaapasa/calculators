@@ -19,6 +19,15 @@ export const fi = {
   'theme.dark': 'Tumma teema',
 
   'lang.toggleTooltip': 'Vaihda englanniksi',
+
+  'page.numbers.title': 'Numerot',
+  'page.numbers.binary': 'Binääri',
+  'page.numbers.octal': 'Oktaali',
+  'page.numbers.decimal': 'Desimaali',
+  'page.numbers.hex': 'Heksa',
+  'page.numbers.char': 'Merkki',
+  'page.numbers.unicode': 'Unicode',
+  'page.numbers.html': 'HTML-koodi',
 } as const;
 
 export type TranslationKey = keyof typeof fi;

@@ -1,3 +1,5 @@
+import { type TranslationKey } from 'app/i18n/fi';
+import { useTranslation } from 'app/i18n/LanguageContext';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import * as numbers from '../calc/numbers';
@@ -8,15 +10,15 @@ import { Item } from './component/Item';
 import { HalfSection } from './component/Section';
 import { publishSelectedValue } from './LastValue';
 
-const texts = {
-  binary: 'Binääri',
-  octal: 'Oktaali',
-  decimal: 'Desimaali',
-  hex: 'Heksa',
-  char: 'Merkki',
-  unicode: 'Unicode',
-  html: 'HTML-koodi',
-};
+const labelKeys = {
+  binary: 'page.numbers.binary',
+  octal: 'page.numbers.octal',
+  decimal: 'page.numbers.decimal',
+  hex: 'page.numbers.hex',
+  char: 'page.numbers.char',
+  unicode: 'page.numbers.unicode',
+  html: 'page.numbers.html',
+} as const satisfies Record<string, TranslationKey>;
 
 interface TypeInfo {
   readonly read: (x: string) => number;
@@ -93,6 +95,7 @@ function intToHTMLCode(value: number): string {
 const isValidNumber = (v: number) => typeof v === 'number' && !isNaN(v);
 
 export function NumbersPage() {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<NumberType>('decimal');
 
   const fields = useMemo(
@@ -119,20 +122,24 @@ export function NumbersPage() {
   }, []);
 
   return (
-    <HalfSection title="Numerot" subtitle={texts[selected]} image="/img/header-numbers.jpg">
-      {typeKeys.map(t => (
-        <Item className="mt-2" name={texts[t]} key={`${t}-item`}>
+    <HalfSection
+      title={t('page.numbers.title')}
+      subtitle={t(labelKeys[selected])}
+      image="/img/header-numbers.jpg"
+    >
+      {typeKeys.map(k => (
+        <Item className="mt-2" name={t(labelKeys[k])} key={`${k}-item`}>
           <input
             className="input-inline flex-1"
-            type={types[t].inputType}
-            name={t}
-            placeholder={texts[t]}
-            value={values[t]}
+            type={types[k].inputType}
+            name={k}
+            placeholder={t(labelKeys[k])}
+            value={values[k]}
             onChange={inputChanged}
             onFocus={selectSrc}
-            maxLength={types[t].maxLength}
-            readOnly={types[t].readOnly || false}
-            key={t}
+            maxLength={types[k].maxLength}
+            readOnly={types[k].readOnly || false}
+            key={k}
           />
         </Item>
       ))}

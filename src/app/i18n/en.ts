@@ -21,4 +21,13 @@ export const en: Record<TranslationKey, string> = {
   'theme.dark': 'Dark theme',
 
   'lang.toggleTooltip': 'Switch to Finnish',
+
+  'page.numbers.title': 'Numbers',
+  'page.numbers.binary': 'Binary',
+  'page.numbers.octal': 'Octal',
+  'page.numbers.decimal': 'Decimal',
+  'page.numbers.hex': 'Hex',
+  'page.numbers.char': 'Character',
+  'page.numbers.unicode': 'Unicode',
+  'page.numbers.html': 'HTML code',
 };
