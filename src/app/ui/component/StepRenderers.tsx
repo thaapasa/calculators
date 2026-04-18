@@ -22,7 +22,7 @@ export function ShowTextRenderer({ input }: StepRenderProps) {
         >
           <Clipboard size={14} />
         </button>
-        <pre className="flex-1 min-w-0 max-h-50 overflow-auto rounded bg-foreground/5 px-2 py-1 text-xs font-mono whitespace-pre-wrap break-all">
+        <pre className="flex-1 min-w-0 min-h-6 max-h-50 overflow-auto rounded bg-foreground/5 px-2 py-1 text-xs font-mono whitespace-pre-wrap break-all">
           {text}
         </pre>
       </div>
@@ -48,7 +48,7 @@ export function HexDumpRenderer({ input, params }: StepRenderProps) {
         >
           <Clipboard size={14} />
         </button>
-        <pre className="flex-1 min-w-0 max-h-50 overflow-auto rounded bg-foreground/5 px-2 py-1 text-xs font-mono whitespace-pre">
+        <pre className="flex-1 min-w-0 min-h-6 max-h-50 overflow-auto rounded bg-foreground/5 px-2 py-1 text-xs font-mono whitespace-pre">
           {formatted}
         </pre>
       </div>
