@@ -35,7 +35,7 @@ export function OperationPicker({ onAdd }: OperationPickerProps) {
           <div className="absolute left-0 top-full mt-1 z-50 min-w-50 max-h-[70vh] overflow-auto rounded border border-border bg-surface shadow-lg">
             {groups.map(({ category, operations }) => (
               <div key={category.id}>
-                <div className="sticky top-0 px-3 py-1.5 text-xs font-medium text-muted-foreground bg-muted">
+                <div className="sticky top-0 z-10 px-3 py-1.5 text-sm font-medium text-foreground bg-border">
                   {category.label}
                 </div>
                 {operations.map(op => (
