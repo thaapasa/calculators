@@ -6,12 +6,12 @@ import * as uuid from 'uuid';
 
 export function UuidCheck({ input: inputFromProps }: { input?: string }) {
   const { t } = useTranslation();
-  const [input, setInput] = React.useState('');
-  React.useEffect(() => {
-    if (inputFromProps) {
-      setInput(inputFromProps);
-    }
-  }, [inputFromProps]);
+  const [input, setInput] = React.useState(inputFromProps ?? '');
+  const [prevProp, setPrevProp] = React.useState(inputFromProps);
+  if (inputFromProps !== prevProp) {
+    setPrevProp(inputFromProps);
+    if (inputFromProps) setInput(inputFromProps);
+  }
 
   const valid = input ? uuid.validate(input) : undefined;
   const version = valid ? uuid.version(input) : undefined;
