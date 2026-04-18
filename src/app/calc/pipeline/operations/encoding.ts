@@ -1,4 +1,3 @@
-import * as base64 from 'app/calc/base64';
 import { fromHexString, toHexString } from 'app/util/strings';
 
 import { binaryData, OperationDef, textData, toBinary, toText } from '../types';
@@ -6,21 +5,6 @@ import { binaryData, OperationDef, textData, toBinary, toText } from '../types';
 export const base64EncodeOp: OperationDef = {
   id: 'base64-encode',
   name: 'Base64 encode',
-  category: 'encoding',
-  process: async input => textData(base64.encode(toText(input))),
-};
-
-export const base64DecodeOp: OperationDef = {
-  id: 'base64-decode',
-  name: 'Base64 decode',
-  category: 'encoding',
-  process: async input => textData(base64.decode(toText(input))),
-};
-
-/** Binary-aware Base64 encode: Uint8Array → base64 string */
-export const base64BinaryEncodeOp: OperationDef = {
-  id: 'base64-binary-encode',
-  name: 'Base64 encode (binary)',
   category: 'encoding',
   process: async input => {
     const bytes = toBinary(input);
@@ -32,10 +16,9 @@ export const base64BinaryEncodeOp: OperationDef = {
   },
 };
 
-/** Binary-aware Base64 decode: base64 string → Uint8Array */
-export const base64BinaryDecodeOp: OperationDef = {
-  id: 'base64-binary-decode',
-  name: 'Base64 decode (binary)',
+export const base64DecodeOp: OperationDef = {
+  id: 'base64-decode',
+  name: 'Base64 decode',
   category: 'encoding',
   process: async input => {
     const binary = atob(toText(input).trim());
@@ -99,8 +82,6 @@ export const jwtDecodeOp: OperationDef = {
 export const encodingOperations: OperationDef[] = [
   base64EncodeOp,
   base64DecodeOp,
-  base64BinaryEncodeOp,
-  base64BinaryDecodeOp,
   urlEncodeOp,
   urlDecodeOp,
   hexEncodeOp,
