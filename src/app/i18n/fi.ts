@@ -27,7 +27,7 @@ export const fi = {
   'page.numbers.hex': 'Heksa',
   'page.numbers.char': 'Merkki',
   'page.numbers.unicode': 'Unicode',
-  'page.numbers.html': 'HTML-koodi',
+  'page.numbers.html': 'HTML-entiteetti',
 
   'page.time.title': 'Aikaleimat',
   'page.time.label.date': 'Päivä',
@@ -37,8 +37,8 @@ export const fi = {
   'page.time.label.nameDaySearch': 'Etsi nimipäivä',
   'page.time.label.javaTime': 'Java/JS time',
   'page.time.label.unixTime': 'Unixtime',
-  'page.time.label.iso8601': 'ISO 8601',
-  'page.time.label.iso8601utc': 'ISO 8601 UTC',
+  'page.time.label.iso8601': 'ISO (selain)',
+  'page.time.label.iso8601utc': 'ISO (UTC)',
   'page.time.weekDay.mon': 'ma',
   'page.time.weekDay.tue': 'ti',
   'page.time.weekDay.wed': 'ke',
@@ -62,8 +62,8 @@ export const fi = {
   'page.colors.addColor': 'Tallenna väri',
   'page.colors.addColorPrompt': 'Anna värin nimi',
   'page.colors.hsl.h': 'H: Sävy',
-  'page.colors.hsl.s': 'S: Väri',
-  'page.colors.hsl.l': 'L: Valo',
+  'page.colors.hsl.s': 'S: Kylläisyys',
+  'page.colors.hsl.l': 'L: Vaaleus',
 
   'page.bytesizes.title': 'Tavukoot',
   'page.bytesizes.byte': 'Tavua',
@@ -93,7 +93,7 @@ export const fi = {
   'page.pipeline.processing': 'Käsitellään…',
   'pipeline.input.label': 'Syöte',
   'pipeline.input.clear': 'Tyhjennä',
-  'pipeline.input.placeholder': 'Kirjoita tai liitä tekstiä, tai pudota tiedosto...',
+  'pipeline.input.placeholder': 'Kirjoita tai liitä tekstiä, tai pudota tiedosto…',
   'pipeline.input.dropHere': 'Pudota tiedosto tähän',
   'pipeline.input.chooseFile': 'Valitse tiedosto',
   'pipeline.input.fetch': 'Hae',
@@ -116,7 +116,7 @@ export const fi = {
   'component.nameDaySearchPlaceholder': 'Etsi nimipäivä',
   'component.checkUuid': 'Tarkista UUID',
   'component.uuidTimestampMs': 'Aikaleima (ms)',
-  'component.uuidTime': 'Aika',
+  'component.uuidTime': 'Purettu aika',
 } as const;
 
 export type TranslationKey = keyof typeof fi;

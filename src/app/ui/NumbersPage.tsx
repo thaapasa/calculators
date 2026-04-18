@@ -128,7 +128,7 @@ export function NumbersPage() {
       image="/img/header-numbers.jpg"
     >
       {typeKeys.map(k => (
-        <Item className="mt-2" name={t(labelKeys[k])} key={`${k}-item`}>
+        <Item className="mt-2" name={t(labelKeys[k])} key={`${k}-item`} labelWidth="w-32">
           <input
             className="input-inline flex-1"
             type={types[k].inputType}

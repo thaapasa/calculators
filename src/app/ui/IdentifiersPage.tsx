@@ -76,7 +76,6 @@ export function IdentifiersPage() {
         generate={generateRandomString}
         onValue={publishSelectedValue}
         max-length="64"
-        width="13em"
       />
       <hr />
       <CheckValue
@@ -85,7 +84,7 @@ export function IdentifiersPage() {
         generate={generateUUIDv1}
         onValue={publishUuid}
         max-length="36"
-        width="13em"
+        labelSize="sm"
       />
       <CheckValue
         name="UUID v4"
@@ -93,7 +92,7 @@ export function IdentifiersPage() {
         generate={generateUUIDv4}
         onValue={publishUuid}
         max-length="36"
-        width="13em"
+        labelSize="sm"
       />
       <CheckValue
         name="UUID v7"
@@ -101,7 +100,7 @@ export function IdentifiersPage() {
         generate={generateUUIDv7}
         onValue={publishUuid}
         max-length="36"
-        width="13em"
+        labelSize="sm"
       />
       <UuidCheck input={uuidInput} />
     </HalfSection>
