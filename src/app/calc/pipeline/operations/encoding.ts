@@ -48,7 +48,11 @@ export const hexEncodeOp: OperationDef = {
   id: 'hex-encode',
   name: 'Hex encode',
   category: 'encoding',
-  process: async input => textData(toHexString(toText(input))),
+  defaultParams: { case: 'lower' },
+  process: async (input, params) => {
+    const hex = toHexString(toText(input));
+    return textData(params?.case === 'upper' ? hex.toUpperCase() : hex.toLowerCase());
+  },
 };
 
 export const hexDecodeOp: OperationDef = {

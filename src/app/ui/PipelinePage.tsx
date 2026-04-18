@@ -19,6 +19,7 @@ import { PipelineOutput } from './component/PipelineOutput';
 import { PipelineStepCard } from './component/PipelineStepCard';
 import Section from './component/Section';
 import {
+  HexCaseConfig,
   HexDumpBytesConfig,
   JsonIndentConfig,
   LineSortConfig,
@@ -46,6 +47,7 @@ setOperationRenderer('show-svg', SvgRenderer);
 setOperationConfig('rot13', RotNConfig);
 setOperationConfig('json-pretty', JsonIndentConfig);
 setOperationConfig('hex-dump', HexDumpBytesConfig);
+setOperationConfig('hex-encode', HexCaseConfig);
 setOperationConfig('line-sort', LineSortConfig);
 setOperationConfig('pbkdf2-sha256', Pbkdf2Config);
 setOperationConfig('pbkdf2-sha512', Pbkdf2Config);

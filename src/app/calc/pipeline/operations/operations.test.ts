@@ -51,6 +51,16 @@ describe('encoding operations', () => {
     const decoded = await hexDecodeOp.process(encoded);
     expect(toText(decoded)).toBe('AB');
   });
+
+  it('hex encode defaults to lowercase', async () => {
+    const result = await hexEncodeOp.process(textData('hello'));
+    expect(toText(result)).toBe('68656c6c6f');
+  });
+
+  it('hex encode respects the uppercase case option', async () => {
+    const result = await hexEncodeOp.process(textData('hello'), { case: 'upper' });
+    expect(toText(result)).toBe('68656C6C6F');
+  });
 });
 
 describe('text operations', () => {

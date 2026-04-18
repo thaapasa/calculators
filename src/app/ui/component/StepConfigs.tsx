@@ -105,6 +105,24 @@ export function Pbkdf2Config({ params, onChange }: StepConfigProps) {
   );
 }
 
+/** Hex encode case config */
+export function HexCaseConfig({ params, onChange }: StepConfigProps) {
+  const hexCase = params.case === 'upper' ? 'upper' : 'lower';
+  return (
+    <label className="flex items-center gap-1 text-xs text-muted-foreground">
+      Case
+      <select
+        value={hexCase}
+        onChange={e => onChange({ ...params, case: e.target.value })}
+        className="rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground"
+      >
+        <option value="lower">lower</option>
+        <option value="upper">UPPER</option>
+      </select>
+    </label>
+  );
+}
+
 /** Line sort direction config */
 export function LineSortConfig({ params, onChange }: StepConfigProps) {
   const direction = params.direction === 'desc' ? 'desc' : 'asc';
