@@ -22,6 +22,7 @@ import {
   HexDumpBytesConfig,
   JsonIndentConfig,
   LineSortConfig,
+  Pbkdf2Config,
   RotNConfig,
 } from './component/StepConfigs';
 import {
@@ -46,6 +47,8 @@ setOperationConfig('rot13', RotNConfig);
 setOperationConfig('json-pretty', JsonIndentConfig);
 setOperationConfig('hex-dump', HexDumpBytesConfig);
 setOperationConfig('line-sort', LineSortConfig);
+setOperationConfig('pbkdf2-sha256', Pbkdf2Config);
+setOperationConfig('pbkdf2-sha512', Pbkdf2Config);
 
 export function PipelinePage() {
   const { t } = useTranslation();
