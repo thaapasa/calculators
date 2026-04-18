@@ -1,3 +1,4 @@
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from 'components/ui/card';
 import { Separator } from 'components/ui/separator';
 import { cn } from 'lib/utils';
@@ -25,6 +26,7 @@ function Section({
   avatar,
   children,
 }: React.PropsWithChildren<SectionProps>) {
+  const { t } = useTranslation();
   return (
     <Card className={cn('pb-1 my-6 text-left', className)}>
       {image ? <img src={image} alt={title} className="h-22 w-full object-cover" /> : null}
@@ -33,7 +35,9 @@ function Section({
           {avatar}
           <div className="flex-1">
             <CardTitle>{title}</CardTitle>
-            <CardDescription>{subtitle || ' '}</CardDescription>
+            <CardDescription className={cn(!subtitle && 'text-muted-foreground/40 italic')}>
+              {subtitle || t('component.subtitlePlaceholder')}
+            </CardDescription>
           </div>
           {action}
         </div>

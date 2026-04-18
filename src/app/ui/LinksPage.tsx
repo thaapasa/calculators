@@ -55,7 +55,11 @@ export function LinksPage() {
   }, []);
 
   return (
-    <Section title={t('page.links.title')} image="/img/header-links.jpg">
+    <Section
+      title={t('page.links.title')}
+      subtitle={t('page.links.subtitle')}
+      image="/img/header-links.jpg"
+    >
       <Item name={t('page.links.label')}>
         <input
           className="input-inline flex-1"

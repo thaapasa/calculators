@@ -24,8 +24,10 @@ const cryptoList: CryptoType[] = [
 
 export function CryptographyPage() {
   const { t } = useTranslation();
-  const [selected, setSelected] = useState(cryptoList[0].code);
+  const [selected, setSelected] = useState<string | undefined>(undefined);
   const refsMap = useRef<Record<string, SelectableOutputHandle | null>>({});
+
+  const valuesRef = useRef<Record<string, string>>({});
 
   const inputChanged = useCallback(
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -37,10 +39,15 @@ export function CryptographyPage() {
 
   const selectCrypto = useCallback((code: string) => {
     setSelected(code);
+    const cached = valuesRef.current[code];
+    if (cached) {
+      publishSelectedValue(cached);
+    }
   }, []);
 
   const onCryptoValue = useCallback(
     (code: string, value: string) => {
+      valuesRef.current[code] = value;
       if (code === selected) {
         publishSelectedValue(value);
       }

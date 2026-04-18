@@ -1,5 +1,6 @@
 import { useTranslation } from 'app/i18n/LanguageContext';
-import React, { useCallback, useMemo, useState } from 'react';
+import { useFocusPublisher } from 'app/util/useFocusPublisher';
+import React, { useCallback, useMemo } from 'react';
 
 import { LinkedField, useLinkedInputs } from '../util/useLinkedInputs';
 import { Item } from './component/Item';
@@ -49,7 +50,7 @@ const isValidNumber = (v: number) => typeof v === 'number' && !isNaN(v) && v >= 
 
 export function PixelDensityPage() {
   const { t } = useTranslation();
-  const [selected, setSelected] = useState<DensityKey>('mdpi');
+  const { selected, selectSrc } = useFocusPublisher<DensityKey>();
 
   const widthFields = useMemo(() => createFields(), []);
   const heightFields = useMemo(() => createFields(), []);
@@ -71,14 +72,26 @@ export function PixelDensityPage() {
     [height],
   );
 
-  const selectSrc = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
-    setSelected(e.target.name as DensityKey);
-  }, []);
+  const onWidthFocus = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      const k = e.target.name as DensityKey;
+      selectSrc(k, width.values[k]);
+    },
+    [selectSrc, width.values],
+  );
+
+  const onHeightFocus = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      const k = e.target.name as DensityKey;
+      selectSrc(k, height.values[k]);
+    },
+    [selectSrc, height.values],
+  );
 
   return (
     <HalfSection
       title={t('page.pixeldensity.title')}
-      subtitle={densities[selected].name}
+      subtitle={selected ? densities[selected].name : ''}
       image="/img/header-bytesize.jpg"
     >
       <PlatformHeader title="Android" />
@@ -91,7 +104,8 @@ export function PixelDensityPage() {
           heightValue={height.values[k]}
           onWidthChange={onWidthChange}
           onHeightChange={onHeightChange}
-          onFocus={selectSrc}
+          onWidthFocus={onWidthFocus}
+          onHeightFocus={onHeightFocus}
         />
       ))}
       <PlatformHeader title="iOS" />
@@ -104,7 +118,8 @@ export function PixelDensityPage() {
           heightValue={height.values[k]}
           onWidthChange={onWidthChange}
           onHeightChange={onHeightChange}
-          onFocus={selectSrc}
+          onWidthFocus={onWidthFocus}
+          onHeightFocus={onHeightFocus}
         />
       ))}
     </HalfSection>
@@ -139,7 +154,8 @@ function DensityRow({
   heightValue,
   onWidthChange,
   onHeightChange,
-  onFocus,
+  onWidthFocus,
+  onHeightFocus,
 }: {
   densityKey: DensityKey;
   info: DensityInfo;
@@ -147,7 +163,8 @@ function DensityRow({
   heightValue: string;
   onWidthChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onHeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onWidthFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onHeightFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
 }) {
   const { t } = useTranslation();
   return (
@@ -161,7 +178,7 @@ function DensityRow({
           placeholder={t('page.pixeldensity.widthPlaceholder')}
           value={widthValue}
           onChange={onWidthChange}
-          onFocus={onFocus}
+          onFocus={onWidthFocus}
         />
         <span className="mx-1 text-foreground/40">×</span>
         <input
@@ -170,7 +187,7 @@ function DensityRow({
           placeholder={t('page.pixeldensity.heightPlaceholder')}
           value={heightValue}
           onChange={onHeightChange}
-          onFocus={onFocus}
+          onFocus={onHeightFocus}
         />
         <div className="w-6.25 shrink-0 text-right pr-2 ml-1">px</div>
       </FlexRow>

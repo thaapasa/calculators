@@ -11,6 +11,7 @@ import {
 } from 'app/calc/time';
 import { type TranslationKey } from 'app/i18n/fi';
 import { useTranslation } from 'app/i18n/LanguageContext';
+import { useFocusPublisher } from 'app/util/useFocusPublisher';
 import { cn } from 'lib/utils';
 import moment from 'moment';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -57,7 +58,7 @@ export function TimePage() {
   );
 
   const [vals, setVals] = useState<TimeValues>(() => computeOutputs(moment(), weekDayLabels));
-  const [reportTarget, setReportTarget] = useState('');
+  const { selected: reportTarget, selectSrc } = useFocusPublisher<string>();
 
   const currentMomentRef = useRef(moment());
 
@@ -127,15 +128,16 @@ export function TimePage() {
     [vals, updateFromMoment, reportTarget],
   );
 
-  const focusChanged = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
-    const src = event.target.name;
-    if (reportableFields[src]) {
-      setReportTarget(src);
-      if (fieldWriters[src]) {
-        publishSelectedValue(fieldWriters[src](currentMomentRef.current));
+  const focusChanged = useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      const src = event.target.name;
+      if (reportableFields[src]) {
+        const value = fieldWriters[src] ? fieldWriters[src](currentMomentRef.current) : undefined;
+        selectSrc(src, value);
       }
-    }
-  }, []);
+    },
+    [selectSrc],
+  );
 
   const selectNameDay = useCallback(
     (day: NameDayItem) => {
@@ -200,7 +202,9 @@ export function TimePage() {
   };
   const labelWidth = 'w-28';
 
-  const labelKey = reportTargetLabels[reportTarget as keyof typeof reportTargetLabels];
+  const labelKey = reportTarget
+    ? reportTargetLabels[reportTarget as keyof typeof reportTargetLabels]
+    : undefined;
   const subtitle = labelKey ? t(labelKey) : '';
 
   return (

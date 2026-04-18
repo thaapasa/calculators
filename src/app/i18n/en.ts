@@ -85,6 +85,7 @@ export const en: Record<TranslationKey, string> = {
   'page.pixeldensity.heightPlaceholder': 'height',
 
   'page.links.title': 'Links',
+  'page.links.subtitle': 'Store your links here',
   'page.links.label': 'Link',
 
   'page.cryptography.title': 'Cryptography',
@@ -111,6 +112,7 @@ export const en: Record<TranslationKey, string> = {
   'pipeline.render.unknownImage': 'Unknown image format',
   'pipeline.render.notSvg': 'Data is not in SVG format',
 
+  'component.subtitlePlaceholder': 'Select a value',
   'component.copyToClipboard': 'Copy to clipboard',
   'component.copyHexToClipboard': 'Copy hex string to clipboard',
   'component.lastValuePlaceholder': 'Last value',

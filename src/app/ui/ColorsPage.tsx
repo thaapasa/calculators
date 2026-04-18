@@ -30,7 +30,7 @@ export function ColorsPage() {
   const [rgb, setRgb] = useState<RGBValue>({ r: 255, g: 255, b: 255 });
   const [hsl, setHsl] = useState<HSLValue>(() => rgbToHSL({ r: 255, g: 255, b: 255 }));
   const [hexString, setHexString] = useState('#ffffff');
-  const [selected, setSelected] = useState<'hex' | 'rgb'>('hex');
+  const [selected, setSelected] = useState<'hex' | 'rgb' | undefined>(undefined);
   const [colorList, setColorList] = useState<StoredColor[]>(getColorsFromStore);
 
   const rgbString = rgbToRGBStr(rgb);
@@ -45,7 +45,9 @@ export function ColorsPage() {
       if (src !== 'hsl') {
         setHsl(rgbToHSL(newRgb));
       }
-      publishSelectedValue(selected === 'rgb' ? rgbToRGBStr(newRgb) : newHex);
+      if (selected) {
+        publishSelectedValue(selected === 'rgb' ? rgbToRGBStr(newRgb) : newHex);
+      }
     },
     [selected],
   );
@@ -66,7 +68,9 @@ export function ColorsPage() {
         const newRgb = hexToRGB(val);
         setRgb(newRgb);
         setHsl(rgbToHSL(newRgb));
-        publishSelectedValue(selected === 'rgb' ? rgbToRGBStr(newRgb) : val);
+        if (selected) {
+          publishSelectedValue(selected === 'rgb' ? rgbToRGBStr(newRgb) : val);
+        }
       }
     },
     [selected],
@@ -88,7 +92,9 @@ export function ColorsPage() {
       const newRgb = hexToRGB(hex);
       setRgb(newRgb);
       setHsl(rgbToHSL(newRgb));
-      publishSelectedValue(selected === 'rgb' ? rgbToRGBStr(newRgb) : hex);
+      if (selected) {
+        publishSelectedValue(selected === 'rgb' ? rgbToRGBStr(newRgb) : hex);
+      }
     },
     [selected],
   );
@@ -121,8 +127,11 @@ export function ColorsPage() {
     [rgbString, hexString],
   );
 
-  const subtitle =
-    selected === 'hex' ? t('page.colors.hex.subtitle') : t('page.colors.rgb.subtitle');
+  const subtitle = selected
+    ? selected === 'hex'
+      ? t('page.colors.hex.subtitle')
+      : t('page.colors.rgb.subtitle')
+    : '';
 
   return (
     <HalfSection

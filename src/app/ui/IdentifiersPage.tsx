@@ -1,5 +1,7 @@
 import { checkLuhn } from 'app/calc/checks';
+import { type TranslationKey } from 'app/i18n/fi';
 import { useTranslation } from 'app/i18n/LanguageContext';
+import { useFocusPublisher } from 'app/util/useFocusPublisher';
 import React from 'react';
 import * as uuid from 'uuid';
 
@@ -21,9 +23,30 @@ function generateRandomString() {
   return getRandomString(64);
 }
 
+const labelKeys = {
+  hetu: 'page.identifiers.hetu',
+  bankReference: 'page.identifiers.bankReference',
+  companyId: 'page.identifiers.companyId',
+  luhn: 'page.identifiers.luhn',
+  randomString: 'page.identifiers.randomString',
+} as const satisfies Record<string, TranslationKey>;
+
+type Source = keyof typeof labelKeys | 'uuidv1' | 'uuidv4' | 'uuidv7';
+
+const staticLabels: Record<'uuidv1' | 'uuidv4' | 'uuidv7', string> = {
+  uuidv1: 'UUID v1',
+  uuidv4: 'UUID v4',
+  uuidv7: 'UUID v7',
+};
+
 export function IdentifiersPage() {
   const { t } = useTranslation();
   const [uuidInput, setUuidInput] = React.useState('');
+  const { selected, selectSrc } = useFocusPublisher<Source>();
+  const focus = React.useCallback(
+    (key: Source) => (value: string) => selectSrc(key, value),
+    [selectSrc],
+  );
   const publishUuid = React.useCallback(
     (v: string) => {
       publishSelectedValue(v);
@@ -31,8 +54,17 @@ export function IdentifiersPage() {
     },
     [setUuidInput],
   );
+  const subtitle = selected
+    ? selected in labelKeys
+      ? t(labelKeys[selected as keyof typeof labelKeys])
+      : staticLabels[selected as keyof typeof staticLabels]
+    : '';
   return (
-    <HalfSection title={t('page.identifiers.title')} image="/img/header-identifiers.jpg">
+    <HalfSection
+      title={t('page.identifiers.title')}
+      subtitle={subtitle}
+      image="/img/header-identifiers.jpg"
+    >
       <CheckValue
         name={t('page.identifiers.hetu')}
         id="hetu"
@@ -40,6 +72,7 @@ export function IdentifiersPage() {
         generate={hetu.generate}
         combine={util.combine}
         onValue={publishSelectedValue}
+        onFocus={focus('hetu')}
         max-length="10"
         width="6.5em"
       />
@@ -50,6 +83,7 @@ export function IdentifiersPage() {
         generate={bankReference.generate}
         combine={util.combine}
         onValue={publishSelectedValue}
+        onFocus={focus('bankReference')}
         max-length="24"
         width="9em"
       />
@@ -60,6 +94,7 @@ export function IdentifiersPage() {
         generate={companyId.generate}
         combine={util.combineWith('-')}
         onValue={publishSelectedValue}
+        onFocus={focus('companyId')}
         max-length="7"
         width="6em"
       />
@@ -68,6 +103,7 @@ export function IdentifiersPage() {
         id="luhn"
         check={checkLuhn}
         onValue={publishSelectedValue}
+        onFocus={focus('luhn')}
         width="13em"
       />
       <CheckValue
@@ -75,6 +111,7 @@ export function IdentifiersPage() {
         id="random-string"
         generate={generateRandomString}
         onValue={publishSelectedValue}
+        onFocus={focus('randomString')}
         max-length="64"
       />
       <hr />
@@ -83,6 +120,7 @@ export function IdentifiersPage() {
         id="uuid-v1"
         generate={generateUUIDv1}
         onValue={publishUuid}
+        onFocus={focus('uuidv1')}
         max-length="36"
         labelSize="sm"
       />
@@ -91,6 +129,7 @@ export function IdentifiersPage() {
         id="uuid-v4"
         generate={generateUUIDv4}
         onValue={publishUuid}
+        onFocus={focus('uuidv4')}
         max-length="36"
         labelSize="sm"
       />
@@ -99,6 +138,7 @@ export function IdentifiersPage() {
         id="uuid-v7"
         generate={generateUUIDv7}
         onValue={publishUuid}
+        onFocus={focus('uuidv7')}
         max-length="36"
         labelSize="sm"
       />

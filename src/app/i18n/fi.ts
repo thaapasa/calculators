@@ -83,6 +83,7 @@ export const fi = {
   'page.pixeldensity.heightPlaceholder': 'korkeus',
 
   'page.links.title': 'Linkit',
+  'page.links.subtitle': 'Kerää linkkejä muistiin',
   'page.links.label': 'Linkki',
 
   'page.cryptography.title': 'Kryptografia',
@@ -109,6 +110,7 @@ export const fi = {
   'pipeline.render.unknownImage': 'Tuntematon kuvaformaatti',
   'pipeline.render.notSvg': 'Data ei ole SVG-muodossa',
 
+  'component.subtitlePlaceholder': 'Valitse arvo',
   'component.copyToClipboard': 'Kopioi leikepöydälle',
   'component.copyHexToClipboard': 'Kopioi hex-merkkijono leikepöydälle',
   'component.lastValuePlaceholder': 'Viimeisin arvo',

@@ -1,6 +1,7 @@
 import { type TranslationKey } from 'app/i18n/fi';
 import { useTranslation } from 'app/i18n/LanguageContext';
-import React, { useCallback, useMemo, useState } from 'react';
+import { useFocusPublisher } from 'app/util/useFocusPublisher';
+import React, { useCallback, useMemo } from 'react';
 
 import * as numbers from '../calc/numbers';
 import { zeroPad } from '../util/strings';
@@ -96,7 +97,7 @@ const isValidNumber = (v: number) => typeof v === 'number' && !isNaN(v);
 
 export function NumbersPage() {
   const { t } = useTranslation();
-  const [selected, setSelected] = useState<NumberType>('decimal');
+  const { selected, selectSrc } = useFocusPublisher<NumberType>();
 
   const fields = useMemo(
     () => Object.fromEntries(typeKeys.map(k => [k, types[k]])) as Record<NumberType, TypeInfo>,
@@ -110,21 +111,25 @@ export function NumbersPage() {
       const name = event.target.name as NumberType;
       handleChange(name, event.target.value);
       const canonical = types[name].read(event.target.value);
-      if (isValidNumber(canonical)) {
+      if (isValidNumber(canonical) && selected) {
         publishSelectedValue(types[selected].write(canonical));
       }
     },
     [handleChange, selected],
   );
 
-  const selectSrc = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
-    setSelected(event.target.name as NumberType);
-  }, []);
+  const onFocus = useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      const name = event.target.name as NumberType;
+      selectSrc(name, values[name]);
+    },
+    [selectSrc, values],
+  );
 
   return (
     <HalfSection
       title={t('page.numbers.title')}
-      subtitle={t(labelKeys[selected])}
+      subtitle={selected ? t(labelKeys[selected]) : ''}
       image="/img/header-numbers.jpg"
     >
       {typeKeys.map(k => (
@@ -136,7 +141,7 @@ export function NumbersPage() {
             placeholder={t(labelKeys[k])}
             value={values[k]}
             onChange={inputChanged}
-            onFocus={selectSrc}
+            onFocus={onFocus}
             maxLength={types[k].maxLength}
             readOnly={types[k].readOnly || false}
             key={k}

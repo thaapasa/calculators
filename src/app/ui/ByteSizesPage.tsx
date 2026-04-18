@@ -1,6 +1,7 @@
 import { type TranslationKey } from 'app/i18n/fi';
 import { useTranslation } from 'app/i18n/LanguageContext';
-import React, { useCallback, useMemo, useState } from 'react';
+import { useFocusPublisher } from 'app/util/useFocusPublisher';
+import React, { useCallback, useMemo } from 'react';
 
 import { useLinkedInputs } from '../util/useLinkedInputs';
 import { allFieldsOfType } from '../util/util';
@@ -61,7 +62,7 @@ const isValidNumber = (v: number) => typeof v === 'number' && !isNaN(v);
 
 export function ByteSizesPage() {
   const { t } = useTranslation();
-  const [selected, setSelected] = useState<SizeTypes>('byte');
+  const { selected, selectSrc } = useFocusPublisher<SizeTypes>();
 
   const fields = useMemo(
     () => Object.fromEntries(typeKeys.map(k => [k, types[k]])) as Record<SizeTypes, TypeInfo>,
@@ -75,47 +76,39 @@ export function ByteSizesPage() {
       const name = event.target.name as SizeTypes;
       handleChange(name, event.target.value);
       const canonical = types[name].read(event.target.value);
-      if (isValidNumber(canonical)) {
+      if (isValidNumber(canonical) && selected) {
         publishSelectedValue(types[selected].write(canonical));
       }
     },
     [handleChange, selected],
   );
 
-  const selectSrc = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
-    setSelected(event.target.name as SizeTypes);
-  }, []);
+  const onFocus = useCallback(
+    (event: React.FocusEvent<HTMLInputElement>) => {
+      const name = event.target.name as SizeTypes;
+      selectSrc(name, values[name]);
+    },
+    [selectSrc, values],
+  );
 
   return (
     <HalfSection
       title={t('page.bytesizes.title')}
-      subtitle={t(types[selected].nameKey)}
+      subtitle={selected ? t(types[selected].nameKey) : ''}
       image="/img/header-bytesize.jpg"
     >
       <Item name={t('page.bytesizes.byte')}>
-        <Editor type="byte" value={values.byte} onChange={inputChanged} onFocus={selectSrc} />
+        <Editor type="byte" value={values.byte} onChange={inputChanged} onFocus={onFocus} />
       </Item>
       <div className="my-0.5 mx-3 flex">
         <Flex className="mr-4 min-w-0">
           {leftColumn.map(k => (
-            <Editor
-              key={k}
-              type={k}
-              value={values[k]}
-              onChange={inputChanged}
-              onFocus={selectSrc}
-            />
+            <Editor key={k} type={k} value={values[k]} onChange={inputChanged} onFocus={onFocus} />
           ))}
         </Flex>
         <Flex className="min-w-0">
           {rightColumn.map(k => (
-            <Editor
-              key={k}
-              type={k}
-              value={values[k]}
-              onChange={inputChanged}
-              onFocus={selectSrc}
-            />
+            <Editor key={k} type={k} value={values[k]} onChange={inputChanged} onFocus={onFocus} />
           ))}
         </Flex>
       </div>

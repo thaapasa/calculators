@@ -23,6 +23,7 @@ interface CheckProps {
   readonly 'max-length'?: string;
   readonly generate?: () => string;
   readonly onValue: (x: string) => void;
+  readonly onFocus?: (value: string) => void;
 }
 
 export function CheckValue({
@@ -35,6 +36,7 @@ export function CheckValue({
   'max-length': _maxLength,
   generate: generateFn,
   onValue,
+  onFocus,
 }: CheckProps) {
   const { t } = useTranslation();
   const [input, setInput] = useState('');
@@ -76,6 +78,10 @@ export function CheckValue({
     processInput(generated);
   }, [generateFn, processInput]);
 
+  const handleFocus = useCallback(() => {
+    if (onFocus) onFocus(value || input);
+  }, [onFocus, value, input]);
+
   return (
     <Item name={name} valueClassName="top" labelWidth={labelWidthClass[labelSize]}>
       {generateFn ? (
@@ -89,6 +95,7 @@ export function CheckValue({
         className={cn('input-inline', !width && 'flex-1')}
         style={width ? { width } : undefined}
         onChange={inputChanged}
+        onFocus={handleFocus}
         value={input}
       />
       {check ? (
