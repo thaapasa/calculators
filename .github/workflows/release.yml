@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
 
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     env:
@@ -62,3 +62,12 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Tag released commit
+        env:
+          TAG: v${{ steps.version.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "Release $TAG" "${{ github.sha }}"
+          git push origin "$TAG"
