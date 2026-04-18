@@ -12,11 +12,11 @@ const nextPreference: Record<ThemePreference, ThemePreference> = {
   dark: 'system',
 };
 
-const labelKeys: Record<ThemePreference, TranslationKey> = {
+const labelKeys = {
   system: 'theme.system',
   light: 'theme.light',
   dark: 'theme.dark',
-};
+} as const satisfies Record<ThemePreference, TranslationKey>;
 
 const icons: Record<ThemePreference, React.ComponentType<{ className?: string }>> = {
   system: MonitorSmartphone,

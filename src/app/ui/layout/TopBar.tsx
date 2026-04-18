@@ -1,5 +1,5 @@
 import { useTranslation } from 'app/i18n/LanguageContext';
-import { routePaths } from 'app/i18n/routeMap';
+import { getPagePaths, type PageId, routePaths } from 'app/i18n/routeMap';
 import { Button } from 'components/ui/button';
 import { cn } from 'lib/utils';
 import {
@@ -22,13 +22,6 @@ import { Logo } from './Logo';
 interface ToolbarProps {
   onToggleDrawer: () => void;
 }
-
-type PageId = keyof typeof routePaths;
-
-const navPageExtraAliases: Partial<Record<PageId, string[]>> = {
-  numbers: ['/p/merkit'],
-  bytesizes: ['/p/bytesize'],
-};
 
 export function TopBar({ onToggleDrawer, children }: React.PropsWithChildren<ToolbarProps>) {
   const { t } = useTranslation();
@@ -68,9 +61,7 @@ function NavLink({ route, page, icon: Icon, tooltip }: NavLinkProps) {
   const location = useLocation();
 
   const target = route ?? routePaths[page!][lang];
-  const matchPaths = route
-    ? [route]
-    : [routePaths[page!].fi, routePaths[page!].en, ...(navPageExtraAliases[page!] ?? [])];
+  const matchPaths = route ? [route] : getPagePaths(page!);
   const selected = matchPaths.includes(location.pathname);
 
   return (

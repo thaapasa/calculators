@@ -1,6 +1,6 @@
 import type { Lang } from './types';
 
-type PageId =
+export type PageId =
   | 'time'
   | 'numbers'
   | 'identifiers'
@@ -23,20 +23,24 @@ export const routePaths: Record<PageId, Record<Lang, string>> = {
   pixeldensity: { fi: '/p/pikselitiheys', en: '/p/pixeldensity' },
 };
 
-const aliases: Array<{ path: string; id: PageId }> = [
-  { path: '/p/merkit', id: 'numbers' },
-  { path: '/p/bytesize', id: 'bytesizes' },
-];
+const aliasesByPage: Partial<Record<PageId, string[]>> = {
+  numbers: ['/p/merkit'],
+  bytesizes: ['/p/bytesize'],
+};
 
 const pathToId = new Map<string, PageId>();
 (Object.keys(routePaths) as PageId[]).forEach(id => {
   pathToId.set(routePaths[id].fi, id);
   pathToId.set(routePaths[id].en, id);
+  aliasesByPage[id]?.forEach(path => pathToId.set(path, id));
 });
-aliases.forEach(({ path, id }) => pathToId.set(path, id));
 
 export function swapPathLang(pathname: string, target: Lang): string {
   const id = pathToId.get(pathname);
   if (!id) return pathname;
   return routePaths[id][target];
+}
+
+export function getPagePaths(page: PageId): string[] {
+  return [routePaths[page].fi, routePaths[page].en, ...(aliasesByPage[page] ?? [])];
 }

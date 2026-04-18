@@ -29,7 +29,7 @@ const hints: Record<string, string> = {
   timeZone: '+02:00',
 };
 
-const reportTargetLabels: Record<string, TranslationKey> = {
+const reportTargetLabels = {
   iso8601: 'page.time.label.iso8601',
   iso8601utc: 'page.time.label.iso8601utc',
   javaTime: 'page.time.label.javaTime',
@@ -37,7 +37,7 @@ const reportTargetLabels: Record<string, TranslationKey> = {
   nameDay: 'page.time.label.nameDay',
   week: 'page.time.label.week',
   date: 'page.time.label.date',
-};
+} as const satisfies Record<string, TranslationKey>;
 
 export function TimePage() {
   const { t } = useTranslation();
@@ -200,7 +200,8 @@ export function TimePage() {
   };
   const labelWidth = 'w-28';
 
-  const subtitle = reportTargetLabels[reportTarget] ? t(reportTargetLabels[reportTarget]) : '';
+  const labelKey = reportTargetLabels[reportTarget as keyof typeof reportTargetLabels];
+  const subtitle = labelKey ? t(labelKey) : '';
 
   return (
     <HalfSection title={t('page.time.title')} subtitle={subtitle} image="/img/header-datetime.jpg">

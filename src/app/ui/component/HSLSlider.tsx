@@ -6,11 +6,11 @@ import { Slider } from 'components/ui/slider';
 import { ColorBar } from './ColorBar';
 import { Item } from './Item';
 
-const labelKeys: Record<HSLKey, TranslationKey> = {
+const labelKeys = {
   h: 'page.colors.hsl.h',
   s: 'page.colors.hsl.s',
   l: 'page.colors.hsl.l',
-};
+} as const satisfies Record<HSLKey, TranslationKey>;
 
 export const HSLSlider = ({
   colorBar,
