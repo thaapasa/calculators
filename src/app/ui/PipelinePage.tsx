@@ -9,6 +9,7 @@ import {
 } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { setOperationConfig, setOperationRenderer } from 'app/calc/pipeline/registry';
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { usePipeline } from 'app/util/usePipeline';
 import { useCallback } from 'react';
 
@@ -47,6 +48,7 @@ setOperationConfig('hex-dump', HexDumpBytesConfig);
 setOperationConfig('line-sort', LineSortConfig);
 
 export function PipelinePage() {
+  const { t } = useTranslation();
   const pipeline = usePipeline();
   const { steps, results, addStep, removeStep, moveStep, updateStepParams } = pipeline;
 
@@ -71,7 +73,11 @@ export function PipelinePage() {
   const finalResult = results.length > 0 ? results[results.length - 1] : null;
 
   return (
-    <Section title="Tekstimuunnokset" subtitle="Dataputki" image="/img/header-text-conversion.jpg">
+    <Section
+      title={t('page.pipeline.title')}
+      subtitle={t('page.pipeline.subtitle')}
+      image="/img/header-text-conversion.jpg"
+    >
       <div className="mx-3 space-y-4">
         <PipelineInput
           value={pipeline.input}
@@ -102,7 +108,9 @@ export function PipelinePage() {
 
         <OperationPicker onAdd={addStep} />
 
-        {pipeline.processing && <div className="text-xs text-muted-foreground">Käsitellään…</div>}
+        {pipeline.processing && (
+          <div className="text-xs text-muted-foreground">{t('page.pipeline.processing')}</div>
+        )}
 
         {finalResult && !finalResult.error ? (
           <PipelineOutput data={finalResult.output} />

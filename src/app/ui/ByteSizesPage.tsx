@@ -1,3 +1,5 @@
+import { type TranslationKey } from 'app/i18n/fi';
+import { useTranslation } from 'app/i18n/LanguageContext';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { useLinkedInputs } from '../util/useLinkedInputs';
@@ -10,7 +12,7 @@ import { Flex, FlexRow } from './layout/elements';
 interface TypeInfo {
   readonly read: (x: string) => number;
   readonly write: (x: number) => string;
-  readonly name: string;
+  readonly nameKey: TranslationKey;
   readonly hint: string;
   readonly unit: string;
 }
@@ -25,8 +27,13 @@ const MEGA = KILO * KILO;
 const GIGA = MEGA * KILO;
 const TERA = GIGA * KILO;
 
-const converter = (name: string, unit: string, ratio: number, decimals: number = 3): TypeInfo => ({
-  name,
+const converter = (
+  nameKey: TranslationKey,
+  unit: string,
+  ratio: number,
+  decimals: number = 3,
+): TypeInfo => ({
+  nameKey,
   hint: unit,
   unit,
   read: x => Number(x) * ratio,
@@ -34,15 +41,15 @@ const converter = (name: string, unit: string, ratio: number, decimals: number =
 });
 
 const types = allFieldsOfType<TypeInfo>()({
-  byte: converter('Tavua', 'B', 1, 0),
-  kibi: converter('Kibitavua', 'KiB', KIBI),
-  mebi: converter('Mebitavua', 'MiB', MEBI),
-  gibi: converter('Gibitavua', 'GiB', GIBI),
-  tebi: converter('Tebitavua', 'TiB', TEBI),
-  kilo: converter('Kilotavua', 'Kt', KILO),
-  mega: converter('Megatavua', 'Mt', MEGA),
-  giga: converter('Gigatavua', 'Gt', GIGA),
-  tera: converter('Teratavua', 'Tt', TERA),
+  byte: converter('page.bytesizes.byte', 'B', 1, 0),
+  kibi: converter('page.bytesizes.kibi', 'KiB', KIBI),
+  mebi: converter('page.bytesizes.mebi', 'MiB', MEBI),
+  gibi: converter('page.bytesizes.gibi', 'GiB', GIBI),
+  tebi: converter('page.bytesizes.tebi', 'TiB', TEBI),
+  kilo: converter('page.bytesizes.kilo', 'Kt', KILO),
+  mega: converter('page.bytesizes.mega', 'Mt', MEGA),
+  giga: converter('page.bytesizes.giga', 'Gt', GIGA),
+  tera: converter('page.bytesizes.tera', 'Tt', TERA),
 });
 export type SizeTypes = keyof typeof types;
 const typeKeys = Object.keys(types) as SizeTypes[];
@@ -53,6 +60,7 @@ const rightColumn: SizeTypes[] = ['kilo', 'mega', 'giga', 'tera'];
 const isValidNumber = (v: number) => typeof v === 'number' && !isNaN(v);
 
 export function ByteSizesPage() {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<SizeTypes>('byte');
 
   const fields = useMemo(
@@ -79,28 +87,32 @@ export function ByteSizesPage() {
   }, []);
 
   return (
-    <HalfSection title="Tavukoot" subtitle={types[selected].name} image="/img/header-bytesize.jpg">
-      <Item name="Tavua">
+    <HalfSection
+      title={t('page.bytesizes.title')}
+      subtitle={t(types[selected].nameKey)}
+      image="/img/header-bytesize.jpg"
+    >
+      <Item name={t('page.bytesizes.byte')}>
         <Editor type="byte" value={values.byte} onChange={inputChanged} onFocus={selectSrc} />
       </Item>
       <div className="my-0.5 mx-3 flex">
         <Flex className="mr-4 min-w-0">
-          {leftColumn.map(t => (
+          {leftColumn.map(k => (
             <Editor
-              key={t}
-              type={t}
-              value={values[t]}
+              key={k}
+              type={k}
+              value={values[k]}
               onChange={inputChanged}
               onFocus={selectSrc}
             />
           ))}
         </Flex>
         <Flex className="min-w-0">
-          {rightColumn.map(t => (
+          {rightColumn.map(k => (
             <Editor
-              key={t}
-              type={t}
-              value={values[t]}
+              key={k}
+              type={k}
+              value={values[k]}
               onChange={inputChanged}
               onFocus={selectSrc}
             />
@@ -117,6 +129,7 @@ const Editor = (p: {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
 }) => {
+  const { t } = useTranslation();
   const info = types[p.type];
   return (
     <FlexRow className="my-3 items-center">
@@ -124,7 +137,7 @@ const Editor = (p: {
         className="input-inline flex-1 min-w-0"
         name={p.type}
         type="number"
-        placeholder={info.name}
+        placeholder={t(info.nameKey)}
         value={p.value}
         onChange={p.onChange}
         onFocus={p.onFocus}

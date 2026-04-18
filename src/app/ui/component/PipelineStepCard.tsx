@@ -1,6 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { getOperation } from 'app/calc/pipeline/registry';
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { StepResult } from 'app/util/usePipeline';
 import { GripVertical, Trash2 } from 'lucide-react';
 import React, { useCallback } from 'react';
@@ -22,6 +23,7 @@ export function PipelineStepCard({
   onRemove,
   onParamsChange,
 }: PipelineStepCardProps) {
+  const { t } = useTranslation();
   const op = getOperation(operationId);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: instanceId,
@@ -68,7 +70,7 @@ export function PipelineStepCard({
         <button
           onClick={() => onRemove(instanceId)}
           className="p-1 text-muted-foreground hover:text-destructive"
-          title="Poista"
+          title={t('pipeline.step.remove')}
         >
           <Trash2 size={14} />
         </button>

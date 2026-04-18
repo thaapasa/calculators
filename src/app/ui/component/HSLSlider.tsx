@@ -1,14 +1,16 @@
 import { HSLKey, HSLMaxValue, RGBValue } from 'app/calc/colors';
+import { type TranslationKey } from 'app/i18n/fi';
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { Slider } from 'components/ui/slider';
 
 import { ColorBar } from './ColorBar';
 import { Item } from './Item';
 
-const texts: Record<HSLKey, string> = {
-  h: 'H: Sävy',
-  s: 'S: Väri',
-  l: 'L: Valo',
-};
+const labelKeys = {
+  h: 'page.colors.hsl.h',
+  s: 'page.colors.hsl.s',
+  l: 'page.colors.hsl.l',
+} as const satisfies Record<HSLKey, TranslationKey>;
 
 export const HSLSlider = ({
   colorBar,
@@ -20,9 +22,12 @@ export const HSLSlider = ({
   colorBar: RGBValue[];
   value: number;
   onChange: (v: number) => void;
-}) => (
-  <Item className="mt-4 [&>.grow]:flex-col [&>.grow]:gap-2" name={texts[hsl]}>
-    <ColorBar colors={colorBar} />
-    <Slider value={value} min={0} max={HSLMaxValue} step={1} onValueChange={onChange} />
-  </Item>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Item className="mt-4 [&>.grow]:flex-col [&>.grow]:gap-2" name={t(labelKeys[hsl])}>
+      <ColorBar colors={colorBar} />
+      <Slider value={value} min={0} max={HSLMaxValue} step={1} onValueChange={onChange} />
+    </Item>
+  );
+};

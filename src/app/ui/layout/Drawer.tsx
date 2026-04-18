@@ -1,3 +1,5 @@
+import { useTranslation } from 'app/i18n/LanguageContext';
+import { routePaths } from 'app/i18n/routeMap';
 import { Button } from 'components/ui/button';
 import { Sheet } from 'components/ui/sheet';
 import { useCallback } from 'react';
@@ -13,6 +15,7 @@ interface NavigationProps {
 
 export function NavigationDrawer({ onClose }: NavigationProps) {
   const navigate = useNavigate();
+  const { t, lang } = useTranslation();
 
   const goTo = useCallback(
     (path: string) => () => {
@@ -28,75 +31,75 @@ export function NavigationDrawer({ onClose }: NavigationProps) {
         <div className="flex items-center gap-3 p-6">
           <Logo />
           <div>
-            <div className="font-semibold leading-none tracking-tight">Laskurit</div>
+            <div className="font-semibold leading-none tracking-tight">{t('app.title')}</div>
             <div className="text-sm text-muted">v. {version}</div>
           </div>
         </div>
         <Button variant="ghost" className="w-full justify-start rounded-none" onClick={goTo('/')}>
-          Kaikki
+          {t('nav.all')}
         </Button>
         <Button
           variant="ghost"
           className="w-full justify-start rounded-none"
-          onClick={goTo('/p/numerot')}
+          onClick={goTo(routePaths.numbers[lang])}
         >
-          Numerot ja merkit
+          {t('nav.numbers')}
         </Button>
         <Button
           variant="ghost"
           className="w-full justify-start rounded-none"
-          onClick={goTo('/p/aika')}
+          onClick={goTo(routePaths.time[lang])}
         >
-          Aikaleimat
+          {t('nav.time')}
         </Button>
         <Button
           variant="ghost"
           className="w-full justify-start rounded-none"
-          onClick={goTo('/p/tunnisteet')}
+          onClick={goTo(routePaths.identifiers[lang])}
         >
-          Tunnisteet
+          {t('nav.identifiers')}
         </Button>
         <Button
           variant="ghost"
           className="w-full justify-start rounded-none"
-          onClick={goTo('/p/värit')}
+          onClick={goTo(routePaths.colors[lang])}
         >
-          Värit
+          {t('nav.colors')}
         </Button>
         <Button
           variant="ghost"
           className="w-full justify-start rounded-none"
-          onClick={goTo('/p/tavukoot')}
+          onClick={goTo(routePaths.bytesizes[lang])}
         >
-          Tavukoot
+          {t('nav.bytesizes')}
         </Button>
         <Button
           variant="ghost"
           className="w-full justify-start rounded-none"
-          onClick={goTo('/p/linkit')}
+          onClick={goTo(routePaths.links[lang])}
         >
-          Linkit
+          {t('nav.links')}
         </Button>
         <Button
           variant="ghost"
           className="w-full justify-start rounded-none"
-          onClick={goTo('/p/tekstimuunnokset')}
+          onClick={goTo(routePaths.pipeline[lang])}
         >
-          Tekstimuunnokset
+          {t('nav.textConversions')}
         </Button>
         <Button
           variant="ghost"
           className="w-full justify-start rounded-none"
-          onClick={goTo('/p/kryptografia')}
+          onClick={goTo(routePaths.cryptography[lang])}
         >
-          Kryptografia
+          {t('nav.cryptography')}
         </Button>
         <Button
           variant="ghost"
           className="w-full justify-start rounded-none"
-          onClick={goTo('/p/pikselitiheys')}
+          onClick={goTo(routePaths.pixeldensity[lang])}
         >
-          Pikselitiheys
+          {t('nav.pixeldensity')}
         </Button>
         <Flex />
         <div className="p-4 text-[10pt] [&_a]:text-foreground/60">

@@ -1,4 +1,5 @@
 import { getOperationsByCategory } from 'app/calc/pipeline/registry';
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { Plus } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
@@ -7,6 +8,7 @@ interface OperationPickerProps {
 }
 
 export function OperationPicker({ onAdd }: OperationPickerProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const groups = getOperationsByCategory();
 
@@ -25,7 +27,7 @@ export function OperationPicker({ onAdd }: OperationPickerProps) {
         className="flex items-center gap-1 rounded border border-dashed border-border px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
       >
         <Plus size={14} />
-        Lisää operaatio
+        {t('pipeline.addOperation')}
       </button>
       {open && (
         <>

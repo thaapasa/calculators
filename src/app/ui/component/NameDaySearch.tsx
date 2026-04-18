@@ -1,3 +1,4 @@
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { findNameDayFor, MonthDay } from 'app/util/namedays';
 import { isString } from 'app/util/util';
 
@@ -33,10 +34,11 @@ const renderMonthDayItem = (m: NameDayItem) => m.text;
 const monthDayToInputValue = (m: NameDayItem) => m.name;
 
 export function NameDaySearch({ onSelectNameDay }: NameDaySearchProps) {
+  const { t } = useTranslation();
   return (
     <AutoComplete
       name="findNameDay"
-      placeholder="Etsi nimipäivä"
+      placeholder={t('component.nameDaySearchPlaceholder')}
       getSuggestions={findNameDays}
       renderSuggestion={renderMonthDayItem}
       getSuggestionValue={monthDayToInputValue}

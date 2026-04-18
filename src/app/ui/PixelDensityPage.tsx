@@ -1,3 +1,4 @@
+import { useTranslation } from 'app/i18n/LanguageContext';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { LinkedField, useLinkedInputs } from '../util/useLinkedInputs';
@@ -47,6 +48,7 @@ function createFields(): Record<DensityKey, LinkedField<number>> {
 const isValidNumber = (v: number) => typeof v === 'number' && !isNaN(v) && v >= 0;
 
 export function PixelDensityPage() {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<DensityKey>('mdpi');
 
   const widthFields = useMemo(() => createFields(), []);
@@ -75,7 +77,7 @@ export function PixelDensityPage() {
 
   return (
     <HalfSection
-      title="Pikselitiheys"
+      title={t('page.pixeldensity.title')}
       subtitle={densities[selected].name}
       image="/img/header-bytesize.jpg"
     >
@@ -110,6 +112,7 @@ export function PixelDensityPage() {
 }
 
 function PlatformHeader({ title }: { title: string }) {
+  const { t } = useTranslation();
   return (
     <Item>
       <FlexRow className="items-center pt-2 pb-1">
@@ -117,8 +120,12 @@ function PlatformHeader({ title }: { title: string }) {
           {title}
         </div>
         <div className="w-[3em] shrink-0" />
-        <div className="flex-1 min-w-0 text-[0.85em] text-muted">Leveys</div>
-        <div className="flex-1 min-w-0 text-[0.85em] text-muted">Korkeus</div>
+        <div className="flex-1 min-w-0 text-[0.85em] text-muted">
+          {t('page.pixeldensity.width')}
+        </div>
+        <div className="flex-1 min-w-0 text-[0.85em] text-muted">
+          {t('page.pixeldensity.height')}
+        </div>
         <div className="w-6.25 shrink-0" />
       </FlexRow>
     </Item>
@@ -142,6 +149,7 @@ function DensityRow({
   onHeightChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <Item>
       <FlexRow className="items-center my-1">
@@ -150,7 +158,7 @@ function DensityRow({
         <input
           className="input-inline flex-1 min-w-0 w-[5em]"
           name={densityKey}
-          placeholder="leveys"
+          placeholder={t('page.pixeldensity.widthPlaceholder')}
           value={widthValue}
           onChange={onWidthChange}
           onFocus={onFocus}
@@ -159,7 +167,7 @@ function DensityRow({
         <input
           className="input-inline flex-1 min-w-0 w-[5em]"
           name={densityKey}
-          placeholder="korkeus"
+          placeholder={t('page.pixeldensity.heightPlaceholder')}
           value={heightValue}
           onChange={onHeightChange}
           onFocus={onFocus}

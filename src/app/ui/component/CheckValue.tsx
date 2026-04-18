@@ -1,3 +1,4 @@
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { cn } from 'lib/utils';
 import { ChangeEvent, useCallback, useState } from 'react';
 
@@ -5,8 +6,16 @@ import * as util from '../../util/util';
 import { Item } from './Item';
 import { GenerateButton } from './ToolButton';
 
+type LabelSize = 'sm' | 'md';
+
+const labelWidthClass: Record<LabelSize, string> = {
+  sm: 'w-20',
+  md: 'w-36',
+};
+
 interface CheckProps {
-  readonly width: string;
+  readonly width?: string;
+  readonly labelSize?: LabelSize;
   readonly check?: (x: string) => string;
   readonly combine?: (a: string, b: string) => string;
   readonly name: string;
@@ -18,6 +27,7 @@ interface CheckProps {
 
 export function CheckValue({
   width,
+  labelSize = 'md',
   check,
   combine,
   name,
@@ -26,6 +36,7 @@ export function CheckValue({
   generate: generateFn,
   onValue,
 }: CheckProps) {
+  const { t } = useTranslation();
   const [input, setInput] = useState('');
   const [checkValue, setCheckValue] = useState('');
   const [value, setValue] = useState('');
@@ -65,19 +76,18 @@ export function CheckValue({
     processInput(generated);
   }, [generateFn, processInput]);
 
-  const widthClass = width ? `w-[${width}]` : 'flex-1';
-
   return (
-    <Item name={name} valueClassName="top" labelWidth="w-28">
+    <Item name={name} valueClassName="top" labelWidth={labelWidthClass[labelSize]}>
       {generateFn ? (
-        <GenerateButton onClick={generate} title="Luo uusi" />
+        <GenerateButton onClick={generate} title={t('component.generateNew')} />
       ) : (
         <div className="w-9 shrink-0" />
       )}
       <input
         type="text"
         id={`${id}-input`}
-        className={cn('input-inline', widthClass)}
+        className={cn('input-inline', !width && 'flex-1')}
+        style={width ? { width } : undefined}
         onChange={inputChanged}
         value={input}
       />

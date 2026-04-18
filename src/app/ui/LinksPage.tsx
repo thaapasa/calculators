@@ -1,3 +1,4 @@
+import { useTranslation } from 'app/i18n/LanguageContext';
 import { Separator } from 'components/ui/separator';
 import { FilePlus, Trash2 } from 'lucide-react';
 import { useCallback, useState } from 'react';
@@ -28,6 +29,7 @@ function storeLinks(links: string[]) {
 }
 
 export function LinksPage() {
+  const { t } = useTranslation();
   const [link, setLink] = useState('');
   const [storedLinks, setStoredLinks] = useState<string[]>(getLinksFromStore);
 
@@ -53,8 +55,8 @@ export function LinksPage() {
   }, []);
 
   return (
-    <Section title="Linkit" image="/img/header-links.jpg">
-      <Item name="Linkki">
+    <Section title={t('page.links.title')} image="/img/header-links.jpg">
+      <Item name={t('page.links.label')}>
         <input
           className="input-inline flex-1"
           name="link"

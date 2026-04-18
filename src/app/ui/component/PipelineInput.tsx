@@ -1,4 +1,5 @@
 import { binaryData, PipelineData, textData } from 'app/calc/pipeline/types';
+import { useTranslation } from 'app/i18n/LanguageContext';
 import React, { useCallback, useRef, useState } from 'react';
 
 interface PipelineInputProps {
@@ -8,6 +9,7 @@ interface PipelineInputProps {
 }
 
 export function PipelineInput({ value, onChange, onDataChange }: PipelineInputProps) {
+  const { t } = useTranslation();
   const [dragOver, setDragOver] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [url, setUrl] = useState('');
@@ -84,11 +86,11 @@ export function PipelineInput({ value, onChange, onDataChange }: PipelineInputPr
       setFileName(trimmed);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      setUrlError(msg.includes('Failed to fetch') ? 'Haku epäonnistui (CORS?)' : msg);
+      setUrlError(msg.includes('Failed to fetch') ? t('pipeline.input.fetchFailed') : msg);
     } finally {
       setUrlLoading(false);
     }
-  }, [url, onChange, onDataChange]);
+  }, [url, onChange, onDataChange, t]);
 
   const handleUrlKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -111,14 +113,14 @@ export function PipelineInput({ value, onChange, onDataChange }: PipelineInputPr
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium">Syöte</span>
+        <span className="text-sm font-medium">{t('pipeline.input.label')}</span>
         {fileName && <span className="text-xs text-muted-foreground">📎 {fileName}</span>}
         {(value || fileName) && (
           <button
             onClick={handleClear}
             className="text-xs text-muted-foreground hover:text-foreground"
           >
-            Tyhjennä
+            {t('pipeline.input.clear')}
           </button>
         )}
       </div>
@@ -132,18 +134,18 @@ export function PipelineInput({ value, onChange, onDataChange }: PipelineInputPr
           className="textarea-box w-full min-h-[80px] rounded px-3 py-2 text-sm resize-y"
           value={value}
           onChange={handleTextChange}
-          placeholder="Kirjoita tai liitä tekstiä, tai pudota tiedosto..."
+          placeholder={t('pipeline.input.placeholder')}
         />
         {dragOver && (
           <div className="absolute inset-0 flex items-center justify-center rounded bg-primary/10 pointer-events-none">
-            <span className="text-sm font-medium text-primary">Pudota tiedosto tähän</span>
+            <span className="text-sm font-medium text-primary">{t('pipeline.input.dropHere')}</span>
           </div>
         )}
       </div>
       <div className="flex items-center gap-2 flex-wrap">
         <label className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
           <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileInput} />
-          📁 Valitse tiedosto
+          📁 {t('pipeline.input.chooseFile')}
         </label>
         <span className="text-xs text-muted-foreground">|</span>
         <div className="flex items-center gap-1">
@@ -160,12 +162,12 @@ export function PipelineInput({ value, onChange, onDataChange }: PipelineInputPr
             disabled={urlLoading || !url.trim()}
             className="rounded border border-border px-2 py-0.5 text-xs text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors"
           >
-            {urlLoading ? '...' : 'Hae'}
+            {urlLoading ? '...' : t('pipeline.input.fetch')}
           </button>
         </div>
         {urlError && <span className="text-xs text-red-500">{urlError}</span>}
         <span className="text-xs text-muted-foreground ml-auto">
-          {value.length > 0 && `${value.length} merkkiä`}
+          {value.length > 0 && `${value.length} ${t('pipeline.input.chars')}`}
         </span>
       </div>
     </div>

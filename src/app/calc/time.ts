@@ -40,27 +40,6 @@ export function writeDateText(v: moment.Moment): string {
   return v.isValid() ? v.format(datePattern) : '';
 }
 
-export const texts = {
-  weekDay: ['', 'ma', 'ti', 'ke', 'to', 'pe', 'la', 'su'],
-  types: {
-    iso8601: 'ISO 8601',
-    iso8601utc: 'ISO 8601 UTC',
-    javaTime: 'Java/JS time',
-    unixTime: 'Unixtime',
-    nameDay: 'Nimipäivä',
-    week: 'Viikko',
-  } as Record<string, string>,
-};
-
-export const hints: Record<string, string> = {
-  date: '31.12.2016',
-  hour: '10',
-  minute: '00',
-  second: '00',
-  millisecond: '000',
-  timeZone: '+02:00',
-};
-
 function toStateValue(mom: moment.Moment, writer: (x: moment.Moment) => unknown): string {
   if (!moment.isMoment(mom)) return '';
   const s = writer(mom);
@@ -91,7 +70,7 @@ export function buildMoment(
   });
 }
 
-export function computeOutputs(m: moment.Moment) {
+export function computeOutputs(m: moment.Moment, weekDayLabels: readonly string[]) {
   return {
     date: writeDateText(m),
     hour: m.isValid() ? pad(m.hour(), 2) : '',
@@ -99,7 +78,7 @@ export function computeOutputs(m: moment.Moment) {
     second: m.isValid() ? pad(m.second(), 2) : '',
     millisecond: m.isValid() ? pad(m.millisecond(), 3) : '',
     timeZone: m.isValid() ? m.format('Z') : '',
-    weekDay: toStateValue(m, v => texts.weekDay[v.isoWeekday()]),
+    weekDay: toStateValue(m, v => weekDayLabels[v.isoWeekday()]),
     week: toStateValue(m, toIsoWeek),
     nameDay: toStateValue(m, v => getNameDay(v.month() + 1, v.date())),
     iso8601: m.isValid() ? m.format() : '',
