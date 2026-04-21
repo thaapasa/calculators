@@ -98,6 +98,10 @@ export function Pbkdf2Config({ params, onChange }: StepConfigProps) {
     saltSource === 'pipeline' && saltPipelineId
       ? (registry?.outputs.get(saltPipelineId) ?? null)
       : null;
+  const sourceIsMissing =
+    saltSource === 'pipeline' &&
+    !!saltPipelineId &&
+    !availablePipelines.some(p => p.id === saltPipelineId);
 
   useEffect(() => {
     if (saltSource !== 'pipeline') return;
@@ -153,11 +157,13 @@ export function Pbkdf2Config({ params, onChange }: StepConfigProps) {
     }
   };
 
-  const sourceInfo = sourceOutput
-    ? sourceOutput.type === 'binary'
-      ? `Binary data, ${sourceOutput.bytes.length} bytes`
-      : `Text, ${new TextEncoder().encode(sourceOutput.text).length} bytes`
-    : '(no output)';
+  const sourceInfo = sourceIsMissing
+    ? '(pipeline deleted)'
+    : sourceOutput
+      ? sourceOutput.type === 'binary'
+        ? `Binary data, ${sourceOutput.bytes.length} bytes`
+        : `Text, ${new TextEncoder().encode(sourceOutput.text).length} bytes`
+      : '(no output)';
   const saltPlaceholder = saltSource === 'base64' ? 'e.g. oYa3...' : 'e.g. a1b2c3...';
 
   return (
@@ -188,6 +194,7 @@ export function Pbkdf2Config({ params, onChange }: StepConfigProps) {
               From: {p.title}
             </option>
           ))}
+          {sourceIsMissing && <option value={`pipeline:${saltPipelineId}`}>From: (deleted)</option>}
         </select>
       </label>
       {saltSource === 'pipeline' ? (

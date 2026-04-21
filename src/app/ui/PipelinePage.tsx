@@ -89,6 +89,7 @@ interface PipelineInstanceMeta {
   id: string;
   title: string;
   initialConfig?: PipelineConfig;
+  loadToken: number;
 }
 
 function MultiPipelinePage() {
@@ -97,6 +98,7 @@ function MultiPipelinePage() {
     (n: number): PipelineInstanceMeta => ({
       id: generateInstanceId(),
       title: `${t('pipeline.defaultTitle')} ${n}`,
+      loadToken: 0,
     }),
     [t],
   );
@@ -158,11 +160,13 @@ function MultiPipelinePage() {
   }, [instances, t]);
 
   const loadSetup = useCallback((setup: StoredSetup) => {
+    const token = Date.now();
     setInstances(
       setup.pipelines.map(p => ({
         id: p.id ?? generateInstanceId(),
         title: p.title,
         initialConfig: p.config,
+        loadToken: token,
       })),
     );
   }, []);
@@ -229,7 +233,7 @@ function MultiPipelinePage() {
           )}
           {instances.map(inst => (
             <PipelineInstance
-              key={inst.id}
+              key={`${inst.id}:${inst.loadToken}`}
               id={inst.id}
               title={inst.title}
               initialConfig={inst.initialConfig}
