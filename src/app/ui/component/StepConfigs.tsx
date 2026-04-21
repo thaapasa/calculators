@@ -1,4 +1,7 @@
-import { StepConfigProps } from 'app/calc/pipeline/types';
+import { StepConfigProps, toBinary } from 'app/calc/pipeline/types';
+import { useEffect } from 'react';
+
+import { usePipelineRegistry, usePipelineSelfId } from './PipelineRegistryContext';
 
 /** ROT-N shift amount config (1–25) */
 export function RotNConfig({ params, onChange }: StepConfigProps) {
@@ -60,11 +63,103 @@ export function HexDumpBytesConfig({ params, onChange }: StepConfigProps) {
   );
 }
 
-/** PBKDF2 config: iterations, salt (hex), output bits */
+function bytesToHex(bytes: Uint8Array): string {
+  return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function base64ToHex(b64: string): string {
+  const clean = b64.trim();
+  if (!clean) return '';
+  const binary = atob(clean);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytesToHex(bytes);
+}
+
+/** PBKDF2 config: iterations, salt source (hex/base64/pipeline), output bits */
 export function Pbkdf2Config({ params, onChange }: StepConfigProps) {
+  const registry = usePipelineRegistry();
+  const selfId = usePipelineSelfId();
+
   const iterations = typeof params.iterations === 'number' ? params.iterations : 27500;
-  const salt = typeof params.salt === 'string' ? params.salt : '';
   const bits = typeof params.bits === 'number' ? params.bits : 256;
+  const saltSource: 'hex' | 'base64' | 'pipeline' =
+    params.saltSource === 'base64' || params.saltSource === 'pipeline' ? params.saltSource : 'hex';
+  const saltInput =
+    typeof params.saltInput === 'string'
+      ? params.saltInput
+      : typeof params.salt === 'string'
+        ? params.salt
+        : '';
+  const saltPipelineId = typeof params.saltPipelineId === 'string' ? params.saltPipelineId : '';
+
+  const availablePipelines = (registry?.pipelines ?? []).filter(p => p.id !== selfId);
+  const sourceOutput =
+    saltSource === 'pipeline' && saltPipelineId
+      ? (registry?.outputs.get(saltPipelineId) ?? null)
+      : null;
+
+  useEffect(() => {
+    if (saltSource !== 'pipeline') return;
+    if (!sourceOutput) {
+      if (params.salt !== '') onChange({ ...params, salt: '' });
+      return;
+    }
+    const hex = bytesToHex(toBinary(sourceOutput));
+    if (params.salt !== hex) onChange({ ...params, salt: hex });
+  }, [saltSource, sourceOutput, params, onChange]);
+
+  const selectValue =
+    saltSource === 'pipeline' && saltPipelineId ? `pipeline:${saltPipelineId}` : saltSource;
+
+  const handleSourceChange = (value: string) => {
+    if (value === 'hex') {
+      onChange({
+        ...params,
+        saltSource: 'hex',
+        saltPipelineId: undefined,
+        salt: saltInput,
+      });
+    } else if (value === 'base64') {
+      let hex: string;
+      try {
+        hex = base64ToHex(saltInput);
+      } catch {
+        hex = '';
+      }
+      onChange({
+        ...params,
+        saltSource: 'base64',
+        saltPipelineId: undefined,
+        salt: hex,
+      });
+    } else if (value.startsWith('pipeline:')) {
+      const pid = value.slice('pipeline:'.length);
+      onChange({ ...params, saltSource: 'pipeline', saltPipelineId: pid });
+    }
+  };
+
+  const handleSaltInputChange = (value: string) => {
+    if (saltSource === 'hex') {
+      onChange({ ...params, saltInput: value, salt: value });
+    } else if (saltSource === 'base64') {
+      let hex: string;
+      try {
+        hex = base64ToHex(value);
+      } catch {
+        hex = '';
+      }
+      onChange({ ...params, saltInput: value, salt: hex });
+    }
+  };
+
+  const sourceInfo = sourceOutput
+    ? sourceOutput.type === 'binary'
+      ? `Binary data, ${sourceOutput.bytes.length} bytes`
+      : `Text, ${new TextEncoder().encode(sourceOutput.text).length} bytes`
+    : '(no output)';
+  const saltPlaceholder = saltSource === 'base64' ? 'e.g. oYa3...' : 'e.g. a1b2c3...';
+
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
       <label className="flex items-center gap-1">
@@ -80,15 +175,32 @@ export function Pbkdf2Config({ params, onChange }: StepConfigProps) {
         />
       </label>
       <label className="flex items-center gap-1">
-        Salt (hex)
+        Salt
+        <select
+          value={selectValue}
+          onChange={e => handleSourceChange(e.target.value)}
+          className="rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground"
+        >
+          <option value="hex">Hex</option>
+          <option value="base64">Base64</option>
+          {availablePipelines.map(p => (
+            <option key={p.id} value={`pipeline:${p.id}`}>
+              From: {p.title}
+            </option>
+          ))}
+        </select>
+      </label>
+      {saltSource === 'pipeline' ? (
+        <span className="font-mono">{sourceInfo}</span>
+      ) : (
         <input
           type="text"
-          value={salt}
-          placeholder="e.g. a1b2c3..."
-          onChange={e => onChange({ ...params, salt: e.target.value })}
+          value={saltInput}
+          placeholder={saltPlaceholder}
+          onChange={e => handleSaltInputChange(e.target.value)}
           className="w-48 rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground font-mono"
         />
-      </label>
+      )}
       <label className="flex items-center gap-1">
         Output bits
         <select

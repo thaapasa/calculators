@@ -3,6 +3,7 @@ import type { PipelineConfig } from 'app/calc/pipeline/types';
 import * as store from './store';
 
 export interface StoredPipeline {
+  id: string;
   title: string;
   config: PipelineConfig;
 }

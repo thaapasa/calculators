@@ -9,17 +9,21 @@ import {
 } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { setOperationConfig, setOperationRenderer } from 'app/calc/pipeline/registry';
-import { generateInstanceId, PipelineConfig } from 'app/calc/pipeline/types';
+import { generateInstanceId, PipelineConfig, PipelineData } from 'app/calc/pipeline/types';
 import { useTranslation } from 'app/i18n/LanguageContext';
 import { getSetupsFromStore, StoredSetup, storeSetups } from 'app/util/pipelineSetupStorage';
 import { PipelineState, usePipeline } from 'app/util/usePipeline';
 import { Badge } from 'components/ui/badge';
 import { Plus, RotateCcw, Save, Trash2 } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { OperationPicker } from './component/OperationPicker';
 import { PipelineInput } from './component/PipelineInput';
 import { PipelineOutput } from './component/PipelineOutput';
+import {
+  PipelineInstanceContext,
+  PipelineRegistryContext,
+} from './component/PipelineRegistryContext';
 import { PipelineStepCard } from './component/PipelineStepCard';
 import Section from './component/Section';
 import {
@@ -98,11 +102,28 @@ function MultiPipelinePage() {
   );
   const [instances, setInstances] = useState<PipelineInstanceMeta[]>(() => [makeDefault(1)]);
   const [setups, setSetups] = useState<StoredSetup[]>(getSetupsFromStore);
+  const [outputs, setOutputs] = useState<Map<string, PipelineData | null>>(() => new Map());
   const configsRef = useRef<Map<string, PipelineConfig>>(new Map());
 
   const registerConfig = useCallback((id: string, config: PipelineConfig | null) => {
     if (config) configsRef.current.set(id, config);
     else configsRef.current.delete(id);
+  }, []);
+
+  const publishOutput = useCallback((id: string, data: PipelineData | null) => {
+    setOutputs(prev => {
+      const cur = prev.get(id);
+      if (data === null) {
+        if (!prev.has(id)) return prev;
+        const next = new Map(prev);
+        next.delete(id);
+        return next;
+      }
+      if (cur === data) return prev;
+      const next = new Map(prev);
+      next.set(id, data);
+      return next;
+    });
   }, []);
 
   const addInstance = useCallback(() => {
@@ -125,6 +146,7 @@ function MultiPipelinePage() {
     const name = window.prompt(t('pipeline.saveSetupPrompt'));
     if (!name) return;
     const pipelines = instances.map(inst => ({
+      id: inst.id,
       title: inst.title,
       config: configsRef.current.get(inst.id) ?? { version: 1 as const, steps: [] },
     }));
@@ -138,7 +160,7 @@ function MultiPipelinePage() {
   const loadSetup = useCallback((setup: StoredSetup) => {
     setInstances(
       setup.pipelines.map(p => ({
-        id: generateInstanceId(),
+        id: p.id ?? generateInstanceId(),
         title: p.title,
         initialConfig: p.config,
       })),
@@ -153,6 +175,14 @@ function MultiPipelinePage() {
       return next;
     });
   }, []);
+
+  const registryValue = useMemo(
+    () => ({
+      pipelines: instances.map(i => ({ id: i.id, title: i.title })),
+      outputs,
+    }),
+    [instances, outputs],
+  );
 
   return (
     <Section
@@ -180,41 +210,44 @@ function MultiPipelinePage() {
         </div>
       }
     >
-      <div className="space-y-4">
-        {setups.length > 0 && (
-          <div className="-m-1 mb-4 flex flex-wrap">
-            {setups.map((s, i) => (
-              <Badge
-                key={i}
-                className="m-1 px-3 py-1 cursor-pointer"
-                onClick={() => loadSetup(s)}
-                onDelete={() => removeSetup(i)}
-                title={t('pipeline.loadSetup')}
-              >
-                {s.name}
-              </Badge>
-            ))}
-          </div>
-        )}
-        {instances.map(inst => (
-          <PipelineInstance
-            key={inst.id}
-            id={inst.id}
-            title={inst.title}
-            initialConfig={inst.initialConfig}
-            onTitleChange={title => renameInstance(inst.id, title)}
-            onRemove={instances.length > 1 ? () => removeInstance(inst.id) : undefined}
-            onConfigChange={registerConfig}
-          />
-        ))}
-        <button
-          onClick={addInstance}
-          className="flex items-center gap-1 rounded border border-dashed border-border px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
-        >
-          <Plus size={14} />
-          {t('pipeline.addPipeline')}
-        </button>
-      </div>
+      <PipelineRegistryContext.Provider value={registryValue}>
+        <div className="space-y-4">
+          {setups.length > 0 && (
+            <div className="-m-1 mb-4 flex flex-wrap">
+              {setups.map((s, i) => (
+                <Badge
+                  key={i}
+                  className="m-1 px-3 py-1 cursor-pointer"
+                  onClick={() => loadSetup(s)}
+                  onDelete={() => removeSetup(i)}
+                  title={t('pipeline.loadSetup')}
+                >
+                  {s.name}
+                </Badge>
+              ))}
+            </div>
+          )}
+          {instances.map(inst => (
+            <PipelineInstance
+              key={inst.id}
+              id={inst.id}
+              title={inst.title}
+              initialConfig={inst.initialConfig}
+              onTitleChange={title => renameInstance(inst.id, title)}
+              onRemove={instances.length > 1 ? () => removeInstance(inst.id) : undefined}
+              onConfigChange={registerConfig}
+              onOutputChange={publishOutput}
+            />
+          ))}
+          <button
+            onClick={addInstance}
+            className="flex items-center gap-1 rounded border border-dashed border-border px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
+          >
+            <Plus size={14} />
+            {t('pipeline.addPipeline')}
+          </button>
+        </div>
+      </PipelineRegistryContext.Provider>
     </Section>
   );
 }
@@ -226,6 +259,7 @@ interface PipelineInstanceProps {
   onTitleChange: (title: string) => void;
   onRemove?: () => void;
   onConfigChange: (id: string, config: PipelineConfig | null) => void;
+  onOutputChange: (id: string, output: PipelineData | null) => void;
 }
 
 function PipelineInstance({
@@ -235,10 +269,11 @@ function PipelineInstance({
   onTitleChange,
   onRemove,
   onConfigChange,
+  onOutputChange,
 }: PipelineInstanceProps) {
   const { t } = useTranslation();
   const pipeline = usePipeline();
-  const { fromConfig, toConfig, steps } = pipeline;
+  const { fromConfig, toConfig, steps, results, input, inputData } = pipeline;
 
   useEffect(() => {
     if (initialConfig) fromConfig(initialConfig);
@@ -250,27 +285,44 @@ function PipelineInstance({
     return () => onConfigChange(id, null);
   }, [id, steps, toConfig, onConfigChange]);
 
+  const finalResult = results.length > 0 ? results[results.length - 1] : null;
+  const effectiveOutput: PipelineData | null =
+    finalResult && !finalResult.error
+      ? finalResult.output
+      : input || inputData.type === 'binary'
+        ? inputData
+        : null;
+
+  useEffect(() => {
+    onOutputChange(id, effectiveOutput);
+    return () => onOutputChange(id, null);
+  }, [id, effectiveOutput, onOutputChange]);
+
+  const instanceValue = useMemo(() => ({ id }), [id]);
+
   return (
-    <div className="rounded border border-border bg-surface/50 p-3 space-y-3">
-      <div className="flex items-center gap-2">
-        <input
-          value={title}
-          onChange={e => onTitleChange(e.target.value)}
-          aria-label={t('pipeline.renameTitle')}
-          className="flex-1 min-w-0 bg-transparent border-0 border-b border-transparent hover:border-border focus:border-primary focus:outline-none px-1 py-0.5 text-base font-semibold"
-        />
-        {onRemove && (
-          <button
-            onClick={onRemove}
-            title={t('pipeline.removePipeline')}
-            className="p-1 text-muted-foreground hover:text-destructive"
-          >
-            <Trash2 size={16} />
-          </button>
-        )}
+    <PipelineInstanceContext.Provider value={instanceValue}>
+      <div className="rounded border border-border bg-surface/50 p-3 space-y-3">
+        <div className="flex items-center gap-2">
+          <input
+            value={title}
+            onChange={e => onTitleChange(e.target.value)}
+            aria-label={t('pipeline.renameTitle')}
+            className="flex-1 min-w-0 bg-transparent border-0 border-b border-transparent hover:border-border focus:border-primary focus:outline-none px-1 py-0.5 text-base font-semibold"
+          />
+          {onRemove && (
+            <button
+              onClick={onRemove}
+              title={t('pipeline.removePipeline')}
+              className="p-1 text-muted-foreground hover:text-destructive"
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
+        </div>
+        <PipelineBody pipeline={pipeline} />
       </div>
-      <PipelineBody pipeline={pipeline} />
-    </div>
+    </PipelineInstanceContext.Provider>
   );
 }
 
