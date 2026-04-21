@@ -1,5 +1,4 @@
 import { getOperationsByCategory } from 'app/calc/pipeline/registry';
-import { useTranslation } from 'app/i18n/LanguageContext';
 import { Plus } from 'lucide-react';
 import { useCallback, useState } from 'react';
 
@@ -8,36 +7,32 @@ interface OperationPickerProps {
 }
 
 export function OperationPicker({ onAdd }: OperationPickerProps) {
-  const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
   const groups = getOperationsByCategory();
 
   const handleSelect = useCallback(
     (operationId: string) => {
       onAdd(operationId);
-      setOpen(false);
+      setOpenCategory(null);
     },
     [onAdd],
   );
 
   return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen(v => !v)}
-        className="flex items-center gap-1 rounded border border-dashed border-border px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
-      >
-        <Plus size={14} />
-        {t('pipeline.addOperation')}
-      </button>
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 top-full mt-1 z-50 min-w-50 max-h-[70vh] overflow-auto rounded border border-border bg-surface shadow-lg">
-            {groups.map(({ category, operations }) => (
-              <div key={category.id}>
-                <div className="sticky top-0 z-10 px-3 py-1.5 text-sm font-medium text-foreground bg-border">
-                  {category.label}
-                </div>
+    <div className="flex flex-wrap gap-2">
+      {groups.map(({ category, operations }) => (
+        <div key={category.id} className="relative">
+          <button
+            onClick={() => setOpenCategory(v => (v === category.id ? null : category.id))}
+            className="flex items-center gap-1 rounded border border-dashed border-border px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
+          >
+            <Plus size={14} />
+            {category.label}
+          </button>
+          {openCategory === category.id && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setOpenCategory(null)} />
+              <div className="absolute left-0 top-full mt-1 z-50 min-w-40 max-h-[70vh] overflow-auto rounded border border-border bg-surface shadow-lg">
                 {operations.map(op => (
                   <button
                     key={op.id}
@@ -48,10 +43,10 @@ export function OperationPicker({ onAdd }: OperationPickerProps) {
                   </button>
                 ))}
               </div>
-            ))}
-          </div>
-        </>
-      )}
+            </>
+          )}
+        </div>
+      ))}
     </div>
   );
 }

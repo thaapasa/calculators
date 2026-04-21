@@ -1,5 +1,3 @@
-import { fromHexString, toHexString } from 'app/util/strings';
-
 import { binaryData, OperationDef, textData, toBinary, toText } from '../types';
 
 export const base64EncodeOp: OperationDef = {
@@ -50,7 +48,8 @@ export const hexEncodeOp: OperationDef = {
   category: 'encoding',
   defaultParams: { case: 'lower' },
   process: async (input, params) => {
-    const hex = toHexString(toText(input));
+    const bytes = toBinary(input);
+    const hex = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
     return textData(params?.case === 'upper' ? hex.toUpperCase() : hex.toLowerCase());
   },
 };
@@ -59,7 +58,17 @@ export const hexDecodeOp: OperationDef = {
   id: 'hex-decode',
   name: 'Hex decode',
   category: 'encoding',
-  process: async input => textData(fromHexString(toText(input))),
+  process: async input => {
+    const clean = toText(input).replace(/\s+/g, '');
+    if (clean.length % 2 !== 0) throw new Error('Hex input must have an even number of digits');
+    const bytes = new Uint8Array(clean.length / 2);
+    for (let i = 0; i < bytes.length; i++) {
+      const byte = parseInt(clean.slice(i * 2, i * 2 + 2), 16);
+      if (Number.isNaN(byte)) throw new Error('Hex input contains non-hex characters');
+      bytes[i] = byte;
+    }
+    return binaryData(bytes);
+  },
 };
 
 /** Decode JWT token payload to JSON */

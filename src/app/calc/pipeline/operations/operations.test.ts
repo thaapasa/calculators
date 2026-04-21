@@ -98,48 +98,54 @@ describe('format operations', () => {
 });
 
 describe('hash operations', () => {
+  async function hashHex(op: OperationDef, input: PipelineData, params?: Record<string, unknown>) {
+    const bytes = await op.process(input, params);
+    return toText(await hexEncodeOp.process(bytes));
+  }
+
   it('MD5 produces correct hash', async () => {
-    const result = await md5Op.process(textData('hello'));
-    expect(toText(result)).toBe('5d41402abc4b2a76b9719d911017c592');
+    expect(await hashHex(md5Op, textData('hello'))).toBe('5d41402abc4b2a76b9719d911017c592');
   });
 
   it('SHA-256 produces correct hash', async () => {
-    const result = await sha256Op.process(textData('hello'));
-    expect(toText(result)).toBe('2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824');
+    expect(await hashHex(sha256Op, textData('hello'))).toBe(
+      '2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824',
+    );
   });
 
   // Test vectors from Stephen Thomas's IETF draft (password="password", salt="salt")
   it('PBKDF2-SHA-256 matches the known test vector at 1 iteration', async () => {
-    const result = await pbkdf2Sha256Op.process(textData('password'), {
-      iterations: 1,
-      salt: '73616c74', // "salt" as hex
-      bits: 256,
-    });
-    expect(toText(result)).toBe('120fb6cffcf8b32c43e7225256c4f837a86548c92ccc35480805987cb70be17b');
+    expect(
+      await hashHex(pbkdf2Sha256Op, textData('password'), {
+        iterations: 1,
+        salt: '73616c74', // "salt" as hex
+        bits: 256,
+      }),
+    ).toBe('120fb6cffcf8b32c43e7225256c4f837a86548c92ccc35480805987cb70be17b');
   });
 
   it('PBKDF2-SHA-256 changes output when iterations change', async () => {
-    const one = await pbkdf2Sha256Op.process(textData('password'), {
+    const one = await hashHex(pbkdf2Sha256Op, textData('password'), {
       iterations: 1,
       salt: '73616c74',
       bits: 256,
     });
-    const two = await pbkdf2Sha256Op.process(textData('password'), {
+    const two = await hashHex(pbkdf2Sha256Op, textData('password'), {
       iterations: 2,
       salt: '73616c74',
       bits: 256,
     });
-    expect(toText(one)).not.toBe(toText(two));
-    expect(toText(two)).toBe('ae4d0c95af6b46d32d0adff928f06dd02a303f8ef3c251dfd6e2d85a95474c43');
+    expect(one).not.toBe(two);
+    expect(two).toBe('ae4d0c95af6b46d32d0adff928f06dd02a303f8ef3c251dfd6e2d85a95474c43');
   });
 
   it('PBKDF2-SHA-512 produces a 128-hex-char output at 512 bits', async () => {
-    const result = await pbkdf2Sha512Op.process(textData('password'), {
+    const hex = await hashHex(pbkdf2Sha512Op, textData('password'), {
       iterations: 1,
       salt: '73616c74',
       bits: 512,
     });
-    expect(toText(result)).toHaveLength(128);
+    expect(hex).toHaveLength(128);
   });
 
   it('PBKDF2 rejects invalid salt hex', async () => {
@@ -178,8 +184,8 @@ describe('pipeline combinations', () => {
     expect(toText(result)).toBe('OLLEH');
   });
 
-  it('lowercase → MD5 hashes the case-folded value', async () => {
-    const result = await runPipeline(textData('HELLO'), [lowercaseOp, md5Op]);
+  it('lowercase → MD5 → hex encode hashes the case-folded value', async () => {
+    const result = await runPipeline(textData('HELLO'), [lowercaseOp, md5Op, hexEncodeOp]);
     expect(toText(result)).toBe('5d41402abc4b2a76b9719d911017c592');
   });
 

@@ -1,34 +1,37 @@
-import { hash } from 'app/util/hash';
+import { hashBytes } from 'app/util/hash';
 import md5 from 'md5';
 
-import { OperationDef, textData, toText } from '../types';
+import { binaryData, OperationDef, toText } from '../types';
 
 export const md5Op: OperationDef = {
   id: 'md5',
   name: 'MD5',
   category: 'hash',
-  process: async input => textData(md5(toText(input))),
+  process: async input => {
+    const bytes = md5(toText(input), { asBytes: true });
+    return binaryData(new Uint8Array(bytes));
+  },
 };
 
 export const sha1Op: OperationDef = {
   id: 'sha1',
   name: 'SHA-1',
   category: 'hash',
-  process: async input => textData(await hash(toText(input), 'SHA-1')),
+  process: async input => binaryData(await hashBytes(toText(input), 'SHA-1')),
 };
 
 export const sha256Op: OperationDef = {
   id: 'sha256',
   name: 'SHA-256',
   category: 'hash',
-  process: async input => textData(await hash(toText(input), 'SHA-256')),
+  process: async input => binaryData(await hashBytes(toText(input), 'SHA-256')),
 };
 
 export const sha512Op: OperationDef = {
   id: 'sha512',
   name: 'SHA-512',
   category: 'hash',
-  process: async input => textData(await hash(toText(input), 'SHA-512')),
+  process: async input => binaryData(await hashBytes(toText(input), 'SHA-512')),
 };
 
 function hexToBytes(hex: string): Uint8Array {
@@ -43,17 +46,13 @@ function hexToBytes(hex: string): Uint8Array {
   return bytes;
 }
 
-function bytesToHex(bytes: Uint8Array): string {
-  return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
-}
-
 async function pbkdf2Derive(
   password: string,
   saltHex: string,
   iterations: number,
   digest: 'SHA-256' | 'SHA-512',
   bits: number,
-): Promise<string> {
+): Promise<Uint8Array> {
   const key = await crypto.subtle.importKey(
     'raw',
     new TextEncoder().encode(password),
@@ -66,7 +65,7 @@ async function pbkdf2Derive(
     key,
     bits,
   );
-  return bytesToHex(new Uint8Array(derived));
+  return new Uint8Array(derived);
 }
 
 export const pbkdf2Sha256Op: OperationDef = {
@@ -78,7 +77,7 @@ export const pbkdf2Sha256Op: OperationDef = {
     const iterations = typeof params?.iterations === 'number' ? params.iterations : 27500;
     const salt = typeof params?.salt === 'string' ? params.salt : '';
     const bits = typeof params?.bits === 'number' ? params.bits : 256;
-    return textData(await pbkdf2Derive(toText(input), salt, iterations, 'SHA-256', bits));
+    return binaryData(await pbkdf2Derive(toText(input), salt, iterations, 'SHA-256', bits));
   },
 };
 
@@ -91,7 +90,7 @@ export const pbkdf2Sha512Op: OperationDef = {
     const iterations = typeof params?.iterations === 'number' ? params.iterations : 210000;
     const salt = typeof params?.salt === 'string' ? params.salt : '';
     const bits = typeof params?.bits === 'number' ? params.bits : 512;
-    return textData(await pbkdf2Derive(toText(input), salt, iterations, 'SHA-512', bits));
+    return binaryData(await pbkdf2Derive(toText(input), salt, iterations, 'SHA-512', bits));
   },
 };
 
