@@ -19,8 +19,11 @@ function Badge({
       {onDelete && (
         <button
           type="button"
-          onClick={onDelete}
-          className="ml-1 rounded-full outline-none hover:bg-border focus:ring-1 focus:ring-primary"
+          onClick={e => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          className="ml-1 cursor-pointer rounded-full outline-none hover:bg-border focus:ring-1 focus:ring-primary"
           aria-label="Remove"
         >
           ✕
