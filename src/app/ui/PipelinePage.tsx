@@ -29,7 +29,9 @@ import Section from './component/Section';
 import {
   HexCaseConfig,
   HexDumpBytesConfig,
+  JsonExtractConfig,
   JsonIndentConfig,
+  JsonMergeConfig,
   LineSortConfig,
   Pbkdf2Config,
   RotNConfig,
@@ -54,6 +56,8 @@ setOperationRenderer('show-svg', SvgRenderer);
 // Wire config components to configurable operations
 setOperationConfig('rot13', RotNConfig);
 setOperationConfig('json-pretty', JsonIndentConfig);
+setOperationConfig('json-extract', JsonExtractConfig);
+setOperationConfig('json-merge', JsonMergeConfig);
 setOperationConfig('hex-dump', HexDumpBytesConfig);
 setOperationConfig('hex-encode', HexCaseConfig);
 setOperationConfig('line-sort', LineSortConfig);

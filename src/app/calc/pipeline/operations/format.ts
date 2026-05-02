@@ -1,6 +1,13 @@
 import { jsonStringToXml, xmlToJsonString } from 'app/calc/xml-json';
 
 import { OperationDef, textData, toText } from '../types';
+import {
+  coerceJsonValue,
+  getAtPath,
+  parseJsonPath,
+  renderExtractedValue,
+  setAtPath,
+} from './jsonPath';
 
 function toPrettyJSON(s: string, indent: number | string = 2): string {
   try {
@@ -50,9 +57,52 @@ export const xmlToJsonOp: OperationDef = {
   process: async input => textData(await xmlToJsonString(toText(input))),
 };
 
+export const jsonExtractOp: OperationDef = {
+  id: 'json-extract',
+  name: 'JSON extract',
+  category: 'format',
+  description: 'Extract value at JSON path (e.g. $.user.name, /user/name, items[0].id)',
+  defaultParams: { path: '' },
+  process: async (input, params) => {
+    const path = typeof params?.path === 'string' ? params.path : '';
+    const segments = parseJsonPath(path);
+    const parsed = JSON.parse(toText(input));
+    const value = getAtPath(parsed, segments);
+    return textData(renderExtractedValue(value));
+  },
+};
+
+export const jsonMergeOp: OperationDef = {
+  id: 'json-merge',
+  name: 'JSON set value',
+  category: 'format',
+  description: 'Set/insert a value at a JSON path. Value from text or another pipeline.',
+  defaultParams: { path: '', value: '', valueType: 'auto', indent: 2 },
+  process: async (input, params) => {
+    const path = typeof params?.path === 'string' ? params.path : '';
+    const valueText = typeof params?.value === 'string' ? params.value : '';
+    const valueType: 'auto' | 'string' | 'json' =
+      params?.valueType === 'string' || params?.valueType === 'json' ? params.valueType : 'auto';
+    const indent = params?.indent === 'tab' ? '\t' : Number(params?.indent ?? 2);
+    const segments = parseJsonPath(path);
+    const inputText = toText(input).trim();
+    const root =
+      inputText === ''
+        ? segments.length > 0 && typeof segments[0] === 'number'
+          ? []
+          : {}
+        : JSON.parse(inputText);
+    const value = coerceJsonValue(valueText, valueType);
+    const updated = setAtPath(root, segments, value);
+    return textData(JSON.stringify(updated, null, indent));
+  },
+};
+
 export const formatOperations: OperationDef[] = [
   jsonPrettyOp,
   jsonCompactOp,
+  jsonExtractOp,
+  jsonMergeOp,
   jsonToXmlOp,
   xmlToJsonOp,
 ];

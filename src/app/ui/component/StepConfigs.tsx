@@ -1,4 +1,4 @@
-import { StepConfigProps, toBinary } from 'app/calc/pipeline/types';
+import { StepConfigProps, toBinary, toText } from 'app/calc/pipeline/types';
 import { useEffect } from 'react';
 
 import { usePipelineRegistry, usePipelineSelfId } from './PipelineRegistryContext';
@@ -239,6 +239,142 @@ export function HexCaseConfig({ params, onChange }: StepConfigProps) {
         <option value="upper">UPPER</option>
       </select>
     </label>
+  );
+}
+
+/** JSON extract path config */
+export function JsonExtractConfig({ params, onChange }: StepConfigProps) {
+  const path = typeof params.path === 'string' ? params.path : '';
+  return (
+    <label className="flex flex-1 items-center gap-1 text-xs text-muted-foreground">
+      Path
+      <input
+        type="text"
+        value={path}
+        placeholder="$.user.name"
+        onChange={e => onChange({ ...params, path: e.target.value })}
+        className="flex-1 min-w-0 rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground font-mono"
+      />
+    </label>
+  );
+}
+
+/** JSON set-value config: path + value source (text or pipeline) + value type */
+export function JsonMergeConfig({ params, onChange }: StepConfigProps) {
+  const registry = usePipelineRegistry();
+  const selfId = usePipelineSelfId();
+
+  const path = typeof params.path === 'string' ? params.path : '';
+  const valueType: 'auto' | 'string' | 'json' =
+    params.valueType === 'string' || params.valueType === 'json' ? params.valueType : 'auto';
+  const valueSource: 'text' | 'pipeline' = params.valueSource === 'pipeline' ? 'pipeline' : 'text';
+  const valueInput =
+    typeof params.valueInput === 'string'
+      ? params.valueInput
+      : typeof params.value === 'string'
+        ? params.value
+        : '';
+  const valuePipelineId = typeof params.valuePipelineId === 'string' ? params.valuePipelineId : '';
+
+  const availablePipelines = (registry?.pipelines ?? []).filter(p => p.id !== selfId);
+  const sourceOutput =
+    valueSource === 'pipeline' && valuePipelineId
+      ? (registry?.outputs.get(valuePipelineId) ?? null)
+      : null;
+  const sourceIsMissing =
+    valueSource === 'pipeline' &&
+    !!valuePipelineId &&
+    !availablePipelines.some(p => p.id === valuePipelineId);
+
+  useEffect(() => {
+    if (valueSource !== 'pipeline') return;
+    if (!sourceOutput) {
+      if (params.value !== '') onChange({ ...params, value: '' });
+      return;
+    }
+    const text = toText(sourceOutput);
+    if (params.value !== text) onChange({ ...params, value: text });
+  }, [valueSource, sourceOutput, params, onChange]);
+
+  const selectValue =
+    valueSource === 'pipeline' && valuePipelineId ? `pipeline:${valuePipelineId}` : 'text';
+
+  const handleSourceChange = (value: string) => {
+    if (value === 'text') {
+      onChange({
+        ...params,
+        valueSource: 'text',
+        valuePipelineId: undefined,
+        value: valueInput,
+      });
+    } else if (value.startsWith('pipeline:')) {
+      const pid = value.slice('pipeline:'.length);
+      onChange({ ...params, valueSource: 'pipeline', valuePipelineId: pid });
+    }
+  };
+
+  const sourceInfo = sourceIsMissing
+    ? '(pipeline deleted)'
+    : sourceOutput
+      ? sourceOutput.type === 'binary'
+        ? `Binary, ${sourceOutput.bytes.length} bytes`
+        : `${sourceOutput.text.length} chars`
+      : '(no output)';
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+      <label className="flex items-center gap-1">
+        Path
+        <input
+          type="text"
+          value={path}
+          placeholder="$.user.name"
+          onChange={e => onChange({ ...params, path: e.target.value })}
+          className="w-40 rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground font-mono"
+        />
+      </label>
+      <label className="flex items-center gap-1">
+        Value
+        <select
+          value={selectValue}
+          onChange={e => handleSourceChange(e.target.value)}
+          className="rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground"
+        >
+          <option value="text">Text</option>
+          {availablePipelines.map(p => (
+            <option key={p.id} value={`pipeline:${p.id}`}>
+              From: {p.title}
+            </option>
+          ))}
+          {sourceIsMissing && (
+            <option value={`pipeline:${valuePipelineId}`}>From: (deleted)</option>
+          )}
+        </select>
+      </label>
+      {valueSource === 'pipeline' ? (
+        <span className="font-mono">{sourceInfo}</span>
+      ) : (
+        <input
+          type="text"
+          value={valueInput}
+          placeholder='"text", 42, true, {"a":1}'
+          onChange={e => onChange({ ...params, valueInput: e.target.value, value: e.target.value })}
+          className="w-48 rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground font-mono"
+        />
+      )}
+      <label className="flex items-center gap-1">
+        As
+        <select
+          value={valueType}
+          onChange={e => onChange({ ...params, valueType: e.target.value })}
+          className="rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground"
+        >
+          <option value="auto">Auto</option>
+          <option value="string">String</option>
+          <option value="json">JSON</option>
+        </select>
+      </label>
+    </div>
   );
 }
 
