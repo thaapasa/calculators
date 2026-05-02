@@ -46,7 +46,7 @@
     "react-router-dom": "7.14.0",
     "react-sizeme": "3.0.2",
     "tailwind-merge": "^3.5.0",
-    "uuid": "13.0.0",
+    "uuid": "14.0.0",
     "vitest": "^4.1.4",
     "xml-js": "1.6.11"
   },
