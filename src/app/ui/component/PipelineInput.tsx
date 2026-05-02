@@ -27,6 +27,9 @@ export function PipelineInput({ value, onChange, onDataChange }: PipelineInputPr
   const [mode, setMode] = useState<InputMode>('text');
   const [randomLength, setRandomLength] = useState(32);
   const [randomBytesHex, setRandomBytesHex] = useState('');
+  const [textCache, setTextCache] = useState('');
+  const [randomStringCache, setRandomStringCache] = useState('');
+  const [randomBytesCache, setRandomBytesCache] = useState<Uint8Array | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
   const [url, setUrl] = useState('');
@@ -37,6 +40,7 @@ export function PipelineInput({ value, onChange, onDataChange }: PipelineInputPr
   const generateRandomString = useCallback(
     (len: number) => {
       const s = getRandomString(len);
+      setRandomStringCache(s);
       onChange(s);
     },
     [onChange],
@@ -45,6 +49,7 @@ export function PipelineInput({ value, onChange, onDataChange }: PipelineInputPr
   const generateRandomBytes = useCallback(
     (len: number) => {
       const bytes = randomBytes(len);
+      setRandomBytesCache(bytes);
       setRandomBytesHex(bytesToHex(bytes));
       onDataChange(binaryData(bytes));
     },
@@ -53,20 +58,41 @@ export function PipelineInput({ value, onChange, onDataChange }: PipelineInputPr
 
   const handleModeChange = useCallback(
     (next: InputMode) => {
+      if (next === mode) return;
+      if (mode === 'text') setTextCache(value);
+      else if (mode === 'randomString') setRandomStringCache(value);
       setMode(next);
       setFileName(null);
       setUrlError(null);
-      if (next === 'randomString') {
-        generateRandomString(randomLength);
-      } else if (next === 'randomBytes') {
-        generateRandomBytes(randomLength);
-      } else {
-        // Switching back to text: ensure inputData mirrors the text value
-        onChange(value);
+      if (next === 'text') {
+        onChange(textCache);
+        onDataChange(textData(textCache));
         setRandomBytesHex('');
+      } else if (next === 'randomString') {
+        if (randomStringCache) onChange(randomStringCache);
+        else generateRandomString(randomLength);
+        setRandomBytesHex('');
+      } else if (next === 'randomBytes') {
+        if (randomBytesCache) {
+          setRandomBytesHex(bytesToHex(randomBytesCache));
+          onDataChange(binaryData(randomBytesCache));
+        } else {
+          generateRandomBytes(randomLength);
+        }
       }
     },
-    [randomLength, generateRandomString, generateRandomBytes, onChange, value],
+    [
+      mode,
+      value,
+      textCache,
+      randomStringCache,
+      randomBytesCache,
+      randomLength,
+      generateRandomString,
+      generateRandomBytes,
+      onChange,
+      onDataChange,
+    ],
   );
 
   const handleLengthChange = useCallback(
