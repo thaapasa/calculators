@@ -1,6 +1,6 @@
 import { Button } from 'components/ui/button';
 import { Languages } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 
 import { useTranslation } from './LanguageContext';
 import { swapPathLang } from './routeMap';

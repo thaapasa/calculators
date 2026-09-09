@@ -3,7 +3,7 @@ import { routePaths } from 'app/i18n/routeMap';
 import { Button } from 'components/ui/button';
 import { Sheet } from 'components/ui/sheet';
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 import { version } from '../../../../package.json';
 import { Flex, FlexColumn } from './elements';
