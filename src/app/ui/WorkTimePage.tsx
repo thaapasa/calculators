@@ -1,4 +1,5 @@
 import {
+  createEmptyDay,
   formatDecimalHours,
   formatDuration,
   formatTime,
@@ -21,6 +22,7 @@ import { HalfSection } from './component/Section';
 import { FlexRow } from './layout/elements';
 
 const TICK_MS = 30_000;
+const labelWidth = 'w-28';
 
 function currentTime(): string {
   return formatTime(nowMinutes());
@@ -82,9 +84,7 @@ export function WorkTimePage() {
     setNow(nowMinutes());
   }, []);
 
-  const clear = useCallback(() => update({ rows: [] }), [update]);
-
-  const labelWidth = 'w-28';
+  const clear = useCallback(() => setDay(prev => createEmptyDay(prev.date)), []);
 
   return (
     <HalfSection
@@ -167,26 +167,22 @@ export function WorkTimePage() {
         </Item>
       ))}
 
-      <Item
+      <DeductionRow
         className="mt-4"
-        labelWidth={labelWidth}
-        name={
-          <label className="inline-flex items-center gap-2 cursor-pointer">
-            <Checkbox
-              checked={day.subtractLunch}
-              onChange={e => update({ subtractLunch: e.target.checked })}
-            />
-            {t('page.worktime.subtractLunch')}
-          </label>
-        }
-      >
-        <NumberInput
-          value={day.lunchMinutes}
-          disabled={!day.subtractLunch}
-          onChange={lunchMinutes => update({ lunchMinutes })}
-        />
-        <span className="ml-1 text-muted-foreground">{t('page.worktime.minutes')}</span>
-      </Item>
+        label={t('page.worktime.subtractLunch')}
+        enabled={day.subtractLunch}
+        minutes={day.lunchMinutes}
+        onEnabledChange={subtractLunch => update({ subtractLunch })}
+        onMinutesChange={lunchMinutes => update({ lunchMinutes })}
+      />
+      <DeductionRow
+        className="mt-1"
+        label={t('page.worktime.subtractCommute')}
+        enabled={day.subtractCommute}
+        minutes={day.commuteMinutes}
+        onEnabledChange={subtractCommute => update({ subtractCommute })}
+        onMinutesChange={commuteMinutes => update({ commuteMinutes })}
+      />
       <Item className="mt-1" name={t('page.worktime.target')} labelWidth={labelWidth}>
         <NumberInput
           value={day.targetMinutes / 60}
@@ -214,6 +210,41 @@ export function WorkTimePage() {
         />
       </Item>
     </HalfSection>
+  );
+}
+
+interface DeductionRowProps {
+  className?: string;
+  label: string;
+  enabled: boolean;
+  minutes: number;
+  onEnabledChange: (enabled: boolean) => void;
+  onMinutesChange: (minutes: number) => void;
+}
+
+function DeductionRow({
+  className,
+  label,
+  enabled,
+  minutes,
+  onEnabledChange,
+  onMinutesChange,
+}: DeductionRowProps) {
+  const { t } = useTranslation();
+  return (
+    <Item
+      className={className}
+      labelWidth={labelWidth}
+      name={
+        <label className="inline-flex items-center gap-2 cursor-pointer">
+          <Checkbox checked={enabled} onChange={e => onEnabledChange(e.target.checked)} />
+          {label}
+        </label>
+      }
+    >
+      <NumberInput value={minutes} disabled={!enabled} onChange={onMinutesChange} />
+      <span className="ml-1 text-muted-foreground">{t('page.worktime.minutes')}</span>
+    </Item>
   );
 }
 

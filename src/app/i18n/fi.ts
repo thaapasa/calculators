@@ -97,6 +97,7 @@ export const fi = {
   'page.worktime.removeRow': 'Poista rivi',
   'page.worktime.clear': 'Tyhjennä',
   'page.worktime.subtractLunch': 'Lounas',
+  'page.worktime.subtractCommute': 'Työmatka',
   'page.worktime.minutes': 'min',
   'page.worktime.target': 'Tavoite',
   'page.worktime.hours': 'h',

@@ -18,19 +18,21 @@ export interface WorkDay {
   readonly rows: readonly WorkRow[];
   readonly subtractLunch: boolean;
   readonly lunchMinutes: number;
+  readonly subtractCommute: boolean;
+  readonly commuteMinutes: number;
   /** Target working day length in minutes */
   readonly targetMinutes: number;
 }
 
 export interface WorkSummary {
-  /** Net minutes worked (lunch subtracted, clamped to >= 0) */
+  /** Net minutes worked (deductions subtracted, clamped to >= 0) */
   readonly workedMinutes: number;
-  /** Gross minutes worked, before lunch */
+  /** Gross minutes worked, before deductions */
   readonly grossMinutes: number;
   /** Minutes of gaps between rows */
   readonly awayMinutes: number;
-  /** Lunch minutes actually subtracted */
-  readonly lunchMinutes: number;
+  /** Fixed deductions (lunch, commute) actually subtracted */
+  readonly deductedMinutes: number;
   /** Minutes still left to reach target; 0 if reached */
   readonly remainingMinutes: number;
   /**
@@ -45,6 +47,7 @@ export interface WorkSummary {
 const MINUTES_PER_DAY = 24 * 60;
 
 export const DEFAULT_LUNCH_MINUTES = 30;
+export const DEFAULT_COMMUTE_MINUTES = 30;
 export const DEFAULT_TARGET_MINUTES = 7.5 * 60;
 
 export function parseTime(s: string): number | undefined {
@@ -124,21 +127,23 @@ export function summarize(day: WorkDay, now: number): WorkSummary {
     (sum, iv, i) => (i === 0 ? 0 : sum + (iv.start - merged[i - 1].end)),
     0,
   );
-  const lunch = day.subtractLunch ? Math.max(0, day.lunchMinutes) : 0;
-  const lunchMinutes = Math.min(lunch, grossMinutes);
-  const workedMinutes = grossMinutes - lunchMinutes;
+  const deductions =
+    (day.subtractLunch ? Math.max(0, day.lunchMinutes) : 0) +
+    (day.subtractCommute ? Math.max(0, day.commuteMinutes) : 0);
+  const deductedMinutes = Math.min(deductions, grossMinutes);
+  const workedMinutes = grossMinutes - deductedMinutes;
   const remainingMinutes = Math.max(0, day.targetMinutes - workedMinutes);
   const hasOpenRow = day.rows.some(r => r.end === '' && parseTime(r.start) !== undefined);
   const lastEnd = merged.length > 0 ? merged[merged.length - 1].end : undefined;
-  // Full lunch still has to be worked off even if not all of it has been subtracted yet.
+  // Full deductions still have to be worked off even if not all subtracted yet.
   const leaveAtMinutes = hasOpenRow
-    ? now + Math.max(0, day.targetMinutes + lunch - grossMinutes)
+    ? now + Math.max(0, day.targetMinutes + deductions - grossMinutes)
     : lastEnd;
   return {
     workedMinutes,
     grossMinutes,
     awayMinutes,
-    lunchMinutes,
+    deductedMinutes,
     remainingMinutes,
     leaveAtMinutes,
     hasOpenRow,
@@ -151,6 +156,8 @@ export function createEmptyDay(date: string, base?: Partial<WorkDay>): WorkDay {
     rows: [],
     subtractLunch: base?.subtractLunch ?? true,
     lunchMinutes: base?.lunchMinutes ?? DEFAULT_LUNCH_MINUTES,
+    subtractCommute: base?.subtractCommute ?? false,
+    commuteMinutes: base?.commuteMinutes ?? DEFAULT_COMMUTE_MINUTES,
     targetMinutes: base?.targetMinutes ?? DEFAULT_TARGET_MINUTES,
   };
 }

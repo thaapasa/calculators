@@ -99,6 +99,7 @@ export const en: Record<TranslationKey, string> = {
   'page.worktime.removeRow': 'Remove row',
   'page.worktime.clear': 'Clear',
   'page.worktime.subtractLunch': 'Lunch',
+  'page.worktime.subtractCommute': 'Commute',
   'page.worktime.minutes': 'min',
   'page.worktime.target': 'Target',
   'page.worktime.hours': 'h',

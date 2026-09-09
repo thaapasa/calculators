@@ -50,7 +50,7 @@ describe('summarize', () => {
       t('20:00'),
     );
     expect(s.grossMinutes).toBe(480);
-    expect(s.lunchMinutes).toBe(30);
+    expect(s.deductedMinutes).toBe(30);
     expect(s.workedMinutes).toBe(450);
     expect(s.awayMinutes).toBe(30);
     expect(s.hasOpenRow).toBe(false);
@@ -71,7 +71,7 @@ describe('summarize', () => {
   it('accounts for lunch not yet worked off when computing leave time', () => {
     const s = summarize(day([{ start: '08:00', end: '' }]), t('08:10'));
     expect(s.grossMinutes).toBe(10);
-    expect(s.lunchMinutes).toBe(10);
+    expect(s.deductedMinutes).toBe(10);
     expect(s.workedMinutes).toBe(0);
     expect(s.leaveAtMinutes).toBe(t('16:00'));
   });
@@ -81,6 +81,13 @@ describe('summarize', () => {
     expect(s.grossMinutes).toBe(0);
     expect(s.hasOpenRow).toBe(true);
     expect(s.leaveAtMinutes).toBe(t('17:30'));
+  });
+
+  it('subtracts commute together with lunch', () => {
+    const s = summarize(day([{ start: '08:00', end: '' }], { subtractCommute: true }), t('10:00'));
+    expect(s.deductedMinutes).toBe(60);
+    expect(s.workedMinutes).toBe(60);
+    expect(s.leaveAtMinutes).toBe(t('16:30'));
   });
 
   it('skips lunch when disabled', () => {
@@ -133,7 +140,7 @@ describe('summarize', () => {
   it('returns zeros for empty day', () => {
     const s = summarize(day([]), t('10:00'));
     expect(s.workedMinutes).toBe(0);
-    expect(s.lunchMinutes).toBe(0);
+    expect(s.deductedMinutes).toBe(0);
     expect(s.leaveAtMinutes).toBeUndefined();
   });
 });
