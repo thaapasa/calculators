@@ -90,7 +90,7 @@ export function WorkTimePage() {
     <HalfSection
       title={t('page.worktime.title')}
       subtitle={t('page.worktime.subtitle')}
-      image="/img/header-datetime.jpg"
+      image="/img/header-worktime.jpg"
       action={
         <Button
           variant="ghost"

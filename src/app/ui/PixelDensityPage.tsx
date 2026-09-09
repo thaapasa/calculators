@@ -92,7 +92,7 @@ export function PixelDensityPage() {
     <HalfSection
       title={t('page.pixeldensity.title')}
       subtitle={selected ? densities[selected].name : ''}
-      image="/img/header-bytesize.jpg"
+      image="/img/header-pixeldensity.jpg"
     >
       <PlatformHeader title="Android" />
       {androidKeys.map(k => (
