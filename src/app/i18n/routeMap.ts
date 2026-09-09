@@ -9,7 +9,8 @@ export type PageId =
   | 'links'
   | 'pipeline'
   | 'cryptography'
-  | 'pixeldensity';
+  | 'pixeldensity'
+  | 'worktime';
 
 export const routePaths: Record<PageId, Record<Lang, string>> = {
   time: { fi: '/p/aika', en: '/p/time' },
@@ -21,6 +22,7 @@ export const routePaths: Record<PageId, Record<Lang, string>> = {
   pipeline: { fi: '/p/tekstimuunnokset', en: '/p/textconversions' },
   cryptography: { fi: '/p/kryptografia', en: '/p/cryptography' },
   pixeldensity: { fi: '/p/pikselitiheys', en: '/p/pixeldensity' },
+  worktime: { fi: '/p/työaika', en: '/p/worktime' },
 };
 
 const aliasesByPage: Partial<Record<PageId, string[]>> = {

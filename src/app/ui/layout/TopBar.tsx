@@ -11,6 +11,7 @@ import {
   Lock,
   Monitor,
   Palette,
+  Timer,
   Type,
   User,
 } from 'lucide-react';
@@ -35,6 +36,7 @@ export function TopBar({ onToggleDrawer, children }: React.PropsWithChildren<Too
         <div className="hidden min-[63em]:flex">
           <NavLink icon={Home} route="/" tooltip={t('nav.all')} />
           <NavLink icon={Clock} page="time" tooltip={t('nav.time')} />
+          <NavLink icon={Timer} page="worktime" tooltip={t('nav.worktime')} />
           <NavLink icon={Hash} page="numbers" tooltip={t('nav.numbers')} />
           <NavLink icon={User} page="identifiers" tooltip={t('nav.identifiers')} />
           <NavLink icon={Palette} page="colors" tooltip={t('nav.colors')} />

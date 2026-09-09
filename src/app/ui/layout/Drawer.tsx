@@ -55,6 +55,13 @@ export function NavigationDrawer({ onClose }: NavigationProps) {
         <Button
           variant="ghost"
           className="w-full justify-start rounded-none"
+          onClick={goTo(routePaths.worktime[lang])}
+        >
+          {t('nav.worktime')}
+        </Button>
+        <Button
+          variant="ghost"
+          className="w-full justify-start rounded-none"
           onClick={goTo(routePaths.identifiers[lang])}
         >
           {t('nav.identifiers')}

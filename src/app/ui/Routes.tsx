@@ -11,6 +11,7 @@ import { PipelinePage } from './PipelinePage';
 import { PixelDensityPage } from './PixelDensityPage';
 import { SinglePageLayout } from './SinglePageLayout';
 import { TimePage } from './TimePage';
+import { WorkTimePage } from './WorkTimePage';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,8 @@ const router = createBrowserRouter([
       { path: '/p/cryptography', element: <CryptographyPage /> },
       { path: '/p/pikselitiheys', element: <PixelDensityPage /> },
       { path: '/p/pixeldensity', element: <PixelDensityPage /> },
+      { path: '/p/työaika', element: <WorkTimePage /> },
+      { path: '/p/worktime', element: <WorkTimePage /> },
       { index: true, element: <SinglePageLayout /> },
     ],
   },

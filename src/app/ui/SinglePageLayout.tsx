@@ -7,16 +7,18 @@ import { NumbersPage } from './NumbersPage';
 import { PipelinePage } from './PipelinePage';
 import { PixelDensityPage } from './PixelDensityPage';
 import { TimePage } from './TimePage';
+import { WorkTimePage } from './WorkTimePage';
 
 export function SinglePageLayout() {
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 items-start">
         <TimePage />
-        <IdentifiersPage />
+        <WorkTimePage />
       </div>
+      <ColorsPage />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 items-start">
-        <ColorsPage />
+        <IdentifiersPage />
         <PixelDensityPage />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 items-start">
