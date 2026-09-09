@@ -36,16 +36,20 @@ export function WorkTimePage() {
     storeWorkDay(day);
   }, [day]);
 
-  // Tick while a row is open, and roll over to a new day if the date changes
-  const hasOpenRow = day.rows.some(r => r.end === '');
+  const summary = summarize(day, now);
+  const hasOpenRow = summary.hasOpenRow;
+
+  // Keep NOW fresh while a row is open. Roll over to a new day only when nothing is
+  // open, so an entry running past midnight is not wiped.
   useEffect(() => {
     const tick = () => {
-      setNow(nowMinutes());
-      const today = todayKey();
-      setDay(prev => (prev.date === today ? prev : loadWorkDay(today)));
+      if (hasOpenRow) {
+        setNow(nowMinutes());
+      } else {
+        const today = todayKey();
+        setDay(prev => (prev.date === today ? prev : loadWorkDay(today)));
+      }
     };
-    tick();
-    if (!hasOpenRow) return;
     const id = window.setInterval(tick, TICK_MS);
     return () => window.clearInterval(id);
   }, [hasOpenRow]);
@@ -80,7 +84,6 @@ export function WorkTimePage() {
 
   const clear = useCallback(() => update({ rows: [] }), [update]);
 
-  const summary = summarize(day, now);
   const labelWidth = 'w-28';
 
   return (
@@ -148,7 +151,6 @@ export function WorkTimePage() {
           />
           <TimeInput
             value={row.end}
-            placeholder={t('page.worktime.now')}
             onChange={end => updateRow(i, { end })}
             onNow={() => updateRow(i, { end: currentTime() })}
             nowTitle={t('page.worktime.setNow')}
@@ -188,7 +190,7 @@ export function WorkTimePage() {
       <Item className="mt-1" name={t('page.worktime.target')} labelWidth={labelWidth}>
         <NumberInput
           value={day.targetMinutes / 60}
-          onChange={hours => update({ targetMinutes: Math.round(hours * 60) })}
+          onChange={hours => update({ targetMinutes: hours * 60 })}
         />
         <span className="ml-1 text-muted-foreground">{t('page.worktime.hours')}</span>
       </Item>
@@ -217,13 +219,12 @@ export function WorkTimePage() {
 
 interface TimeInputProps {
   value: string;
-  placeholder?: string;
   nowTitle: string;
   onChange: (value: string) => void;
   onNow: () => void;
 }
 
-function TimeInput({ value, placeholder, nowTitle, onChange, onNow }: TimeInputProps) {
+function TimeInput({ value, nowTitle, onChange, onNow }: TimeInputProps) {
   const { t } = useTranslation();
   return (
     <div className="inline-flex items-center ml-1 w-[8.5em]">
@@ -231,7 +232,6 @@ function TimeInput({ value, placeholder, nowTitle, onChange, onNow }: TimeInputP
         type="time"
         className={cn('input-inline w-[5.5em]', !value && 'text-muted-foreground')}
         value={value}
-        placeholder={placeholder}
         onChange={e => onChange(e.target.value)}
       />
       <Button

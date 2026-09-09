@@ -76,6 +76,13 @@ describe('summarize', () => {
     expect(s.leaveAtMinutes).toBe(t('16:00'));
   });
 
+  it('clamps an open row with a future start to zero length', () => {
+    const s = summarize(day([{ start: '17:00', end: '' }], { subtractLunch: false }), t('10:00'));
+    expect(s.grossMinutes).toBe(0);
+    expect(s.hasOpenRow).toBe(true);
+    expect(s.leaveAtMinutes).toBe(t('17:30'));
+  });
+
   it('skips lunch when disabled', () => {
     const s = summarize(day([{ start: '08:00', end: '' }], { subtractLunch: false }), t('10:00'));
     expect(s.workedMinutes).toBe(120);

@@ -1,3 +1,5 @@
+import { zeroPad } from 'app/util/strings';
+
 /**
  * Work time tracking calculations. All times are local 'HH:mm' strings within a single
  * day. An empty end time means the row is still open and NOW is used as its end.
@@ -57,13 +59,13 @@ export function parseTime(s: string): number | undefined {
 export function formatTime(minutesFromMidnight: number): string {
   const m =
     ((Math.round(minutesFromMidnight) % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY;
-  return `${pad2(Math.floor(m / 60))}:${pad2(m % 60)}`;
+  return `${zeroPad(String(Math.floor(m / 60)), 2)}:${zeroPad(String(m % 60), 2)}`;
 }
 
 export function formatDuration(minutes: number): string {
   const sign = minutes < 0 ? '-' : '';
   const abs = Math.abs(Math.round(minutes));
-  return `${sign}${Math.floor(abs / 60)}:${pad2(abs % 60)}`;
+  return `${sign}${Math.floor(abs / 60)}:${zeroPad(String(abs % 60), 2)}`;
 }
 
 export function formatDecimalHours(minutes: number): string {
@@ -75,11 +77,7 @@ export function nowMinutes(now: Date = new Date()): number {
 }
 
 export function todayKey(now: Date = new Date()): string {
-  return `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
-}
-
-function pad2(n: number): string {
-  return n < 10 ? `0${n}` : String(n);
+  return `${now.getFullYear()}-${zeroPad(String(now.getMonth() + 1), 2)}-${zeroPad(String(now.getDate()), 2)}`;
 }
 
 interface Interval {
@@ -89,14 +87,15 @@ interface Interval {
 
 /**
  * Resolves rows into concrete minute intervals. Rows with an invalid start are skipped.
- * An empty end resolves to `now`. If end < start, the row is assumed to cross midnight.
+ * An empty end resolves to `now` (or `start`, if the start is in the future). If a closed
+ * row has end < start, it is assumed to cross midnight.
  */
 export function resolveIntervals(rows: readonly WorkRow[], now: number): Interval[] {
   const result: Interval[] = [];
   for (const row of rows) {
     const start = parseTime(row.start);
     if (start === undefined) continue;
-    let end = row.end === '' ? now : parseTime(row.end);
+    let end = row.end === '' ? Math.max(start, now) : parseTime(row.end);
     if (end === undefined) continue;
     if (end < start) end += MINUTES_PER_DAY;
     result.push({ start, end });
@@ -125,15 +124,16 @@ export function summarize(day: WorkDay, now: number): WorkSummary {
     (sum, iv, i) => (i === 0 ? 0 : sum + (iv.start - merged[i - 1].end)),
     0,
   );
-  const lunch = day.subtractLunch && grossMinutes > 0 ? Math.max(0, day.lunchMinutes) : 0;
+  const lunch = day.subtractLunch ? Math.max(0, day.lunchMinutes) : 0;
   const lunchMinutes = Math.min(lunch, grossMinutes);
   const workedMinutes = grossMinutes - lunchMinutes;
   const remainingMinutes = Math.max(0, day.targetMinutes - workedMinutes);
   const hasOpenRow = day.rows.some(r => r.end === '' && parseTime(r.start) !== undefined);
-  // Lunch not yet fully subtracted (gross < lunch) still needs to be worked off.
-  const lunchDeficit = day.subtractLunch ? Math.max(0, day.lunchMinutes) - lunchMinutes : 0;
   const lastEnd = merged.length > 0 ? merged[merged.length - 1].end : undefined;
-  const leaveAtMinutes = hasOpenRow ? now + remainingMinutes + lunchDeficit : lastEnd;
+  // Full lunch still has to be worked off even if not all of it has been subtracted yet.
+  const leaveAtMinutes = hasOpenRow
+    ? now + Math.max(0, day.targetMinutes + lunch - grossMinutes)
+    : lastEnd;
   return {
     workedMinutes,
     grossMinutes,
