@@ -24,6 +24,8 @@
 }
 
 .dark {
+  /* Native control chrome, such as the time input's picker icon, follows this */
+  color-scheme: dark;
   --color-primary: #1a5276;
   --color-primary-dark: #5b9bd5;
   --color-primary-light: #1565c0;
@@ -43,6 +45,7 @@
 @layer base {
   html {
     @apply text-foreground antialiased;
+    color-scheme: light;
   }
   body {
     @apply bg-background font-sans text-sm leading-relaxed m-0;
