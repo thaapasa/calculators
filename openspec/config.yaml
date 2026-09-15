@@ -1,0 +1,62 @@
+schema: spec-driven
+
+context: |
+  Calculators — a collection of browser-based calculator tools, live at
+  https://laskurit.pomeranssi.fi. Every calculation runs client-side; nothing is
+  sent to a server, which is what makes it safe to hash passwords and other
+  sensitive values in the page. Any proposed feature must preserve this.
+
+  Tech stack:
+    - React 19 + TypeScript 6 (strict: noImplicitAny, strictNullChecks,
+      noImplicitReturns, noUnusedLocals)
+    - Tailwind CSS 4 + shadcn/ui components (src/components/ui), lucide-react icons
+    - React Router 8 (createBrowserRouter), Vite 8, Vitest 5 + jsdom
+    - @dnd-kit for drag-and-drop, ramda, moment
+    - Yarn 4 (node-modules linker, PnP disabled), ES modules ("type": "module")
+
+  Layout:
+    src/app/calc/   pure calculation logic, no React (hetu, companyid, colors,
+                    numbers, time, worktime, bankreference, pipeline/)
+    src/app/i18n/   fi/en string tables, LanguageContext, routeMap
+    src/app/ui/     page components; routes in src/app/ui/Routes.tsx
+    src/app/util/   hooks, storage helpers, utilities
+    src/components/ui, src/lib/utils.ts — shadcn/ui scaffolding
+  TS path aliases: app/*, lib/*, components/* (see tsconfig.json paths).
+
+  Conventions:
+    - Prettier: single quotes, trailing commas, 2-space indent, 100 char width,
+      arrowParens avoid
+    - ESLint flat config: typescript-eslint, react-hooks, simple-import-sort,
+      unused-imports; prefix deliberately unused variables with _
+    - Tests colocated as *.test.ts next to the source, using describe/it/expect
+      from vitest. Calculation logic in app/calc is the part that carries tests;
+      UI is largely untested.
+    - The UI ships in Finnish and English. Strings live in app/i18n/fi.ts and
+      en.ts and are read through t() from LanguageContext; no bare user-facing
+      strings in components.
+    - Every page has a Finnish and an English path (/p/aika and /p/time). A new
+      page must be added in two places: app/ui/Routes.tsx declares the routes,
+      and app/i18n/routeMap.ts maps paths to page ids for the language toggle.
+    - Verify with: yarn test, yarn lint (eslint + tsc --noEmit)
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing
