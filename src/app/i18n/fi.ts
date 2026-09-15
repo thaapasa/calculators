@@ -106,6 +106,9 @@ export const fi = {
   'page.worktime.remaining': 'Jäljellä',
   'page.worktime.leaveAt': 'Lähtöaika',
   'page.worktime.noRows': 'Ei kirjauksia. Paina Aloita, kun aloitat työt.',
+  'page.worktime.error.endBeforeStart': 'Loppuaika on ennen alkuaikaa',
+  'page.worktime.error.startInFuture': 'Alkuaika on tulevaisuudessa',
+  'page.worktime.error.overlap': 'Rivi menee edellisen rivin päälle',
 
   'page.links.title': 'Linkit',
   'page.links.subtitle': 'Kerää linkkejä muistiin',

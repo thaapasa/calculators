@@ -28,9 +28,12 @@ context: |
       arrowParens avoid
     - ESLint flat config: typescript-eslint, react-hooks, simple-import-sort,
       unused-imports; prefix deliberately unused variables with _
-    - Tests colocated as *.test.ts next to the source, using describe/it/expect
-      from vitest. Calculation logic in app/calc is the part that carries tests;
-      UI is largely untested.
+    - Tests colocated next to the source as *.test.ts, or *.test.tsx when the
+      test renders a component, using describe/it/expect from vitest. Tests run
+      in the node environment. One that needs a DOM adds
+      // @vitest-environment jsdom on the first line and renders with
+      @testing-library/react. Calculation logic in app/calc is the part that
+      carries tests; UI is largely untested.
     - The UI ships in Finnish and English. Strings live in app/i18n/fi.ts and
       en.ts and are read through t() from LanguageContext; no bare user-facing
       strings in components.

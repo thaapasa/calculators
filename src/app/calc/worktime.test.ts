@@ -5,15 +5,17 @@ import {
   formatDecimalHours,
   formatDuration,
   formatTime,
+  orderRowsByStart,
   parseTime,
   summarize,
+  withOrderedRows,
   WorkDay,
 } from './worktime';
 
 const t = (s: string) => parseTime(s)!;
 
 function day(rows: WorkDay['rows'], extra: Partial<WorkDay> = {}): WorkDay {
-  return { ...createEmptyDay('2026-09-08'), rows, ...extra };
+  return { ...createEmptyDay(), rows, ...extra };
 }
 
 describe('parseTime / formatTime', () => {
@@ -40,6 +42,39 @@ describe('parseTime / formatTime', () => {
   });
 });
 
+describe('orderRowsByStart', () => {
+  const at = (start: string) => ({ start, end: '' });
+
+  it(`orders rows by start time, keeping each row's index`, () => {
+    expect(orderRowsByStart([at('13:00'), at('08:00'), at('12:00')])).toEqual([
+      { row: at('08:00'), index: 1 },
+      { row: at('12:00'), index: 2 },
+      { row: at('13:00'), index: 0 },
+    ]);
+  });
+
+  it('sorts rows with no readable start last, in the order they were entered', () => {
+    expect(orderRowsByStart([at(''), at('08:00'), at('nope')]).map(r => r.index)).toEqual([
+      1, 0, 2,
+    ]);
+  });
+});
+
+describe('withOrderedRows', () => {
+  it('returns the same day when the rows are already in order', () => {
+    const d = day([{ start: '08:00', end: '12:00' }]);
+    expect(withOrderedRows(d)).toBe(d);
+  });
+
+  it('reorders the rows otherwise', () => {
+    const rows = [
+      { start: '13:00', end: '16:00' },
+      { start: '08:00', end: '12:00' },
+    ];
+    expect(withOrderedRows(day(rows)).rows).toEqual([rows[1], rows[0]]);
+  });
+});
+
 describe('summarize', () => {
   it('sums closed rows and subtracts lunch once', () => {
     const s = summarize(
@@ -56,6 +91,22 @@ describe('summarize', () => {
     expect(s.hasOpenRow).toBe(false);
     expect(s.leaveAtMinutes).toBe(t('16:30'));
     expect(s.remainingMinutes).toBe(0);
+  });
+
+  it('counts no time away when rows meet exactly', () => {
+    const s = summarize(
+      day(
+        [
+          { start: '08:00', end: '12:00' },
+          { start: '12:00', end: '16:00' },
+        ],
+        { subtractLunch: false },
+      ),
+      t('20:00'),
+    );
+    expect(s.grossMinutes).toBe(480);
+    expect(s.awayMinutes).toBe(0);
+    expect(s.rowErrors).toEqual({});
   });
 
   it('uses NOW for open rows and computes leave time', () => {
@@ -76,11 +127,9 @@ describe('summarize', () => {
     expect(s.leaveAtMinutes).toBe(t('16:00'));
   });
 
-  it('clamps an open row with a future start to zero length', () => {
-    const s = summarize(day([{ start: '17:00', end: '' }], { subtractLunch: false }), t('10:00'));
-    expect(s.grossMinutes).toBe(0);
-    expect(s.hasOpenRow).toBe(true);
-    expect(s.leaveAtMinutes).toBe(t('17:30'));
+  it('reports a leave-at time past midnight as a wall-clock time', () => {
+    const s = summarize(day([{ start: '20:00', end: '' }]), t('20:00'));
+    expect(formatTime(s.leaveAtMinutes!)).toBe('04:00');
   });
 
   it('subtracts commute together with lunch', () => {
@@ -96,7 +145,116 @@ describe('summarize', () => {
     expect(s.leaveAtMinutes).toBe(t('15:30'));
   });
 
-  it('merges overlapping rows', () => {
+  it('reads an end time of 00:00 as the end of the day', () => {
+    const s = summarize(day([{ start: '22:00', end: '00:00' }], { subtractLunch: false }), 0);
+    expect(s.grossMinutes).toBe(120);
+    expect(s.rowErrors).toEqual({});
+  });
+
+  it('reads a row of 00:00 to 00:00 as the whole day', () => {
+    const s = summarize(day([{ start: '00:00', end: '00:00' }], { subtractLunch: false }), 0);
+    expect(s.grossMinutes).toBe(24 * 60);
+  });
+
+  it('orders rows by start time regardless of the order they were entered', () => {
+    const s = summarize(
+      day(
+        [
+          { start: '13:00', end: '16:00' },
+          { start: '08:00', end: '12:00' },
+        ],
+        { subtractLunch: false },
+      ),
+      t('20:00'),
+    );
+    expect(s.grossMinutes).toBe(420);
+    expect(s.awayMinutes).toBe(60);
+    expect(s.rowErrors).toEqual({});
+  });
+
+  it('marks a row whose end is before its start', () => {
+    const s = summarize(
+      day(
+        [
+          { start: '13:00', end: '12:00' },
+          { start: '08:00', end: '12:00' },
+        ],
+        { subtractLunch: false },
+      ),
+      t('20:00'),
+    );
+    expect(s.grossMinutes).toBe(240);
+    expect(s.rowErrors).toEqual({ 0: 'endBeforeStart' });
+  });
+
+  it('marks a row crossing midnight instead of counting it', () => {
+    const s = summarize(
+      day([{ start: '22:00', end: '02:00' }], { subtractLunch: false }),
+      t('03:00'),
+    );
+    expect(s.grossMinutes).toBe(0);
+    expect(s.rowErrors).toEqual({ 0: 'endBeforeStart' });
+  });
+
+  it('counts a row that has just started as zero length', () => {
+    const s = summarize(day([{ start: '10:00', end: '' }], { subtractLunch: false }), t('10:00'));
+    expect(s.grossMinutes).toBe(0);
+    expect(s.rowErrors).toEqual({});
+    expect(s.hasOpenRow).toBe(true);
+    expect(s.leaveAtMinutes).toBe(t('17:30'));
+  });
+
+  it('counts a closed row of zero length without marking it', () => {
+    const s = summarize(day([{ start: '10:00', end: '10:00' }], { subtractLunch: false }), 0);
+    expect(s.grossMinutes).toBe(0);
+    expect(s.rowErrors).toEqual({});
+    expect(s.leaveAtMinutes).toBe(t('10:00'));
+  });
+
+  it('marks an open row whose start is in the future', () => {
+    const s = summarize(day([{ start: '17:00', end: '' }], { subtractLunch: false }), t('10:00'));
+    expect(s.grossMinutes).toBe(0);
+    expect(s.hasOpenRow).toBe(true);
+    expect(s.rowErrors).toEqual({ 0: 'startInFuture' });
+    expect(s.leaveAtMinutes).toBeUndefined();
+  });
+
+  it('marks an open row left running overnight, and counts it once it is closed', () => {
+    const open = summarize(
+      day([{ start: '22:00', end: '' }], { subtractLunch: false }),
+      t('09:00'),
+    );
+    expect(open.grossMinutes).toBe(0);
+    expect(open.rowErrors).toEqual({ 0: 'startInFuture' });
+    expect(open.leaveAtMinutes).toBeUndefined();
+
+    const closed = summarize(
+      day([{ start: '22:00', end: '23:30' }], { subtractLunch: false }),
+      t('09:00'),
+    );
+    expect(closed.grossMinutes).toBe(90);
+    expect(closed.rowErrors).toEqual({});
+    expect(closed.leaveAtMinutes).toBe(t('23:30'));
+  });
+
+  it('reports the last counted end when an open row does not count', () => {
+    const s = summarize(
+      day(
+        [
+          { start: '08:00', end: '12:00' },
+          { start: '17:00', end: '' },
+        ],
+        { subtractLunch: false },
+      ),
+      t('13:00'),
+    );
+    expect(s.grossMinutes).toBe(240);
+    expect(s.hasOpenRow).toBe(true);
+    expect(s.rowErrors).toEqual({ 1: 'startInFuture' });
+    expect(s.leaveAtMinutes).toBe(t('12:00'));
+  });
+
+  it('marks an overlapping row instead of merging it', () => {
     const s = summarize(
       day(
         [
@@ -107,16 +265,9 @@ describe('summarize', () => {
       ),
       t('20:00'),
     );
-    expect(s.grossMinutes).toBe(300);
-    expect(s.awayMinutes).toBe(0);
-  });
-
-  it('handles rows crossing midnight', () => {
-    const s = summarize(
-      day([{ start: '22:00', end: '02:00' }], { subtractLunch: false }),
-      t('03:00'),
-    );
     expect(s.grossMinutes).toBe(240);
+    expect(s.awayMinutes).toBe(0);
+    expect(s.rowErrors).toEqual({ 1: 'overlap' });
   });
 
   it('ignores rows with invalid start or end', () => {
@@ -135,6 +286,7 @@ describe('summarize', () => {
     );
     expect(s.grossMinutes).toBe(60);
     expect(s.hasOpenRow).toBe(false);
+    expect(s.rowErrors).toEqual({});
   });
 
   it('returns zeros for empty day', () => {

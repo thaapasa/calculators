@@ -108,6 +108,9 @@ export const en: Record<TranslationKey, string> = {
   'page.worktime.remaining': 'Remaining',
   'page.worktime.leaveAt': 'Leave at',
   'page.worktime.noRows': 'No entries. Press Clock in when you start working.',
+  'page.worktime.error.endBeforeStart': 'End time is before the start time',
+  'page.worktime.error.startInFuture': 'Start time is in the future',
+  'page.worktime.error.overlap': 'Row overlaps the one before it',
 
   'page.links.title': 'Links',
   'page.links.subtitle': 'Store your links here',

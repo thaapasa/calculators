@@ -5,7 +5,7 @@ import {
   formatTime,
   nowMinutes,
   summarize,
-  todayKey,
+  withOrderedRows,
   type WorkDay,
   type WorkRow,
 } from 'app/calc/worktime';
@@ -30,7 +30,7 @@ function currentTime(): string {
 
 export function WorkTimePage() {
   const { t } = useTranslation();
-  const [day, setDay] = useState<WorkDay>(() => loadWorkDay());
+  const [day, setDay] = useState<WorkDay>(() => withOrderedRows(loadWorkDay()));
   const [now, setNow] = useState(() => nowMinutes());
 
   // Persist every change
@@ -41,20 +41,16 @@ export function WorkTimePage() {
   const summary = summarize(day, now);
   const hasOpenRow = summary.hasOpenRow;
 
-  // Keep NOW fresh while a row is open. Roll over to a new day only when nothing is
-  // open, so an entry running past midnight is not wiped.
+  // Keep NOW fresh while a row is open. Nothing else is clock-driven.
   useEffect(() => {
-    const tick = () => {
-      if (hasOpenRow) {
-        setNow(nowMinutes());
-      } else {
-        const today = todayKey();
-        setDay(prev => (prev.date === today ? prev : loadWorkDay(today)));
-      }
-    };
-    const id = window.setInterval(tick, TICK_MS);
+    if (!hasOpenRow) return;
+    const id = window.setInterval(() => setNow(nowMinutes()), TICK_MS);
     return () => window.clearInterval(id);
   }, [hasOpenRow]);
+
+  // Rows are shown in start order, but only re-sorted once a start time is committed, so
+  // a row does not move out from under the cursor while it is being typed.
+  const orderRows = useCallback(() => setDay(withOrderedRows), []);
 
   const update = useCallback((patch: Partial<WorkDay>) => {
     setDay(prev => ({ ...prev, ...patch }));
@@ -72,7 +68,7 @@ export function WorkTimePage() {
   }, []);
 
   const addRow = useCallback((row: WorkRow) => {
-    setDay(prev => ({ ...prev, rows: [...prev.rows, row] }));
+    setDay(prev => withOrderedRows({ ...prev, rows: [...prev.rows, row] }));
     setNow(nowMinutes());
   }, []);
 
@@ -84,7 +80,7 @@ export function WorkTimePage() {
     setNow(nowMinutes());
   }, []);
 
-  const clear = useCallback(() => setDay(prev => createEmptyDay(prev.date)), []);
+  const clear = useCallback(() => setDay(createEmptyDay()), []);
 
   return (
     <HalfSection
@@ -142,29 +138,40 @@ export function WorkTimePage() {
         </Item>
       )}
       {day.rows.map((row, i) => (
-        <Item key={i} className="my-1" labelWidth={labelWidth}>
-          <TimeInput
-            value={row.start}
-            onChange={start => updateRow(i, { start })}
-            onNow={() => updateRow(i, { start: currentTime() })}
-            nowTitle={t('page.worktime.setNow')}
-          />
-          <TimeInput
-            value={row.end}
-            onChange={end => updateRow(i, { end })}
-            onNow={() => updateRow(i, { end: currentTime() })}
-            nowTitle={t('page.worktime.setNow')}
-          />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 text-muted-foreground"
-            onClick={() => removeRow(i)}
-            title={t('page.worktime.removeRow')}
-          >
-            <Trash2 size={14} />
-          </Button>
-        </Item>
+        <div key={i}>
+          <Item className="my-1" labelWidth={labelWidth}>
+            <TimeInput
+              value={row.start}
+              onChange={start => updateRow(i, { start })}
+              onNow={() => {
+                updateRow(i, { start: currentTime() });
+                orderRows();
+              }}
+              onCommit={orderRows}
+              nowTitle={t('page.worktime.setNow')}
+            />
+            <TimeInput
+              value={row.end}
+              onChange={end => updateRow(i, { end })}
+              onNow={() => updateRow(i, { end: currentTime() })}
+              nowTitle={t('page.worktime.setNow')}
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-muted-foreground"
+              onClick={() => removeRow(i)}
+              title={t('page.worktime.removeRow')}
+            >
+              <Trash2 size={14} />
+            </Button>
+          </Item>
+          {summary.rowErrors[i] ? (
+            <div className="mx-3 mb-1 pl-28 text-xs text-destructive">
+              {t(`page.worktime.error.${summary.rowErrors[i]}`)}
+            </div>
+          ) : undefined}
+        </div>
       ))}
 
       <DeductionRow
@@ -253,9 +260,11 @@ interface TimeInputProps {
   nowTitle: string;
   onChange: (value: string) => void;
   onNow: () => void;
+  /** Called when the field loses focus, once the typed value has settled */
+  onCommit?: () => void;
 }
 
-function TimeInput({ value, nowTitle, onChange, onNow }: TimeInputProps) {
+function TimeInput({ value, nowTitle, onChange, onNow, onCommit }: TimeInputProps) {
   const { t } = useTranslation();
   return (
     <div className="inline-flex items-center ml-1 w-[8.5em]">
@@ -264,6 +273,7 @@ function TimeInput({ value, nowTitle, onChange, onNow }: TimeInputProps) {
         className={cn('input-inline w-[5.5em]', !value && 'text-muted-foreground')}
         value={value}
         onChange={e => onChange(e.target.value)}
+        onBlur={onCommit}
       />
       <Button
         variant="ghost"

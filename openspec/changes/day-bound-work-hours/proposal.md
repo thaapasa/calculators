@@ -13,18 +13,20 @@ total, and clears it or edits it into a template for the next day.
 
 ## What Changes
 
-- **BREAKING** No row crosses midnight. A row counts only when its end is after its
+- **BREAKING** No row crosses midnight. A row counts unless its end falls before its
   start; any other row is marked with the reason and left out of the totals until the
   user corrects it. An overnight shift is two rows rather than one.
+- A row that starts and ends at the same minute counts and contributes nothing. That is
+  what a row looks like the moment the user clocks in.
 - An end time of `00:00` means the end of the day, so a row can run 22:00 to 00:00. A
   start time of `00:00` still means the beginning of the day.
 - Rows sort by start time, so a forgotten earlier row moves into place.
 - Overlapping rows are marked and excluded instead of being merged. With sorting and this
   rule, `start_n >= end_(n-1)` holds for every row that counts, and interval merging is
   removed.
-- A row whose start is in the future is marked as an error rather than counted as zero
-  length. This covers an open row left running overnight: on returning the next day the
-  row reads as invalid, and the user closes it by entering the end time.
+- A row whose start is in the future is marked as an error. This covers an open row left
+  running overnight: on returning the next day the row reads as invalid, and the user
+  closes it by entering the end time. No leave-at time is shown for such a row.
 - **BREAKING** Nothing clears itself. The stored rows are no longer tied to a date, the
   day rollover is gone, and the page no longer distinguishes today from any other day.
   Rows stay until the user edits or clears them.

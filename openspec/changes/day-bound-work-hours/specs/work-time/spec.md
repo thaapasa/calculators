@@ -11,7 +11,8 @@ The system SHALL let the user record any number of rows, each with a start time 
 end time. Times are local wall-clock times with no date attached, entered as `HH:mm` on
 a 24-hour clock. An end time of `00:00` SHALL mean the end of the day; a start time of
 `00:00` SHALL mean its beginning. The system SHALL keep the rows in order of start time,
-and SHALL mark a row it cannot count with the reason for it.
+reordering them once the user has finished editing a start time rather than while it is
+being typed, and SHALL mark a row it cannot count with the reason for it.
 
 #### Scenario: Clocking in
 
@@ -52,20 +53,26 @@ and SHALL mark a row it cannot count with the reason for it.
 ### Requirement: Reading a single row
 
 A row with an empty end time is open, meaning the user is still working, and the system
-SHALL treat it as ending at the current time. A row SHALL count only when its end is
-after its start. The system SHALL mark any other row as an error and leave it out of the
-totals until the user corrects it. The system SHALL ignore a row whose times it cannot
-read.
+SHALL treat it as ending at the current time. A row SHALL count unless its end falls
+before its start. A row that starts and ends at the same time SHALL count and contribute
+nothing. The system SHALL mark any other row as an error, with the reason, and leave it
+out of the totals until the user corrects it. The system SHALL ignore a row whose times
+it cannot read.
 
 #### Scenario: Open row counts up to the current time
 
 - **WHEN** a row starts at 08:00, has no end time, and the current time is 10:00
 - **THEN** the row contributes 2 hours to the gross total
 
+#### Scenario: Row that has just started
+
+- **WHEN** the user clocks in at 10:00 and the current time is still 10:00
+- **THEN** the row counts and contributes no time yet
+
 #### Scenario: Start time in the future
 
 - **WHEN** a row starts at 17:00, has no end time, and the current time is 10:00
-- **THEN** the row is marked as an error rather than counted as zero length
+- **THEN** the row is marked as an error, because its start has not arrived yet
 
 #### Scenario: Open row left running overnight
 
@@ -114,11 +121,11 @@ falling before the first row or after the last, SHALL NOT count as time away.
 
 ### Requirement: Leave-at time
 
-While a row is open, the system SHALL report the time of day at which the target will be
-reached. That time SHALL account for deductions in full, including any part not yet
-worked off. When the target falls after midnight, the system SHALL show it as a
-wall-clock time. When no row is open, the system SHALL report the end of the last row
-instead, and when there are no counted rows, no leave-at time at all.
+While an open row counts, the system SHALL report the time of day at which the target
+will be reached. That time SHALL account for deductions in full, including any part not
+yet worked off. When the target falls after midnight, the system SHALL show it as a
+wall-clock time. Otherwise the system SHALL report the end of the last counted row, and
+when no row counts, no leave-at time at all.
 
 #### Scenario: Open row
 
@@ -137,6 +144,11 @@ instead, and when there are no counted rows, no leave-at time at all.
 - **WHEN** a row starts at 20:00 and is open, the target is 7.5 hours, and the 30 minute
   lunch deduction is on
 - **THEN** the leave-at time is shown as 04:00
+
+#### Scenario: Open row that does not count
+
+- **WHEN** the only row starts at 22:00, has no end time, and the current time is 09:00
+- **THEN** no leave-at time is shown
 
 #### Scenario: All rows closed
 

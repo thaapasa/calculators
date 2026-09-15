@@ -10,7 +10,7 @@ changes unless a row is open.
 
 **Goals**
 
-- One rule decides whether a row counts: its end is after its start.
+- One rule decides whether a row counts: its end does not fall before its start.
 - A row that does not count says why, on the row.
 - No clock-driven behaviour beyond keeping an open row's elapsed time fresh.
 
@@ -48,13 +48,34 @@ and the rollover effect are deleted rather than left unused, so nothing can grow
 dependency on them. `WorkDay` keeps only the rows and the deduction and target settings.
 
 **An open row is validated by the same rule.** An open row ends at the current time, so
-`start < now` decides it, exactly as for a closed row. A start in the future and a row
+`start <= now` decides it, exactly as for a closed row. A start in the future and a row
 left open past midnight both become errors through that one rule, with no special case
 for either. The existing clamp that gave a future-dated row zero length is removed.
 
+**A row may start and end at the same minute.** Clocking in writes the current time as
+the start, and the open row then ends at that same minute until the clock moves on.
+Requiring the end to be strictly later would mark every fresh row as an error.
+
+**A leave-at time needs an open row that counts.** Otherwise the page shows the end of
+the last counted row, and nothing when no row counts. An open row the totals reject, such
+as one left running overnight, would otherwise put a leave-at time next to a row the page
+has just marked as an error. The Pause button still keys off the raw rows, so the user
+can close that row.
+
+**Rows are reordered when the user leaves the start field, not while typing.** An
+`<input type="time">` reports an empty value whenever a segment is cleared, so sorting on
+every keystroke would throw the row to the bottom mid-edit and move it back once the new
+time parses. Moving a focused element can also blur it. `orderRowsByStart` in
+`app/calc/worktime.ts` is the one place that decides the order, shared by the page and
+`resolveIntervals`.
+
 **Errors are per row and carry a reason.** `summarize` returns, alongside the totals, a
-reason for each row it did not count: the end is not after the start, or the row overlaps
-the one before it. The page renders that on the row. The reasons need Finnish and English
+reason for each row it did not count: the end falls before the start, the start is in the
+future, or the row overlaps the one before it. The page renders that on the row.
+
+A closed row and an open row fail the same check, but they need different wording. An
+open row has no end time, so telling the user its end is before its start explains
+nothing. That is why the two carry separate reasons. All three need Finnish and English
 wording in `app/i18n`.
 
 ## Risks / Trade-offs

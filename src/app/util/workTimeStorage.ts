@@ -1,20 +1,18 @@
-import { createEmptyDay, todayKey, type WorkDay } from 'app/calc/worktime';
+import { createEmptyDay, type WorkDay } from 'app/calc/worktime';
 
 import * as store from './store';
 
 const WORK_DAY_STORE_KEY = 'calculators:work-day';
 
 /**
- * Loads the stored work day. Rows from a previous day are discarded, but the
- * lunch and target settings are carried over.
+ * Loads the stored work day. The rows are not tied to a date, so they are restored as
+ * they were, however long ago they were written.
  */
-export function loadWorkDay(today: string = todayKey()): WorkDay {
+export function loadWorkDay(): WorkDay {
   const stored = store.getValue<Partial<WorkDay>>(WORK_DAY_STORE_KEY);
-  if (!stored || typeof stored !== 'object') return createEmptyDay(today);
-  if (stored.date === today && Array.isArray(stored.rows)) {
-    return { ...createEmptyDay(today, stored), rows: stored.rows };
-  }
-  return createEmptyDay(today, stored);
+  if (!stored || typeof stored !== 'object') return createEmptyDay();
+  const base = createEmptyDay(stored);
+  return Array.isArray(stored.rows) ? { ...base, rows: stored.rows } : base;
 }
 
 export function storeWorkDay(day: WorkDay) {

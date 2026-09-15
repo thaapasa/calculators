@@ -77,11 +77,13 @@ Two places need updating when you add a page:
 
 ## Testing
 
-Tests sit next to the source file, named `*.test.ts`. Use `describe`/`it`/`expect` from
-vitest. The calculation logic under `app/calc` carries most of the tests; the UI has few.
+Tests sit next to the source file, named `*.test.ts`, or `*.test.tsx` when the test renders
+a component. Use `describe`/`it`/`expect` from vitest. The calculation logic under
+`app/calc` carries most of the tests; the UI has few.
 
 There is no vitest config file, so tests run in the default node environment. A test that
-needs a DOM opts in with `// @vitest-environment jsdom` on the first line.
+needs a DOM opts in with `// @vitest-environment jsdom` on the first line and renders with
+`@testing-library/react`.
 
 ## Deployment
 
