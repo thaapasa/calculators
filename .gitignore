@@ -12,8 +12,19 @@ node_modules
 .idea
 /*.iml
 /*.log
-dist
-build
-deploy
+/dist
+/build
+/deploy
+/coverage
 .vscode
-.claude
+
+# Claude Code: share commands, skills and launch config; keep local state out
+.claude/settings.local.json
+.claude/worktrees/
+
+# Airlock sandbox runtime dir (airlock.toml is tracked)
+.airlock/
+
+# Local env overrides
+.env.local
+.env.*.local

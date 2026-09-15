@@ -5,8 +5,8 @@
 A collection of handy browser-based calculator tools, live at
 [laskurit.pomeranssi.fi](https://laskurit.pomeranssi.fi).
 
-All calculations run locally in the browser — no data is sent to any server,
-so you can safely calculate password hashes and other sensitive values.
+All calculations run locally in the browser. No data is sent to any server, so you can
+safely calculate password hashes and other sensitive values.
 
 ## Features
 
@@ -17,16 +17,18 @@ so you can safely calculate password hashes and other sensitive values.
 - **Byte sizes** — byte/KB/MB/GB conversions
 - **Links** — URL encoding/decoding and manipulation
 - **Data pipeline** — chainable text/binary operations: encoding (Base64, hex, URL, JWT decode),
-  text transforms (ROT-N, case, sort, trim, unique), formatting (JSON, XML), hashing (MD5, SHA-\*),
-  compression (gzip, deflate), and display (hex dump, image/SVG preview, statistics).
-  Supports text input, file drag-and-drop, and URL fetch. Operations are drag-and-drop reorderable
-  with per-operation configuration.
+  text transforms (ROT-N, case, sort, trim, unique), formatting (JSON, XML, JSONPath extract
+  and set), hashing (MD5, SHA-\*, PBKDF2), compression (gzip, deflate), and display (hex dump,
+  image/SVG preview, statistics). Supports text input, file drag-and-drop, and URL fetch.
+  Operations are drag-and-drop reorderable with per-operation configuration.
 - **Cryptography** — MD5, SHA-1, SHA-256, SHA-512 hashing
 - **Pixel density** — DPI/PPI calculations
+- **Work time** — track start and end times for a day, with lunch and commute deductions
 - **UUID** — validation and UUID v7 timestamp parsing
+- **Finnish and English** — the whole UI switches language, and every page has a path in both
 - **Dark mode** — system, light, and dark theme support
 
-## Getting Started
+## Getting started
 
 Requires [Node.js](https://nodejs.org/) and [Yarn](https://yarnpkg.com/).
 
@@ -45,11 +47,12 @@ yarn fix            # Auto-fix ESLint issues
 yarn deploy         # Build and deploy to production
 ```
 
-## Tech Stack
+## Tech stack
 
-- [React](https://react.dev/) 19 + [TypeScript](https://www.typescriptlang.org/) 5
+- [React](https://react.dev/) 19 + [TypeScript](https://www.typescriptlang.org/) 6
 - [Tailwind CSS](https://tailwindcss.com/) 4 + [shadcn/ui](https://ui.shadcn.com/) components
-- [Vite](https://vite.dev/) 7 (build & dev server)
+- [React Router](https://reactrouter.com/) 8
+- [Vite](https://vite.dev/) 8 (build & dev server)
 - [Vitest](https://vitest.dev/) (testing)
 - [@dnd-kit](https://dndkit.com/) (drag-and-drop)
 
