@@ -149,7 +149,7 @@ instead. When there are no usable rows, the system SHALL report no leave-at time
 
 #### Scenario: No rows
 
-- **WHEN** the day has no rows
+- **WHEN** the sheet has no rows
 - **THEN** no leave-at time is shown
 
 ### Requirement: The day is kept between visits
@@ -174,7 +174,7 @@ that rollover while a row is open, so that an entry running past midnight is not
 - **WHEN** the date changes while a row is still open
 - **THEN** the rows are kept until the row is closed
 
-#### Scenario: Clearing the day
+#### Scenario: Clearing the sheet
 
-- **WHEN** the user clears the day
+- **WHEN** the user clears the sheet
 - **THEN** all rows are removed and the settings return to their defaults
