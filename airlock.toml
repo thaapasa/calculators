@@ -1,0 +1,15 @@
+presets = ["debian", "nodejs", "claude-code"]
+
+[vm]
+image = "claude-yarn"
+
+[network]
+policy = "deny-by-default"
+# policy = "allow-always"
+
+[network.rules.package-registry]
+allow = [
+    "registry.npmjs.org",
+    "registry.yarnpkg.com",
+    "repo.yarnpkg.com"
+]
