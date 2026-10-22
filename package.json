@@ -12,7 +12,6 @@
     "test": "vitest run",
     "deploy": "sh script/deploy.sh",
     "clean": "rm -rf dist/",
-    "eject": "react-scripts eject",
     "lint": "yarn lint-eslint && yarn lint-tsc",
     "lint-eslint": "eslint src",
     "lint-tsc": "tsc --noEmit",
