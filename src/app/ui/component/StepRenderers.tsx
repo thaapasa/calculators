@@ -1,4 +1,5 @@
-import { formatHexDump, toRawHex } from 'app/calc/pipeline/operations/display';
+import { bytesToHex } from 'app/calc/bytes';
+import { formatHexDump } from 'app/calc/pipeline/operations/display';
 import { StepRenderProps, toBinary, toText } from 'app/calc/pipeline/types';
 import { useTranslation } from 'app/i18n/LanguageContext';
 import { Clipboard } from 'lucide-react';
@@ -36,7 +37,7 @@ export function HexDumpRenderer({ input, params }: StepRenderProps) {
   const bytes = toBinary(input);
   const bytesPerLine = typeof params?.bytesPerLine === 'number' ? params.bytesPerLine : 16;
   const formatted = formatHexDump(bytes, bytesPerLine);
-  const rawHex = toRawHex(bytes);
+  const rawHex = bytesToHex(bytes);
 
   return (
     <div className="mt-2 space-y-1">

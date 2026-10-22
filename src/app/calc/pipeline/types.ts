@@ -34,6 +34,11 @@ export interface OperationDef {
   render?: ComponentType<StepRenderProps>;
   /** Optional React component to render configuration UI */
   configComponent?: ComponentType<StepConfigProps>;
+  /**
+   * Slow enough that the pipeline waits for a pause in typing before running it (password
+   * hashes that run on the main thread)
+   */
+  expensive?: boolean;
   /** Default configuration for this operation */
   defaultParams?: Record<string, unknown>;
 }

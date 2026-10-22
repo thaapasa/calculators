@@ -16,10 +16,10 @@ safely calculate password hashes and other sensitive values.
 - **Colors** — color conversions and analysis
 - **Byte sizes** — byte/KB/MB/GB conversions
 - **Links** — URL encoding/decoding and manipulation
-- **Data pipeline** — chainable text/binary operations: encoding (Base64, hex, URL, JWT decode),
-  text transforms (ROT-N, case, sort, trim, unique), formatting (JSON, XML, JSONPath extract
-  and set), hashing (MD5, SHA-\*, PBKDF2), compression (gzip, deflate), and display (hex dump,
-  image/SVG preview, statistics). Supports text input, file drag-and-drop, and URL fetch.
+- **Data pipeline** — chainable text/binary operations: encoding (Base64, Base64url, hex, URL,
+  HTML entities, JWT decode), text transforms (ROT-N, case, sort, trim, unique), formatting
+  (JSON, XML, JSONPath extract and set), hashing (MD5, SHA-\*, HMAC, PBKDF2, Argon2id, bcrypt,
+  CRC-32), compression (gzip, deflate), and display (hex dump, image/SVG preview, statistics). Supports text input, file drag-and-drop, and URL fetch.
   Operations are drag-and-drop reorderable with per-operation configuration.
 - **Cryptography** — MD5, SHA-1, SHA-256, SHA-512 hashing
 - **Pixel density** — DPI/PPI calculations

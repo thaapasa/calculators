@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 import { describe, expect, it } from 'vitest';
 
 import { binaryData, OperationDef, PipelineData, textData, toBinary, toText } from '../types';
@@ -64,6 +66,10 @@ describe('encoding operations', () => {
     expect(toText(encoded)).toBe('4142');
     const decoded = await hexDecodeOp.process(encoded);
     expect(toText(decoded)).toBe('AB');
+  });
+
+  it('hex decode rejects digits that parseInt would read as a prefix', async () => {
+    await expect(hexDecodeOp.process(textData('0g'))).rejects.toThrow('non-hex');
   });
 
   it('hex encode defaults to lowercase', async () => {
@@ -249,6 +255,35 @@ describe('more hashes', () => {
     expect(one).not.toBe(two);
   });
 
+  it('MD5 and SHA hash binary input as bytes', async () => {
+    const bytes = binaryData(new Uint8Array([0xff, 0xfe]));
+    const expected = (alg: string) =>
+      createHash(alg)
+        .update(Buffer.from([0xff, 0xfe]))
+        .digest('hex');
+    expect(await hex(md5Op, bytes)).toBe(expected('md5'));
+    expect(await hex(sha384Op, bytes)).toBe(expected('sha384'));
+  });
+
+  it('HMAC reports a key that is not valid Base64', async () => {
+    await expect(hmacOp.process(textData('x'), { key: null, keySource: 'base64' })).rejects.toThrow(
+      'Key is not valid Base64',
+    );
+  });
+
+  it('bcrypt rejects costs outside 4-16', async () => {
+    await expect(bcryptOp.process(textData('pw'), { cost: 3 })).rejects.toThrow();
+    await expect(bcryptOp.process(textData('pw'), { cost: 17 })).rejects.toThrow(
+      'bcrypt cost must be between 4 and 16',
+    );
+  });
+
+  it('bcrypt reports a salt that is not valid Base64 instead of using a random one', async () => {
+    await expect(
+      bcryptOp.process(textData('pw'), { cost: 4, salt: null, saltSource: 'base64' }),
+    ).rejects.toThrow('Salt is not valid Base64');
+  });
+
   it('bcrypt rejects passwords over 72 bytes and salts that are not 16 bytes', async () => {
     await expect(bcryptOp.process(textData('x'.repeat(73)), { cost: 4 })).rejects.toThrow();
     await expect(bcryptOp.process(textData('pw'), { cost: 4, salt: 'abcd' })).rejects.toThrow();
@@ -282,6 +317,30 @@ describe('argon2id', () => {
     await expect(
       argon2idOp.process(textData('password'), { salt: '', saltSource: 'pipeline' }),
     ).rejects.toThrow();
+  });
+
+  it('hashes binary input as bytes, not as decoded text', async () => {
+    const params = { memory: 64, iterations: 1, parallelism: 1, salt: '736f6d6573616c74' };
+    const ff = toText(await argon2idOp.process(binaryData(new Uint8Array([0xff])), params));
+    const fe = toText(await argon2idOp.process(binaryData(new Uint8Array([0xfe])), params));
+    expect(ff).not.toBe(fe);
+  });
+
+  it('reports a salt that is not valid Base64 instead of using a random one', async () => {
+    await expect(
+      argon2idOp.process(textData('password'), { salt: null, saltSource: 'base64' }),
+    ).rejects.toThrow('Salt is not valid Base64');
+  });
+
+  it('rejects settings outside the limits', async () => {
+    const run = (params: Record<string, unknown>) =>
+      argon2idOp.process(textData('password'), { iterations: 1, parallelism: 1, ...params });
+    await expect(run({ memory: 1024 * 1024 + 1 })).rejects.toThrow('Memory must be between');
+    await expect(run({ memory: 64, iterations: 11 })).rejects.toThrow('Iterations can be at most');
+    await expect(run({ memory: 64, parallelism: 17 })).rejects.toThrow(
+      'Parallelism can be at most',
+    );
+    await expect(run({ memory: 1024 * 1024, iterations: 5 })).rejects.toThrow('4 GiB');
   });
 
   it('rejects a salt shorter than 8 bytes', async () => {

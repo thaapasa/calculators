@@ -8,6 +8,9 @@ import {
 } from 'app/calc/pipeline/types';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+/** How long the pipeline waits for typing to pause before running an expensive step */
+const expensiveStepDelayMs = 400;
+
 export interface StepResult {
   input: PipelineData;
   output: PipelineData;
@@ -91,7 +94,13 @@ export function usePipeline(): PipelineState {
       setProcessing(false);
     }
 
-    compute();
+    // Password hashes block the page while they run, so wait until typing pauses
+    if (!steps.some(s => getOperation(s.operationId)?.expensive)) {
+      compute();
+      return;
+    }
+    const timer = setTimeout(compute, expensiveStepDelayMs);
+    return () => clearTimeout(timer);
   }, [inputData, steps]);
 
   const addStep = useCallback((operationId: string, params?: Record<string, unknown>) => {

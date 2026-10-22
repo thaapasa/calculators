@@ -1,10 +1,12 @@
-export async function hashBytes(x: string, digest: string): Promise<Uint8Array> {
-  const msgBuffer = new TextEncoder().encode(x);
-  const hashBuffer = await crypto.subtle.digest(digest, msgBuffer);
+import { bytesToHex } from 'app/calc/bytes';
+
+/** Digest of the data; a string is hashed as its UTF-8 bytes */
+export async function hashBytes(x: string | Uint8Array, digest: string): Promise<Uint8Array> {
+  const msgBuffer = typeof x === 'string' ? new TextEncoder().encode(x) : x;
+  const hashBuffer = await crypto.subtle.digest(digest, msgBuffer as BufferSource);
   return new Uint8Array(hashBuffer);
 }
 
 export async function hash(x: string, digest: string): Promise<string> {
-  const bytes = await hashBytes(x, digest);
-  return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+  return bytesToHex(await hashBytes(x, digest));
 }

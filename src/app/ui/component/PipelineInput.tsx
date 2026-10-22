@@ -1,3 +1,4 @@
+import { bytesToHex } from 'app/calc/bytes';
 import { binaryData, PipelineData, textData } from 'app/calc/pipeline/types';
 import { getRandomString } from 'app/calc/random';
 import { useTranslation } from 'app/i18n/LanguageContext';
@@ -16,10 +17,6 @@ function randomBytes(len: number): Uint8Array {
   const bytes = new Uint8Array(len);
   crypto.getRandomValues(bytes);
   return bytes;
-}
-
-function bytesToHex(bytes: Uint8Array): string {
-  return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
 }
 
 export function PipelineInput({ value, onChange, onDataChange }: PipelineInputProps) {

@@ -1,5 +1,7 @@
+import { base64ToBytes, bytesToHex, textToHex } from 'app/calc/bytes';
+import { argon2Limits, bcryptMaxCost, bcryptMinCost } from 'app/calc/pipeline/operations/hash';
 import { StepConfigProps, toBinary, toText } from 'app/calc/pipeline/types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { usePipelineRegistry, usePipelineSelfId } from './PipelineRegistryContext';
 
@@ -63,25 +65,13 @@ export function HexDumpBytesConfig({ params, onChange }: StepConfigProps) {
   );
 }
 
-function bytesToHex(bytes: Uint8Array): string {
-  return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function base64ToHex(b64: string): string {
-  const clean = b64.trim();
-  if (!clean) return '';
-  const binary = atob(clean);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  return bytesToHex(bytes);
-}
-
 type ByteSource = 'text' | 'hex' | 'base64' | 'pipeline';
 
 /**
  * Picker for a byte-valued parameter such as a salt or a key. The value is typed as text, hex or
  * Base64, or taken from another pipeline's output. Whatever the source, the operation receives it
- * as hex in `params[name]`; the picker keeps its own state in `${name}Source`, `${name}Input` and
+ * as hex in `params[name]`, or null if the typed Base64 does not decode, so the operation can
+ * report the error. The picker keeps its own state in `${name}Source`, `${name}Input` and
  * `${name}PipelineId`.
  */
 function ByteSourceInput({
@@ -130,13 +120,13 @@ function ByteSourceInput({
     if (params[name] !== hex) onChange({ ...params, [name]: hex });
   }, [source, sourceOutput, params, onChange, name]);
 
-  const toHex = (src: ByteSource, value: string): string => {
-    if (src === 'text') return bytesToHex(new TextEncoder().encode(value));
+  const toHex = (src: ByteSource, value: string): string | null => {
+    if (src === 'text') return textToHex(value);
     if (src === 'base64') {
       try {
-        return base64ToHex(value);
+        return bytesToHex(base64ToBytes(value));
       } catch {
-        return '';
+        return null;
       }
     }
     return value;
@@ -424,12 +414,17 @@ export function Argon2Config({ params, onChange }: StepConfigProps) {
   const iterations = typeof params.iterations === 'number' ? params.iterations : 2;
   const parallelism = typeof params.parallelism === 'number' ? params.parallelism : 1;
 
-  const numberInput = (key: string, value: number, width: string) => (
-    <input
-      type="number"
-      min={1}
+  const numberInput = (
+    key: 'memory' | 'iterations' | 'parallelism',
+    value: number,
+    { min, max }: { min: number; max: number },
+    width: string,
+  ) => (
+    <BoundedNumberInput
       value={value}
-      onChange={e => onChange({ ...params, [key]: Math.max(1, Number(e.target.value) || 1) })}
+      min={min}
+      max={max}
+      onChange={v => onChange({ ...params, [key]: v })}
       className={`${width} rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground text-center`}
     />
   );
@@ -438,15 +433,15 @@ export function Argon2Config({ params, onChange }: StepConfigProps) {
     <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
       <label className="flex items-center gap-1">
         Memory (KiB)
-        {numberInput('memory', memory, 'w-24')}
+        {numberInput('memory', memory, argon2Limits.memoryKiB, 'w-24')}
       </label>
       <label className="flex items-center gap-1">
         Iterations
-        {numberInput('iterations', iterations, 'w-14')}
+        {numberInput('iterations', iterations, argon2Limits.iterations, 'w-14')}
       </label>
       <label className="flex items-center gap-1">
         Parallelism
-        {numberInput('parallelism', parallelism, 'w-14')}
+        {numberInput('parallelism', parallelism, argon2Limits.parallelism, 'w-14')}
       </label>
       <ByteSourceInput
         params={params}
@@ -459,6 +454,56 @@ export function Argon2Config({ params, onChange }: StepConfigProps) {
   );
 }
 
+/**
+ * Number input that passes on only values within [min, max]. The typed text stays as typed, so
+ * you can clear the field or pass through an out-of-range value on the way to a valid one. On
+ * blur the field snaps back into range.
+ */
+function BoundedNumberInput({
+  value,
+  min,
+  max,
+  onChange,
+  className,
+}: {
+  value: number;
+  min: number;
+  max: number;
+  onChange: (value: number) => void;
+  className: string;
+}) {
+  const [text, setText] = useState(String(value));
+  const [shownValue, setShownValue] = useState(value);
+  if (value !== shownValue) {
+    setShownValue(value);
+    setText(String(value));
+  }
+
+  const inRange = (n: number) => Number.isInteger(n) && n >= min && n <= max;
+
+  return (
+    <input
+      type="number"
+      min={min}
+      max={max}
+      value={text}
+      onChange={e => {
+        setText(e.target.value);
+        const n = Number(e.target.value);
+        if (e.target.value !== '' && inRange(n) && n !== value) onChange(n);
+      }}
+      onBlur={() => {
+        const n = Number(text);
+        const clamped =
+          text === '' || !Number.isFinite(n) ? value : Math.round(Math.max(min, Math.min(max, n)));
+        setText(String(clamped));
+        if (clamped !== value) onChange(clamped);
+      }}
+      className={className}
+    />
+  );
+}
+
 /** bcrypt config: cost factor, salt source (empty = random) */
 export function BcryptConfig({ params, onChange }: StepConfigProps) {
   const cost = typeof params.cost === 'number' ? params.cost : 12;
@@ -466,14 +511,11 @@ export function BcryptConfig({ params, onChange }: StepConfigProps) {
     <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
       <label className="flex items-center gap-1">
         Cost
-        <input
-          type="number"
-          min={4}
-          max={31}
+        <BoundedNumberInput
           value={cost}
-          onChange={e =>
-            onChange({ ...params, cost: Math.max(4, Math.min(31, Number(e.target.value) || 12)) })
-          }
+          min={bcryptMinCost}
+          max={bcryptMaxCost}
+          onChange={c => onChange({ ...params, cost: c })}
           className="w-14 rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground text-center"
         />
       </label>

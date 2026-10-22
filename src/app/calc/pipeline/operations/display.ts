@@ -17,13 +17,6 @@ export function formatHexDump(bytes: Uint8Array, bytesPerLine = 16): string {
   return lines.join('\n');
 }
 
-/** Raw hex string (no formatting) for clipboard copy */
-export function toRawHex(bytes: Uint8Array): string {
-  return Array.from(bytes)
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
 // Render components are attached in src/app/ui/component/StepRenderers.tsx
 // and wired up via registry initialization.
 
