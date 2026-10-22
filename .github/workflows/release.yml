@@ -1,73 +1,220 @@
-name: Release Docker image
+# Release workflow, started by hand from the Actions tab.
+#
+# prepare: bumps the version in package.json on a release branch.
+# image:   builds the Docker image from that commit and pushes it to GHCR.
+# release: merges the branch into master, tags it and publishes a GitHub Release.
+
+name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump level
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: patch
+      notes:
+        description: Highlights for the release notes (optional). Plain markdown, multi-line OK. Rendered above the commit list.
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}
 
 jobs:
-  release:
-    name: Build and push image to GHCR
-    runs-on: ubuntu-24.04-arm
-
-    permissions:
-      contents: write
-      packages: write
-
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository }}
-
+  prepare:
+    name: Prepare release branch
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      previous_tag: ${{ steps.version.outputs.previous_tag }}
+      branch: ${{ steps.version.outputs.branch }}
+      sha: ${{ steps.commit.outputs.sha }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
-      - name: Read version from package.json
+      - name: Compute bumped version
         id: version
         run: |
-          VERSION=$(jq -r '.version' package.json)
-          if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
-            echo "Could not read version from package.json" >&2
+          set -euo pipefail
+          CURRENT=$(node -p "require('./package.json').version")
+          if [ -z "$CURRENT" ]; then
+            echo "::error::could not parse current version"
             exit 1
           fi
-          echo "version=$VERSION" >>"$GITHUB_OUTPUT"
-          echo "Detected version: $VERSION"
+          IFS=. read -r MAJOR MINOR PATCH <<EOF
+          $CURRENT
+          EOF
+          case '${{ inputs.bump }}' in
+            major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH + 1)) ;;
+          esac
+          VERSION="$MAJOR.$MINOR.$PATCH"
+          TAG="v$VERSION"
+          BRANCH="release/$TAG"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          PREVIOUS_TAG=$(git tag --list 'v*' --sort=-v:refname | head -n1 || true)
+          echo "previous_tag=$PREVIOUS_TAG" >> "$GITHUB_OUTPUT"
+          echo "Bumping $CURRENT -> $VERSION (${{ inputs.bump }}), branch $BRANCH (previous tag: ${PREVIOUS_TAG:-none})"
 
-      - name: Log in to GHCR
-        uses: docker/login-action@v4
+      - name: Fail if tag already exists on origin
+        run: |
+          set -euo pipefail
+          TAG='${{ steps.version.outputs.tag }}'
+          if git ls-remote --tags origin "refs/tags/$TAG" | grep -q "$TAG"; then
+            echo "::error::tag $TAG already exists on origin — delete the existing release+tag before re-running"
+            exit 1
+          fi
+
+      - name: Create release branch with version bump
+        id: commit
+        # The highlights go through an env var so that quotes and newlines
+        # cannot break the shell script.
+        env:
+          HIGHLIGHTS: ${{ inputs.notes }}
+        run: |
+          set -euo pipefail
+          VERSION='${{ steps.version.outputs.version }}'
+          BRANCH='${{ steps.version.outputs.branch }}'
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          # yarn.lock records the workspace as 0.0.0-use.local, so only
+          # package.json changes.
+          npm version "$VERSION" --no-git-tag-version
+          git checkout -B "$BRANCH"
+          git add package.json
+          if [ -n "$HIGHLIGHTS" ]; then
+            git commit -m "Bump version to $VERSION" -m "$HIGHLIGHTS"
+          else
+            git commit -m "Bump version to $VERSION"
+          fi
+          git push --force origin "$BRANCH"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  image:
+    name: Build and push image
+    needs: prepare
+    # The server is an ARM machine, so the image is built natively for arm64.
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+    steps:
+      - uses: actions/checkout@v6
         with:
-          registry: ${{ env.REGISTRY }}
+          # Build the exact commit that prepare pushed.
+          ref: ${{ needs.prepare.outputs.sha }}
+
+      - uses: docker/setup-buildx-action@v4
+
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fail if version already published
-        env:
-          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}
-        run: |
-          if docker manifest inspect "$IMAGE" >/dev/null 2>&1; then
-            echo "::error::Image $IMAGE already exists in GHCR — bump package.json version before releasing."
-            exit 1
-          fi
-          echo "Version ${{ steps.version.outputs.version }} not yet published, proceeding."
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
-      - name: Build and push image
-        uses: docker/build-push-action@v7
+      - uses: docker/build-push-action@v7
         with:
           context: .
           platforms: linux/arm64
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE }}:${{ env.VERSION }}
+            ${{ env.IMAGE }}:latest
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.version=${{ env.VERSION }}
+            org.opencontainers.image.revision=${{ needs.prepare.outputs.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Tag released commit
-        env:
-          TAG: v${{ steps.version.outputs.version }}
+  release:
+    name: Merge and release
+    needs: [prepare, image]
+    runs-on: ubuntu-24.04
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+      TAG: ${{ needs.prepare.outputs.tag }}
+      BRANCH: ${{ needs.prepare.outputs.branch }}
+      PREVIOUS_TAG: ${{ needs.prepare.outputs.previous_tag }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: master
+
+      - name: Merge release branch into master
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "$TAG" -m "Release $TAG" "${{ github.sha }}"
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git fetch origin "$BRANCH"
+          if git merge --ff-only "origin/$BRANCH"; then
+            echo "fast-forward merge into master"
+          else
+            echo "master moved since the release branch was cut — recording a merge commit"
+            git merge --no-ff "origin/$BRANCH" -m "Merge $BRANCH"
+          fi
+          git push origin master
+
+      - name: Create and push tag
+        run: |
+          set -euo pipefail
+          # Tag the commit that the image was built from, not the merge commit.
+          git tag "$TAG" '${{ needs.prepare.outputs.sha }}'
           git push origin "$TAG"
+
+      - name: Generate release notes
+        id: notes
+        env:
+          HIGHLIGHTS: ${{ inputs.notes }}
+        run: |
+          set -euo pipefail
+          {
+            if [ -n "$HIGHLIGHTS" ]; then
+              echo "## Highlights"
+              echo
+              echo "$HIGHLIGHTS"
+              echo
+            fi
+            echo "## Image"
+            echo
+            echo '```'
+            echo "docker pull $IMAGE:$VERSION"
+            echo '```'
+            echo
+            echo "## Changes"
+            echo
+            if [ -n "$PREVIOUS_TAG" ]; then
+              git log "$PREVIOUS_TAG..$TAG" --pretty=format:'- %s' --no-merges
+            else
+              git log "$TAG" --pretty=format:'- %s' --no-merges
+            fi
+          } > release-notes.md
+          echo "notes_path=$GITHUB_WORKSPACE/release-notes.md" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ env.TAG }}
+          name: ${{ env.TAG }}
+          body_path: ${{ steps.notes.outputs.notes_path }}
+
+      - name: Delete release branch
+        run: git push origin --delete "$BRANCH"
