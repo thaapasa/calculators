@@ -76,84 +76,86 @@ function base64ToHex(b64: string): string {
   return bytesToHex(bytes);
 }
 
-/** PBKDF2 config: iterations, salt source (hex/base64/pipeline), output bits */
-export function Pbkdf2Config({ params, onChange }: StepConfigProps) {
+type ByteSource = 'text' | 'hex' | 'base64' | 'pipeline';
+
+/**
+ * Picker for a byte-valued parameter such as a salt or a key. The value is typed as text, hex or
+ * Base64, or taken from another pipeline's output. Whatever the source, the operation receives it
+ * as hex in `params[name]`; the picker keeps its own state in `${name}Source`, `${name}Input` and
+ * `${name}PipelineId`.
+ */
+function ByteSourceInput({
+  params,
+  onChange,
+  name,
+  label,
+  allowText = false,
+  emptyPlaceholder,
+}: StepConfigProps & {
+  name: string;
+  label: string;
+  allowText?: boolean;
+  emptyPlaceholder?: string;
+}) {
   const registry = usePipelineRegistry();
   const selfId = usePipelineSelfId();
+  const sourceKey = `${name}Source`;
+  const inputKey = `${name}Input`;
+  const pipelineKey = `${name}PipelineId`;
 
-  const iterations = typeof params.iterations === 'number' ? params.iterations : 27500;
-  const bits = typeof params.bits === 'number' ? params.bits : 256;
-  const saltSource: 'hex' | 'base64' | 'pipeline' =
-    params.saltSource === 'base64' || params.saltSource === 'pipeline' ? params.saltSource : 'hex';
-  const saltInput =
-    typeof params.saltInput === 'string'
-      ? params.saltInput
-      : typeof params.salt === 'string'
-        ? params.salt
+  const rawSource = params[sourceKey];
+  const source: ByteSource =
+    rawSource === 'base64' || rawSource === 'pipeline' || (rawSource === 'text' && allowText)
+      ? rawSource
+      : rawSource === 'hex' || !allowText
+        ? 'hex'
+        : 'text';
+  const textInput =
+    typeof params[inputKey] === 'string'
+      ? params[inputKey]
+      : typeof params[name] === 'string'
+        ? params[name]
         : '';
-  const saltPipelineId = typeof params.saltPipelineId === 'string' ? params.saltPipelineId : '';
+  const pipelineId = typeof params[pipelineKey] === 'string' ? params[pipelineKey] : '';
 
   const availablePipelines = (registry?.pipelines ?? []).filter(p => p.id !== selfId);
   const sourceOutput =
-    saltSource === 'pipeline' && saltPipelineId
-      ? (registry?.outputs.get(saltPipelineId) ?? null)
-      : null;
+    source === 'pipeline' && pipelineId ? (registry?.outputs.get(pipelineId) ?? null) : null;
   const sourceIsMissing =
-    saltSource === 'pipeline' &&
-    !!saltPipelineId &&
-    !availablePipelines.some(p => p.id === saltPipelineId);
+    source === 'pipeline' && !!pipelineId && !availablePipelines.some(p => p.id === pipelineId);
 
   useEffect(() => {
-    if (saltSource !== 'pipeline') return;
-    if (!sourceOutput) {
-      if (params.salt !== '') onChange({ ...params, salt: '' });
-      return;
-    }
-    const hex = bytesToHex(toBinary(sourceOutput));
-    if (params.salt !== hex) onChange({ ...params, salt: hex });
-  }, [saltSource, sourceOutput, params, onChange]);
+    if (source !== 'pipeline') return;
+    const hex = sourceOutput ? bytesToHex(toBinary(sourceOutput)) : '';
+    if (params[name] !== hex) onChange({ ...params, [name]: hex });
+  }, [source, sourceOutput, params, onChange, name]);
 
-  const selectValue =
-    saltSource === 'pipeline' && saltPipelineId ? `pipeline:${saltPipelineId}` : saltSource;
-
-  const handleSourceChange = (value: string) => {
-    if (value === 'hex') {
-      onChange({
-        ...params,
-        saltSource: 'hex',
-        saltPipelineId: undefined,
-        salt: saltInput,
-      });
-    } else if (value === 'base64') {
-      let hex: string;
+  const toHex = (src: ByteSource, value: string): string => {
+    if (src === 'text') return bytesToHex(new TextEncoder().encode(value));
+    if (src === 'base64') {
       try {
-        hex = base64ToHex(saltInput);
+        return base64ToHex(value);
       } catch {
-        hex = '';
+        return '';
       }
-      onChange({
-        ...params,
-        saltSource: 'base64',
-        saltPipelineId: undefined,
-        salt: hex,
-      });
-    } else if (value.startsWith('pipeline:')) {
-      const pid = value.slice('pipeline:'.length);
-      onChange({ ...params, saltSource: 'pipeline', saltPipelineId: pid });
     }
+    return value;
   };
 
-  const handleSaltInputChange = (value: string) => {
-    if (saltSource === 'hex') {
-      onChange({ ...params, saltInput: value, salt: value });
-    } else if (saltSource === 'base64') {
-      let hex: string;
-      try {
-        hex = base64ToHex(value);
-      } catch {
-        hex = '';
-      }
-      onChange({ ...params, saltInput: value, salt: hex });
+  const selectValue = source === 'pipeline' && pipelineId ? `pipeline:${pipelineId}` : source;
+
+  const handleSourceChange = (value: string) => {
+    if (value.startsWith('pipeline:')) {
+      const pid = value.slice('pipeline:'.length);
+      onChange({ ...params, [sourceKey]: 'pipeline', [pipelineKey]: pid });
+    } else {
+      const src = value as ByteSource;
+      onChange({
+        ...params,
+        [sourceKey]: src,
+        [pipelineKey]: undefined,
+        [name]: toHex(src, textInput),
+      });
     }
   };
 
@@ -164,7 +166,55 @@ export function Pbkdf2Config({ params, onChange }: StepConfigProps) {
         ? `Binary data, ${sourceOutput.bytes.length} bytes`
         : `Text, ${new TextEncoder().encode(sourceOutput.text).length} bytes`
       : '(no output)';
-  const saltPlaceholder = saltSource === 'base64' ? 'e.g. oYa3...' : 'e.g. a1b2c3...';
+  const placeholder =
+    emptyPlaceholder ??
+    (source === 'base64' ? 'e.g. oYa3...' : source === 'text' ? '' : 'e.g. a1b2c3...');
+
+  return (
+    <>
+      <label className="flex items-center gap-1">
+        {label}
+        <select
+          value={selectValue}
+          onChange={e => handleSourceChange(e.target.value)}
+          className="rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground"
+        >
+          {allowText && <option value="text">Text</option>}
+          <option value="hex">Hex</option>
+          <option value="base64">Base64</option>
+          {availablePipelines.map(p => (
+            <option key={p.id} value={`pipeline:${p.id}`}>
+              From: {p.title}
+            </option>
+          ))}
+          {sourceIsMissing && <option value={`pipeline:${pipelineId}`}>From: (deleted)</option>}
+        </select>
+      </label>
+      {source === 'pipeline' ? (
+        <span className="font-mono">{sourceInfo}</span>
+      ) : (
+        <input
+          type="text"
+          value={textInput}
+          placeholder={placeholder}
+          onChange={e =>
+            onChange({
+              ...params,
+              [inputKey]: e.target.value,
+              [name]: toHex(source, e.target.value),
+            })
+          }
+          className="w-48 rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground font-mono"
+        />
+      )}
+    </>
+  );
+}
+
+/** PBKDF2 config: iterations, salt source (hex/base64/pipeline), output bits */
+export function Pbkdf2Config({ params, onChange }: StepConfigProps) {
+  const iterations = typeof params.iterations === 'number' ? params.iterations : 27500;
+  const bits = typeof params.bits === 'number' ? params.bits : 256;
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
@@ -180,34 +230,7 @@ export function Pbkdf2Config({ params, onChange }: StepConfigProps) {
           className="w-24 rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground text-center"
         />
       </label>
-      <label className="flex items-center gap-1">
-        Salt
-        <select
-          value={selectValue}
-          onChange={e => handleSourceChange(e.target.value)}
-          className="rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground"
-        >
-          <option value="hex">Hex</option>
-          <option value="base64">Base64</option>
-          {availablePipelines.map(p => (
-            <option key={p.id} value={`pipeline:${p.id}`}>
-              From: {p.title}
-            </option>
-          ))}
-          {sourceIsMissing && <option value={`pipeline:${saltPipelineId}`}>From: (deleted)</option>}
-        </select>
-      </label>
-      {saltSource === 'pipeline' ? (
-        <span className="font-mono">{sourceInfo}</span>
-      ) : (
-        <input
-          type="text"
-          value={saltInput}
-          placeholder={saltPlaceholder}
-          onChange={e => handleSaltInputChange(e.target.value)}
-          className="w-48 rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground font-mono"
-        />
-      )}
+      <ByteSourceInput params={params} onChange={onChange} name="salt" label="Salt" />
       <label className="flex items-center gap-1">
         Output bits
         <select
@@ -392,5 +415,98 @@ export function LineSortConfig({ params, onChange }: StepConfigProps) {
         <option value="desc">Z → A</option>
       </select>
     </label>
+  );
+}
+
+/** Argon2id config: memory cost, iterations, parallelism, salt source (empty = random) */
+export function Argon2Config({ params, onChange }: StepConfigProps) {
+  const memory = typeof params.memory === 'number' ? params.memory : 19456;
+  const iterations = typeof params.iterations === 'number' ? params.iterations : 2;
+  const parallelism = typeof params.parallelism === 'number' ? params.parallelism : 1;
+
+  const numberInput = (key: string, value: number, width: string) => (
+    <input
+      type="number"
+      min={1}
+      value={value}
+      onChange={e => onChange({ ...params, [key]: Math.max(1, Number(e.target.value) || 1) })}
+      className={`${width} rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground text-center`}
+    />
+  );
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+      <label className="flex items-center gap-1">
+        Memory (KiB)
+        {numberInput('memory', memory, 'w-24')}
+      </label>
+      <label className="flex items-center gap-1">
+        Iterations
+        {numberInput('iterations', iterations, 'w-14')}
+      </label>
+      <label className="flex items-center gap-1">
+        Parallelism
+        {numberInput('parallelism', parallelism, 'w-14')}
+      </label>
+      <ByteSourceInput
+        params={params}
+        onChange={onChange}
+        name="salt"
+        label="Salt"
+        emptyPlaceholder="random"
+      />
+    </div>
+  );
+}
+
+/** bcrypt config: cost factor, salt source (empty = random) */
+export function BcryptConfig({ params, onChange }: StepConfigProps) {
+  const cost = typeof params.cost === 'number' ? params.cost : 12;
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+      <label className="flex items-center gap-1">
+        Cost
+        <input
+          type="number"
+          min={4}
+          max={31}
+          value={cost}
+          onChange={e =>
+            onChange({ ...params, cost: Math.max(4, Math.min(31, Number(e.target.value) || 12)) })
+          }
+          className="w-14 rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground text-center"
+        />
+      </label>
+      <ByteSourceInput
+        params={params}
+        onChange={onChange}
+        name="salt"
+        label="Salt (16 bytes)"
+        emptyPlaceholder="random"
+      />
+    </div>
+  );
+}
+
+/** HMAC config: digest algorithm, key source (text/hex/base64/pipeline) */
+export function HmacConfig({ params, onChange }: StepConfigProps) {
+  const digest = typeof params.digest === 'string' ? params.digest : 'SHA-256';
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+      <label className="flex items-center gap-1">
+        Digest
+        <select
+          value={digest}
+          onChange={e => onChange({ ...params, digest: e.target.value })}
+          className="rounded border border-border bg-surface px-1 py-0.5 text-xs text-foreground"
+        >
+          <option value="SHA-1">SHA-1</option>
+          <option value="SHA-256">SHA-256</option>
+          <option value="SHA-384">SHA-384</option>
+          <option value="SHA-512">SHA-512</option>
+        </select>
+      </label>
+      <ByteSourceInput params={params} onChange={onChange} name="key" label="Key" allowText />
+    </div>
   );
 }

@@ -28,6 +28,28 @@ export const base64DecodeOp: OperationDef = {
   },
 };
 
+/** Base64url (RFC 4648 §5): `-` and `_` instead of `+` and `/`, no padding */
+export const base64UrlEncodeOp: OperationDef = {
+  id: 'base64url-encode',
+  name: 'Base64url encode',
+  category: 'encoding',
+  process: async input => {
+    const b64 = toText(await base64EncodeOp.process(input));
+    return textData(b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''));
+  },
+};
+
+/** Accepts Base64url with or without padding, and plain Base64 as well */
+export const base64UrlDecodeOp: OperationDef = {
+  id: 'base64url-decode',
+  name: 'Base64url decode',
+  category: 'encoding',
+  process: async input => {
+    const b64 = toText(input).trim().replace(/-/g, '+').replace(/_/g, '/').replace(/=+$/, '');
+    return base64DecodeOp.process(textData(b64 + '='.repeat((4 - (b64.length % 4)) % 4)));
+  },
+};
+
 export const urlEncodeOp: OperationDef = {
   id: 'url-encode',
   name: 'URL encode',
@@ -71,6 +93,98 @@ export const hexDecodeOp: OperationDef = {
   },
 };
 
+const htmlEscapes: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+};
+
+/** Escapes the characters that are special in HTML text and attribute values */
+export const htmlEncodeOp: OperationDef = {
+  id: 'html-encode',
+  name: 'HTML entity encode',
+  category: 'encoding',
+  process: async input => textData(toText(input).replace(/[&<>"']/g, c => htmlEscapes[c])),
+};
+
+/**
+ * Named entities that HTML entity decode understands. The full HTML list has over 2000 entries;
+ * this covers the ones that turn up in practice, including the Nordic letters.
+ */
+const namedEntities: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  apos: "'",
+  nbsp: '\u00a0',
+  shy: '\u00ad',
+  copy: '©',
+  reg: '®',
+  trade: '™',
+  deg: '°',
+  plusmn: '±',
+  times: '×',
+  divide: '÷',
+  micro: 'µ',
+  para: '¶',
+  sect: '§',
+  middot: '·',
+  bull: '•',
+  hellip: '…',
+  ndash: '–',
+  mdash: '—',
+  lsquo: '‘',
+  rsquo: '’',
+  ldquo: '“',
+  rdquo: '”',
+  laquo: '«',
+  raquo: '»',
+  euro: '€',
+  pound: '£',
+  yen: '¥',
+  cent: '¢',
+  auml: 'ä',
+  Auml: 'Ä',
+  ouml: 'ö',
+  Ouml: 'Ö',
+  aring: 'å',
+  Aring: 'Å',
+  uuml: 'ü',
+  Uuml: 'Ü',
+  aelig: 'æ',
+  AElig: 'Æ',
+  oslash: 'ø',
+  Oslash: 'Ø',
+  szlig: 'ß',
+  eacute: 'é',
+  Eacute: 'É',
+  egrave: 'è',
+  agrave: 'à',
+  ccedil: 'ç',
+  ntilde: 'ñ',
+};
+
+/** Decodes numeric entities (`&#228;`, `&#xE4;`) and common named ones; leaves others as-is */
+export const htmlDecodeOp: OperationDef = {
+  id: 'html-decode',
+  name: 'HTML entity decode',
+  category: 'encoding',
+  process: async input =>
+    textData(
+      toText(input).replace(/&(#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);/g, (m, body) => {
+        if (body[0] !== '#') return namedEntities[body] ?? m;
+        const code =
+          body[1] === 'x' || body[1] === 'X'
+            ? parseInt(body.slice(2), 16)
+            : parseInt(body.slice(1), 10);
+        return code <= 0x10ffff ? String.fromCodePoint(code) : m;
+      }),
+    ),
+};
+
 /** Decode JWT token payload to JSON */
 export const jwtDecodeOp: OperationDef = {
   id: 'jwt-decode',
@@ -95,9 +209,13 @@ export const jwtDecodeOp: OperationDef = {
 export const encodingOperations: OperationDef[] = [
   base64EncodeOp,
   base64DecodeOp,
+  base64UrlEncodeOp,
+  base64UrlDecodeOp,
   urlEncodeOp,
   urlDecodeOp,
   hexEncodeOp,
   hexDecodeOp,
+  htmlEncodeOp,
+  htmlDecodeOp,
   jwtDecodeOp,
 ];

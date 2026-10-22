@@ -27,8 +27,11 @@ import {
 import { PipelineStepCard } from './component/PipelineStepCard';
 import Section from './component/Section';
 import {
+  Argon2Config,
+  BcryptConfig,
   HexCaseConfig,
   HexDumpBytesConfig,
+  HmacConfig,
   JsonExtractConfig,
   JsonIndentConfig,
   JsonMergeConfig,
@@ -63,6 +66,9 @@ setOperationConfig('hex-encode', HexCaseConfig);
 setOperationConfig('line-sort', LineSortConfig);
 setOperationConfig('pbkdf2-sha256', Pbkdf2Config);
 setOperationConfig('pbkdf2-sha512', Pbkdf2Config);
+setOperationConfig('argon2id', Argon2Config);
+setOperationConfig('bcrypt', BcryptConfig);
+setOperationConfig('hmac', HmacConfig);
 
 interface PipelinePageProps {
   multiInstance?: boolean;
