@@ -3,12 +3,20 @@ debian = { version = "1", args = { allow-apt = true } }
 claude = { version = "1", args = { acp = true } }
 docker = { version = "1", args = { allow-pulls = true } }
 git = { version = "1" }
-nodejs = { version = "1", args = { allow-npm = true, node-version = "lts" } }
+mise = { version = "1" }
 python = { version = "1", args = { allow-pypi = true, python-version = "latest" } }
 
 [clipboard]
 copy = true
 paste = false
+
+[vm.image]
+insecure = false
+name = "debian:stable-slim@sha256:13f723858144cb70a15a8f5924e1bb3ca2a3e19d29e86fb8adcfd7101ba9e237"
+pull-policy = "if-not-present"
+resolution = "registry"
+
+[vm]
 
 # node_modules and the Yarn cache live on the VM's ext4 disk, not on the
 # VirtioFS project mount. The host is macOS and the sandbox is Linux, so the
