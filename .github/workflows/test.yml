@@ -11,11 +11,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Install deps
-        run: yarn install --immutable
+      # Runs `mise install`, which installs Node and Yarn and then the
+      # dependencies through the postinstall hook in mise.toml.
+      - name: Install tools and dependencies
+        uses: jdx/mise-action@v3
 
+      # ESLint also checks the Prettier formatting.
       - name: Lint
         run: yarn lint
+
+      - name: Build
+        run: yarn build
 
       - name: Run tests
         run: yarn test

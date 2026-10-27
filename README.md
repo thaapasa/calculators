@@ -30,10 +30,11 @@ safely calculate password hashes and other sensitive values.
 
 ## Getting started
 
-Requires [Node.js](https://nodejs.org/) and [Yarn](https://yarnpkg.com/).
+The project uses [mise](https://mise.jdx.dev/) to install [Node.js](https://nodejs.org/)
+and [Yarn](https://yarnpkg.com/). `mise install` also installs the project dependencies.
 
 ```bash
-yarn                # Install dependencies
+mise install        # Install Node, Yarn and the dependencies
 yarn start          # Dev server at http://localhost:3000
 ```
 
@@ -46,6 +47,8 @@ yarn lint           # ESLint + TypeScript type checking
 yarn fix            # Auto-fix ESLint issues
 yarn deploy         # Build and deploy to production
 ```
+
+[HOSTING.md](HOSTING.md) describes how releases are built and deployed.
 
 ## Tech stack
 

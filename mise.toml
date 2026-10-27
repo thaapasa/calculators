@@ -1,0 +1,7 @@
+[tools]
+node = "24"
+yarn = "4.18.1"
+
+[hooks]
+# Install the project dependencies as part of `mise install`.
+postinstall = "yarn install --immutable"
