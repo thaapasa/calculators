@@ -23,7 +23,7 @@ the format.
 
 ```bash
 mise install        # Install Node, Yarn and the project dependencies
-yarn start          # Dev server on port 3000
+yarn start          # Dev server on port 10510
 yarn build          # Production build (Vite)
 yarn test           # Run tests (vitest run)
 yarn lint           # ESLint + TypeScript check

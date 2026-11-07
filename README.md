@@ -34,7 +34,7 @@ and [Yarn](https://yarnpkg.com/). `mise install` also installs the project depen
 
 ```bash
 mise install        # Install Node, Yarn and the dependencies
-yarn start          # Dev server at http://localhost:3000
+yarn start          # Dev server at http://localhost:10510
 ```
 
 ## Scripts

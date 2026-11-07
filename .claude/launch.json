@@ -5,7 +5,7 @@
       "name": "dev",
       "runtimeExecutable": "yarn",
       "runtimeArgs": ["start"],
-      "port": 3000
+      "port": 10510
     }
   ]
 }

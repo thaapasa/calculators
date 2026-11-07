@@ -9,7 +9,8 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   server: {
-    port: 3000,
+    port: 10510,
+    strictPort: true,
   },
   build: {
     target: 'es2020',
