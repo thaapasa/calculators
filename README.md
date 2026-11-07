@@ -49,6 +49,7 @@ yarn deploy         # Build and deploy to production
 ```
 
 [HOSTING.md](HOSTING.md) describes how releases are built and deployed.
+[specs/README.md](specs/README.md) lists the requirements for each area of the app.
 
 ## Tech stack
 

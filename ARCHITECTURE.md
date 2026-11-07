@@ -6,6 +6,10 @@ Every calculation runs in the browser, so nothing the user types reaches a serve
 the main promise of the app: a user can hash a password or decode a token without sending
 it anywhere. A feature that needs a backend does not belong here.
 
+## Requirements
+
+The requirements for each area of the app are in [specs/](specs/README.md).
+
 ## Source layout
 
 ```

@@ -1,6 +1,6 @@
 ---
 name: scoped-review
-description: Scoped code review — determines the change scope (explicit, discussion, or git), picks a source of truth (discussion, OpenSpec change, or code), then reviews the changes for correctness, spec agreement, doc coverage, the client-side-only invariant, i18n and route wiring, convention adherence, duplicated shapes that want a shared abstraction, hand-rolled complex logic that wants a named/shared function, and unit-test coverage of calculation logic.
+description: Scoped code review — determines the change scope (explicit, discussion, or git), picks a source of truth (discussion, spec, or code), then reviews the changes for correctness, spec agreement, doc coverage, the client-side-only invariant, i18n and route wiring, convention adherence, duplicated shapes that want a shared abstraction, hand-rolled complex logic that wants a named/shared function, and unit-test coverage of calculation logic.
 disable-model-invocation: true
 context: fork
 agent: general-purpose
@@ -52,14 +52,11 @@ this order:
 1. **Discussion context.** If the conversation laid out what the change should
    do (a spec, an agreed design, acceptance criteria), that is the source of
    truth. Code and docs are judged against it.
-2. **An OpenSpec change.** If `openspec/changes/<id>/` covers the work, that is
-   the spec. Read all of it: `proposal.md` for the why, `design.md` for the
-   decisions, `specs/<capability>/spec.md` for the requirements and scenarios,
-   and `tasks.md` for what was meant to be done. A task checked off with no
-   matching code is a finding; so is code that no task asked for. Also read the
-   main spec it modifies, `openspec/specs/<capability>/spec.md`.
+2. **A spec.** If the diff adds or ticks requirements in `specs/<area>.md`,
+   that spec is the source of truth. A requirement ticked (`- [x]`) with no
+   matching code is a finding; so is code that no requirement asked for.
 3. **Code, with docs judged against it.** If the diff is mostly code with no
-   OpenSpec change behind it and only scattered doc edits, the **code is the
+   spec change behind it and only scattered doc edits, the **code is the
    source of truth** and the documentation is reviewed *against the code* —
    stale, contradictory, or missing doc updates are findings, not the spec.
 
@@ -70,8 +67,8 @@ does".
 
 Load the context needed to judge against the source of truth:
 
-- `CLAUDE.md` — commands, project structure, code style, page and route rules.
-- `openspec/config.yaml` — the same conventions in the form OpenSpec work reads.
+- `CLAUDE.md` — commands, tech stack, code style and testing.
+- `ARCHITECTURE.md` — the source layout, the pages and the routes.
 - `README.md` — the outward feature list.
 - Whatever spec the source-of-truth decision points at.
 
@@ -129,8 +126,7 @@ is the product promise on the front page. Check it holds:
 - Code matches what the spec / docs / discussion promised. Flag every divergence
   — both "code does less than promised" and "code does something the spec didn't
   ask for" (scope creep is a finding too).
-- For an OpenSpec change: every requirement and scenario in the delta spec has
-  code behind it, and every checked task is actually done.
+- For a spec change: every requirement ticked in the diff has code behind it.
 
 ### 3d. All relevant docs and specs updated
 
@@ -140,13 +136,11 @@ doc update is a finding. When applicable:
 
 - **README.md** — the feature list, when a page or a user-visible capability is
   added, removed, or renamed.
-- **CLAUDE.md** — commands, project structure, the page list, the route rules,
-  code style, tech stack (when the change alters any of these).
-- **openspec/config.yaml** — the `context` block repeats the stack and
-  conventions; it goes stale the same way CLAUDE.md does.
-- **openspec/specs/<capability>/spec.md** — when the change alters documented
-  behaviour of a specified capability outside an OpenSpec change.
-- **openspec/changes/<id>/tasks.md** — tasks checked off to match what was done.
+- **CLAUDE.md** — commands, tech stack, code style and testing (when the
+  change alters any of these).
+- **ARCHITECTURE.md** — the source layout, the page list and the route rules.
+- **specs/<area>.md** — when the change alters the behaviour of an area that
+  has a spec, and requirements ticked to match what was done.
 
 Judge *appropriateness* — not every change touches every doc. A pure internal
 refactor may need no doc changes at all; a new page usually needs several. Flag

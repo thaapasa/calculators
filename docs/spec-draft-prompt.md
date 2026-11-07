@@ -9,7 +9,7 @@ gets wrong.
 
 ---
 
-Draft the OpenSpec specification for the `<CAPABILITY>` capability of this repo. The
+Draft the spec for the `<CAPABILITY>` capability of this repo. The
 relevant code is in `<SOURCE FILES>`.
 
 ## What a spec means here
@@ -23,13 +23,12 @@ implementation.
 
 ## Read these first
 
-- `openspec/config.yaml` for project conventions.
-- `openspec/specs/linked-inputs/spec.md` for how long a spec should be and what belongs in
-  one.
-- `openspec/specs/work-time/spec.md` for the OpenSpec format only: `### Requirement:`,
-  SHALL wording, `#### Scenario:` with WHEN and THEN. Ignore its length and its scope. It
-  describes a page whose interface is the product. Most capabilities here are calculations,
-  and their specs are much shorter.
+- `CLAUDE.md` and `ARCHITECTURE.md` for project conventions.
+- `specs/README.md` for the spec format.
+- `specs/linked-inputs.md` for how long a spec should be and what belongs in one.
+- `specs/work-time.md` for an example of the format only. Ignore its length and its scope.
+  It describes a page whose interface is the product. Most capabilities here are
+  calculations, and their specs are much shorter.
 
 ## Find the real source of intent
 
@@ -39,18 +38,19 @@ and section in the spec. The standard is your source of truth, not the code.
 Where no standard applies, the intent comes from the tests. Where neither exists, you do
 not know the intent, and it goes in the delta list as a question.
 
-## Deliverable 1: `openspec/specs/<CAPABILITY>/spec.md`
+## Deliverable 1: `specs/<CAPABILITY>.md`
 
-Requirements and scenarios, stating intent.
+Requirements stating intent, in the format of `specs/README.md`. Tick (`- [x]`) a
+requirement that the code meets, and leave one that it does not meet unticked (`- [ ]`).
 
-Include a scenario if getting it wrong produces a wrong answer. Leave it out if it only
-produces a worse experience. Worked examples with real values make good scenarios, because
-they become test cases.
+Include a requirement if getting it wrong produces a wrong answer. Leave it out if it only
+produces a worse experience. Give worked examples with real values, because they become
+test cases.
 
 Say nothing about linked input fields. `linked-inputs` covers that, and repeating it here
 is wrong.
 
-## Deliverable 2: `openspec/changes/<CAPABILITY>-spec/deltas.md`
+## Deliverable 2: `docs/deltas/<CAPABILITY>.md`
 
 Every point where the code differs from the spec, and every point where you could not
 derive the intent. This file matters as much as the spec.
@@ -62,18 +62,18 @@ One entry each, in this shape:
 
 Always cite `file:line`. Always recommend a resolution. Do not ask a bare question.
 
-Anything that looks arbitrary goes here, not into the spec. A hardcoded range, a magic
+Anything that looks arbitrary goes in this list, not into the spec. A hardcoded range, a magic
 constant, an off-by-one between two related numbers: report it, do not write it up as a
 rule.
 
-## Map every scenario to a test
+## Map every requirement to a test
 
-List, for each scenario, the test that proves it. Use existing tests in
+List, for each requirement, the test that proves it. Use existing tests in
 `*.test.ts` where they fit and write new ones where they do not. Put new tests next to the
-source file, following the conventions in `openspec/config.yaml`.
+source file, following the conventions in `CLAUDE.md`.
 
 A failing test is expected here. It means the code does not match the intent, so add it to
-`deltas.md` and leave it failing.
+the delta list and leave it failing.
 
 ## Do not change the implementation
 

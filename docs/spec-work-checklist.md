@@ -11,7 +11,7 @@ Nothing else can start until both are done.
 `/p/tekstimuunnokset` and `/p/textconversions`. Delete it so nobody writes a spec for dead
 code.
 
-**Write `openspec/specs/linked-inputs/spec.md` yourself.** Four later specs depend on it,
+**Write `specs/linked-inputs.md` yourself.** Four later specs depend on it,
 and writing it is how you set the house style for specs written after the code.
 
 Write it about `src/app/util/useLinkedInputs.ts`, using `useLinkedInputs.test.ts` as the
@@ -22,7 +22,7 @@ Once it exists, it replaces `work-time` as the example you hand to agents.
 
 ## Reviewing what an agent gives you
 
-You get two files back. Read `deltas.md` closely and skim `spec.md`.
+You get two files back. Read the delta list in `docs/deltas/` closely and skim the spec.
 
 A delta entry is good when you can rule on it without opening the repo. It should look
 like this:
@@ -38,8 +38,8 @@ recommending an answer.
 Three things to watch for in the spec itself:
 
 - A requirement whose only evidence is the implementation. If no standard and no test
-  backs it, it belongs in `deltas.md` as a question.
-- Interface scenarios that `linked-inputs` already covers.
+  backs it, it belongs in the delta list as a question.
+- Interface requirements that `linked-inputs` already covers.
 - An arbitrary looking constant quietly written up as a rule.
 
 ## Deltas already found

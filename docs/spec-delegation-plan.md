@@ -4,9 +4,9 @@ How to write the missing specs for this repo, and which parts to hand to an AI a
 
 ## Where we start
 
-The repo has ten pages and one spec. `openspec/specs/work-time/spec.md` came out of the
-`day-bound-work-hours` change, so it was written before the code it describes. Every
-remaining spec has to be written from code that already exists.
+The repo has ten pages and one spec. `specs/work-time.md` was written before the code it
+describes. Every remaining spec has to be written from code that already exists. The
+format is in [specs/README.md](../specs/README.md).
 
 These specs record intent, not implementation. Where the code does something the intent
 does not call for, the spec states the intent and the code gets fixed.
@@ -26,7 +26,7 @@ to describe the code.
 
 ## The work-time spec is not the template
 
-`work-time` spends most of its 237 lines on the user interface. For that page the
+Most of the `work-time` spec is about the user interface. For that page the
 interface is the answer, so this is correct. It is also why it does not transfer.
 
 Colors, byte sizes, pixel density and numbers share one interface mechanism:
@@ -34,10 +34,10 @@ Colors, byte sizes, pixel density and numbers share one interface mechanism:
 as its own capability. Those four page specs then say nothing about the interface. They
 become short conversion contracts.
 
-Use this rule to decide whether a scenario belongs in a spec. Include it if getting it
+Use this rule to decide whether a requirement belongs in a spec. Include it if getting it
 wrong gives a wrong answer. Leave it out if it only gives a worse experience.
-`rgb(255, 0, 0)` maps to `#ff0000` is a scenario. "Typing in the hex field updates the RGB
-fields" is not.
+`rgb(255, 0, 0)` maps to `#ff0000` is a requirement. "Typing in the hex field updates the
+RGB fields" is not.
 
 ## The capability list
 
@@ -66,10 +66,9 @@ Eight capabilities go to an agent. Five stay with you, and four of those are sma
 
 Four steps. The agent does steps 1 and 4. You do steps 2 and 3.
 
-**1. The agent drafts two files, never one.** The first is
-`openspec/specs/<capability>/spec.md`, written as intent. Where the standard is clear, the
-spec states the standard, even if the code disagrees. The second is
-`openspec/changes/<capability>-spec/deltas.md`, listing every point where the code differs
+**1. The agent drafts two files, never one.** The first is `specs/<capability>.md`,
+written as intent. Where the standard is clear, the spec states the standard, even if the
+code disagrees. The second is `docs/deltas/<capability>.md`, listing every point where the code differs
 from the spec, and every point where the agent could not derive intent. Each entry cites
 `file:line`, says what the spec requires, says what the code does, and recommends a
 resolution.
@@ -82,12 +81,12 @@ attached, not reading a spec closely.
 
 **3. You skim the spec against your verdicts.**
 
-**4. The agent opens one OpenSpec change per capability**, bundling that capability's bugs.
-It implements the fixes, writes tests, and runs `yarn test` and `yarn lint`.
+**4. The agent fixes the bugs of one capability in one change.** It implements the fixes,
+writes tests, ticks the requirements it fixed, and runs `yarn test` and `yarn lint`.
 
-## Every scenario maps to a test
+## Every requirement maps to a test
 
-Require the agent to pin each scenario to a test, existing or new. A passing test confirms
+Require the agent to pin each requirement to a test, existing or new. A passing test confirms
 the code already matches the intent. A failing one is a bug, and the list of failures is
 the delta list in executable form.
 
@@ -96,9 +95,9 @@ never had.
 
 ## Handling the bugs
 
-Open one change per capability as soon as its spec lands. Do not build a backlog. Between
-the spec landing and the fix landing, `openspec/specs/` describes behaviour the code does
-not have, so keep that window to hours rather than weeks.
+Fix the bugs of a capability as soon as its spec lands. Do not build a backlog. Until the
+fix lands, the spec has unticked requirements for behaviour the code does not have, so keep
+that window to hours rather than weeks.
 
 ## Order of work
 
@@ -133,5 +132,5 @@ a user expects after a reload are not recoverable from the code.
 for `numbers` differ (`/p/numerot` against `/p/symbols`) in a way that looks deliberate but
 cannot be derived.
 
-Every verdict in every `deltas.md` is yours. That is the whole point of splitting the
+Every verdict in every delta list is yours. That is the whole point of splitting the
 drafting from the deciding.

@@ -7,6 +7,18 @@ needs a backend does not belong here.
 Read `ARCHITECTURE.md` for the source layout, the pages and how the Finnish and English
 routes work. `HOSTING.md` describes the releases and the production server.
 
+## Specs
+
+Requirements live in `specs/`, one file per app area. See `specs/README.md` for
+the format.
+
+- Read the relevant spec before planning or implementing a feature.
+- Add new requirements as unchecked items (`- [ ]`).
+- Tick a requirement (`- [x]`) in the same commit that implements it.
+- Ask before changing or removing an existing requirement.
+- Each spec can end with an "Open questions" section. Ask the user before you
+  implement anything that depends on an open question.
+
 ## Commands
 
 ```bash
