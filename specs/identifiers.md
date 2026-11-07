@@ -23,8 +23,9 @@ generate random strings and UUIDs, and check a UUID.
 
 ## Generating values
 
-- [x] User can generate a random hetu, bank reference or company ID. The page fills in
-      the input and shows its check character.
+- [x] User can generate a random hetu, bank reference or company ID. The generated value
+      is what the user would type, so it has no check character. The page fills it in
+      and shows the check character, as if the user had typed it.
 - [x] A generated hetu can have any real date in its range of years, and an individual
       number that is given to people, not a temporary one.
 - [x] User can generate a random string of 64 characters. The string leaves out
@@ -43,9 +44,3 @@ generate random strings and UUIDs, and check a UUID.
 
 - [x] Every identifier and UUID can be copied through the
       [last value](common.md#last-value). The copied value includes the check character.
-
-## Open questions
-
-- `generate()` in `hetu.ts` and in `bankreference.ts` returns a value without its check
-  character, and the page adds the check character separately. Is this the intent? The
-  code does not say, and the spec should state it either way.

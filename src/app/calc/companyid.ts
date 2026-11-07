@@ -21,6 +21,7 @@ export function check(value: string): string {
   return div === 0 ? '0' : (div === 1 ? '-' : 11 - div).toString();
 }
 
-export function generate(): string {
+/** Gives a random company ID without its check digit */
+export function generateInput(): string {
   return zeroPad(getRandomInt(1, 9999999).toString(), 7);
 }

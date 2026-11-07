@@ -2,7 +2,8 @@ import { getRandomInt } from '../util/util';
 
 /* Bank reference number (viitenumero) */
 /* ----------------------------------- */
-export function generate(): string {
+/** Gives a random bank reference without its check digit */
+export function generateInput(): string {
   return getRandomInt(100, 999999999).toString();
 }
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { check, generate } from './hetu';
+import { check, generateInput } from './hetu';
 
 describe('hetu', () => {
   describe('check', () => {
@@ -43,8 +43,8 @@ describe('hetu', () => {
     });
   });
 
-  describe('generate', () => {
-    const generated = Array.from({ length: 5000 }, generate);
+  describe('generateInput', () => {
+    const generated = Array.from({ length: 5000 }, generateInput);
 
     it('generates a hetu that passes the check', () => {
       for (const hetu of generated) {

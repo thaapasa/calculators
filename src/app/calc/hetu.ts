@@ -54,7 +54,7 @@ const firstBirthDate = DateTime.fromObject({ year: 1950, month: 1, day: 1 });
 const lastBirthDate = DateTime.fromObject({ year: 2013, month: 12, day: 31 });
 
 /** Gives a random hetu born between 1950 and 2013, without its check character */
-export function generate(): string {
+export function generateInput(): string {
   const days = Math.round(lastBirthDate.diff(firstBirthDate, 'days').days);
   const date = firstBirthDate.plus({ days: getRandomInt(0, days + 1) });
   const separator = date.year >= 2000 ? 'A' : '-';

@@ -21,7 +21,7 @@ interface CheckProps {
   readonly name: string;
   readonly id: string | number;
   readonly 'max-length'?: string;
-  readonly generate?: () => string;
+  readonly generateInput?: () => string;
   readonly onValue: (x: string) => void;
   readonly onFocus?: (value: string) => void;
 }
@@ -34,7 +34,7 @@ export function CheckValue({
   name,
   id,
   'max-length': _maxLength,
-  generate: generateFn,
+  generateInput,
   onValue,
   onFocus,
 }: CheckProps) {
@@ -72,11 +72,11 @@ export function CheckValue({
   );
 
   const generate = useCallback(() => {
-    if (!generateFn) return;
-    const generated = generateFn().toString();
+    if (!generateInput) return;
+    const generated = generateInput().toString();
     setInput(generated);
     processInput(generated);
-  }, [generateFn, processInput]);
+  }, [generateInput, processInput]);
 
   const handleFocus = useCallback(() => {
     if (onFocus) onFocus(value || input);
@@ -84,7 +84,7 @@ export function CheckValue({
 
   return (
     <Item name={name} valueClassName="top" labelWidth={labelWidthClass[labelSize]}>
-      {generateFn ? (
+      {generateInput ? (
         <GenerateButton onClick={generate} title={t('component.generateNew')} />
       ) : (
         <div className="w-9 shrink-0" />

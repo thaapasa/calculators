@@ -69,7 +69,7 @@ export function IdentifiersPage() {
         name={t('page.identifiers.hetu')}
         id="hetu"
         check={hetu.check}
-        generate={hetu.generate}
+        generateInput={hetu.generateInput}
         combine={util.combine}
         onValue={publishSelectedValue}
         onFocus={focus('hetu')}
@@ -80,7 +80,7 @@ export function IdentifiersPage() {
         name={t('page.identifiers.bankReference')}
         id="bank-reference"
         check={bankReference.check}
-        generate={bankReference.generate}
+        generateInput={bankReference.generateInput}
         combine={util.combine}
         onValue={publishSelectedValue}
         onFocus={focus('bankReference')}
@@ -91,7 +91,7 @@ export function IdentifiersPage() {
         name={t('page.identifiers.companyId')}
         id="company-id"
         check={companyId.check}
-        generate={companyId.generate}
+        generateInput={companyId.generateInput}
         combine={util.combineWith('-')}
         onValue={publishSelectedValue}
         onFocus={focus('companyId')}
@@ -109,7 +109,7 @@ export function IdentifiersPage() {
       <CheckValue
         name={t('page.identifiers.randomString')}
         id="random-string"
-        generate={generateRandomString}
+        generateInput={generateRandomString}
         onValue={publishSelectedValue}
         onFocus={focus('randomString')}
         max-length="64"
@@ -118,7 +118,7 @@ export function IdentifiersPage() {
       <CheckValue
         name="UUID v1"
         id="uuid-v1"
-        generate={generateUUIDv1}
+        generateInput={generateUUIDv1}
         onValue={publishUuid}
         onFocus={focus('uuidv1')}
         max-length="36"
@@ -127,7 +127,7 @@ export function IdentifiersPage() {
       <CheckValue
         name="UUID v4"
         id="uuid-v4"
-        generate={generateUUIDv4}
+        generateInput={generateUUIDv4}
         onValue={publishUuid}
         onFocus={focus('uuidv4')}
         max-length="36"
@@ -136,7 +136,7 @@ export function IdentifiersPage() {
       <CheckValue
         name="UUID v7"
         id="uuid-v7"
-        generate={generateUUIDv7}
+        generateInput={generateUUIDv7}
         onValue={publishUuid}
         onFocus={focus('uuidv7')}
         max-length="36"
