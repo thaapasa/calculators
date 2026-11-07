@@ -1,6 +1,6 @@
 import { useTranslation } from 'app/i18n/LanguageContext';
 import { isDefined } from 'app/util/util';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import React from 'react';
 import * as uuid from 'uuid';
 
@@ -43,7 +43,7 @@ function Uuid7Info({ input }: { input: string }) {
   const { t } = useTranslation();
   const stampStr = input.slice(0, 8) + input.slice(9, 13);
   const epochMillis = parseInt(stampStr, 16);
-  const time = moment(epochMillis);
+  const time = DateTime.fromMillis(epochMillis);
   return (
     <>
       <div className="mx-3 mt-2">
@@ -58,7 +58,7 @@ function Uuid7Info({ input }: { input: string }) {
         <label className="text-xs text-muted">{t('component.uuidTime')}</label>
         <input
           className="w-full rounded border border-border bg-background px-3 py-2"
-          value={time.format('YYYY-MM-DD HH:mm:ss.SSS Z')}
+          value={time.toFormat('yyyy-MM-dd HH:mm:ss.SSS ZZ')}
           readOnly
         />
       </div>

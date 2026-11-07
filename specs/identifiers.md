@@ -7,7 +7,11 @@ generate random strings and UUIDs, and check a UUID.
 ## Check characters
 
 - [x] User can type a hetu without its check character, and the page shows the check
-      character. The century separators `-`, `+` and `A` are accepted.
+      character. All the century separators are accepted, also the ones added in 2023:
+      `+` for the 1800s, `-`, `Y`, `X`, `W`, `V` and `U` for the 1900s, and `A`, `B`, `C`,
+      `D`, `E` and `F` for the 2000s.
+- [x] If the date of a hetu does not exist, such as 31 April, the hetu is invalid. The
+      century of the separator decides leap years.
 - [x] User can type a bank reference without its check digit, and the page shows the
       check digit.
 - [x] User can type a company ID without its check digit, and the page shows the check
@@ -21,6 +25,8 @@ generate random strings and UUIDs, and check a UUID.
 
 - [x] User can generate a random hetu, bank reference or company ID. The page fills in
       the input and shows its check character.
+- [x] A generated hetu can have any real date in its range of years, and an individual
+      number that is given to people, not a temporary one.
 - [x] User can generate a random string of 64 characters. The string leaves out
       characters that are easy to mix up, such as `l`, `O` and `0`.
 - [x] User can generate a UUID of version 1, 4 or 7.
@@ -37,14 +43,6 @@ generate random strings and UUIDs, and check a UUID.
 
 - [x] Every identifier and UUID can be copied through the
       [last value](common.md#last-value). The copied value includes the check character.
-
-## Known issues
-
-- [ ] A generated hetu never falls on the 29th, 30th or 31st of a month. `generate()` in
-      `hetu.ts` picks the day from 1 to 28, and a TODO there says so. A generated hetu
-      should be able to have any real calendar date.
-- [ ] The hetu check does not check that the date part is a real date. For example,
-      `319999-123` gets a check character. An invalid date should make the hetu invalid.
 
 ## Open questions
 

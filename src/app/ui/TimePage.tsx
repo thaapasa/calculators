@@ -1,7 +1,6 @@
 import {
-  buildMoment,
+  buildDateTime,
   computeOutputs,
-  datePattern,
   EditableField,
   fieldReaders,
   fieldWriters,
@@ -13,7 +12,7 @@ import { type TranslationKey } from 'app/i18n/fi';
 import { useTranslation } from 'app/i18n/LanguageContext';
 import { useFocusPublisher } from 'app/util/useFocusPublisher';
 import { cn } from 'lib/utils';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Item } from './component/Item';
@@ -57,36 +56,23 @@ export function TimePage() {
     [t],
   );
 
-  const [vals, setVals] = useState<TimeValues>(() => computeOutputs(moment(), weekDayLabels));
+  const [vals, setVals] = useState<TimeValues>(() => computeOutputs(DateTime.now(), weekDayLabels));
   const { selected: reportTarget, selectSrc } = useFocusPublisher<string>();
 
-  const currentMomentRef = useRef(moment());
+  const currentRef = useRef<DateTime>(DateTime.now());
 
   useEffect(() => {
     setVals(prev => ({
       ...prev,
-      weekDay: currentMomentRef.current.isValid()
-        ? (weekDayLabels[currentMomentRef.current.isoWeekday()] ?? '')
-        : '',
+      weekDay: currentRef.current.isValid ? (weekDayLabels[currentRef.current.weekday] ?? '') : '',
     }));
   }, [weekDayLabels]);
 
-  const updateFromMoment = useCallback(
-    (m: moment.Moment, src: EditableField | 'direct' | 'datePicker') => {
-      currentMomentRef.current = m;
+  const updateFrom = useCallback(
+    (m: DateTime, src: EditableField) => {
+      currentRef.current = m;
       const outputs = computeOutputs(m, weekDayLabels);
-      if (['date', 'hour', 'minute', 'second', 'millisecond'].includes(src)) {
-        setVals(prev => ({ ...outputs, [src]: prev[src as TimeField] }));
-      } else if (
-        src === 'iso8601' ||
-        src === 'iso8601utc' ||
-        src === 'javaTime' ||
-        src === 'unixTime'
-      ) {
-        setVals(prev => ({ ...outputs, [src]: prev[src] }));
-      } else {
-        setVals(outputs);
-      }
+      setVals(prev => ({ ...outputs, [src]: prev[src] }));
     },
     [weekDayLabels],
   );
@@ -97,11 +83,11 @@ export function TimePage() {
       const val = event.target.value;
       setVals(prev => ({ ...prev, [src]: val }));
 
-      let m: moment.Moment;
+      let m: DateTime;
       if (src in fieldReaders) {
         m = fieldReaders[src](val);
       } else if (src === 'date') {
-        m = buildMoment(
+        m = buildDateTime(
           val,
           String(vals.hour),
           String(vals.minute),
@@ -110,7 +96,7 @@ export function TimePage() {
         );
       } else {
         const parts = { ...vals, [src]: val };
-        m = buildMoment(
+        m = buildDateTime(
           String(parts.date),
           String(parts.hour),
           String(parts.minute),
@@ -119,20 +105,20 @@ export function TimePage() {
         );
       }
 
-      updateFromMoment(m, src);
+      updateFrom(m, src);
 
       if (reportTarget && fieldWriters[reportTarget]) {
         publishSelectedValue(fieldWriters[reportTarget](m));
       }
     },
-    [vals, updateFromMoment, reportTarget],
+    [vals, updateFrom, reportTarget],
   );
 
   const focusChanged = useCallback(
     (event: React.FocusEvent<HTMLInputElement>) => {
       const src = event.target.name;
       if (reportableFields[src]) {
-        const value = fieldWriters[src] ? fieldWriters[src](currentMomentRef.current) : undefined;
+        const value = fieldWriters[src] ? fieldWriters[src](currentRef.current) : undefined;
         selectSrc(src, value);
       }
     },
@@ -141,22 +127,18 @@ export function TimePage() {
 
   const selectNameDay = useCallback(
     (day: NameDayItem) => {
-      const m = moment()
-        .startOf('day')
-        .month(day.value.month - 1)
-        .date(day.value.day);
-      const date = m.format(datePattern);
-      const fullMoment = buildMoment(
+      const date = `${day.value.day}.${day.value.month}.${DateTime.now().year}`;
+      const dt = buildDateTime(
         date,
         String(vals.hour),
         String(vals.minute),
         String(vals.second),
         String(vals.millisecond),
       );
-      updateFromMoment(fullMoment, 'date');
+      updateFrom(dt, 'date');
       setVals(prev => ({ ...prev, date }));
     },
-    [vals, updateFromMoment],
+    [vals, updateFrom],
   );
 
   const renderType = (type: string) => {

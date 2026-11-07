@@ -43,7 +43,7 @@ the working tree.
 - Tailwind CSS 4 with shadcn/ui components, lucide-react icons
 - Vite 8 for build/dev, Vitest 5 for testing
 - Node 24 and Yarn 4 (PnP disabled, node-modules linker), installed with mise
-- @dnd-kit for drag-and-drop, ramda, moment
+- @dnd-kit for drag-and-drop, ramda, Luxon
 
 ## Code style
 

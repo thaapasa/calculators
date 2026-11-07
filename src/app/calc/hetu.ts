@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 import { zeroPad } from '../util/strings';
 import { getRandomInt } from '../util/util';
 
@@ -5,43 +7,58 @@ import { getRandomInt } from '../util/util';
 /* ---------------------------------------------------- */
 const hetuChecks = 'ABCDEFHJKLMNPRSTUVWXY';
 
-const hetuSeparators = ['A', '-', '+'];
+/**
+ * The separator gives the century of the birth date. The letters other than A were added in 2023,
+ * when codes for the most common birth dates started to run out.
+ */
+const centuryBySeparator: Record<string, number> = {
+  '+': 1800,
+  '-': 1900,
+  Y: 1900,
+  X: 1900,
+  W: 1900,
+  V: 1900,
+  U: 1900,
+  A: 2000,
+  B: 2000,
+  C: 2000,
+  D: 2000,
+  E: 2000,
+  F: 2000,
+};
 
+const hetuPattern = /^(\d{2})(\d{2})(\d{2})(.)(\d{3})$/;
+
+/**
+ * Gives the check character of a hetu without its check character, such as `131052-308`. If the
+ * input is not a hetu, or its date does not exist, gives an empty string.
+ */
 export function check(hetu: string): string {
-  if (hetu.length !== 10) {
-    return '';
-  }
-  const date = hetu.substr(0, 6);
-  const mark = hetu.charAt(6);
-  const start = 7;
-  if (hetuSeparators.indexOf(mark) === -1) {
-    // Invalid separator
-    return '';
-  }
-  // Get hetu order num
-  const order = hetu.substr(start, 3);
+  const match = hetuPattern.exec(hetu);
+  if (!match) return '';
+  const [, day, month, year, separator, order] = match;
+  const century = centuryBySeparator[separator];
+  if (century === undefined) return '';
+  const date = DateTime.fromObject({
+    day: Number(day),
+    month: Number(month),
+    year: century + Number(year),
+  });
+  if (!date.isValid) return '';
 
-  const num = parseInt(`${date}${order}`, 10);
-  const checksum = num % 31;
+  const checksum = Number(`${day}${month}${year}${order}`) % 31;
   return checksum < 10 ? checksum.toString() : hetuChecks[checksum - 10];
 }
 
+const firstBirthDate = DateTime.fromObject({ year: 1950, month: 1, day: 1 });
+const lastBirthDate = DateTime.fromObject({ year: 2013, month: 12, day: 31 });
+
+/** Gives a random hetu born between 1950 and 2013, without its check character */
 export function generate(): string {
-  // TODO: Use a date lib to generate all dates
-  const day = getRandomInt(1, 29);
-  const month = getRandomInt(1, 13);
-  let year = getRandomInt(50, 114);
-  let separator = '-';
-  if (year > 99) {
-    year -= 100;
-    separator = 'A';
-  }
-  const counter = getRandomInt(1, 999);
-  return (
-    zeroPad(day.toString(), 2) +
-    zeroPad(month.toString(), 2) +
-    zeroPad(year.toString(), 2) +
-    separator +
-    zeroPad(counter.toString(), 3)
-  );
+  const days = Math.round(lastBirthDate.diff(firstBirthDate, 'days').days);
+  const date = firstBirthDate.plus({ days: getRandomInt(0, days + 1) });
+  const separator = date.year >= 2000 ? 'A' : '-';
+  // Individual numbers 002-899 are given to people, and 900-999 are for temporary codes
+  const counter = getRandomInt(2, 900);
+  return date.toFormat('ddMMyy') + separator + zeroPad(counter.toString(), 3);
 }
