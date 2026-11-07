@@ -28,3 +28,4 @@ node_modules
 # Local env overrides
 .env.local
 .env.*.local
+*.local.toml
