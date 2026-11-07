@@ -22,8 +22,17 @@ yet.
 
 ## Areas
 
-- [Colors](colors.md): conversions between hex, RGB and HSL.
-- [Identifiers](identifiers.md): Finnish identity codes, bank references, company IDs
-  and check digits.
+Each card on the main page has its own file.
+
+- [Time](time.md): one moment in time as a date, timestamps, the week and name days.
 - [Work time](work-time.md): the sheet of working hours, with deductions, a target
   and the leave-at time.
+- [Colors](colors.md): conversions between hex, RGB and HSL, and stored colors.
+- [Identifiers](identifiers.md): Finnish identity codes, bank references, company IDs,
+  check digits, random strings and UUIDs.
+- [Pixel density](pixel-density.md): image sizes across Android and iOS screen densities.
+- [Numbers](numbers.md): number bases and character codes.
+- [Byte sizes](byte-sizes.md): data sizes in binary and decimal units.
+- [Text conversions](text-conversions.md): a pipeline of encoding, format, hash and
+  compression steps.
+- [Links](links.md): a stored list of links.
