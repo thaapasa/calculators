@@ -21,7 +21,6 @@ safely calculate password hashes and other sensitive values.
   (JSON, XML, JSONPath extract and set), hashing (MD5, SHA-\*, HMAC, PBKDF2, Argon2id, bcrypt,
   CRC-32), compression (gzip, deflate), and display (hex dump, image/SVG preview, statistics). Supports text input, file drag-and-drop, and URL fetch.
   Operations are drag-and-drop reorderable with per-operation configuration.
-- **Cryptography** — MD5, SHA-1, SHA-256, SHA-512 hashing
 - **Pixel density** — DPI/PPI calculations
 - **Work time** — track start and end times for a day, with lunch and commute deductions
 - **UUID** — validation and UUID v7 timestamp parsing

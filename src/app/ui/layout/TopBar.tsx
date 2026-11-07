@@ -8,7 +8,6 @@ import {
   Hash,
   Home,
   Link as LinkIcon,
-  Lock,
   Monitor,
   Palette,
   Timer,
@@ -43,7 +42,6 @@ export function TopBar({ onToggleDrawer, children }: React.PropsWithChildren<Too
           <NavLink icon={Code} page="bytesizes" tooltip={t('nav.bytesizes')} />
           <NavLink icon={LinkIcon} page="links" tooltip={t('nav.links')} />
           <NavLink icon={Type} page="pipeline" tooltip={t('nav.textConversions')} />
-          <NavLink icon={Lock} page="cryptography" tooltip={t('nav.cryptography')} />
           <NavLink icon={Monitor} page="pixeldensity" tooltip={t('nav.pixeldensity')} />
         </div>
         <div className="inline-flex flex-1 justify-end">{children}</div>

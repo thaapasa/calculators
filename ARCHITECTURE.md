@@ -34,7 +34,7 @@ rendering anything. Most of the tests are there.
 ## Pages
 
 The pages are Time, Numbers, Identifiers (HETU and company ID), Colors, ByteSizes, Links,
-Pipeline (text conversions), Cryptography, PixelDensity and WorkTime. The index route
+Pipeline (text conversions), PixelDensity and WorkTime. The index route
 renders every page on one scrolling page.
 
 ## Languages and routes

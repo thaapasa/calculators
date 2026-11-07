@@ -13,7 +13,6 @@ export const en: Record<TranslationKey, string> = {
   'nav.bytesizes': 'Byte sizes',
   'nav.links': 'Links',
   'nav.textConversions': 'Text conversions',
-  'nav.cryptography': 'Cryptography',
   'nav.pixeldensity': 'Pixel density',
   'nav.worktime': 'Work time',
 
@@ -115,9 +114,6 @@ export const en: Record<TranslationKey, string> = {
   'page.links.title': 'Links',
   'page.links.subtitle': 'Store your links here',
   'page.links.label': 'Link',
-
-  'page.cryptography.title': 'Cryptography',
-  'page.cryptography.input': 'Input',
 
   'page.pipeline.title': 'Text conversions',
   'page.pipeline.subtitle': 'Data pipeline',

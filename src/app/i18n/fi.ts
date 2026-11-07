@@ -11,7 +11,6 @@ export const fi = {
   'nav.bytesizes': 'Tavukoot',
   'nav.links': 'Linkit',
   'nav.textConversions': 'Tekstimuunnokset',
-  'nav.cryptography': 'Kryptografia',
   'nav.pixeldensity': 'Pikselitiheys',
   'nav.worktime': 'Työaika',
 
@@ -113,9 +112,6 @@ export const fi = {
   'page.links.title': 'Linkit',
   'page.links.subtitle': 'Kerää linkkejä muistiin',
   'page.links.label': 'Linkki',
-
-  'page.cryptography.title': 'Kryptografia',
-  'page.cryptography.input': 'Syöte',
 
   'page.pipeline.title': 'Tekstimuunnokset',
   'page.pipeline.subtitle': 'Dataputki',

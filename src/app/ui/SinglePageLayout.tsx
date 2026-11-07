@@ -1,6 +1,5 @@
 import { ByteSizesPage } from './ByteSizesPage';
 import { ColorsPage } from './ColorsPage';
-import { CryptographyPage } from './CryptographyPage';
 import { IdentifiersPage } from './IdentifiersPage';
 import { LinksPage } from './LinksPage';
 import { NumbersPage } from './NumbersPage';
@@ -26,7 +25,6 @@ export function SinglePageLayout() {
         <ByteSizesPage />
       </div>
       <PipelinePage />
-      <CryptographyPage />
       <LinksPage />
     </>
   );

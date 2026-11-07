@@ -3,7 +3,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import { ByteSizesPage } from './ByteSizesPage';
 import { CalculatorLayout } from './CalculatorLayout';
 import { ColorsPage } from './ColorsPage';
-import { CryptographyPage } from './CryptographyPage';
 import { IdentifiersPage } from './IdentifiersPage';
 import { LinksPage } from './LinksPage';
 import { NumbersPage } from './NumbersPage';
@@ -33,8 +32,6 @@ const router = createBrowserRouter([
       { path: '/p/links', element: <LinksPage /> },
       { path: '/p/tekstimuunnokset', element: <PipelinePage multiInstance /> },
       { path: '/p/textconversions', element: <PipelinePage multiInstance /> },
-      { path: '/p/kryptografia', element: <CryptographyPage /> },
-      { path: '/p/cryptography', element: <CryptographyPage /> },
       { path: '/p/pikselitiheys', element: <PixelDensityPage /> },
       { path: '/p/pixeldensity', element: <PixelDensityPage /> },
       { path: '/p/työaika', element: <WorkTimePage /> },

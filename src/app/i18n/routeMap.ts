@@ -8,7 +8,6 @@ export type PageId =
   | 'bytesizes'
   | 'links'
   | 'pipeline'
-  | 'cryptography'
   | 'pixeldensity'
   | 'worktime';
 
@@ -20,7 +19,6 @@ export const routePaths: Record<PageId, Record<Lang, string>> = {
   bytesizes: { fi: '/p/tavukoot', en: '/p/bytesizes' },
   links: { fi: '/p/linkit', en: '/p/links' },
   pipeline: { fi: '/p/tekstimuunnokset', en: '/p/textconversions' },
-  cryptography: { fi: '/p/kryptografia', en: '/p/cryptography' },
   pixeldensity: { fi: '/p/pikselitiheys', en: '/p/pixeldensity' },
   worktime: { fi: '/p/työaika', en: '/p/worktime' },
 };

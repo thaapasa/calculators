@@ -97,13 +97,6 @@ export function NavigationDrawer({ onClose }: NavigationProps) {
         <Button
           variant="ghost"
           className="w-full justify-start rounded-none"
-          onClick={goTo(routePaths.cryptography[lang])}
-        >
-          {t('nav.cryptography')}
-        </Button>
-        <Button
-          variant="ghost"
-          className="w-full justify-start rounded-none"
           onClick={goTo(routePaths.pixeldensity[lang])}
         >
           {t('nav.pixeldensity')}
