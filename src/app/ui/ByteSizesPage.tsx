@@ -14,8 +14,7 @@ interface TypeInfo {
   readonly read: (x: string) => number;
   readonly write: (x: number) => string;
   readonly nameKey: TranslationKey;
-  readonly hint: string;
-  readonly unit: string;
+  readonly unitKey: TranslationKey;
 }
 
 const KIBI = 1024;
@@ -30,27 +29,26 @@ const TERA = GIGA * KILO;
 
 const converter = (
   nameKey: TranslationKey,
-  unit: string,
+  unitKey: TranslationKey,
   ratio: number,
   decimals: number = 3,
 ): TypeInfo => ({
   nameKey,
-  hint: unit,
-  unit,
+  unitKey,
   read: x => Number(x) * ratio,
   write: x => (x / ratio).toFixed(decimals),
 });
 
 const types = allFieldsOfType<TypeInfo>()({
-  byte: converter('page.bytesizes.byte', 'B', 1, 0),
-  kibi: converter('page.bytesizes.kibi', 'KiB', KIBI),
-  mebi: converter('page.bytesizes.mebi', 'MiB', MEBI),
-  gibi: converter('page.bytesizes.gibi', 'GiB', GIBI),
-  tebi: converter('page.bytesizes.tebi', 'TiB', TEBI),
-  kilo: converter('page.bytesizes.kilo', 'Kt', KILO),
-  mega: converter('page.bytesizes.mega', 'Mt', MEGA),
-  giga: converter('page.bytesizes.giga', 'Gt', GIGA),
-  tera: converter('page.bytesizes.tera', 'Tt', TERA),
+  byte: converter('page.bytesizes.byte', 'page.bytesizes.unit.byte', 1, 0),
+  kibi: converter('page.bytesizes.kibi', 'page.bytesizes.unit.kibi', KIBI),
+  mebi: converter('page.bytesizes.mebi', 'page.bytesizes.unit.mebi', MEBI),
+  gibi: converter('page.bytesizes.gibi', 'page.bytesizes.unit.gibi', GIBI),
+  tebi: converter('page.bytesizes.tebi', 'page.bytesizes.unit.tebi', TEBI),
+  kilo: converter('page.bytesizes.kilo', 'page.bytesizes.unit.kilo', KILO),
+  mega: converter('page.bytesizes.mega', 'page.bytesizes.unit.mega', MEGA),
+  giga: converter('page.bytesizes.giga', 'page.bytesizes.unit.giga', GIGA),
+  tera: converter('page.bytesizes.tera', 'page.bytesizes.unit.tera', TERA),
 });
 export type SizeTypes = keyof typeof types;
 const typeKeys = Object.keys(types) as SizeTypes[];
@@ -135,7 +133,7 @@ const Editor = (p: {
         onChange={p.onChange}
         onFocus={p.onFocus}
       />
-      <div className="w-[25px] text-right pr-2 ml-2">{info.unit}</div>
+      <div className="w-[25px] text-right pr-2 ml-2">{t(info.unitKey)}</div>
     </FlexRow>
   );
 };

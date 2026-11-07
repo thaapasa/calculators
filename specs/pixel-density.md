@@ -17,11 +17,4 @@ enter the size of an asset at one density and read the pixel sizes for the other
 
 ## Copying values
 
-- [x] When the user focuses a field, its value goes to the last-value field in the top
-      bar.
-- [x] The card subtitle names the density of the focused field.
-
-## Open questions
-
-- On the other cards, the last-value field follows later edits of the focused field. Here
-  it only gets the value at the moment of focus. Should it follow edits too?
+- [x] Every width and height can be copied through the [last value](common.md#last-value).

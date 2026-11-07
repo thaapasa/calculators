@@ -35,9 +35,8 @@ generate random strings and UUIDs, and check a UUID.
 
 ## Copying values
 
-- [x] When the user focuses a field or generates a value, the full value with its check
-      character goes to the last-value field in the top bar.
-- [x] The card subtitle names the identifier of the focused field.
+- [x] Every identifier and UUID can be copied through the
+      [last value](common.md#last-value). The copied value includes the check character.
 
 ## Known issues
 

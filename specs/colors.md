@@ -25,10 +25,7 @@ three, and the page updates the others. The page opens with white.
 
 ## Copying values
 
-- [x] When the user focuses the hex field or the RGB string, its value goes to the
-      last-value field in the top bar. Later changes to the color keep updating it in
-      that format.
-- [x] The card subtitle names the format of the focused field.
+- [x] The hex code and the RGB string can be copied through the [last value](common.md#last-value).
 
 ## Open questions
 

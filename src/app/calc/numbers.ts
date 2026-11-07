@@ -1,10 +1,9 @@
-import { isDefined, isNumber, mapObject } from '../util/util';
+import { isDefined, mapObject } from '../util/util';
 
 const binCharsRE = /[^01]/;
 const octCharsRE = /[^0-7]/;
 const decCharsRE = /[^0-9]/;
 const hexCharsRE = /[^0-9A-Fa-f]/;
-const numChars = '0123456789ABCDEF';
 
 export function numberify<T extends object>(t: T): Record<keyof T, number> {
   return mapObject(Number, t);
@@ -35,15 +34,15 @@ export function intToStr(value: number): string {
 }
 
 export function intToHexStr(value: number | string): string {
-  return intToStrBPC(value, 4);
+  return intToRadixStr(value, 16);
 }
 
 export function intToOctalStr(value: number | string): string {
-  return intToStrBPC(value, 3);
+  return intToRadixStr(value, 8);
 }
 
 export function intToBinaryStr(value: number | string): string {
-  return intToStrBPC(value, 1);
+  return intToRadixStr(value, 2);
 }
 
 export function charToInt(value: string): number {
@@ -80,24 +79,8 @@ function strToIntChecked(value: any, radix: number, validChars: RegExp): number 
   return parseInt(value, radix);
 }
 
-function toChar(value: number, radix: number): string | undefined {
-  if (!isNumber(value) || value < 0 || value >= radix || value >= numChars.length) {
-    return;
-  }
-  return numChars.charAt(value);
-}
-
-function intToStrBPC(value: number | string, bitsPerChar: number): string {
-  const radix = 1 << bitsPerChar;
-  const mask = (1 << bitsPerChar) - 1;
-  let remaining = Number(value);
-  const str = [];
-  while (remaining > 0) {
-    str.push(toChar(remaining & mask, radix));
-    remaining >>= bitsPerChar;
-  }
-  if (str.length === 0) {
-    str.push('0');
-  }
-  return str.reverse().join('');
+/** Negative and non-numeric values give '0', and fractions are truncated */
+function intToRadixStr(value: number | string, radix: number): string {
+  const num = Math.floor(Number(value));
+  return Number.isFinite(num) && num > 0 ? num.toString(radix).toUpperCase() : '0';
 }

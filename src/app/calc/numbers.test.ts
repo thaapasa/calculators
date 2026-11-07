@@ -33,4 +33,20 @@ describe('Numbers', () => {
       expect(n.intToBinaryStr(127)).toEqual('1111111');
     });
   });
+
+  describe('int -> radix string above 32 bits', () => {
+    it('should convert large integers', () => {
+      expect(n.intToHexStr(2 ** 31)).toEqual('80000000');
+      expect(n.intToHexStr(4294967296)).toEqual('100000000');
+      expect(n.intToOctalStr(2 ** 33)).toEqual('100000000000');
+      expect(n.intToBinaryStr(2 ** 40)).toEqual('1' + '0'.repeat(40));
+      expect(n.intToHexStr(Number.MAX_SAFE_INTEGER)).toEqual('1FFFFFFFFFFFFF');
+    });
+    it('should give 0 for values that are not positive integers', () => {
+      expect(n.intToHexStr(0)).toEqual('0');
+      expect(n.intToHexStr(-5)).toEqual('0');
+      expect(n.intToHexStr(NaN)).toEqual('0');
+      expect(n.intToHexStr(255.9)).toEqual('FF');
+    });
+  });
 });

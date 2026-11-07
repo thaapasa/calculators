@@ -300,12 +300,13 @@ function PipelineInstance({
   }, [id, steps, toConfig, onConfigChange]);
 
   const finalResult = results.length > 0 ? results[results.length - 1] : null;
-  const effectiveOutput: PipelineData | null =
-    finalResult && !finalResult.error
-      ? finalResult.output
-      : input || inputData.type === 'binary'
-        ? inputData
-        : null;
+  // A failed step passes its input on, so the last result holds the output of the last step
+  // that worked
+  const effectiveOutput: PipelineData | null = finalResult
+    ? finalResult.output
+    : input || inputData.type === 'binary'
+      ? inputData
+      : null;
 
   useEffect(() => {
     onOutputChange(id, effectiveOutput);
@@ -403,7 +404,7 @@ function PipelineBody({ pipeline }: PipelineBodyProps) {
         <div className="text-xs text-muted-foreground">{t('page.pipeline.processing')}</div>
       )}
 
-      {finalResult && !finalResult.error ? (
+      {finalResult ? (
         <PipelineOutput data={finalResult.output} />
       ) : (
         (pipeline.input || pipeline.inputData.type === 'binary') && (

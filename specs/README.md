@@ -22,7 +22,8 @@ yet.
 
 ## Areas
 
-Each card on the main page has its own file.
+Each card on the main page has its own file. [Common behaviour](common.md) covers what
+the cards share, such as the last value in the top bar.
 
 - [Time](time.md): one moment in time as a date, timestamps, the week and name days.
 - [Work time](work-time.md): the sheet of working hours, with deductions, a target

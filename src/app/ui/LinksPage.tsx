@@ -15,7 +15,7 @@ function validate(link: string): string {
   if (link.includes('://')) {
     return link;
   }
-  return 'http://' + link;
+  return 'https://' + link;
 }
 
 const LINKS_STORE_KEY = 'calculators:links';

@@ -36,7 +36,8 @@ pipelines side by side and store them as setups.
 ## Output
 
 - [x] The page shows the output of the last step, with its length in characters or
-      bytes.
+      bytes. If the last step fails, the page shows the output of the last step that
+      worked.
 - [x] User can copy the output to the clipboard or download it as a file.
 
 ## Several pipelines
@@ -50,8 +51,3 @@ These apply to the card on its own page.
       stored setup.
 - [x] Stored setups are kept in the browser and restored when the user comes back.
 - [x] User can reset the page back to one empty pipeline.
-
-## Open questions
-
-- If the last step fails, the output shows the input of the pipeline, not the output of
-  the last step that worked. Is this the intent?

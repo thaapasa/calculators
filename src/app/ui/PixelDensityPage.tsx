@@ -5,6 +5,7 @@ import React, { useCallback, useMemo } from 'react';
 import { LinkedField, useLinkedInputs } from '../util/useLinkedInputs';
 import { Item } from './component/Item';
 import { HalfSection } from './component/Section';
+import { publishSelectedValue } from './LastValue';
 import { FlexRow } from './layout/elements';
 
 interface DensityInfo {
@@ -29,6 +30,14 @@ const densityKeys = Object.keys(densities) as DensityKey[];
 const androidKeys = densityKeys.filter(k => densities[k].platform === 'android');
 const iosKeys = densityKeys.filter(k => densities[k].platform === 'ios');
 
+type Dimension = 'width' | 'height';
+type SelectedField = `${Dimension}:${DensityKey}`;
+
+function parseSelectedField(field: SelectedField): { dimension: Dimension; key: DensityKey } {
+  const [dimension, key] = field.split(':') as [Dimension, DensityKey];
+  return { dimension, key };
+}
+
 function formatValue(v: number): string {
   if (!isFinite(v)) return '';
   return Number.isInteger(v) ? String(v) : v.toFixed(3);
@@ -50,7 +59,8 @@ const isValidNumber = (v: number) => typeof v === 'number' && !isNaN(v) && v >= 
 
 export function PixelDensityPage() {
   const { t } = useTranslation();
-  const { selected, selectSrc } = useFocusPublisher<DensityKey>();
+  const { selected, selectSrc } = useFocusPublisher<SelectedField>();
+  const selectedKey = selected ? parseSelectedField(selected).key : undefined;
 
   const widthFields = useMemo(() => createFields(), []);
   const heightFields = useMemo(() => createFields(), []);
@@ -58,24 +68,41 @@ export function PixelDensityPage() {
   const width = useLinkedInputs(widthFields, isValidNumber);
   const height = useLinkedInputs(heightFields, isValidNumber);
 
+  const publishEdit = useCallback(
+    (dimension: Dimension, k: DensityKey, input: string) => {
+      if (!selected) return;
+      const sel = parseSelectedField(selected);
+      if (sel.dimension !== dimension) return;
+      const fields = dimension === 'width' ? widthFields : heightFields;
+      const canonical = fields[k].read(input);
+      if (!isValidNumber(canonical)) return;
+      publishSelectedValue(sel.key === k ? input : fields[sel.key].write(canonical));
+    },
+    [selected, widthFields, heightFields],
+  );
+
   const onWidthChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      width.handleChange(e.target.name as DensityKey, e.target.value);
+      const k = e.target.name as DensityKey;
+      width.handleChange(k, e.target.value);
+      publishEdit('width', k, e.target.value);
     },
-    [width],
+    [width, publishEdit],
   );
 
   const onHeightChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      height.handleChange(e.target.name as DensityKey, e.target.value);
+      const k = e.target.name as DensityKey;
+      height.handleChange(k, e.target.value);
+      publishEdit('height', k, e.target.value);
     },
-    [height],
+    [height, publishEdit],
   );
 
   const onWidthFocus = useCallback(
     (e: React.FocusEvent<HTMLInputElement>) => {
       const k = e.target.name as DensityKey;
-      selectSrc(k, width.values[k]);
+      selectSrc(`width:${k}`, width.values[k]);
     },
     [selectSrc, width.values],
   );
@@ -83,7 +110,7 @@ export function PixelDensityPage() {
   const onHeightFocus = useCallback(
     (e: React.FocusEvent<HTMLInputElement>) => {
       const k = e.target.name as DensityKey;
-      selectSrc(k, height.values[k]);
+      selectSrc(`height:${k}`, height.values[k]);
     },
     [selectSrc, height.values],
   );
@@ -91,7 +118,7 @@ export function PixelDensityPage() {
   return (
     <HalfSection
       title={t('page.pixeldensity.title')}
-      subtitle={selected ? densities[selected].name : ''}
+      subtitle={selectedKey ? densities[selectedKey].name : ''}
       image="/img/header-pixeldensity.jpg"
     >
       <PlatformHeader title="Android" />

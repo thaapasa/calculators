@@ -29,7 +29,5 @@ When the page opens, it shows the current time in the time zone of the browser.
 
 ## Copying values
 
-- [x] When the user focuses the date, week, name day or one of the timestamp fields, its
-      value goes to the last-value field in the top bar. Later edits keep updating it in
-      that format.
-- [x] The card subtitle names the format of the focused field.
+- [x] The date, week, name day and timestamp fields can be copied through the
+      [last value](common.md#last-value).
